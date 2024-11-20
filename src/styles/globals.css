@@ -1,0 +1,28 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  /* body {
+    @apply bg-white text-typo-200 dark:bg-dark-650 dark:text-light-300;
+  } */
+  /* .container {
+    @apply m-[0_auto] w-90 max-w-[1440px] px-0  md:w-85 xl:w-3/4;
+  } */
+  .flex-center {
+    @apply flex justify-center items-center;
+  }
+
+  .flex-between {
+    @apply flex justify-between items-center;
+  }
+}
+
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

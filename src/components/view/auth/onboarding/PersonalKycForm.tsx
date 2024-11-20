@@ -1,0 +1,93 @@
+'use client';
+
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+
+import ReInput from '@/components/re-ui/re-input/ReInput';
+import ReDatePicker from '@/components/re-ui/ReDatePicker';
+import { ReHeading } from '@/components/re-ui/ReHeading';
+import ReSelect from '@/components/re-ui/ReSelect';
+import { Form } from '@/components/ui/form';
+import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.validation';
+import { ReButton } from '@/components/re-ui/ReButton';
+
+type defaultVal = {
+  enterNin: string;
+  gender: string;
+  dateOfBirth: Date;
+  instaUsername: string;
+  facebookUsername: string;
+};
+
+const defaultValues: defaultVal = {
+  enterNin: '',
+  gender: '',
+  dateOfBirth: new Date(),
+  instaUsername: '',
+  facebookUsername: '',
+};
+
+const genderOptions = [
+  { value: 'male', label: 'Male' },
+  { value: 'female', label: 'Female' },
+  { value: 'other', label: 'Other' },
+];
+
+export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
+  const form = useForm<TPersonalKyc>({
+    resolver: zodResolver(personalKycSchema),
+    defaultValues,
+    mode: 'onChange',
+  });
+
+  const { handleSubmit, formState } = form;
+  const { isSubmitting, isValid } = formState;
+
+  const onSubmit = async (data: TPersonalKyc) => {
+    console.log(data);
+    manageCurrentStep();
+  };
+
+  return (
+    <section>
+      <Form {...form}>
+        <h1 className="font-inter text-2xl font-bold text-zinc-700">Personal Information</h1>
+        <p className="mb-5 font-inter text-zinc-500">
+          Provide your personal information as it appears on your bank verification documents for
+          accurate account matching and processing.
+        </p>
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <div>
+            <ReHeading heading="Enter NIN" size={'base'} />
+            <ReInput name="enterNin" />
+          </div>
+          <div>
+            <ReHeading heading="Gender" size={'base'} />
+            <ReSelect name="gender" placeholder="Select" options={genderOptions} />
+          </div>
+          <div>
+            <ReHeading heading="Date" size={'base'} />
+            <ReDatePicker name="dateOfBirth" placeholder="Select" />
+          </div>
+          <div>
+            <ReHeading heading="Instagram Username (optional)" size={'base'} />
+            <ReInput name="instaUsername" placeholder="@" />
+          </div>
+          <div>
+            <ReHeading heading="Facebook Username (optional)" size={'base'} />
+            <ReInput name="facebookUsername" placeholder="www.facebook.com/" />
+          </div>
+          <div className="mt-3 flex justify-end">
+            <ReButton
+              className="w-2/5 rounded-full bg-[#03045B] py-6 font-inter text-white sm:py-4"
+              type="submit"
+              isSubmitting={isSubmitting}
+            >
+              Submit
+            </ReButton>
+          </div>
+        </form>
+      </Form>
+    </section>
+  );
+}
