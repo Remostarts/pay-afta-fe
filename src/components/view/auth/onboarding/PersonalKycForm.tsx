@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/navigation';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import ReDatePicker from '@/components/re-ui/ReDatePicker';
@@ -10,6 +11,7 @@ import ReSelect from '@/components/re-ui/ReSelect';
 import { Form } from '@/components/ui/form';
 import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.validation';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { DialogClose } from '@/components/ui/dialog';
 
 type defaultVal = {
   enterNin: string;
@@ -34,6 +36,7 @@ const genderOptions = [
 ];
 
 export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
+  const route = useRouter();
   const form = useForm<TPersonalKyc>({
     resolver: zodResolver(personalKycSchema),
     defaultValues,
@@ -78,6 +81,7 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
             <ReInput name="facebookUsername" placeholder="www.facebook.com/" />
           </div>
           <div className="mt-3 flex justify-end">
+            {/* <DialogClose asChild> */}
             <ReButton
               className="w-2/5 rounded-full bg-[#03045B] py-6 font-inter text-white sm:py-4"
               type="submit"
@@ -85,6 +89,7 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
             >
               Submit
             </ReButton>
+            {/* </DialogClose> */}
           </div>
         </form>
       </Form>

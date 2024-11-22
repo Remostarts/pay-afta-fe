@@ -17,24 +17,24 @@ export default function FundWallet() {
   };
   return (
     <section className="mx-auto w-full max-w-md">
-      <div className="flex flex-row items-center justify-between space-y-0 pb-7">
-        <h1 className="font-inter text-2xl font-bold">Add Funds to Wallet</h1>
+      <div className="flex flex-row items-center justify-between space-y-0 pb-3">
+        <h1 className="font-inter text-2xl font-bold text-gray-800">Add Funds to Wallet</h1>
       </div>
-      <div className="space-y-6">
-        <p className="text-muted-foreground font-inter">
+      <div className="space-y-2">
+        <p className="text-muted-foreground font-inter text-gray-600">
           This works like a regular bank account number. You can transfer to the account below and
           the funds will be credited to your wallet.
         </p>
 
-        <div className="flex flex-col items-center justify-center space-y-6">
-          <div className="space-y-2">
+        <div className="mt-5 flex flex-col items-center justify-center space-y-6">
+          <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Bank Name:</p>
             <p className="font-inter font-semibold">{accountDetails.bankName}</p>
           </div>
 
-          <div className="space-y-2">
+          <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Account Number:</p>
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 rounded-full bg-gray-100 p-1">
               <div className="bg-muted rounded-md px-4 py-2 font-inter font-semibold">
                 {accountDetails.accountNumber}
               </div>
@@ -50,7 +50,7 @@ export default function FundWallet() {
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Account Name:</p>
             <p className="font-inter font-semibold">{accountDetails.accountName}</p>
           </div>

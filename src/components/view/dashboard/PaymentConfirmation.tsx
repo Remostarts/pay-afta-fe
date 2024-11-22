@@ -88,9 +88,9 @@ const PaymentConfirmation = ({
               height={120}
             />
           </div>
-          <h2 className="mb-2 text-center font-inter text-2xl font-bold">Transaction confirmed!</h2>
+          <h2 className="mb-2 text-center font-inter text-2xl font-bold">Withdrawal Successful</h2>
           <p className="mb-4 text-center font-inter text-gray-600">
-            Proceeding to make the payment for the transaction.
+            You sent ₦{amount} to {bankName}.
           </p>
         </div>
       )}

@@ -36,7 +36,7 @@ export default function RecentTrackLink() {
         </h2>
         <button
           className="text-sm text-blue-600"
-          onClick={() => route.push('/lawyer/lawyers/briefs')}
+          // onClick={() => route.push('/lawyer/lawyers/briefs')}
         >
           VIEW ALL
         </button>

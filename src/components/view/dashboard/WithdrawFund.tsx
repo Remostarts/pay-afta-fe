@@ -2,18 +2,15 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 
 import PaymentConfirmation from './PaymentConfirmation';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { Input } from '@/components/ui/input';
 import { withdrawfundSchema, TWithdrawfund } from '@/lib/validations/withdrawfund.validation';
 import { Form } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
-import RePin from '@/components/re-ui/RePin';
 
 const defaultValues = {
   amountWithdraw: '',
