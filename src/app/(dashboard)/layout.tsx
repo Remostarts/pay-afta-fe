@@ -1,15 +1,15 @@
 'use client';
 import { useState } from 'react';
 
-import Header from '@/components/view/dashboard/Header';
+import Header from '@/components/view/dashboard/Dashboard/Header';
 import { TChildrenProps } from '@/types';
-import Sidebar from '@/components/view/dashboard/SideNav';
+import Sidebar from '@/components/view/dashboard/Dashboard/SideNav';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
   return (
-    <div className="container mx-auto min-h-screen">
+    <div className="container mx-auto min-h-screen overflow-hidden">
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} className={'block lg:hidden'} />
 
       {/* Overlay for mobile/tablet */}

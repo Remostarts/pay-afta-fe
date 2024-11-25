@@ -2,8 +2,9 @@
 
 import { useState } from 'react';
 
+import ProfileHeader from '../shared/ProfileHeader';
+
 import NewOrder from './NewOrder';
-import ProfileHeader from './ProfileHeader';
 import RecentTrackLink from './RecentTrackLink';
 import RecentTransactions from './RecentTransactions';
 import StatsSection from './StatsSection';

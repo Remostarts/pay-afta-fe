@@ -3,7 +3,7 @@ import { Bell, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import ProfileHeader from './ProfileHeader';
+import ProfileHeader from '../shared/ProfileHeader';
 
 interface HeaderProps {
   onMenuClick: () => void;

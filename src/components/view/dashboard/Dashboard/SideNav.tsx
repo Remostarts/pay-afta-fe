@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { X } from 'lucide-react';
 
-import { sideNavMenu } from '../../../constants/dashboard/shared';
+import { sideNavMenu } from '../../../../constants/dashboard/shared';
 
 interface SidebarProps {
   onClose?: () => void;
