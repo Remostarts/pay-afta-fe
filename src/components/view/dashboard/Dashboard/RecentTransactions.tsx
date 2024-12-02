@@ -36,7 +36,7 @@ export default function RecentTransactions() {
         </h2>
         <button
           className="text-sm text-blue-600"
-          // onClick={() => route.push('/lawyer/lawyers/briefs')}
+          onClick={() => route.push('/dashboard/transactions')}
         >
           VIEW ALL
         </button>

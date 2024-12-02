@@ -3,6 +3,8 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 
+import PaymentSuccessful from '../shared/PaymentSuccessful';
+
 import { ReButton } from '@/components/re-ui/ReButton';
 import RePin from '@/components/re-ui/RePin';
 
@@ -79,20 +81,7 @@ const PaymentConfirmation = ({
         </div>
       )}
       {isShowTranscationDone && (
-        <div className="mx-auto max-w-md rounded-lg bg-white p-6">
-          <div className="flex items-center justify-center">
-            <Image
-              src="/assets/dashboard/Dashboard/payment-checked.png"
-              alt="payment-checked"
-              width={120}
-              height={120}
-            />
-          </div>
-          <h2 className="mb-2 text-center font-inter text-2xl font-bold">Withdrawal Successful</h2>
-          <p className="mb-4 text-center font-inter text-gray-600">
-            You sent ₦{amount} to {bankName}.
-          </p>
-        </div>
+        <PaymentSuccessful label={'Withdrawal Successful'} amount={amount} bankName={bankName} />
       )}
     </section>
   );

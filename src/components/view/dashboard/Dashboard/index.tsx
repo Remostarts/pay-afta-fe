@@ -2,8 +2,6 @@
 
 import { useState } from 'react';
 
-import ProfileHeader from '../shared/ProfileHeader';
-
 import NewOrder from './NewOrder';
 import RecentTrackLink from './RecentTrackLink';
 import RecentTransactions from './RecentTransactions';
@@ -16,9 +14,6 @@ export default function Dashboard() {
   if (showNewOrder) {
     return (
       <section>
-        <div className="hidden lg:m-6 lg:block">
-          <ProfileHeader />
-        </div>
         <div className="lg:m-6">
           <NewOrder onBack={() => setShowNewOrder(false)} />
         </div>
@@ -28,9 +23,6 @@ export default function Dashboard() {
 
   return (
     <section>
-      <div className="hidden lg:m-6 lg:block">
-        <ProfileHeader />
-      </div>
       <div className="lg:m-6">
         <StatsSection />
       </div>

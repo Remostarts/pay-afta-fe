@@ -1,5 +1,6 @@
 'use client';
 
+import React, { useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -14,6 +15,7 @@ import {
   DropdownMenuCheckboxItem,
 } from '@radix-ui/react-dropdown-menu';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -25,14 +27,26 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends { transactionType: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
+  lable: string;
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData extends { transactionType: string }, TValue>({
+  columns,
+  data,
+  lable,
+}: DataTableProps<TData, TValue>) {
+  const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
+  const route = useRouter();
+
+  const filteredData = selectedTransactionType
+    ? data.filter((item) => item.transactionType === selectedTransactionType)
+    : data;
+
   const table = useReactTable({
-    data,
+    data: filteredData,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
@@ -75,6 +89,61 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
   return (
     <div>
+      <div className=" mb-4 flex items-center justify-between">
+        <h2 className="text-2xl font-medium">{lable}</h2>
+        <div className="flex flex-col gap-5">
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild className="relative ">
+              <Button variant="outline" size="sm" className="w-[200px]">
+                {selectedTransactionType || 'Transactions Types'}
+                <ChevronDownIcon className="ml-2 size-4" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="center" className=" bg-white">
+              <DropdownMenuCheckboxItem
+                key="all"
+                className="capitalize"
+                checked={selectedTransactionType === null}
+                onCheckedChange={() => setSelectedTransactionType(null)}
+              >
+                All
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                key="credit"
+                className="capitalize"
+                checked={selectedTransactionType === 'Credit'}
+                onCheckedChange={() => setSelectedTransactionType('Credit')}
+              >
+                Credit
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                key="withdrawal"
+                className="capitalize"
+                checked={selectedTransactionType === 'Withdrawal'}
+                onCheckedChange={() => setSelectedTransactionType('Withdrawal')}
+              >
+                Withdrawal
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                key="track-link"
+                className="capitalize"
+                checked={selectedTransactionType === 'Track Link'}
+                onCheckedChange={() => setSelectedTransactionType('Track Link')}
+              >
+                Track Link
+              </DropdownMenuCheckboxItem>
+              <DropdownMenuCheckboxItem
+                key="card-funded"
+                className="capitalize"
+                checked={selectedTransactionType === 'Card Funded'}
+                onCheckedChange={() => setSelectedTransactionType('Card Funded')}
+              >
+                Card Funded
+              </DropdownMenuCheckboxItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </div>
+      </div>
       <div className="rounded-md border bg-white">
         <Table>
           <TableHeader className="bg-gray-100">
@@ -157,9 +226,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
             {Math.min(
               (table.getState().pagination.pageIndex + 1) * table.getState().pagination.pageSize,
-              data.length
+              filteredData.length
             )}{' '}
-            of {data.length} entries
+            of {filteredData.length} entries
           </div>
 
           <DropdownMenu>

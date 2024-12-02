@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Header from '@/components/view/dashboard/Dashboard/Header';
 import { TChildrenProps } from '@/types';
 import Sidebar from '@/components/view/dashboard/Dashboard/SideNav';
+import ProfileHeader from '@/components/view/dashboard/shared/ProfileHeader';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,7 +34,12 @@ export default function Layout({ children }: TChildrenProps) {
           <Sidebar onClose={() => setIsSidebarOpen(false)} />
         </div>
 
-        <main className="flex-1 p-4 lg:p-6">{children}</main>
+        <main className="flex-1 bg-gray-50 p-4 lg:p-6">
+          <div className="hidden lg:m-6 lg:block">
+            <ProfileHeader />
+          </div>
+          {children}
+        </main>
       </div>
     </div>
   );
