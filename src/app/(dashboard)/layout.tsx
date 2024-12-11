@@ -11,6 +11,7 @@ export default function Layout({ children }: TChildrenProps) {
 
   return (
     <div className="container mx-auto min-h-screen overflow-hidden">
+      {/* Mobile Header */}
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} className={'block lg:hidden'} />
 
       {/* Overlay for mobile/tablet */}
@@ -22,23 +23,24 @@ export default function Layout({ children }: TChildrenProps) {
         />
       )}
 
-      <div className="flex min-h-screen">
-        {/* Sidebar - visible on large screens by default, controlled by state on smaller screens */}
+      <div className="flex h-screen">
+        {/* Sidebar - fixed, non-scrollable */}
         <div
-          className={`
-            fixed left-0 top-0 lg:relative lg:block 
+          className={` 
+            fixed left-0 top-0 lg:relative lg:block
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            z-50 min-h-screen transition-transform duration-300 ease-in-out
+            z-50 h-full shadow-md transition-transform duration-300 ease-in-out
           `}
         >
           <Sidebar onClose={() => setIsSidebarOpen(false)} />
         </div>
 
-        <main className="flex-1 bg-gray-50 p-4 lg:p-6">
+        {/* Main content - scrollable */}
+        <main className="flex-1 overflow-auto bg-gray-50 p-4 lg:p-6">
           <div className="hidden lg:m-6 lg:block">
             <ProfileHeader />
           </div>
-          {children}
+          <div className="h-full">{children}</div>
         </main>
       </div>
     </div>
