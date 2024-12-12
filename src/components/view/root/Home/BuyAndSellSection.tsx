@@ -3,12 +3,12 @@ import Image from 'next/image';
 export default function BuyAndSellSection() {
   return (
     <div className="container mx-auto px-4 py-12 md:px-8 md:py-20">
-      <h2 className="mb-12 text-center font-playfair text-3xl font-bold text-[#03045B] md:text-6xl">
+      <h2 className="mb-12 text-center font-playfair text-5xl font-bold text-[#03045B] md:text-7xl">
         What Can You Buy And Sell Using PayAfta?
       </h2>
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center md:justify-center">
         <div className="md:flex md:w-full md:flex-col md:items-center">
-          <h3 className="mb-4 font-inter text-xl font-bold">Physical Products</h3>
+          <h3 className="mb-4 font-inter text-xl font-semibold">Physical Products</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-3 font-inter">
               <span>
@@ -43,7 +43,7 @@ export default function BuyAndSellSection() {
           </ul>
         </div>
         <div className="md:flex md:w-full md:flex-col md:items-center">
-          <h3 className="mb-4 font-inter text-2xl font-bold">Services</h3>
+          <h3 className="mb-4 font-inter text-2xl font-semibold">Services</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-3 font-inter">
               <span>
