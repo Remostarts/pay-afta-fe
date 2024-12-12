@@ -21,7 +21,7 @@ export default function ProtectionSection() {
             {/* Right: Content  */}
             <div className="space-y-6">
               <h1 className="font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
-                buyer protection with payAfta
+                Buyer Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
                 Payafta takes buyer protection seriously. We&apos;re here to ensure that you receive
@@ -37,7 +37,7 @@ export default function ProtectionSection() {
           <div className="mt-16 grid grid-cols-1 items-center gap-12 md:grid-cols-2">
             <div>
               <h1 className="font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
-                seller protection with payAfta
+                Seller Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
                 Sellers, we&apos;ve got your back too. Payafta provides seller protection by
