@@ -38,14 +38,14 @@ export function Whitelist() {
 
   const onSubmit = async (data: TWhiteList) => {
     console.log(data);
-    // const result = await addToWhitelist(data);
-    // console.log('🌼 🔥🔥 onSubmit 🔥🔥 result🌼', result);
-    // if (result?.result === 'success') {
-    //   setIsModalOpen(false);
-    //   toast.success(' Congratulations! You have been added to the whitelist');
-    // } else {
-    //   toast.error('Sorry, Try again.');
-    // }
+    const result = await addToWhitelist(data);
+    console.log('onSubmit', result);
+    if (result?.result === 'success') {
+      setIsModalOpen(false);
+      toast.success(' Congratulations! You have been added to the whitelist');
+    } else {
+      toast.error('Sorry, Try again.');
+    }
   };
 
   return (
