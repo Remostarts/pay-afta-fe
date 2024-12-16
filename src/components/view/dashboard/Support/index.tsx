@@ -13,9 +13,9 @@ export default function Support() {
       <div>
         <Faqs />
       </div>
-      {/* <div>
+      <div>
         <ContactUs />
-      </div> */}
+      </div>
     </section>
   );
 }
