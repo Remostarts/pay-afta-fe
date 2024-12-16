@@ -37,7 +37,7 @@ export default function Layout({ children }: TChildrenProps) {
 
         {/* Main content - scrollable */}
         <main className="flex-1 overflow-auto bg-gray-50 p-4 lg:p-6">
-          <div className="hidden lg:m-6 lg:block">
+          <div className="hidden lg:mb-4 lg:block">
             <ProfileHeader />
           </div>
           <div className="h-full">{children}</div>
