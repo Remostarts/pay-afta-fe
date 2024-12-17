@@ -38,7 +38,7 @@ export default function WithdrawFund() {
   return (
     <section>
       {!isShowPaymentConfirmation && (
-        <div className="w-full max-w-md rounded-md bg-white p-6">
+        <div className="w-full max-w-md rounded-md">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-bold">Withdrawal</h2>
           </div>
