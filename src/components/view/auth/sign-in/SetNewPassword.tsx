@@ -9,12 +9,16 @@ import RePassInput from '@/components/re-ui/re-input/RePassInput';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { TResetPassword, resetPasswordSchema } from '@/lib/validations/userAuth.validations';
 
+interface ISetNewPasswordProps {
+  handleCurrentStep(): void;
+}
+
 const defaultValues = {
   newPassword: '',
   confirmPassword: '',
 };
 
-export default function SetNewPassword() {
+export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordProps) {
   const router = useRouter();
   const form = useForm<TResetPassword>({
     resolver: zodResolver(resetPasswordSchema),
@@ -27,7 +31,7 @@ export default function SetNewPassword() {
 
   function onSubmit(data: TResetPassword) {
     console.log('new Password', data);
-    router.push('?step=3');
+    handleCurrentStep();
   }
 
   return (

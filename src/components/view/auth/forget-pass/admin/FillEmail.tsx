@@ -1,14 +1,13 @@
 'use client';
 
 import Image from 'next/image';
-import { Dispatch, SetStateAction, useState } from 'react';
-import Link from 'next/link';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 // import { useOtp } from '@/context/OtpProvider';
-import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
+// import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
 // import { sendForgetPasswordOtp } from '@/lib/actions/auth/signup.actions';
 
 interface IFillEmailProps {
@@ -18,7 +17,7 @@ interface IFillEmailProps {
 export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
   const [email, setEmail] = useState('');
   // const { setEmail: setEmailOtp } = useOtp();
-  const handleSendCode = useSearchParamsHandler();
+  // const handleSendCode = useSearchParamsHandler();
 
   const handleSubmit = async () => {
     if (email.trim() === '') {
@@ -81,14 +80,14 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
           >
             Send Recovery Link
           </Button>
-          <div className="mt-10 text-center">
+          {/* <div className="mt-10 text-center">
             <p>
               You do not have a account?{' '}
               <Link href="/sign-up" className="font-inter font-semibold">
                 Create an account
               </Link>
             </p>
-          </div>
+          </div> */}
         </form>
       </div>
     </section>

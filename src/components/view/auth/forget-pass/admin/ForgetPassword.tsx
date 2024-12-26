@@ -1,15 +1,15 @@
 'use client';
 
-import { useSearchParams } from 'next/navigation';
+// import { useSearchParams } from 'next/navigation';
 import { useState } from 'react';
 
-import SetNewPassword from '../sign-in/SetNewPassword';
-import BackToLogin from '../sign-in/BackToLogin';
+import SetNewPassword from '../../sign-in/SetNewPassword';
+import BackToLogin from '../../sign-in/BackToLogin';
 
-import FillEmail from '@/components/view/auth/forget-pass/FillEmail';
+import FillEmail from './FillEmail';
 
 export default function ForgetPassword() {
-  const searchParams = useSearchParams();
+  // const searchParams = useSearchParams();
   // const currentStep = Number(searchParams.get('step'));
   const [currentStep, setCurrentStep] = useState<number>(1);
 
