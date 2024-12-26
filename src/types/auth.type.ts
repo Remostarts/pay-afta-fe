@@ -9,25 +9,25 @@ export type EmailVerificationParams = {
   emailVerificationCode: string;
 };
 
-export type LawyerInfoParams = {
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  dateOfBirth: Date;
-  gender: string;
-};
+// export type LawyerInfoParams = {
+//   email: string;
+//   address: string;
+//   city: string;
+//   state: string;
+//   dateOfBirth: Date;
+//   gender: string;
+// };
 
-export type LawStudentInfo = {
-  email: string;
-  address: string;
-  city: string;
-  state: string;
-  dateOfBirth: Date;
-  gender: string;
-  studentCategory?: string;
-  universityAttended?: string;
-  yearOfGraduation?: string;
-  nigeriaLawSchoolCurrentlyAt?: string;
-  level?: string;
-};
+// export type LawStudentInfo = {
+//   email: string;
+//   address: string;
+//   city: string;
+//   state: string;
+//   dateOfBirth: Date;
+//   gender: string;
+//   studentCategory?: string;
+//   universityAttended?: string;
+//   yearOfGraduation?: string;
+//   nigeriaLawSchoolCurrentlyAt?: string;
+//   level?: string;
+// };
