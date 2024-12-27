@@ -1,9 +1,10 @@
 'use client';
-import { Bell, Settings } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import ProfileHeader from '../shared/ProfileHeader';
+import AdminProfileHeader from '../../adminDashboard/shared/AdminProfileHeader';
 
 interface HeaderProps {
   onMenuClick: () => void;
@@ -11,6 +12,9 @@ interface HeaderProps {
 }
 
 export default function Header({ onMenuClick, className }: HeaderProps) {
+  const pathName = usePathname();
+  const isAdminDashboard = pathName.startsWith('/admin-dashboard');
+  const isDashboard = pathName.startsWith('/dashboard');
   return (
     <>
       <header className={`w-full border-b border-gray-200 p-4 lg:px-6 ${className} `}>
@@ -37,7 +41,8 @@ export default function Header({ onMenuClick, className }: HeaderProps) {
           </div>
         </nav>
         <div>
-          <ProfileHeader />
+          {isDashboard && <ProfileHeader />}
+          {isAdminDashboard && <AdminProfileHeader />}
         </div>
       </header>
     </>
