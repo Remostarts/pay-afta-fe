@@ -3,7 +3,7 @@ import { Bell, Settings } from 'lucide-react';
 export default function ProfileHeader() {
   return (
     <>
-      <div className="flex items-center justify-between rounded-lg border-slate-300 bg-white p-4 shadow-md">
+      <div className="flex items-center justify-between rounded-lg border-slate-300 bg-white p-4 shadow">
         <div>
           <span className="font-inter text-xl font-semibold">Hi Pual</span>
         </div>
