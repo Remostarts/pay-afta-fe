@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 
 import { TChildrenProps } from '@/types';
 
 export default function Layout({ children }: TChildrenProps) {
-  return (
+  const pathName = usePathname();
+  return pathName === '/sign-in' ? (
     <div className="flex min-h-screen flex-col md:flex-row">
       <div className="relative  hidden items-center justify-center md:flex md:w-[45%]">
         <Image
@@ -16,5 +20,8 @@ export default function Layout({ children }: TChildrenProps) {
 
       <div className="mt-20 px-4 md:mx-auto md:w-1/2 md:pt-16 lg:px-8 xl:px-20">{children}</div>
     </div>
+  ) : (
+    <div>{children}</div>
   );
+  // <div>{children}</div>
 }

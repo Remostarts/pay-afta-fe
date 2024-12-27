@@ -47,12 +47,23 @@ export const SigninForm = () => {
 
   return (
     <section>
-      <div>
+      <div
+        className={`${pathname === '/sign-in/admin' && 'mt-10 flex items-center justify-center'}`}
+      >
         <Image src={Logo} alt="Pay afta" width={176} height={64} />
       </div>
       <div className="mt-5">
-        <h1 className="font-inter text-2xl font-bold">Sign in</h1>
-        <p className="font-inter font-semibold">Enter your account details</p>
+        {pathname === '/sign-in' ? (
+          <div>
+            <h1 className="font-inter text-2xl font-bold">Sign in</h1>
+            <p className="font-inter font-semibold text-gray-500">Enter your account details</p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center justify-center">
+            <h1 className="font-inter text-2xl font-bold">Administrator Sign in</h1>
+            <p className="font-inter font-semibold text-gray-500">Enter your account details</p>
+          </div>
+        )}
       </div>
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -68,7 +79,7 @@ export const SigninForm = () => {
           </div>
           <div>
             <Link
-              href="/forget-pass?step=1"
+              href={pathname === '/sign-in/admin' ? '/forget-pass/admin' : '/forget-pass'}
               className="mb-10 flex justify-end font-inter text-sm text-[#03045B]"
             >
               Forgot your password?
@@ -84,14 +95,16 @@ export const SigninForm = () => {
             </ReButton>
           </div>
         </form>
-        <div className="mt-10 text-center">
-          <p>
-            You do not have a account?{' '}
-            <Link href="/sign-up" className="font-inter font-semibold">
-              Create an account
-            </Link>
-          </p>
-        </div>
+        {pathname === '/sign-in' && (
+          <div className="mt-10 text-center">
+            <p>
+              You do not have a account?{' '}
+              <Link href="/sign-up" className="font-inter font-semibold">
+                Create an account
+              </Link>
+            </p>
+          </div>
+        )}
       </Form>
     </section>
   );

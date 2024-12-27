@@ -18,6 +18,7 @@ export async function addToWhitelist(data: TWhiteList) {
     Object.entries(data).forEach(([key, value]) => {
       formData.append(key, value as string);
     });
+    // console.log(formData);
     console.log(process.env.App_Script_Key);
     const response = await fetch(`${process.env.App_Script_Key}`, {
       method: 'POST',

@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
@@ -11,7 +11,11 @@ import { toast } from '@/components/ui/use-toast';
 import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
 // import { sendForgetPasswordOtp } from '@/lib/actions/auth/signup.actions';
 
-export default function FillEmail() {
+interface IFillEmailProps {
+  handleCurrentStep(): void;
+}
+
+export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
   const [email, setEmail] = useState('');
   // const { setEmail: setEmailOtp } = useOtp();
   const handleSendCode = useSearchParamsHandler();
@@ -31,7 +35,7 @@ export default function FillEmail() {
         title: 'Code Sent',
         description: 'A verification code has been sent to your email address.',
       });
-      handleSendCode('step', '2');
+      handleCurrentStep();
     } catch (error) {
       console.error('Error sending verification code:', error);
       toast({

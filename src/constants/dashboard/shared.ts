@@ -24,8 +24,8 @@ export const sideNavMenu = [
     id: 4,
     imgBlack: '/assets/dashboard/Dashboard/chat.svg',
     imgColor: '/assets/dashboard/Dashboard/chat.svg',
-    name: 'Chat',
-    alt: 'chat',
+    name: 'Chats',
+    alt: 'chats',
   },
   {
     id: 5,
