@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -17,6 +17,15 @@ import {
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -41,9 +50,20 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
   const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
   const route = useRouter();
 
-  const filteredData = selectedTransactionType
-    ? data.filter((item) => item.transactionType === selectedTransactionType)
-    : data;
+  const [filteredData, setFilteredData] = useState<TData[]>(data);
+
+  const filteredDataByTransaction = () => {
+    setFilteredData(
+      selectedTransactionType
+        ? data.filter((item) => item.transactionType === selectedTransactionType)
+        : data
+    );
+  };
+
+  // console.log(selectedTransactionType);
+  useEffect(() => {
+    filteredDataByTransaction();
+  }, [selectedTransactionType]);
 
   const table = useReactTable({
     data: filteredData,
@@ -92,56 +112,21 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
       <div className=" mb-4 flex items-center justify-between">
         <h2 className="text-2xl font-medium">{lable}</h2>
         <div className="flex flex-col gap-5">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild className="relative ">
-              <Button variant="outline" size="sm" className="w-[200px]">
-                {selectedTransactionType || 'Transactions Types'}
-                <ChevronDownIcon className="ml-2 size-4" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="center" className=" bg-white">
-              <DropdownMenuCheckboxItem
-                key="all"
-                className="capitalize"
-                checked={selectedTransactionType === null}
-                onCheckedChange={() => setSelectedTransactionType(null)}
-              >
-                All
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                key="credit"
-                className="capitalize"
-                checked={selectedTransactionType === 'Credit'}
-                onCheckedChange={() => setSelectedTransactionType('Credit')}
-              >
-                Credit
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                key="withdrawal"
-                className="capitalize"
-                checked={selectedTransactionType === 'Withdrawal'}
-                onCheckedChange={() => setSelectedTransactionType('Withdrawal')}
-              >
-                Withdrawal
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                key="track-link"
-                className="capitalize"
-                checked={selectedTransactionType === 'Track Link'}
-                onCheckedChange={() => setSelectedTransactionType('Track Link')}
-              >
-                Track Link
-              </DropdownMenuCheckboxItem>
-              <DropdownMenuCheckboxItem
-                key="card-funded"
-                className="capitalize"
-                checked={selectedTransactionType === 'Card Funded'}
-                onCheckedChange={() => setSelectedTransactionType('Card Funded')}
-              >
-                Card Funded
-              </DropdownMenuCheckboxItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <Select onValueChange={(e) => setSelectedTransactionType(e === 'All' ? null : e)}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Transaction Type" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectGroup>
+                <SelectLabel>Transaction Type</SelectLabel>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Credit">Credit</SelectItem>
+                <SelectItem value="Withdrawal">Withdrawal</SelectItem>
+                <SelectItem value="Track Link">Track Link</SelectItem>
+                <SelectItem value="Card Funded">Card Funded</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
         </div>
       </div>
       <div className="rounded-md border bg-white">

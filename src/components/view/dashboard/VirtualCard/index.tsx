@@ -1,5 +1,6 @@
-import CardDetails from './CardDetails';
+import CardDetail from './CardDetail';
 import CardRepresentation from './CardRepresentation';
+import CreatVirtualCard from './CreatVirtualCard';
 import TransactionHistory from './TransactionHistory';
 
 import { ReHeading } from '@/components/re-ui/ReHeading';
@@ -13,7 +14,11 @@ export default function VirtualCard() {
           <CardRepresentation />
         </div>
         <div className="mt-4 w-full md:mt-0 md:w-2/5">
-          <CardDetails />
+          {/* process to create a Virtual Card  */}
+          {/* <CreatVirtualCard /> */}
+
+          {/* process to display a Virtual Card details and withdraw money */}
+          <CardDetail />
         </div>
       </div>
       <div className="mt-8">
