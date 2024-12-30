@@ -2,10 +2,13 @@ import { ReButton } from '@/components/re-ui/ReButton';
 
 interface IConfirmPaymentModalProps {
   amount: string;
-  onConfirm: () => void;
+  handleCurrentDialogStep(data?: string): void;
 }
 
-export default function ConfirmPaymentModal({ amount, onConfirm }: IConfirmPaymentModalProps) {
+export default function ConfirmPaymentModal({
+  amount,
+  handleCurrentDialogStep,
+}: IConfirmPaymentModalProps) {
   return (
     <div className="mx-auto max-w-md">
       <h2 className="mb-2 text-center font-inter text-2xl font-bold">Payment</h2>
@@ -28,8 +31,11 @@ export default function ConfirmPaymentModal({ amount, onConfirm }: IConfirmPayme
         <p className="font-inter font-medium text-gray-700">Account Name</p>
         <p className="font-inter text-gray-900">Jon Doe</p>
       </div>
-      <div className="flex space-x-2">
-        <ReButton className="w-full rounded-full p-3 font-inter" onClick={onConfirm}>
+      <div className="mt-5 flex justify-center space-x-2">
+        <ReButton
+          className="w-[70%] rounded-full py-5 font-inter"
+          onClick={() => handleCurrentDialogStep()}
+        >
           Proceed to Payment
         </ReButton>
       </div>

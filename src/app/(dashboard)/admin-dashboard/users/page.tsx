@@ -1,3 +1,9 @@
+import Users from '@/components/view/adminDashboard/Users';
+
 export default function Page() {
-  return <section>users ....</section>;
+  return (
+    <section>
+      <Users />
+    </section>
+  );
 }

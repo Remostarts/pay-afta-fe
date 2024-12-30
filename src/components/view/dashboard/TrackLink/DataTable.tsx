@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -18,6 +18,15 @@ import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -46,29 +55,44 @@ export function DataTable<
   const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [searchFilterData, setSearchFilterData] = useState<string | null>(null);
+  const [filteredData, setFilteredData] = useState<TData[]>(data);
   const route = useRouter();
 
-  let filteredData = data;
+  const filteredDataByTransaction = () => {
+    setFilteredData(
+      selectedTransactionType
+        ? data.filter((item) => item.payment === selectedTransactionType)
+        : data
+    );
+  };
 
-  if (selectedTransactionType) {
-    filteredData = filteredData?.filter((item) => item?.payment === selectedTransactionType);
-  }
+  const filteredDataByStatus = () => {
+    setFilteredData(selectedStatus ? data.filter((item) => item.status === selectedStatus) : data);
+  };
 
-  if (selectedStatus) {
-    filteredData = filteredData?.filter((item) => item?.status === selectedStatus);
-  }
+  useEffect(() => {
+    filteredDataByTransaction();
+    filteredDataByStatus();
+  }, [selectedTransactionType, selectedStatus]);
 
-  function handleChange(e: any) {
-    const value = e.target.value;
-    setSearchFilterData(value);
-  }
+  // console.log(filterDataByTransaction);
+
+  // console.log(filterDataByStatus);
+
+  // console.log(selectedStatus);
+  // console.log(selectedTransactionType);
+
+  // function handleChange(e: any) {
+  //   const value = e.target.value;
+  //   setSearchFilterData(value);
+  // }
   // console.log(searchFilterData);
 
-  if (searchFilterData) {
-    filteredData = filteredData?.filter((item) =>
-      item?.name?.toLowerCase().includes(searchFilterData.toLowerCase())
-    );
-  }
+  // if (searchFilterData) {
+  //   filteredData = filteredData?.filter((item) =>
+  //     item?.name?.toLowerCase().includes(searchFilterData.toLowerCase())
+  //   );
+  // }
 
   const table = useReactTable({
     data: filteredData,
@@ -117,7 +141,7 @@ export function DataTable<
       <div className=" mb-4 flex items-center justify-between">
         <div className="grid grid-rows-2">
           <h2 className="text-2xl font-medium">{lable}</h2>
-          <Input onChange={handleChange} placeholder="Search by Name" className="w-full" />
+          {/* <Input onChange={handleChange} placeholder="Search by Name" className="w-full" /> */}
         </div>
         <div className="flex flex-col gap-5">
           <button
@@ -134,118 +158,41 @@ export function DataTable<
             />
             <span className="font-inter text-xl font-semibold">New Order</span>
           </button>
-          <div className="flex items-center">
+          <div className="flex items-center gap-2">
             {/* payment filter DropdownMenu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="relative ">
-                <Button variant="outline" size="sm" className="w-[200px]">
-                  {selectedTransactionType || 'Payments'}
-                  <ChevronDownIcon className="ml-2 size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className=" bg-white">
-                <DropdownMenuCheckboxItem
-                  key="all"
-                  className="capitalize"
-                  checked={selectedTransactionType === null}
-                  onCheckedChange={() => setSelectedTransactionType(null)}
-                >
-                  All
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="   in-escrow "
-                  className="capitalize"
-                  checked={selectedTransactionType === 'In Escrow'}
-                  onCheckedChange={() => setSelectedTransactionType('In Escrow')}
-                >
-                  In Escrow
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="    paid"
-                  className="capitalize"
-                  checked={selectedTransactionType === 'Paid'}
-                  onCheckedChange={() => setSelectedTransactionType('Paid')}
-                >
-                  Paid
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="released"
-                  className="capitalize"
-                  checked={selectedTransactionType === 'Released'}
-                  onCheckedChange={() => setSelectedTransactionType('Released')}
-                >
-                  Released
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="refunded"
-                  className="capitalize"
-                  checked={selectedTransactionType === 'Refunded'}
-                  onCheckedChange={() => setSelectedTransactionType('Refunded')}
-                >
-                  Card Funded
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Select onValueChange={(e) => setSelectedTransactionType(e === 'All' ? null : e)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Transaction Type" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectGroup>
+                  <SelectLabel>Transaction Type</SelectLabel>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="In Escrow">In Escrow</SelectItem>
+                  <SelectItem value="Paid">Paid</SelectItem>
+                  <SelectItem value="Released">Released</SelectItem>
+                  <SelectItem value="Card Funded">Card Funded</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
 
             {/* Status Filter DropdownMenu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild className="relative ">
-                <Button variant="outline" size="sm" className="w-[200px]">
-                  {selectedStatus || 'Status'}
-                  <ChevronDownIcon className="ml-2 size-4" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="center" className=" bg-white">
-                <DropdownMenuCheckboxItem
-                  key="all"
-                  className="capitalize"
-                  checked={selectedStatus === null}
-                  onCheckedChange={() => setSelectedStatus(null)}
-                >
-                  All
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="closed"
-                  className="capitalize"
-                  checked={selectedStatus === 'Closed'}
-                  onCheckedChange={() => setSelectedStatus('Closed')}
-                >
-                  Closed
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="agreement"
-                  className="capitalize"
-                  checked={selectedStatus === 'Agreement'}
-                  onCheckedChange={() => setSelectedStatus('Agreement')}
-                >
-                  Agreement
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="payment"
-                  className="capitalize"
-                  checked={selectedStatus === 'Payment'}
-                  onCheckedChange={() => setSelectedStatus('Payment')}
-                >
-                  Payment
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="shipping"
-                  className="capitalize"
-                  checked={selectedStatus === 'Shipping'}
-                  onCheckedChange={() => setSelectedStatus('Shipping')}
-                >
-                  Shipping
-                </DropdownMenuCheckboxItem>
-                <DropdownMenuCheckboxItem
-                  key="dispute"
-                  className="capitalize"
-                  checked={selectedStatus === 'Dispute'}
-                  onCheckedChange={() => setSelectedStatus('Dispute')}
-                >
-                  Dispute
-                </DropdownMenuCheckboxItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+            <Select onValueChange={(e) => setSelectedStatus(e === 'All' ? null : e)}>
+              <SelectTrigger className="w-[180px]">
+                <SelectValue placeholder="Status" />
+              </SelectTrigger>
+              <SelectContent className="bg-white">
+                <SelectGroup>
+                  <SelectLabel>Status</SelectLabel>
+                  <SelectItem value="All">All</SelectItem>
+                  <SelectItem value="Closed">Closed</SelectItem>
+                  <SelectItem value="Agreement">Agreement</SelectItem>
+                  <SelectItem value="Payment">Payment</SelectItem>
+                  <SelectItem value="Shipping">Shipping</SelectItem>
+                  <SelectItem value="Dispute">Dispute</SelectItem>
+                </SelectGroup>
+              </SelectContent>
+            </Select>
           </div>
         </div>
       </div>

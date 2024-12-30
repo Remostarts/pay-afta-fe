@@ -1,3 +1,5 @@
+'use client';
+
 import { ColumnDef } from '@tanstack/react-table';
 
 import { DataTable } from './DataTable';
@@ -25,6 +27,17 @@ const columns: ColumnDef<Payment>[] = [
   {
     accessorKey: 'status',
     header: 'Status',
+    cell: ({ row }) => {
+      const status = row.getValue('status') as string;
+
+      const style =
+        {
+          Successful:
+            'bg-[#E8FDEF] rounded-full text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
+        }[status] || '';
+
+      return <div className={style}>{status}</div>;
+    },
   },
 ];
 
@@ -105,7 +118,7 @@ export default function TransactionHistory() {
   return (
     <section>
       <div className="container mx-auto rounded-md bg-white p-5">
-        <DataTable columns={columns} data={data} lable={'Transaction History'} />
+        <DataTable columns={columns} data={data} lable={'Recent Transaction'} />
       </div>
     </section>
   );

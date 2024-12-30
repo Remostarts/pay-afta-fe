@@ -26,11 +26,11 @@ const defaultValues = {
   message: '',
 };
 
-// interface GetInTouchProps {
-//   onSubmit: (isValid: boolean, data?: any) => void;
-// }
+interface GetInTouchProps {
+  handleConfirmTransaction: () => void;
+}
 
-export default function GetInTouch() {
+export default function GetInTouch({ handleConfirmTransaction }: GetInTouchProps) {
   const form = useForm<TGetInTouch>({
     resolver: zodResolver(getInTouchSchema),
     defaultValues,
@@ -40,19 +40,9 @@ export default function GetInTouch() {
   const { handleSubmit, formState } = form;
   const { isSubmitting, isValid } = formState;
 
-  //   const handleFormSubmit = (data?: TGetInTouch) => {
-  //     onSubmit(true, data);
-  //   };
-
-  //   const handleSubmitAttempt = () => {
-  //     // If form is not valid, trigger validation
-  //     if (!isValid) {
-  //       onSubmit(false);
-  //     }
-  //   };
-
   const onSubmit = (data: TGetInTouch) => {
     console.log(data);
+    handleConfirmTransaction();
   };
 
   return (
