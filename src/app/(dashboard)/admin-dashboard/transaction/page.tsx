@@ -1,3 +1,9 @@
+import Transactions from '@/components/view/adminDashboard/Transactions';
+
 export default function Page() {
-  return <section>transaction...</section>;
+  return (
+    <section>
+      <Transactions />
+    </section>
+  );
 }

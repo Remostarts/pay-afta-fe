@@ -17,7 +17,7 @@ export default function HeroSection() {
                 THE SAFEST WAY TO PAY
               </h1>
               <p className="font-inter text-lg">
-                We offer you the safest way to pay for your online purchases. With Payafta, your
+                We offer you the safest way to pay for your online purchases. With PayAfta, your
                 money is held securely until you receive your goods or services as promised. Trust
                 is at the core of what we do, and your peace of mind is our priority.
               </p>

@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 
 import { DataTable } from './DataTable';
 import FilterDataSection from './FilterDataSection';
+import UserDetails from './Userdetails';
 
 export type Payment = {
   userId: string;

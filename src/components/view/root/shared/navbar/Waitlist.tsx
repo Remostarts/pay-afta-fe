@@ -25,7 +25,7 @@ const defaultValues = {
   email: '',
 };
 
-export function Whitelist() {
+export function Waitlist() {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const form = useForm<TWhiteList>({
     resolver: zodResolver(whiteListSchema),
@@ -42,7 +42,7 @@ export function Whitelist() {
     console.log('onSubmit', result);
     if (result?.result === 'success') {
       setIsModalOpen(false);
-      toast.success(' Congratulations! You have been added to the whitelist');
+      toast.success(' Congratulations! You have been added to the waitlist');
     } else {
       toast.error('Sorry, Try again.');
     }
@@ -51,11 +51,11 @@ export function Whitelist() {
   return (
     <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline">Join whitelist</Button>
+        <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join whitelist</DialogTitle>
+          <DialogTitle>Join Waitlist</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
