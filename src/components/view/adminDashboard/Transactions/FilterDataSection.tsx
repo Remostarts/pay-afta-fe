@@ -21,17 +21,17 @@ export default function FilterDataSection({ setSelectedStatusType }: FilterDataS
     <div className="mb-2 flex flex-col gap-4 rounded-md bg-white p-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Tabs section  */}
       <div className="w-full lg:w-auto">
-        <Tabs defaultValue="Transaction" className="w-full rounded-[4px] p-1 lg:h-[56] lg:w-[408]">
-          <TabsList className="grid w-full grid-cols-2 bg-[#E9F5FB]">
+        <Tabs defaultValue="Transaction" className="w-full rounded-[4px] p-1 lg:h-[56] lg:w-[408] ">
+          <TabsList className="grid w-full grid-cols-2 rounded-lg border-2 border-[#A9D8EF] bg-[#E9F5FB]">
             <TabsTrigger
               value="Transaction"
-              className="font-inter data-[state=active]:bg-[#1F7EAD] data-[state=active]:text-white"
+              className="rounded-lg font-inter text-[#7EC4E7] data-[state=active]:bg-[#1F7EAD] data-[state=active]:text-white"
             >
               Transaction
             </TabsTrigger>
             <TabsTrigger
               value="Withdrawal Request"
-              className="font-inter data-[state=active]:bg-[#1F7EAD] data-[state=active]:text-white"
+              className="rounded-lg font-inter text-[#7EC4E7] data-[state=active]:bg-[#1F7EAD] data-[state=active]:text-white"
             >
               Withdrawal Request
             </TabsTrigger>
@@ -62,13 +62,32 @@ export default function FilterDataSection({ setSelectedStatusType }: FilterDataS
 
         {/* state section  */}
         <div className="w-full sm:w-auto">
-          <Select onValueChange={(e) => setSelectedStatusType(e)}>
+          <Select>
+            <SelectTrigger className="w-full sm:w-[180px]">
+              <SelectValue placeholder="Select a Type" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectGroup>
+                <SelectLabel>Type</SelectLabel>
+                <SelectItem value="All">All</SelectItem>
+                <SelectItem value="Active">Successful</SelectItem>
+                <SelectItem value="Suspended">Suspended</SelectItem>
+                <SelectItem value="Failed">Failed</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
+
+        {/* state section  */}
+        <div className="w-full sm:w-auto">
+          <Select onValueChange={(e) => setSelectedStatusType(e !== 'All' ? e : null)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select a State" />
             </SelectTrigger>
             <SelectContent className="bg-white">
               <SelectGroup>
                 <SelectLabel>State</SelectLabel>
+                <SelectItem value="All">All</SelectItem>
                 <SelectItem value="Active">Active</SelectItem>
                 <SelectItem value="Suspended">Suspended</SelectItem>
                 <SelectItem value="Pending">Pending</SelectItem>

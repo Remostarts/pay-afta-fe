@@ -60,12 +60,12 @@ export default function CardDetail() {
       </div>
       <div className="mt-5 flex w-full justify-center space-x-2">
         <ReDialog
-          btnLable={'Fund Card'}
+          btnLabel={'Fund Card'}
           DialogComponent={FundWallet}
           classNames={'w-full text-white'}
         />
         <ReDialog
-          btnLable={'Withdrawal'}
+          btnLabel={'Withdrawal'}
           DialogComponent={renderDialogContent}
           classNames={
             'w-[50%] rounded-full border border-[#03045B] bg-white font-inter text-[#03045B] hover:bg-white'

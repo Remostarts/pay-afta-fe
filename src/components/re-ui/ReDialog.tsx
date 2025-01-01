@@ -1,43 +1,51 @@
 'use client';
+
 import React, { useState } from 'react';
 
-import { ReButton } from '@/components/re-ui/ReButton';
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
 
-interface ReDialogProps {
-  btnLable: string;
+interface ReDialogProps<T extends object> {
+  btnLabel: string;
   classNames?: string;
-  DialogComponent: React.ComponentType<any>;
+  DialogComponent: React.ComponentType<T>;
+  componentProps?: Partial<T>;
+  buttonVariant?: 'default' | 'custom';
+  onOpenChange?: (open: boolean) => void;
+  defaultOpen?: boolean;
 }
 
-export function ReDialog({ btnLable, classNames, DialogComponent }: ReDialogProps) {
-  const [isOpen, setIsOpen] = useState<boolean>(false);
-  // console.log(isOpen);
+const defaultButtonClasses = 'rounded-full bg-[#03045B] p-2 px-6 font-inter text-white lg:px-14';
+
+export function ReDialog<T extends object>({
+  btnLabel,
+  classNames,
+  DialogComponent,
+  componentProps = {} as Partial<T>,
+  buttonVariant = 'default',
+  onOpenChange,
+  defaultOpen = false,
+}: ReDialogProps<T>) {
+  const [isOpen, setIsOpen] = useState<boolean>(defaultOpen);
+
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    onOpenChange?.(open);
+  };
+
+  const buttonClasses =
+    buttonVariant === 'default' ? cn(defaultButtonClasses, classNames) : classNames;
+
   return (
-    <div>
-      <Dialog open={isOpen} onOpenChange={setIsOpen}>
-        <DialogTrigger asChild>
-          <button
-            className={`w-full rounded-full bg-[#03045B] p-2 px-6 font-inter lg:px-14 ${classNames}`}
-          >
-            {btnLable}
-          </button>
-        </DialogTrigger>
-        {isOpen && (
-          <DialogContent>
-            <DialogComponent />
-          </DialogContent>
-        )}
-      </Dialog>
-    </div>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogTrigger asChild>
+        <button type="button" className={buttonClasses}>
+          {btnLabel}
+        </button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogComponent {...(componentProps as T)} />
+      </DialogContent>
+    </Dialog>
   );
 }
