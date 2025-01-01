@@ -24,7 +24,7 @@ export default function ProtectionSection() {
                 Buyer Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
-                Payafta takes buyer protection seriously. We&apos;re here to ensure that you receive
+                PayAfta takes buyer protection seriously. We&apos;re here to ensure that you receive
                 what you paid for. Our process guarantees that your money is held securely until you
                 confirm your satisfaction. If you encounter any issues with your purchase, our team
                 is ready to assist and, if necessary, facilitate refunds. Your peace of mind is our
@@ -40,7 +40,7 @@ export default function ProtectionSection() {
                 Seller Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
-                Sellers, we&apos;ve got your back too. Payafta provides seller protection by
+                Sellers, we&apos;ve got your back too. PayAfta provides seller protection by
                 ensuring ensuring that you receive payment once you fulfill your part of the deal.
                 You can trust us to hold the buyer&apos;s funds securely until the transaction is
                 complete. We&apos;re to making your online sales as smooth and secure as possible.

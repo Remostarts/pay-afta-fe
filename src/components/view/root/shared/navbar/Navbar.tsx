@@ -3,7 +3,7 @@ import Link from 'next/link';
 
 import Logo from '../../../../../../public/Logo.svg';
 
-import { Whitelist } from './Whitelist';
+import { Waitlist } from './Waitlist';
 
 export default function Navbar() {
   return (
@@ -27,7 +27,7 @@ export default function Navbar() {
             Get Started
           </Link>
           <div>
-            <Whitelist />
+            <Waitlist />
           </div>
         </nav>
       </div>

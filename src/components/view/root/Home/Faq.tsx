@@ -25,8 +25,8 @@ export default function Faqs() {
             </div>
             <div className="text-black-700 mb-6 w-full font-inter text-sm leading-[140%] tracking-[-0.01em] md:mb-0 md:text-base">
               <span className="font-inter font-bold">(Frequently Asked Questions)</span> <br />
-              Got questions about Payafta? We&apos;ve got answers. Check out our frequently asked
-              questions to find information about using Payafta for your online transactions. If you
+              Got questions about PayAfta? We&apos;ve got answers. Check out our frequently asked
+              questions to find information about using PayAfta for your online transactions. If you
               don&apos;t find the answer you&apos;re looking for, feel free to reach out to our
               support team. We&apos;re here to assist you.
             </div>

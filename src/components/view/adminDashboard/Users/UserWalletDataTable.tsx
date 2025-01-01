@@ -11,7 +11,6 @@ import {
 } from '@tanstack/react-table';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import Link from 'next/link';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -23,17 +22,17 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface DataTableProps<TData extends { userId: string }, TValue> {
+interface UserWalletDataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lable?: string;
 }
 
-export function DataTable<TData extends { userId: string }, TValue>({
+export function UserWalletDataTable<TData, TValue>({
   columns,
   data,
   lable,
-}: DataTableProps<TData, TValue>) {
+}: UserWalletDataTableProps<TData, TValue>) {
   const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
@@ -66,7 +65,7 @@ export function DataTable<TData extends { userId: string }, TValue>({
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
                   return (
-                    <TableHead key={header.id} className="font-inter text-[#1F7EAD]">
+                    <TableHead key={header.id} className="text-[#1F7EAD]">
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -85,13 +84,8 @@ export function DataTable<TData extends { userId: string }, TValue>({
                   // onClick={() => console.log('clicked', row.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className="cursor-pointer p-0">
-                      <Link
-                        href={`/admin-dashboard/users/${row.original.userId}`}
-                        className="block size-full p-4"
-                      >
-                        {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                      </Link>
+                    <TableCell key={cell.id} className="cursor-pointer">
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
