@@ -85,7 +85,7 @@ export function DataTable<TData extends { ordersId: string }, TValue>({
                   // onClick={() => console.log('clicked', row.id)}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className=" cursor-pointer p-4">
+                    <TableCell key={cell.id} className=" p-4">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
