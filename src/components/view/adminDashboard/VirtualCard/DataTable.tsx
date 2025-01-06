@@ -13,6 +13,9 @@ import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 
+import { DialogTableRow } from './DialogTableRow';
+import TransactionModal from './TransactionModal';
+
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -23,18 +26,27 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface DataTableProps<TData extends { ordersId: string }, TValue> {
+const sampleTransaction = {
+  id: 'US-123456789',
+  userId: 'User ID',
+  fullName: 'Full Name',
+  status: 'Successful' as const,
+  type: 'Money Recieved',
+  amount: '₦200,000.00',
+  senderBank: 'Lorem Ipsum',
+  senderAccount: '0011223344',
+  senderName: 'Lorem Ipsum',
+  reference: 'ht62gbs-7wyhe-i98id-29uejh-8uh-d9uh8id-dyhd',
+  date: '5 Jun, 2024 10:30PM',
+};
+
+interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lable?: string;
 }
 
-export function DataTable<TData extends { ordersId: string }, TValue>({
-  columns,
-  data,
-  lable,
-}: DataTableProps<TData, TValue>) {
-  const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
+export function DataTable<TData, TValue>({ columns, data, lable }: DataTableProps<TData, TValue>) {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 8,
@@ -79,17 +91,18 @@ export function DataTable<TData extends { ordersId: string }, TValue>({
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow
+                <DialogTableRow
                   key={row.id}
-                  data-state={row.getIsSelected() && 'selected'}
-                  // onClick={() => console.log('clicked', row.id)}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id} className=" p-4">
-                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                    </TableCell>
-                  ))}
-                </TableRow>
+                  row={row}
+                  DialogComponent={TransactionModal}
+                  dialogProps={{
+                    transaction: sampleTransaction,
+                  }}
+                  onRowClick={(row) => {
+                    console.log('Row clicked:', row.id);
+                    // Add any additional click handling here
+                  }}
+                />
               ))
             ) : (
               <TableRow>

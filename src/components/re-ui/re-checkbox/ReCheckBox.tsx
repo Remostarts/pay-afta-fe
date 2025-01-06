@@ -21,7 +21,7 @@ export const ReCheckBox = ({ id, handleCheckboxChange, isChecked, label }: TChec
         />
         <label htmlFor={id} className="terms-label flex cursor-pointer  ">
           <svg
-            className={cn('checkbox-svg h-5 w-5', {})}
+            className={cn('checkbox-svg h-5 w-5 rounded-full', {})}
             viewBox="0 0 200 200"
             fill="none"
             xmlns="http://www.w3.org/2000/svg"

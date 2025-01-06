@@ -23,13 +23,13 @@ import {
   TableRow,
 } from '@/components/ui/table';
 
-interface DataTableProps<TData extends { ordersId: string }, TValue> {
+interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lable?: string;
 }
 
-export function DataTable<TData extends { ordersId: string }, TValue>({
+export function RolesDataTable<TData, TValue>({
   columns,
   data,
   lable,

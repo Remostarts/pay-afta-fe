@@ -1,3 +1,9 @@
+import VirtualCard from '@/components/view/adminDashboard/VirtualCard';
+
 export default function Page() {
-  return <section>virtual card...</section>;
+  return (
+    <section>
+      <VirtualCard />
+    </section>
+  );
 }

@@ -1,3 +1,9 @@
+import Team from '@/components/view/adminDashboard/Team';
+
 export default function Page() {
-  return <section>teams...</section>;
+  return (
+    <section>
+      <Team />
+    </section>
+  );
 }
