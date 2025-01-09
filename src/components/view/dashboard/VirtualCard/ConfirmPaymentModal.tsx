@@ -1,8 +1,8 @@
 import { ReButton } from '@/components/re-ui/ReButton';
 
 interface IConfirmPaymentModalProps {
-  amount: string;
-  handleCurrentDialogStep(data?: string): void;
+  amount?: string;
+  handleCurrentDialogStep: () => void;
 }
 
 export default function ConfirmPaymentModal({

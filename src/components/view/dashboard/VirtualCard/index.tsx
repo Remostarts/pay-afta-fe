@@ -15,10 +15,10 @@ export default function VirtualCard() {
         </div>
         <div className="mt-4 w-full md:mt-0 md:w-2/5">
           {/* process to create a Virtual Card  */}
-          {/* <CreatVirtualCard /> */}
+          <CreatVirtualCard />
 
           {/* process to display a Virtual Card details and withdraw money */}
-          <CardDetail />
+          {/* <CardDetail /> */}
         </div>
       </div>
       <div className="mt-8">

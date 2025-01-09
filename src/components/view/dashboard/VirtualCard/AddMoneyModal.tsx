@@ -19,7 +19,7 @@ const defaultValues = {
 };
 
 interface IAddMoneyModalProps {
-  handleCurrentDialogStep(data?: string): void;
+  handleCurrentDialogStep: () => void;
 }
 
 export default function AddMoneyModal({ handleCurrentDialogStep }: IAddMoneyModalProps) {
@@ -34,7 +34,7 @@ export default function AddMoneyModal({ handleCurrentDialogStep }: IAddMoneyModa
 
   const onSubmit = async (data: TFundAmount) => {
     // console.log(data);
-    handleCurrentDialogStep(data.fundAmountInCard);
+    handleCurrentDialogStep();
   };
 
   return (

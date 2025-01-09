@@ -9,12 +9,6 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import ReSelect from '@/components/re-ui/ReSelect';
 import { Form } from '@/components/ui/form';
 
-interface IUpdateTeam {
-  role: string;
-  fullName: string;
-  email: string;
-}
-
 const defaultValues = {
   role: '',
   fullName: '',
@@ -29,7 +23,11 @@ const updateTeamSchema = z.object({
 
 type TUpdateTeam = z.infer<typeof updateTeamSchema>;
 
-export default function UpdateTeam() {
+type IUpdateTeam = {
+  onNext: () => void;
+};
+
+export default function UpdateTeam({ onNext }: IUpdateTeam) {
   const form = useForm<TUpdateTeam>({
     resolver: zodResolver(updateTeamSchema),
     defaultValues,
@@ -41,6 +39,7 @@ export default function UpdateTeam() {
 
   const onSubmit = async (data: TUpdateTeam) => {
     console.log(data);
+    onNext();
   };
 
   return (
@@ -48,7 +47,7 @@ export default function UpdateTeam() {
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <ReHeading heading="Update Team Member" size={'2xl'} />
+            <ReHeading heading="Edit Team Member" size={'2xl'} className="mb-5" />
             <div>
               <ReHeading heading="Role" size={'base'} />
               <ReSelect
@@ -67,8 +66,11 @@ export default function UpdateTeam() {
               <ReHeading heading="Email" size={'base'} />
               <ReInput name="email" />
             </div>
-            <div>
-              <ReButton className="bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]" type="submit">
+            <div className=" flex items-end justify-end">
+              <ReButton
+                className="mt-3 w-fit bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]"
+                type="submit"
+              >
                 Save Changes
               </ReButton>
             </div>

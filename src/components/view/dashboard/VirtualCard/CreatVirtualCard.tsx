@@ -11,34 +11,35 @@ import TransactionPinModal from './TransactionPinModal';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ReDialog } from '@/components/re-ui/ReDialog';
-
-const DialogSteps = {
-  Step1: 1,
-  Step2: 2,
-  Step3: 3,
-  Step4: 4,
-};
+import { useDialog } from '@/hooks/useDialog';
 
 export default function CreatVirtualCard() {
-  const [currentDialogStep, setcurrentDialogStep] = useState<number>(DialogSteps.Step1);
   const [fundAmount, setFundAmount] = useState('');
 
-  // console.log(fundAmount);
+  const { currentStep, nextStep } = useDialog(1, 4);
 
-  const Steps = {
-    [DialogSteps.Step1]: AddMoneyModal,
-    [DialogSteps.Step2]: ConfirmPaymentModal,
-    [DialogSteps.Step3]: TransactionPinModal,
-    [DialogSteps.Step4]: SuccessConfirmation,
+  const renderDialogContent = () => {
+    switch (currentStep) {
+      case 1:
+        return <AddMoneyModal handleCurrentDialogStep={nextStep} />;
+      case 2:
+        return <ConfirmPaymentModal handleCurrentDialogStep={nextStep} />;
+      case 3:
+        return <TransactionPinModal handleCurrentDialogStep={nextStep} />;
+      case 4:
+        return (
+          <SuccessConfirmation
+            handleCurrentDialogStep={nextStep}
+            lable="Card Created"
+            description="Your virtual card is now active."
+          />
+        );
+      default:
+        return null;
+    }
   };
 
-  const CurrentDialogComponent = Steps[currentDialogStep];
-  const isLastDialogStep = currentDialogStep === DialogSteps.Step4;
-
-  function handleCurrentDialogStep(data: string = '') {
-    setcurrentDialogStep((prev) => (prev === 4 ? 1 : prev + 1));
-    setFundAmount(data);
-  }
+  // console.log(fundAmount);
 
   return (
     <section className="rounded-lg border-2 border-gray-200 p-4">
@@ -52,16 +53,9 @@ export default function CreatVirtualCard() {
           />
         </div>
         <ReDialog
-          btnLable="Create Card"
+          btnLabel={'Create Card'}
           classNames="mt-4 w-3/5 rounded-full px-6 py-2 text-white"
-          DialogComponent={(props) => (
-            <CurrentDialogComponent
-              {...props}
-              handleCurrentDialogStep={handleCurrentDialogStep}
-              lable="Card Created"
-              description="Your virtual card is now active."
-            />
-          )}
+          DialogComponent={renderDialogContent}
         />
       </div>
     </section>

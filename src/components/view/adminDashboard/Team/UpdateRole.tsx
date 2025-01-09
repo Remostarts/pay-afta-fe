@@ -54,7 +54,11 @@ const updateRoleSchema = z.object({
 
 type TCreateRole = z.infer<typeof updateRoleSchema>;
 
-export default function UpdateRole() {
+type IUpdateRole = {
+  onNext: () => void;
+};
+
+export default function UpdateRole({ onNext }: IUpdateRole) {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
   const form = useForm<TCreateRole>({
     resolver: zodResolver(updateRoleSchema),
@@ -68,6 +72,7 @@ export default function UpdateRole() {
   //   console.log(selectedFeatures);
   const onSubmit = async (data: TCreateRole) => {
     console.log(data);
+    onNext();
   };
 
   return (
@@ -75,13 +80,13 @@ export default function UpdateRole() {
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <ReHeading heading="Edit Role" size={'2xl'} />
+            <ReHeading heading="Edit Role" size={'2xl'} className="mb-5" />
             <div>
               <ReHeading heading="Title" size={'base'} />
               <ReInput name="title" />
             </div>
             <div>
-              <ReHeading heading="Select Features" size={'base'} />
+              <ReHeading heading="Select Features" size={'base'} className="mb-2" />
               <FormField
                 name="selectFeatures"
                 control={form.control}
@@ -90,7 +95,7 @@ export default function UpdateRole() {
                     <FormControl>
                       <div className="space-y-2">
                         {features.map((feature) => (
-                          <div key={feature.id} className="flex items-center space-x-2">
+                          <div key={feature.id} className=" flex items-center space-x-2 space-y-1">
                             <Checkbox
                               id={feature.id}
                               className="rounded-full text-[#1F7EAD]"
@@ -117,7 +122,7 @@ export default function UpdateRole() {
               />
             </div>
             <div>
-              <ReHeading heading="Access Type" size={'base'} />
+              <ReHeading heading="Access Type" size={'base'} className="mb-2 mt-3" />
               <ReSelect
                 name="accessType"
                 options={[
@@ -127,8 +132,11 @@ export default function UpdateRole() {
               />
             </div>
 
-            <div>
-              <ReButton className="bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]" type="submit">
+            <div className=" flex items-end justify-end">
+              <ReButton
+                className="mt-3 w-fit bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]"
+                type="submit"
+              >
                 Save Role
               </ReButton>
             </div>
