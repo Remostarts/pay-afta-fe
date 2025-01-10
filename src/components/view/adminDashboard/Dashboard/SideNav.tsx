@@ -68,13 +68,15 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
               className=" rounded-full"
             />
             <span className="font-inter font-medium tracking-wider">Pual Simeon</span>
-            <Image
-              src="/assets/admin-dashboard/dashboard/setting-icon.svg"
-              alt="setting icon"
-              width={25}
-              height={25}
-              className=" cursor-pointer rounded-full"
-            />
+            <Link href="/admin-dashboard/setting">
+              <Image
+                src="/assets/admin-dashboard/dashboard/setting-icon.svg"
+                alt="setting icon"
+                width={25}
+                height={25}
+                className=" cursor-pointer rounded-full"
+              />
+            </Link>
           </li>
         </ul>
       </nav>

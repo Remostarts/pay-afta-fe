@@ -7,8 +7,9 @@ export default function AdminProfileHeader() {
   const pathArr = pathName.split('/');
   const headerName = pathArr[2];
   let dashboardName = '';
-  if (headerName === 'user') {
-    dashboardName = 'User';
+
+  if (headerName === 'users') {
+    dashboardName = 'Users';
   } else if (headerName === 'transaction') {
     dashboardName = 'Transaction';
   } else if (headerName === 'payment-order') {
@@ -17,13 +18,17 @@ export default function AdminProfileHeader() {
     dashboardName = 'Virtual card';
   } else if (headerName === 'team') {
     dashboardName = 'Team';
+  } else if (headerName === 'setting') {
+    dashboardName = 'Setting';
   }
 
   return (
     <section>
       <div className="flex items-center justify-between rounded-lg border-slate-300 bg-white p-4">
         <div>
-          <span className="font-inter text-xl font-semibold">{dashboardName ?? 'Dashboard'}</span>
+          <span className="font-inter text-xl font-semibold">
+            {(dashboardName || headerName) ?? 'Dashboard'}
+          </span>
         </div>
 
         <div className="flex items-center space-x-4">
