@@ -36,11 +36,14 @@ const Footer = () => {
           <div className="flex flex-col space-y-6 sm:space-y-8">
             <div className="space-y-3 sm:space-y-4">
               <p className="text-sm sm:text-base">
-                <span className="font-semibold">Contact:</span> Lorem ipsum dolor
+                <span className="font-semibold">Phone:</span> 08055121522
               </p>
               <p className="text-sm sm:text-base">
-                <span className="font-semibold">Nigeria:</span> Lorem ipsum dolor sit amet
-                conctetur. In dui magna convallis congue quis sed cras arcu nibh.
+                <span className="font-semibold">Email:</span> hello@getpayafta.com
+              </p>
+              <p className="text-sm sm:text-base">
+                <span className="font-semibold">Address:</span> Plot 3, Block 8 Adeosun Street
+                Oluyole Estate lbadan
               </p>
             </div>
 

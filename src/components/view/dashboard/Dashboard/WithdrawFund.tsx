@@ -52,7 +52,7 @@ export default function WithdrawFund() {
                 <p className="font-inter text-sm text-gray-600">Available Balance: ₦10,000</p>
               </div>
               <div>
-                <h3 className="mb-2 font-inter text-base font-bold">Settlement Account</h3>
+                <h3 className="mb-2 mt-4 font-inter text-base font-bold">Settlement Account</h3>
                 <div className="space-y-1 rounded-md border-dashed border-black bg-gray-100 p-4">
                   <p className="font-inter text-sm text-gray-600">Bank Name: 0011223344</p>
                   <p className="font-inter text-sm text-gray-600">Account Name: Account Name</p>
