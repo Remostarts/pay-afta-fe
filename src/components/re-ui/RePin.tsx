@@ -1,114 +1,139 @@
 'use client';
-
-import { KeyboardEvent, useRef, useState } from 'react';
-
-const TempArray = ['•', '•', '•', '•'];
+import React, { KeyboardEvent, useRef, useState, useCallback, useEffect } from 'react';
 
 interface RePinProps {
   count?: number;
   onChange?: (pin: string) => void;
   className?: string;
   name?: string;
+  error?: boolean;
 }
 
-export default function RePin({ count = 6, onChange, className, name }: RePinProps) {
-  const [pin, setPin] = useState<string[]>([]);
-  const [masking, setMasking] = useState<string[]>([]);
+const DOT = '•';
+
+export default function RePin({
+  count = 4,
+  onChange,
+  className = '',
+  name,
+  error = false,
+}: RePinProps) {
+  const [pin, setPin] = useState<string[]>(Array(count).fill(''));
+  const [masking, setMasking] = useState<string[]>(Array(count).fill(''));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
-  function handleClick(index: number) {
-    return (event: any) => {
-      event.target.setSelectionRange(1, 1);
-    };
-  }
-
-  function handleKeyUp(index: any) {
-    return (event: KeyboardEvent<HTMLInputElement>) => {
-      const key = event.key;
-      // console.log(key)
-      const oldPin = [...pin];
-      const oldMasking = [...masking];
-
-      if (key === 'Backspace') {
-        oldPin[index] = '';
-        oldMasking[index] = '';
-        setPin(oldPin);
-        setMasking(oldMasking);
-        handleBackSpace(index);
-        return;
+  const handlePinUpdate = useCallback(
+    (newPin: string[]) => {
+      const pinString = newPin.join('');
+      if (onChange) {
+        onChange(pinString);
       }
+    },
+    [onChange]
+  );
 
-      if (key === 'ArrowRight') {
-        // console.log("arrow right")
-        handleArrowRight(index);
-        return;
+  const moveFocus = useCallback(
+    (currentIndex: number, direction: 1 | -1) => {
+      const newIndex = currentIndex + direction;
+      if (newIndex >= 0 && newIndex < count && inputRefs.current[newIndex]) {
+        inputRefs.current[newIndex]?.focus();
       }
+    },
+    [count]
+  );
 
-      if (key === 'ArrowLeft') {
-        handleArrowLeft(index);
-        return;
+  const handleInputChange = useCallback(
+    (index: number, value: string) => {
+      if (!/^\d*$/.test(value)) return;
+
+      const newPin = [...pin];
+      const newMasking = [...masking];
+
+      newPin[index] = value;
+      newMasking[index] = value ? DOT : '';
+
+      setPin(newPin);
+      setMasking(newMasking);
+      handlePinUpdate(newPin);
+
+      if (value && index < count - 1) {
+        moveFocus(index, 1);
       }
+    },
+    [pin, masking, count, moveFocus, handlePinUpdate]
+  );
 
-      if (isNaN(Number(key))) {
-        return;
+  const handleKeyDown = useCallback(
+    (index: number, event: KeyboardEvent<HTMLInputElement>) => {
+      if (event.key === 'Backspace' && !pin[index]) {
+        event.preventDefault();
+        moveFocus(index, -1);
+      } else if (event.key === 'ArrowLeft') {
+        event.preventDefault();
+        moveFocus(index, -1);
+      } else if (event.key === 'ArrowRight') {
+        event.preventDefault();
+        moveFocus(index, 1);
       }
+    },
+    [pin, moveFocus]
+  );
 
-      oldPin[index] = key;
-      oldMasking[index] = TempArray[index];
+  const handlePaste = useCallback(
+    (event: React.ClipboardEvent) => {
+      event.preventDefault();
+      const pastedData = event.clipboardData.getData('text');
+      const pastedNumbers = pastedData.replace(/\D/g, '').slice(0, count);
 
-      setPin(oldPin);
-      setMasking(oldMasking);
+      if (pastedNumbers) {
+        const newPin = [...pin];
+        const newMasking = [...masking];
 
-      // Send the focus to next box if it available.
-      if (inputRefs.current[index + 1]) {
-        inputRefs.current[index + 1]?.focus();
+        [...pastedNumbers].forEach((num, index) => {
+          if (index < count) {
+            newPin[index] = num;
+            newMasking[index] = DOT;
+          }
+        });
+
+        setPin(newPin);
+        setMasking(newMasking);
+        handlePinUpdate(newPin);
       }
-
-      const pinToSend = oldPin.join('');
-      if (pinToSend.length === count && onChange) {
-        onChange(pinToSend);
-      }
-    };
-  }
-
-  function handleBackSpace(index: any) {
-    if (inputRefs.current[index - 1]) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  }
-
-  function handleArrowRight(index: any) {
-    if (inputRefs.current[index + 1]) {
-      inputRefs.current[index + 1]?.focus();
-    }
-  }
-
-  function handleArrowLeft(index: any) {
-    if (inputRefs.current[index - 1]) {
-      inputRefs.current[index - 1]?.focus();
-    }
-  }
-
-  //   console.log(pin);
+    },
+    [count, pin, masking, handlePinUpdate]
+  );
 
   return (
-    <div className={`flex flex-wrap justify-center gap-2 sm:gap-3 md:gap-4 ${className}`}>
-      {new Array(count).fill('').map((__, index) => (
-        <input
-          key={index}
-          name={name}
-          ref={(iRefs) => {
-            inputRefs.current[index] = iRefs;
-          }}
-          type="text"
-          className="size-10 rounded-md border border-gray-300 text-center font-spaceGrotesk text-lg transition-all duration-200 focus:border-[#03045B] focus:outline-none sm:size-12 sm:text-xl md:size-14 md:text-2xl"
-          onKeyUp={handleKeyUp(index)}
-          value={masking[index] ?? ''}
-          onClick={handleClick(index)}
-          inputMode="numeric"
-          maxLength={1}
-        />
-      ))}
+    <div className={`flex flex-wrap justify-center ${className}`}>
+      {Array(count)
+        .fill('')
+        .map((_, index) => (
+          <input
+            key={index}
+            ref={(el) => {
+              inputRefs.current[index] = el;
+            }}
+            type="text"
+            inputMode="numeric"
+            maxLength={1}
+            name={`${name}-${index}`}
+            value={masking[index] || ''}
+            onChange={(e) => handleInputChange(index, e.target.value)}
+            onKeyDown={(e) => handleKeyDown(index, e)}
+            onPaste={handlePaste}
+            onClick={(e) => (e.target as HTMLInputElement).select()}
+            className={`
+            mr-3 size-12 rounded-md border text-center font-spaceGrotesk text-xl
+            transition-all duration-200 focus:outline-none sm:size-14 sm:text-2xl
+            ${
+              error
+                ? 'border-red-500 focus:border-red-600'
+                : 'border-gray-300 focus:border-[#03045B]'
+            }
+          `}
+          />
+        ))}
     </div>
   );
 }

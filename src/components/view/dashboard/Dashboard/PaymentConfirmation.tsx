@@ -39,7 +39,7 @@ const PaymentConfirmation = ({
   return (
     <section>
       {!isShowTranscationPin && (
-        <div className="mx-auto max-w-md rounded-lg bg-white p-6">
+        <div className="mx-auto max-w-md rounded-lg bg-white">
           <h2 className="mb-2 text-center font-inter text-2xl font-bold">Confirm Payment</h2>
           <p className="mb-4 text-center font-inter text-gray-600">
             Verify the details below before completing the payment.

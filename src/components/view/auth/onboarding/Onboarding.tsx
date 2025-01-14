@@ -103,7 +103,12 @@ export default function Onboarding() {
                       </Button>
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
-                      <StepForm manageCurrentStep={manageCurrentStep} />
+                      <StepForm
+                        manageCurrentStep={manageCurrentStep}
+                        onComplete={function (pin: string): void {
+                          throw new Error('Function not implemented.');
+                        }}
+                      />
                     </DialogContent>
                   </Dialog>
                 )}
