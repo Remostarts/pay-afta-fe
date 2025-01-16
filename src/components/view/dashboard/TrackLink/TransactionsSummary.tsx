@@ -3,12 +3,12 @@
 import { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
-import OrderAreement from './OrderAgreement';
 import Summary from './Summary';
 import MakePayment from './MakePayment';
 import ConfirmShipping from './ConfirmShipping';
 import Delivery from './Delivery';
 import TransactionsDispute from './TransactionsDispute';
+import OrderAgreement from './OrderAgreement';
 
 import Stepper from '@/components/ui/stepper';
 import { Button } from '@/components/ui/button';
@@ -41,7 +41,7 @@ export default function TransactionsSummary({ onBack }: TransactionsSummaryProps
         </div>
         <Stepper totalSteps={5} currentStep={currentStep} steps={steps} />
         {currentStep === 1 ? (
-          <OrderAreement handleCurrentStepChange={setCurrentStep} />
+          <OrderAgreement handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 2 ? (
           <MakePayment handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 3 ? (
