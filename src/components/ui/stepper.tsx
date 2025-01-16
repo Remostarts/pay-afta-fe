@@ -21,11 +21,13 @@ export default function Stepper({ totalSteps, currentStep, steps }: StepperProps
               <div
                 className={`flex size-6 items-center justify-center rounded-full border-2 text-xs font-medium sm:size-8 sm:text-sm md:size-10
                 ${
-                  step.number === currentStep
-                    ? 'border-green-500 bg-green-500 text-white'
-                    : step.number < currentStep
+                  step.number === currentStep && currentStep === 5
+                    ? 'border-red-500 bg-red-500 text-white'
+                    : step.number === currentStep
                       ? 'border-green-500 bg-green-500 text-white'
-                      : 'border-gray-200 bg-white text-gray-400'
+                      : step.number < currentStep
+                        ? 'border-green-500 bg-green-500 text-white'
+                        : 'border-gray-200 bg-white text-gray-400'
                 }`}
               >
                 {step.number}
