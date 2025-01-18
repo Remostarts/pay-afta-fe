@@ -3,6 +3,8 @@ import Link from 'next/link';
 
 import Logo from '../../../../../../public/Logo.svg';
 
+import { Waitlist } from './Waitlist';
+
 export default function Navbar() {
   return (
     <header className="border-b border-gray-200">
@@ -24,6 +26,9 @@ export default function Navbar() {
           >
             Get Started
           </Link>
+          <div>
+            <Waitlist />
+          </div>
         </nav>
       </div>
     </header>

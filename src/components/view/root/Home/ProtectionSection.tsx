@@ -21,10 +21,10 @@ export default function ProtectionSection() {
             {/* Right: Content  */}
             <div className="space-y-6">
               <h1 className="font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
-                buyer protection with payAfta
+                Buyer Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
-                Payafta takes buyer protection seriously. We&apos;re here to ensure that you receive
+                PayAfta takes buyer protection seriously. We&apos;re here to ensure that you receive
                 what you paid for. Our process guarantees that your money is held securely until you
                 confirm your satisfaction. If you encounter any issues with your purchase, our team
                 is ready to assist and, if necessary, facilitate refunds. Your peace of mind is our
@@ -37,10 +37,10 @@ export default function ProtectionSection() {
           <div className="mt-16 grid grid-cols-1 items-center gap-12 md:grid-cols-2">
             <div>
               <h1 className="font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
-                seller protection with payAfta
+                Seller Protection With PayAfta
               </h1>
               <p className="font-inter text-lg">
-                Sellers, we&apos;ve got your back too. Payafta provides seller protection by
+                Sellers, we&apos;ve got your back too. PayAfta provides seller protection by
                 ensuring ensuring that you receive payment once you fulfill your part of the deal.
                 You can trust us to hold the buyer&apos;s funds securely until the transaction is
                 complete. We&apos;re to making your online sales as smooth and secure as possible.

@@ -1,77 +1,108 @@
-'use client';
-
+import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { z } from 'zod';
 
-import ReOtp from '@/components/re-ui/ReOtp';
+import RePin from '../../../re-ui/RePin';
+
 import { Form } from '@/components/ui/form';
-import { TTransactionPin, transactionPinSchema } from '@/lib/validations/onboarding.validation';
-import { ReButton } from '@/components/re-ui/ReButton';
 
-export default function TransactionPin({ manageCurrentStep = () => {} }) {
-  const [finalPin, setFinalPin] = useState<string>('');
-  const [pin, setPin] = useState<string>('');
-  const [confirmPin, setConfirmPin] = useState<string>('');
-  const [error, setError] = useState<string>('');
+const pinSchema = z
+  .object({
+    pin: z.string().length(4, 'PIN must be 4 digits'),
+    confirmPin: z.string().length(4, 'PIN must be 4 digits'),
+  })
+  .refine((data) => data.pin === data.confirmPin, {
+    message: "PINs don't match",
+    path: ['confirmPin'],
+  });
 
-  const handlePinChange = (newPin: string): void => {
-    // Ensure only numeric input is allowed
-    const numericPin = newPin.replace(/\D/g, '');
-    setPin(numericPin);
-  };
+type PinFormData = z.infer<typeof pinSchema>;
 
-  const handleConfirmPinChange = (confirmPin: string): void => {
-    const numericPin = confirmPin.replace(/\D/g, '');
-    setConfirmPin(numericPin);
-  };
+interface TransactionPinProps {
+  onComplete: (pin: string) => void;
+  manageCurrentStep?: () => void;
+}
 
-  function handleSubmit(data: any): void {
-    // console.log(data);
-    if (pin === confirmPin) {
-      setFinalPin(confirmPin);
-    } else {
-      setError('Enter Pin does not match.');
+export default function TransactionPin({ onComplete, manageCurrentStep }: TransactionPinProps) {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const form = useForm<PinFormData>({
+    resolver: zodResolver(pinSchema),
+    defaultValues: {
+      pin: '',
+      confirmPin: '',
+    },
+  });
+
+  const handleSubmit = async (data: PinFormData) => {
+    try {
+      // setIsSubmitting(true);
+      // onComplete(data.pin);
+      console.log(data);
+      if (manageCurrentStep) {
+        manageCurrentStep();
+      }
+    } catch (error) {
+      console.error('Error submitting PIN:', error);
+      form.setError('root', {
+        message: 'An error occurred while setting your PIN. Please try again.',
+      });
+    } finally {
+      // setIsSubmitting(false);
     }
-    console.log(finalPin);
-    manageCurrentStep();
-  }
+  };
 
   return (
-    <section>
-      <h1 className="text-center font-inter text-3xl font-semibold text-gray-800">
-        Transaction Pin
-      </h1>
-      <div>
-        <p className="my-5 text-center font-inter text-xl font-semibold">Enter Verification Code</p>
-        <ReOtp
-          count={4}
-          name="verificationCode"
-          onChange={handlePinChange}
-          className="mb-4 gap-2 sm:gap-4"
-        />
-      </div>
-      <div>
-        <p className="my-5 text-center font-inter text-xl font-semibold">
-          Confirm Verification Code
-        </p>
-        <ReOtp
-          count={4}
-          name="confirmVerificationCode"
-          onChange={handleConfirmPinChange}
-          className="mb-4 gap-2 sm:gap-4"
-        />
-      </div>
-      <p className="my-5 text-center font-inter font-semibold text-red-500">{error}</p>
-      <div className="mt-3 flex justify-end">
-        <button
-          className="w-2/5 rounded-full bg-[#03045B] py-3 font-inter text-white sm:py-3"
-          type="submit"
-          onClick={handleSubmit}
-        >
-          Submit
-        </button>
-      </div>
-    </section>
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+        <div className="text-center">
+          <h1 className="font-inter text-3xl font-semibold text-gray-800">Transaction PIN</h1>
+
+          <div className="mt-8">
+            <p className="mb-4 font-inter text-xl font-semibold">Enter PIN</p>
+            <RePin
+              count={4}
+              name="pin"
+              onChange={(value) => form.setValue('pin', value)}
+              error={!!form.formState.errors.pin}
+              className="mb-2"
+            />
+            {form.formState.errors.pin && (
+              <p className="text-sm text-red-500">{form.formState.errors.pin.message}</p>
+            )}
+          </div>
+
+          <div className="mt-6">
+            <p className="mb-4 font-inter text-xl font-semibold">Confirm PIN</p>
+            <RePin
+              count={4}
+              name="confirmPin"
+              onChange={(value) => form.setValue('confirmPin', value)}
+              error={!!form.formState.errors.confirmPin}
+              className="mb-2"
+            />
+            {form.formState.errors.confirmPin && (
+              <p className="text-sm text-red-500">{form.formState.errors.confirmPin.message}</p>
+            )}
+          </div>
+        </div>
+
+        {form.formState.errors.root && (
+          <p className="text-center text-sm text-red-500">{form.formState.errors.root.message}</p>
+        )}
+
+        <div className="flex justify-end">
+          <button
+            type="submit"
+            disabled={isSubmitting}
+            className="w-2/5 rounded-full bg-[#03045B] py-3 font-inter text-white transition-all duration-200 
+              hover:bg-[#02034d] disabled:cursor-not-allowed disabled:opacity-50"
+          >
+            {isSubmitting ? 'Setting PIN...' : 'Submit'}
+          </button>
+        </div>
+      </form>
+    </Form>
   );
 }

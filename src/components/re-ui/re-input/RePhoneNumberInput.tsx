@@ -25,7 +25,7 @@ export function RePhoneNumberInput<T extends FieldValues>({
       name={name}
       render={({ field }) => (
         <FormItem className="col-span-full">
-          <FormLabel>
+          <FormLabel className="text-gray-700">
             {label} {required && <span className="text-red-500">*</span>}
           </FormLabel>
           <FormControl>

@@ -1,9 +1,13 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 
 export default function BackToLogin() {
+  const pathName = usePathname();
   return (
     <section className=" container mx-auto">
       <div className="mb-10">
@@ -24,9 +28,9 @@ export default function BackToLogin() {
         <p className="font-inter font-semibold text-[#666666] sm:text-sm">
           Please return to the login page to sign in with your new password.
         </p>
-      </div>
+      </div>{' '}
       <div>
-        <Link href="/sign-in">
+        <Link href={pathName === '/forget-pass/admin' ? '/sign-in/admin' : 'sign-in'}>
           <ReButton className="mt-5 w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-6 sm:text-lg">
             Back to Login
           </ReButton>

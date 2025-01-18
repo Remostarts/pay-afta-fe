@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 import PersonalKycForm from './PersonalKycForm';
 import SettlementKycForm from './SettlementKycForm';
@@ -46,11 +47,18 @@ const steps = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState<number>(0);
+  const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  const route = useRouter();
 
-  console.log(currentStep);
+  // console.log(currentStep);
 
   function manageCurrentStep() {
+    setCompletedSteps((prev) => [...prev, currentStep]);
     setCurrentStep(currentStep + 1);
+  }
+
+  function handleClick() {
+    route.push('/dashboard');
   }
 
   return (
@@ -64,41 +72,46 @@ export default function Onboarding() {
       {/* Cards */}
       <div className="space-y-4">
         {steps?.map((step, index) => {
-          const StepForm = step.Form; // Create component reference
-
+          const StepForm = step?.Form; // Create component reference
+          const isStepCompleted = completedSteps.includes(step?.id);
           return (
             <Card
-              key={step.id}
+              key={step?.id}
               className="border border-gray-200 p-6 shadow-none transition-shadow hover:shadow-sm"
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="font-inter text-lg font-medium text-gray-900">{step.title}</h2>
-                  <p className="font-inter text-sm text-gray-500">{step.description}</p>
+                  <h2 className="font-inter text-lg font-medium text-gray-900">{step?.title}</h2>
+                  <p className="font-inter text-sm text-gray-500">{step?.description}</p>
                 </div>
-                <Dialog>
-                  <DialogTrigger asChild>
-                    {step?.id < currentStep ? (
-                      <Image
-                        src="/assets/auth/onboarding/check 1.svg"
-                        alt="Check"
-                        width={24}
-                        height={24}
-                      />
-                    ) : (
+                {isStepCompleted ? (
+                  <Image
+                    src="/assets/auth/onboarding/check 1.svg"
+                    alt="Check"
+                    width={24}
+                    height={24}
+                  />
+                ) : (
+                  <Dialog>
+                    <DialogTrigger asChild>
                       <Button
                         className="min-w-[120px] rounded-full bg-[#03045B] px-6 font-inter text-white hover:bg-[#03045B]/90"
-                        disabled={step.id > currentStep}
+                        disabled={step?.id > currentStep}
                       >
                         Submit
                         <ArrowRight className="ml-2 size-4" />
                       </Button>
-                    )}
-                  </DialogTrigger>
-                  <DialogContent className="sm:max-w-[425px]">
-                    <StepForm manageCurrentStep={manageCurrentStep} />
-                  </DialogContent>
-                </Dialog>
+                    </DialogTrigger>
+                    <DialogContent className="sm:max-w-[425px]">
+                      <StepForm
+                        manageCurrentStep={manageCurrentStep}
+                        onComplete={function (pin: string): void {
+                          throw new Error('Function not implemented.');
+                        }}
+                      />
+                    </DialogContent>
+                  </Dialog>
+                )}
               </div>
             </Card>
           );
@@ -111,6 +124,7 @@ export default function Onboarding() {
           variant="secondary"
           className="w-[70%] rounded-full bg-[#03045B] py-6 font-inter text-base font-medium text-white hover:bg-[#03045B]/90"
           disabled={currentStep < 3}
+          onClick={handleClick}
         >
           Complete Onboarding
         </Button>
