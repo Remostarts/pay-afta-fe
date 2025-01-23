@@ -45,7 +45,7 @@ export default function VerificationCode() {
   };
 
   function handleClick() {
-    route.push('/onboarding');
+    route.push('/sign-in');
   }
 
   // Check if all OTP fields are filled

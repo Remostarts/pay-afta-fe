@@ -6,6 +6,7 @@ import { usePathname, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Image from 'next/image';
+import { signIn } from 'next-auth/react';
 
 import Logo from '../../../../../public/Logo.svg';
 
@@ -26,7 +27,7 @@ const defaultValues = {
 
 export const SigninForm = () => {
   const pathname = usePathname();
-  const role = pathname?.split('/')[2];
+  // const role = pathname?.split('/')[2];
   const date = new Date().toDateString();
   // console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
 
@@ -42,7 +43,17 @@ export const SigninForm = () => {
   const { isSubmitting } = formState;
 
   const onSubmit = async (data: TInputs) => {
-    console.log(data);
+    event?.preventDefault();
+    console.log('🌼 🔥🔥 onSubmit 🔥🔥 data🌼', data);
+
+    const result = await signIn('pay-afta-backend', { ...data, role: 'user', redirect: false });
+    console.log('🌼 🔥🔥 onSubmit 🔥🔥 result🌼', result);
+
+    if (result?.ok && !result.error) {
+      router.refresh();
+      // router.push('/');
+    }
+    // console.log('🌼 🔥🔥 constonSubmit:SubmitHandler<TInputs>= 🔥🔥 result🌼', result, data);
   };
 
   return (

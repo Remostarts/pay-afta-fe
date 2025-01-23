@@ -1,28 +1,26 @@
 'use client';
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { useParams } from 'next/navigation';
-import Image from 'next/image';
 import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
+import { useParams } from 'next/navigation';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 // import { toast as Toast } from 'sonner';
 
-import { DialogProvider } from '../shared/Dialog';
-
 import Header from './Header';
-import { TypingIndicator } from './TypingIndicator';
 import SkeletonMessageLoader from './SkeletonMessageLoader';
+import { TypingIndicator } from './TypingIndicator';
 // import { InvoiceDialog } from './Invoice/InvoiceDialog';
 
+import { toast } from '@/components/ui/use-toast';
+import { ChatInput } from '@/components/view/dashboard/Chats/ChatInput';
+import { MessageList } from '@/components/view/dashboard/Chats/MessageList';
+import { useChats } from '@/context/ChatListProvider';
 import { useChat } from '@/context/ChatProvider';
 import { Chat, Message } from '@/types/chat.type';
-import { toast } from '@/components/ui/use-toast';
-import { MessageList } from '@/components/view/dashboard/Chats/MessageList';
-import { ChatInput } from '@/components/view/dashboard/Chats/ChatInput';
-import { useChats } from '@/context/ChatListProvider';
 // import { getErrorMessage } from '@/lib/responseError';
-import { TChatMessage } from '@/lib/validations/chats.validation';
-import { useSocket } from '@/context/socketProvider';
 import { useGeneral } from '@/context/generalProvider';
+import { useSocket } from '@/context/socketProvider';
+import { TChatMessage } from '@/lib/validations/chats.validation';
 // Define the data type returned by your API
 type ChatData = Chat; // Replace with your actual data type if known
 
@@ -36,7 +34,7 @@ const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Prom
     throw new Error('Missing chatId or accessToken');
   }
 
-  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-id/${chatId}`, {
+  const response = await fetch(`${process.env.BACKEND_URL}/chat/get-by-id/${chatId}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json',
@@ -503,7 +501,7 @@ export default function ChatUI() {
       formData.append('media', file);
       formData.append('data', JSON.stringify(data));
 
-      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/upload-file`, {
+      fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
         method: 'POST',
         headers: {
           Authorization: session?.accessToken,
@@ -595,7 +593,7 @@ export default function ChatUI() {
         formData.append('media', file);
         formData.append('data', JSON.stringify(data));
 
-        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/upload-file`, {
+        fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
           method: 'POST',
           headers: {
             Authorization: session?.accessToken,
@@ -696,17 +694,14 @@ export default function ChatUI() {
 
   const handleUpdateMessageStatus = async () => {
     if (isRead) return;
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/update-status/${chatId}`,
-      {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: session?.accessToken,
-        },
-        cache: 'no-store',
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/chat/update-status/${chatId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: session?.accessToken,
+      },
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       throw new Error(`Error updating message status for chat ${chatId}`);

@@ -9,6 +9,8 @@ import {
 import { EmailVerificationParams, ResetPasswordParams } from '@/types/auth.type';
 // import { authOptions } from '@/lib/AuthOptions';
 
+console.log(process.env.BACKEND_URL);
+
 export async function partialSignup(formData: TInitialSignUp) {
   const validation = initialSignUpSchema.safeParse(formData);
 
@@ -107,7 +109,7 @@ export async function resetPassword(data: ResetPasswordParams) {
 //   const session = (await getServerSession(authOptions)) as any;
 //   const token = session?.accessToken;
 //   try {
-//     const response = await fetch(`${process.env.BACKEND_URL}/auth/change-password`, {
+//     const response = await fetch(`${process.env.BACKEND_URLL}/auth/change-password`, {
 //       method: 'POST',
 //       headers: {
 //         'Content-Type': 'application/json',

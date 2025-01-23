@@ -12,7 +12,7 @@
 //   const token = session?.accessToken;
 
 //   try {
-//     const response = await fetch(`${process.env.BACKEND_URL}/user/update-user-profile`, {
+//     const response = await fetch(`${process.env.BACKEND_URLL}/user/update-user-profile`, {
 //       method: 'PATCH',
 //       headers: {
 //         'Content-Type': 'application/json',

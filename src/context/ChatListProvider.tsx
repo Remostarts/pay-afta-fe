@@ -1,12 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
 
-import { createContext, useContext, useState, useEffect, ReactNode, useCallback } from 'react';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 import { useSocket } from './socketProvider';
 
-import { Chat } from '@/types/chat.type';
 import { getErrorMessage } from '@/lib/responseError';
+import { Chat } from '@/types/chat.type';
 
 type OnlineUsers = {
   [email: string]: string;
@@ -31,17 +31,14 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
 
   const loadChats = useCallback(async () => {
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-participant`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: session?.accessToken,
-          },
-          cache: 'no-store',
-        }
-      );
+      const response = await fetch(`${process.env.BACKEND_URL}/chat/get-by-participant`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: session?.accessToken,
+        },
+        cache: 'no-store',
+      });
 
       const data = await response.json();
       console.log('🌼 🔥🔥 loadChats 🔥🔥 data🌼', data?.data);

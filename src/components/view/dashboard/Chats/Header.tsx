@@ -1,10 +1,10 @@
 'use client';
 
-import { CircleArrowLeft, MoreVertical, Sparkles } from 'lucide-react';
-import Link from 'next/link';
-import React, { useEffect } from 'react';
+import { CircleArrowLeft, MoreVertical } from 'lucide-react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 // import { DialogProvider } from '../../shared/Dialog';
 // import GenerateInvoice from '../../lawyers-dashboard/chats/GenerateInvoice';
@@ -17,15 +17,15 @@ import { usePathname } from 'next/navigation';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
-import { Chat } from '@/types/chat.type';
 import {
   DropdownMenu,
-  DropdownMenuTrigger,
   DropdownMenuContent,
+  DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useChats } from '@/context/ChatListProvider';
 import { getErrorMessage } from '@/lib/responseError';
+import { Chat } from '@/types/chat.type';
 // import { useSocket } from '@/context/socketProvider';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
@@ -53,7 +53,7 @@ const Header = ({ chat }: Props) => {
   const loadFiles = async () => {
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-file?chatId=${chat.id}&type=image`,
+        `${process.env.BACKEND_URL}/chat/get-file?chatId=${chat.id}&type=image`,
         {
           method: 'GET',
           headers: {
