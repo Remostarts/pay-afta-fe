@@ -1,34 +1,36 @@
 'use client';
 
 import Image from 'next/image';
-import Link from 'next/link';
-import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 
 import ReOtp from '@/components/re-ui/ReOtp';
 import { Button } from '@/components/ui/button';
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
   DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useOtp } from '@/context/OtpProvider';
+import { verifyEmail } from '@/lib/actions/auth/signup.actions';
 
 export default function VerificationCode() {
   const [otp, setOtp] = useState<string>('');
+  const { email } = useOtp();
+  console.log('🌼 🔥🔥 email🌼', email);
   const [timer, setTimer] = useState<number>(90);
   const route = useRouter();
 
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
-    }, 1000);
+  // useEffect(() => {
+  //   const interval = setInterval(() => {
+  //     setTimer((prevTimer) => (prevTimer > 0 ? prevTimer - 1 : 0));
+  //   }, 1000);
 
-    return () => clearInterval(interval);
-  }, []);
+  //   return () => clearInterval(interval);
+  // }, []);
 
   const handleOtpChange = (newOtp: string) => {
     // Ensure only numeric input is allowed
@@ -46,10 +48,20 @@ export default function VerificationCode() {
     route.push('/onboarding');
   }
 
-  console.log(otp);
-
   // Check if all OTP fields are filled
   const isOtpComplete = otp.length === 4;
+  const handleSubmit = async () => {
+    // server actions should be here
+    try {
+      const response = await verifyEmail({ email, emailVerificationCode: otp });
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+      if (response?.success) {
+        console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+      }
+    } catch (error) {
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 error🌼', error);
+    }
+  };
 
   return (
     <section>
@@ -65,13 +77,14 @@ export default function VerificationCode() {
       <div className="mt-10 flex w-full flex-col items-start p-4">
         <p className="mb-4 text-sm font-semibold text-gray-600">Enter Verification Code</p>
         <ReOtp count={4} onChange={handleOtpChange} className="mb-4 gap-2 sm:gap-4" />
-        <p className="mb-6 text-center text-sm text-gray-600">
+        {/* <p className="mb-6 text-center text-sm text-gray-600">
           Resend code in <span className="font-bold text-green-500">{formatTime(timer)}</span>
-        </p>
+        </p> */}
       </div>
       <Dialog>
         <DialogTrigger asChild>
           <Button
+            onClick={handleSubmit}
             className="w-4/5 rounded-full bg-[#03045B] py-5 text-lg font-semibold text-white hover:bg-[#03045B]"
             disabled={!isOtpComplete}
           >

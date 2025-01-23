@@ -1,20 +1,23 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePathname, useRouter } from 'next/navigation';
-import { useForm } from 'react-hook-form';
 import Image from 'next/image';
 import Link from 'next/link';
+import { usePathname, useRouter } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import Logo from '../../../../../public/Logo.svg';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import { Form } from '@/components/ui/form';
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
-import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
 import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
+import { Form } from '@/components/ui/form';
+import { useOtp } from '@/context/OtpProvider';
+import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
+import { partialSignup } from '@/lib/actions/auth/signup.actions';
 
 type defaultVal = {
   firstName: string;
@@ -38,9 +41,11 @@ export default function SignupForm() {
   const pathname = usePathname();
   const role = pathname?.split('/')[2];
   const date = new Date().toDateString();
+
   //   console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
 
   const router = useRouter();
+  const { setEmail, email } = useOtp();
 
   const form = useForm<TInitialSignUp>({
     resolver: zodResolver(initialSignUpSchema),
@@ -52,13 +57,26 @@ export default function SignupForm() {
   const { isSubmitting, isValid } = formState;
 
   const onSubmit = async (data: TInitialSignUp) => {
+    try {
+      setEmail(data.email);
+      const response = await partialSignup(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        router.push('/sign-up/verification');
+      } else {
+        toast.error(response?.error || 'Sign up Failed');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Sign up Failed');
+    }
+
     console.log(data);
 
-    if (isValid) {
-      router.push('/sign-up/verification');
-    }
+    // if (isValid) {
+    //   router.push('/sign-up/verification');
+    // }
   };
-
   return (
     <section>
       <div>
