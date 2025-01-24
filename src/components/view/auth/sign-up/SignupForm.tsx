@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useState } from 'react';
 
 import Logo from '../../../../../public/Logo.svg';
 
@@ -41,7 +42,6 @@ export default function SignupForm() {
   const pathname = usePathname();
   const role = pathname?.split('/')[2];
   const date = new Date().toDateString();
-
   //   console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
 
   const router = useRouter();

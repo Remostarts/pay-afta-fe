@@ -22,7 +22,7 @@ const defaultValues = {
   confirmPassword: '',
 };
 
-export default function SetNewPassword() {
+export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordProps) {
   const searchParams = useSearchParams();
   const code = searchParams.get('code') as string;
   console.log('🌼 🔥🔥 SetNewPassword 🔥🔥 code🌼', code);
@@ -60,6 +60,7 @@ export default function SetNewPassword() {
       }
 
       router.push('/sign-in');
+      handleCurrentStep();
     } catch (error) {
       console.error('Error sending verification code:', error);
       toast({
