@@ -63,9 +63,9 @@ export async function verifyEmail(formData: EmailVerificationParams) {
   }
 }
 
-export async function sendForgetPasswordOtp(email: string) {
+export async function sendResetPassLink(email: string) {
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/forget-password-otp-send`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/send-reset-link`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -86,7 +86,7 @@ export async function sendForgetPasswordOtp(email: string) {
 
 export async function resetPassword(data: ResetPasswordParams) {
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/auth/forget-password`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/reset-password`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

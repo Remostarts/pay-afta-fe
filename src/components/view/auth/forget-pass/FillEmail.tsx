@@ -1,14 +1,15 @@
 'use client';
 
 import Image from 'next/image';
-import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 // import { useOtp } from '@/context/OtpProvider';
 import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
+import { sendResetPassLink } from '@/lib/actions/auth/signup.actions';
 // import { sendForgetPasswordOtp } from '@/lib/actions/auth/signup.actions';
 
 interface IFillEmailProps {
@@ -30,12 +31,17 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
     }
 
     try {
-      // await sendForgetPasswordOtp(email);
-      toast({
-        title: 'Code Sent',
-        description: 'A verification code has been sent to your email address.',
-      });
-      handleCurrentStep();
+      const response = await sendResetPassLink(email);
+
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        toast({
+          title: 'Code Sent',
+          description: 'A verification code has been sent to your email address.',
+        });
+        handleCurrentStep();
+      }
     } catch (error) {
       console.error('Error sending verification code:', error);
       toast({

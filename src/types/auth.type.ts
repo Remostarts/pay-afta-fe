@@ -2,6 +2,7 @@ export type ResetPasswordParams = {
   email: string;
   emailVerificationCode: string;
   newPassword: string;
+  confirmNewPassword: string;
 };
 
 export type EmailVerificationParams = {

@@ -1,12 +1,16 @@
-import Image from 'next/image';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
+'use client';
 
-import { Form } from '@/components/ui/form';
-import { ReHeading } from '@/components/re-ui/ReHeading';
+import { zodResolver } from '@hookform/resolvers/zod';
+import Image from 'next/image';
+import { useRouter, useSearchParams } from 'next/navigation';
+import { useForm } from 'react-hook-form';
+
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { ReHeading } from '@/components/re-ui/ReHeading';
+import { Form } from '@/components/ui/form';
+import { toast } from '@/components/ui/use-toast';
+import { resetPassword } from '@/lib/actions/auth/signup.actions';
 import { TResetPassword, resetPasswordSchema } from '@/lib/validations/userAuth.validations';
 
 interface ISetNewPasswordProps {
@@ -18,7 +22,14 @@ const defaultValues = {
   confirmPassword: '',
 };
 
-export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordProps) {
+export default function SetNewPassword() {
+  const searchParams = useSearchParams();
+  const code = searchParams.get('code') as string;
+  console.log('🌼 🔥🔥 SetNewPassword 🔥🔥 code🌼', code);
+
+  const email = decodeURIComponent(searchParams.get('email') as string);
+  console.log('🌼 🔥🔥 SetNewPassword 🔥🔥 email🌼', email);
+
   const router = useRouter();
   const form = useForm<TResetPassword>({
     resolver: zodResolver(resetPasswordSchema),
@@ -29,10 +40,34 @@ export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordPro
   const { handleSubmit, formState } = form;
   const { isSubmitting } = formState;
 
-  function onSubmit(data: TResetPassword) {
-    console.log('new Password', data);
-    handleCurrentStep();
-  }
+  const onSubmit = async (data: TResetPassword) => {
+    const input = {
+      email,
+      newPassword: data.newPassword,
+      emailVerificationCode: code,
+      confirmNewPassword: data.confirmPassword,
+    };
+    try {
+      const response = await resetPassword(input);
+
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        toast({
+          title: 'Password reset successfully',
+          description: 'You can now login.',
+        });
+      }
+
+      router.push('/sign-in');
+    } catch (error) {
+      console.error('Error sending verification code:', error);
+      toast({
+        title: 'Error',
+        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+      });
+    }
+  };
 
   return (
     <section className=" container mx-auto">
@@ -76,7 +111,7 @@ export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordPro
               type="submit"
               isSubmitting={isSubmitting}
             >
-              Change Password
+              Reset Password
             </ReButton>
           </div>
         </form>
