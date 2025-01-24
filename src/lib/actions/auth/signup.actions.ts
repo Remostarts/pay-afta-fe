@@ -40,6 +40,8 @@ export async function partialSignup(formData: TInitialSignUp) {
 
 export async function verifyEmail(formData: EmailVerificationParams) {
   const validation = emailVerification.safeParse(formData);
+  // console.log(formData);
+  // console.log(validation);
 
   if (!validation.success) {
     let zodErrors = '';
