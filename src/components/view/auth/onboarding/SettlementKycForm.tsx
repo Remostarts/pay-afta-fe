@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
@@ -10,6 +11,7 @@ import ReSelect from '@/components/re-ui/ReSelect';
 import { Form } from '@/components/ui/form';
 import { nigeriaBanks } from '@/lib/data/nigeriaBanks';
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
+import { kycBankInfo, kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
 
 type defaultVal = {
   bankName: string;
@@ -31,9 +33,20 @@ export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
   const { handleSubmit, formState } = form;
   const { isValid, isSubmitting } = formState;
 
-  function onSubmit(data: TSettlementKyc) {
+  async function onSubmit(data: TSettlementKyc) {
     console.log(data);
-    manageCurrentStep();
+    try {
+      const response = await kycBankInfo(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        manageCurrentStep();
+      } else {
+        toast.error(response?.error || 'Failed to update kyc bank information');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update kyc bank information');
+    }
   }
 
   return (
