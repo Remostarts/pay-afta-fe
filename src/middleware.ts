@@ -63,7 +63,7 @@ export const config = {
     '/sign-in/:page',
     '/sign-up/:page',
     // business routes
-    // '/dashboard/:page*',
+    '/dashboard/:page*',
 
     // lawyer routes
     // '/lawyer/:page',
