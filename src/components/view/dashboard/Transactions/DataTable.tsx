@@ -205,7 +205,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
           </Button>
         </div>
 
-        <div className="flex items-center space-x-2">
+        {/* <div className="flex items-center space-x-2">
           <div className="text-muted-foreground flex-1 text-sm">
             Showing{' '}
             {table.getState().pagination.pageIndex * table.getState().pagination.pageSize + 1} to{' '}
@@ -236,7 +236,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
               ))}
             </DropdownMenuContent>
           </DropdownMenu>
-        </div>
+        </div> */}
       </div>
     </div>
   );
