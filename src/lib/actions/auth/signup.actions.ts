@@ -1,5 +1,9 @@
 'use server';
 
+import { getServerSession } from 'next-auth';
+
+import { TChangePassInputs } from '@/components/view/adminDashboard/Setting/Profile';
+import { authOptions } from '@/lib/AuthOptions';
 import { getErrorMessage } from '@/lib/responseError';
 import {
   emailVerification,
@@ -107,26 +111,27 @@ export async function resetPassword(data: ResetPasswordParams) {
   }
 }
 
-// export async function changePassword(data: TChangePassInputs) {
-//   const session = (await getServerSession(authOptions)) as any;
-//   const token = session?.accessToken;
-//   try {
-//     const response = await fetch(`${process.env.BACKEND_URLL}/auth/change-password`, {
-//       method: 'POST',
-//       headers: {
-//         'Content-Type': 'application/json',
-//         Authorization: token,
-//       },
-//       body: JSON.stringify(data),
-//     });
+export async function changePassword(data: TChangePassInputs) {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/auth/change-password`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(data),
+    });
 
-//     if (!response.ok) {
-//       const errorData = await response.json();
-//       throw new Error(errorData.message || 'Failed to reset password');
-//     }
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to reset password');
+    }
 
-//     return { success: true };
-//   } catch (error) {
-//     return { success: false, error: getErrorMessage(error) };
-//   }
-// }
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: getErrorMessage(error) };
+  }
+}

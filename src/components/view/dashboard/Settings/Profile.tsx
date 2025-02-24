@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
@@ -20,6 +21,7 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { changePassword } from '@/lib/actions/auth/signup.actions';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,100}$/;
 
@@ -68,6 +70,35 @@ export default function Profile() {
 
   const onSubmit: SubmitHandler<TChangePassInputs> = async (data) => {
     console.log(data);
+    try {
+      const response = await changePassword(data);
+      console.log(
+        '🌼 🔥🔥 constonSubmit:SubmitHandler<TChangePassInputs>= 🔥🔥 response🌼',
+        response
+      );
+
+      if (response.success) {
+        toast.success('Password changed successfully');
+        open('changePasswordSuccess');
+        // Reset form or redirect user as needed
+        form.reset();
+      } else {
+        // toast({
+        //   title: 'Error',
+        //   description: response.error || 'Failed to change password',
+        //   variant: 'destructive',
+        // });
+        toast.error(response.error || 'Failed to change password');
+      }
+    } catch (error) {
+      console.error('Error submitting feedback:', error);
+      // toast({
+      //   title: 'Error',
+      //   description: 'An unexpected error occurred',
+      //   variant: 'destructive',
+      // });
+      toast.error('An unexpected error occurred');
+    }
   };
 
   return (
@@ -79,17 +110,25 @@ export default function Profile() {
         </div>
         <div className="grid gap-4">
           <div className="col-span-2">
-            <ReInput name="firstName" label="First Name" placeholder="Cameron" readonly={true} />
+            <ReInput
+              name="firstName"
+              label="First Name"
+              placeholder="Cameron" /* readonly={true} */
+            />
           </div>
           <div className="col-span-2">
-            <ReInput name="lastName" label="Last Name" placeholder="Williamson" readonly={true} />
+            <ReInput
+              name="lastName"
+              label="Last Name"
+              placeholder="Williamson" /* readonly={true} */
+            />
           </div>
           <div className="col-span-2">
             <ReInput
               name="phone"
               label="Phone Number"
               placeholder="+234-9033-2314-423"
-              readonly={true}
+              /* readonly={true} */
             />
           </div>
           <div className="col-span-2">
@@ -97,19 +136,23 @@ export default function Profile() {
               name="email"
               label="Email"
               placeholder="Kelly.Heller@gmail.com"
-              readonly={true}
+              /* readonly={true} */
             />
           </div>
           <div className="grid gap-4 lg:grid-cols-2">
             <div>
-              <ReInput name="DOB" label="Date of Birth" placeholder="12/04/2024" readonly={true} />
+              <ReInput
+                name="DOB"
+                label="Date of Birth"
+                placeholder="12/04/2024" /* readonly={true} */
+              />
             </div>
             <div>
-              <ReInput name="gender" label="Gender" placeholder="Male" readonly={true} />
+              <ReInput name="gender" label="Gender" placeholder="Male" /* readonly={true} */ />
             </div>
           </div>
           <div className="col-span-2">
-            <ReButton className="mt-5 rounded-full lg:w-2/5" disabled={true}>
+            <ReButton className="mt-5 rounded-full lg:w-2/5" /* disabled={true} */>
               {' '}
               Edit Information
             </ReButton>
