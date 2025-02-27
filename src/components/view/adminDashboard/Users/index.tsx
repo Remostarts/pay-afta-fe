@@ -51,7 +51,7 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const data = [
+const tData = [
   {
     userId: 'US-123456789',
     name: 'John Doe',
@@ -115,18 +115,57 @@ const data = [
     date: '15 Jun, 2024',
     status: 'Active',
   },
+  {
+    userId: 'US-123456789',
+    name: 'Tiana Levin',
+    email: 'Jaxson@gmail.com',
+    date: '15 Jun, 2024',
+    status: 'Active',
+  },
+  {
+    userId: 'US-123456789',
+    name: 'Tiana Levin',
+    email: 'Jaxson@gmail.com',
+    date: '15 Jun, 2024',
+    status: 'Active',
+  },
+  {
+    userId: 'US-123456789',
+    name: 'Tiana Levin',
+    email: 'Jaxson@gmail.com',
+    date: '15 Jun, 2024',
+    status: 'Active',
+  },
 ];
 
 export default function Users() {
   const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
-  const [filteredDataByStatus, setFilteredDataByStatus] = useState<Payment[]>([]);
+  const [data, setData] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   function filterSelectedStatusType() {
     const filteredData = selectedStatusType
       ? data.filter((item) => item.status === selectedStatusType)
       : data;
-    setFilteredDataByStatus(filteredData);
+    setData(filteredData);
   }
+
+  function handlePageChange(pageNumber: any) {
+    try {
+      console.log(pageNumber);
+      setTimeout(() => {
+        setData(tData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange(1);
+  }, []);
 
   useEffect(() => {
     filterSelectedStatusType();
@@ -141,8 +180,13 @@ export default function Users() {
       <div>
         <FilterDataSection setSelectedStatusType={setSelectedStatusType} />
       </div>
-      <div className="container mx-auto rounded-md bg-white p-5">
-        <DataTable columns={columns} data={filteredDataByStatus} />
+      <div className=" rounded-md bg-white p-5">
+        <DataTable
+          columns={columns}
+          data={data}
+          isLoading={isLoading}
+          onPageChange={handlePageChange}
+        />
       </div>
     </section>
   );

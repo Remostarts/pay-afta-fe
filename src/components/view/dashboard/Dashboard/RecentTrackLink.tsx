@@ -47,7 +47,7 @@ export default function RecentTrackLink() {
             <div key={index} className="border-b pb-4 last:border-b-0">
               <div className="mb-2 flex items-center justify-between">
                 <h3 className="font-medium">{service?.user || 'Unknown User'}</h3>
-                <span className="font-inter text-2xl font-bold">{service?.payment}</span>
+                <span className="font-inter text-2xl font-semibold">{service?.payment}</span>
               </div>
               <div className="mb-2 flex items-center justify-between">
                 <p className="mb-2 font-inter text-sm font-medium text-gray-600">{service?.type}</p>

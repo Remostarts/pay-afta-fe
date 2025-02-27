@@ -4,7 +4,7 @@ import { title } from 'process';
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { z } from 'zod';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
@@ -60,6 +60,8 @@ type IUpdateRole = {
 
 export default function UpdateRole({ onNext }: IUpdateRole) {
   const [selectedFeatures, setSelectedFeatures] = useState<string[]>([]);
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
   const form = useForm<TCreateRole>({
     resolver: zodResolver(updateRoleSchema),
     defaultValues,
@@ -72,7 +74,10 @@ export default function UpdateRole({ onNext }: IUpdateRole) {
   //   console.log(selectedFeatures);
   const onSubmit = async (data: TCreateRole) => {
     console.log(data);
-    onNext();
+    // onNext();
+    if (closeButtonRef.current) {
+      closeButtonRef.current.click();
+    }
   };
 
   return (
@@ -134,6 +139,8 @@ export default function UpdateRole({ onNext }: IUpdateRole) {
 
             <div className=" flex items-end justify-end">
               <ReButton
+                ref={closeButtonRef}
+                isSubmitting={isSubmitting}
                 className="mt-3 w-fit bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]"
                 type="submit"
               >

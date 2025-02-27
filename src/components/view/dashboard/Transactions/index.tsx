@@ -1,6 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useState } from 'react';
 
 import { DataTable } from './DataTable';
 
@@ -43,7 +44,7 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const data = [
+const tData = [
   {
     id: '1',
     date: '21-02-2025, 02:24pm',
@@ -124,10 +125,36 @@ const data = [
 ];
 
 export default function Transcations() {
+  const [data, setData] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  function handlePageChange(pageNumber: any) {
+    try {
+      console.log(pageNumber);
+      setTimeout(() => {
+        setData(tData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange(1);
+  }, []);
+
   return (
     <section>
-      <div className="container mx-auto rounded-md bg-white p-5">
-        <DataTable columns={columns} data={data} lable={'Transaction History'} />
+      <div className="rounded-md bg-white p-5">
+        <DataTable
+          columns={columns}
+          data={data}
+          lable={'Transaction History'}
+          isLoading={isLoading}
+          onPageChange={handlePageChange}
+        />
       </div>
     </section>
   );

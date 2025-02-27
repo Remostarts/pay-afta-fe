@@ -63,7 +63,7 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
         </div>
 
         {/* state section  */}
-        <div className="w-full sm:w-auto">
+        {/* <div className="w-full sm:w-auto">
           <Select onValueChange={(e) => onStatusChange(e !== 'All' ? e : null)}>
             <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Select a State" />
@@ -78,7 +78,7 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
               </SelectGroup>
             </SelectContent>
           </Select>
-        </div>
+        </div> */}
 
         {/* export button  */}
         <div className="w-full sm:w-auto">

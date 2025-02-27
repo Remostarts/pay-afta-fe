@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -12,6 +12,7 @@ import {
 import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
 import { DialogTableRow } from './DialogTableRow';
 import TransactionModal from './TransactionModal';
@@ -25,6 +26,7 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 const sampleTransaction = {
   id: 'US-123456789',
@@ -44,14 +46,32 @@ interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lable?: string;
+  isLoading: boolean;
+  onPageChange: (pageNumber: number) => void;
 }
 
-export function DataTable<TData, TValue>({ columns, data, lable }: DataTableProps<TData, TValue>) {
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 8,
-  });
-  const route = useRouter();
+const PAGE_SIZE = 8;
+const DEFAULT_PAGE = 1;
+
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  lable,
+  isLoading,
+  onPageChange = (pageNumber: number) => {},
+}: DataTableProps<TData, TValue>) {
+  const [visibleTableData, setVisibleTableData] = useState<TData[]>(data);
+  const [currentPage, setCurrentPage] = useState<number>(DEFAULT_PAGE);
+
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+
+  const totalPages = Math.ceil(data.length / PAGE_SIZE);
+  // const [pagination, setPagination] = useState<PaginationState>({
+  //   pageIndex: 0,
+  //   pageSize: 8,
+  // });
+  // const route = useRouter();
   //   ? data.filter((item) => item.transactionType === selectedTransactionType)
   //   : data;
 
@@ -59,12 +79,25 @@ export function DataTable<TData, TValue>({ columns, data, lable }: DataTableProp
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
-    state: {
-      pagination,
-    },
+    // getPaginationRowModel: getPaginationRowModel(),
+    // onPaginationChange: setPagination,
+    // state: {
+    //   pagination,
+    // },
   });
+
+  useEffect(() => {
+    const visibleData = data.slice(startIndex, endIndex);
+    setVisibleTableData(visibleData);
+  }, [currentPage, data]);
+
+  const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  function handlePageChange(pageNumber: number) {
+    console.log(pageNumber);
+    setCurrentPage(pageNumber);
+    onPageChange(pageNumber);
+  }
 
   return (
     <div>
@@ -89,7 +122,13 @@ export function DataTable<TData, TValue>({ columns, data, lable }: DataTableProp
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="p-5">
+                  <Skeleton count={5} className="w-full" />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <DialogTableRow
                   key={row.id}
