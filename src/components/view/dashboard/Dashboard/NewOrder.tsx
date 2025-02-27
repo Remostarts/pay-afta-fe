@@ -11,7 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 export default function NewOrder({ onBack }: any) {
   const [activeTab, setActiveTab] = useState('buyer');
   return (
-    <section>
+    <section className=" bg-white p-5">
       <button onClick={onBack} className="mb-4 flex items-center text-gray-600 hover:text-gray-800">
         <span>
           <ChevronLeft />

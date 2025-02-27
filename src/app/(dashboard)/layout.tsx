@@ -18,7 +18,7 @@ export default function Layout({ children }: TChildrenProps) {
   const isDashboard = pathName.startsWith('/dashboard');
 
   return (
-    <div className="container mx-auto min-h-screen overflow-hidden">
+    <div className="flex h-screen flex-col overflow-hidden">
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} className="block lg:hidden" />
 
       {isSidebarOpen && (
@@ -29,24 +29,24 @@ export default function Layout({ children }: TChildrenProps) {
         />
       )}
 
-      <div className="flex h-screen">
+      <div className="flex flex-1 overflow-hidden">
         <div
           className={`
-            fixed left-0 top-0 lg:relative lg:block
-            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
-            z-50 h-full shadow-md transition-transform duration-300 ease-in-out
+            fixed left-0 top-0 z-50 h-full shadow-md transition-transform duration-300 ease-in-out
+            ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
+            lg:relative lg:block
           `}
         >
           {isAdminDashboard && <AdminSidebar onClose={() => setIsSidebarOpen(false)} />}
           {isDashboard && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
         </div>
 
-        <main className="flex-1 overflow-auto bg-gray-50 p-4 lg:p-6">
-          <div className="hidden lg:mb-4 lg:block">
+        <main className="flex-1 overflow-auto bg-gray-50">
+          <div className="hidden p-4 lg:block lg:p-6">
             {isDashboard && <ProfileHeader />}
             {isAdminDashboard && <AdminProfileHeader />}
           </div>
-          <div className="h-full">{children}</div>
+          <div className="w-full p-4">{children}</div>
         </main>
       </div>
     </div>

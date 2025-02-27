@@ -58,7 +58,7 @@ export default function RecentTransactions() {
               <div className="flex-1 space-y-1">
                 <div className="mb-2 flex items-center justify-between">
                   <h3 className="font-inter font-semibold">{service.transactionsType}</h3>
-                  <span className="font-inter text-2xl font-bold">{service.paymentAmount}</span>
+                  <span className="font-inter text-2xl font-semibold">{service.paymentAmount}</span>
                 </div>
                 <div className="mb-2 flex items-center justify-between">
                   <p className="mb-2 font-inter text-sm font-medium text-gray-600">

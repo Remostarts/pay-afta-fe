@@ -23,7 +23,7 @@ export default function Dashboard() {
 
   return (
     <section>
-      <div className="lg:m-6">
+      <div className="lg:m-4">
         <StatsSection />
       </div>
       <div className="lg:m-6">
