@@ -1,9 +1,11 @@
 'use client';
 
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
 import { set } from 'date-fns';
 
 import { Chat } from '@/types/chat.type';
+import { TUser } from '@/types/general.type';
+import { getErrorMessage } from '@/lib/responseError';
 
 type ChatData = Chat;
 
@@ -20,11 +22,13 @@ interface GeneralContextType {
   setClientId: (clientId: string) => void;
   amount: number;
   setAmount: (amount: number) => void;
+  user: TUser | null;
+  loadUserData: () => void;
 }
 
 const GeneralContext = createContext<GeneralContextType | undefined>(undefined);
 
-export function GeneralProvider({ children }: { children: ReactNode }) {
+export function GeneralProvider({ children, session }: { children: ReactNode; session: any }) {
   const [invoiceId, setInvoiceId] = useState<string>('');
   const [chatData, setChatData] = useState<ChatData>({} as ChatData);
   const [chatId, setChatId] = useState<string>('');
@@ -38,6 +42,30 @@ export function GeneralProvider({ children }: { children: ReactNode }) {
 
   const [amount, setAmount] = useState<number>(0);
   console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 amount🌼', amount);
+  const [user, setUser] = useState<TUser | null>(null);
+  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 user🌼', user);
+
+  const loadUserData = useCallback(async () => {
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-profile`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: session?.accessToken,
+        },
+        cache: 'no-store',
+      });
+
+      const data = await response.json();
+      setUser(data?.data);
+    } catch (error) {
+      getErrorMessage(error);
+    }
+  }, [session?.accessToken]);
+
+  useEffect(() => {
+    loadUserData();
+  }, [session, loadUserData]);
 
   return (
     <GeneralContext.Provider
@@ -54,6 +82,8 @@ export function GeneralProvider({ children }: { children: ReactNode }) {
         setClientId,
         amount,
         setAmount,
+        user,
+        loadUserData,
       }}
     >
       {children}

@@ -4,11 +4,26 @@ import * as z from 'zod';
 export const profileInformationSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
   lastName: z.string().min(1, 'Last name is required.'),
-  phoneNo: z.string().min(1, 'Phone number is required.'),
+  phone: z.string().min(1, 'Phone number is required.'),
   email: z.string().min(1, 'Email is required.'),
-  DOB: z.string().min(1, 'DOB is required.'),
+  dateOfBirth: z.union([
+    z.date(), // Accepts a Date object
+    z.string().min(1, 'DOB is required.'), // Accepts a non-empty string
+  ]),
   gender: z.string().min(1, 'Gender is required.'),
 });
+
+export const profileUpdateSchema = z.object({
+  firstName: z.string().min(1, 'First name is required.'),
+  lastName: z.string().min(1, 'Last name is required.'),
+  dateOfBirth: z.union([
+    z.date(), // Accepts a Date object
+    z.string().min(1, 'DOB is required.'), // Accepts a non-empty string
+  ]),
+  gender: z.string().min(1, 'Gender is required.'),
+});
+
+export type TProfileUpdate = z.infer<typeof profileUpdateSchema>;
 
 export type TProfileInformation = z.infer<typeof profileInformationSchema>;
 

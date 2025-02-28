@@ -27,7 +27,10 @@ import {
   profileInformationSchema,
   TChangePassInputs,
   TProfileInformation,
+  TProfileUpdate,
 } from '@/lib/validations/setting.validation';
+import { useGeneral } from '@/context/generalProvider';
+import { userProfileUpdate } from '@/lib/actions/root/user.action';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,100}$/;
 
@@ -37,21 +40,22 @@ const defaultValues = {
   confirmNewPassword: '',
 };
 
-const defaultValuesOfprofileInformation = {
-  firstName: '',
-  lastName: '',
-  phoneNo: '',
-  email: '',
-  DOB: '',
-  gender: '',
-};
-
 export default function Profile() {
+  const { user, loadUserData } = useGeneral();
   const changePasswordForm = useForm<TChangePassInputs>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues,
     mode: 'onChange',
   });
+
+  const defaultValuesOfprofileInformation = {
+    firstName: user?.firstName || '',
+    lastName: user?.lastName || '',
+    phone: user?.phone || '',
+    email: user?.email || '',
+    dateOfBirth: user?.profile?.dateOfBirth || '',
+    gender: user?.profile?.gender || '',
+  };
 
   const profileInformationForm = useForm<TProfileInformation>({
     resolver: zodResolver(profileInformationSchema),
@@ -71,8 +75,43 @@ export default function Profile() {
   const { isSubmitting: profileIsSubmitting } = profileFormState;
 
   // profile info submitHandler
-  const handleProfileSubmitForm = (data: TProfileInformation) => {
+  const handleProfileSubmitForm = async (data: TProfileInformation) => {
     console.log(data);
+    const modifiedData: TProfileUpdate = {
+      dateOfBirth: data?.dateOfBirth,
+      firstName: data?.firstName,
+      lastName: data?.lastName,
+      gender: data?.gender,
+    };
+    try {
+      const response = await userProfileUpdate(modifiedData);
+      console.log(
+        '🌼 🔥🔥 constonSubmit:SubmitHandler<TChangePassInputs>= 🔥🔥 response🌼',
+        response
+      );
+
+      if (response.success) {
+        toast.success('profile updated successfully');
+        // Reset form or redirect user as needed
+        // profileInformationForm.reset();
+        loadUserData();
+      } else {
+        // toast({
+        //   title: 'Error',
+        //   description: response.error || 'Failed to change password',
+        //   variant: 'destructive',
+        // });
+        toast.error(response.error || 'Failed to update profile');
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      // toast({
+      //   title: 'Error',
+      //   description: 'An unexpected error occurred',
+      //   variant: 'destructive',
+      // });
+      toast.error('An unexpected error occurred');
+    }
   };
 
   // change password submithandler
@@ -137,12 +176,12 @@ export default function Profile() {
               </div>
               <div className="col-span-2">
                 <ReInput
-                  {...profileFormRegister('phoneNo')}
+                  {...profileFormRegister('phone')}
                   type="number"
-                  name="phoneNo"
+                  name="phone"
                   label="Phone Number"
                   placeholder="+234-9033-2314-423"
-                  /* readonly={true} */
+                  readonly={true}
                 />
               </div>
               <div className="col-span-2">
@@ -150,15 +189,17 @@ export default function Profile() {
                   {...profileFormRegister('email')}
                   name="email"
                   label="Email"
+                  type="email"
                   placeholder="Kelly.Heller@gmail.com"
-                  /* readonly={true} */
+                  readonly={true}
                 />
               </div>
               <div className="grid gap-4 lg:grid-cols-2">
                 <div>
                   <ReInput
-                    {...profileFormRegister('DOB')}
-                    name="DOB"
+                    {...profileFormRegister('dateOfBirth')}
+                    name="dateOfBirth"
+                    type="date"
                     label="Date of Birth"
                     placeholder="12/04/2024" /* readonly={true} */
                   />

@@ -1,11 +1,14 @@
-import type { Metadata } from 'next';
 import '../styles/globals.css';
-import { Inter, Playfair } from 'next/font/google';
-import { Toaster } from 'sonner';
 // import { FormProvider } from 'react-hook-form';
+
+import { getServerSession } from 'next-auth';
+import type { Metadata } from 'next';
+import { Toaster } from 'sonner';
+import { Inter, Playfair } from 'next/font/google';
 
 import { TChildrenProps } from '@/types';
 import Providers from '@/context/Providers';
+import { authOptions } from '@/lib/AuthOptions';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -30,12 +33,14 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: TChildrenProps) {
+export default async function RootLayout({ children }: TChildrenProps) {
+  const session = (await getServerSession(authOptions)) as any;
+  console.log('🌼 🔥🔥 RootLayout 🔥🔥 session🌼', session);
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={` ${(inter.variable, playfair.variable)}  `}>
         {/* <FormProvider> */}
-        <Providers>
+        <Providers session={session}>
           <div>{children}</div>
           <Toaster
             richColors
