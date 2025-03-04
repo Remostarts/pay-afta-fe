@@ -44,7 +44,7 @@ interface DataTableProps<TData extends { transactionType: string }, TValue> {
   data: TData[];
   lable: string;
   isLoading: boolean;
-  onPageChange: (pageNumber: number) => void;
+  onPageChange: (pageNumber: number, transactionType: string) => void;
 }
 
 const PAGE_SIZE = 8;
@@ -55,7 +55,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
   data,
   lable,
   isLoading,
-  onPageChange = (pageNumber: number) => {},
+  onPageChange,
 }: DataTableProps<TData, TValue>) {
   const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
   const route = useRouter();
@@ -101,15 +101,17 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
     setVisibleTableData(visibleData);
   }, [currentPage, data]);
 
+  useEffect(() => {
+    handlePageChange(currentPage, selectedTransactionType || 'All');
+  }, [currentPage, selectedTransactionType]);
+
   const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
 
-  function handlePageChange(pageNumber: number) {
-    console.log(pageNumber);
-    setCurrentPage(pageNumber);
-    onPageChange(pageNumber);
+  function handlePageChange(pageNumber: number, transactionType: string) {
+    // console.log(pageNumber);
+    // setCurrentPage(pageNumber);
+    onPageChange(pageNumber, transactionType);
   }
-  // console.log(pageNumberButtons);
-  // console.log(isLoading);
 
   return (
     <div>
@@ -184,7 +186,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
           <Button
             variant="outline"
             size="icon"
-            onClick={() => handlePageChange(currentPage - 1)}
+            onClick={() => setCurrentPage(currentPage - 1)}
             disabled={currentPage === 1}
           >
             <ChevronLeftIcon className="size-4" />
@@ -196,7 +198,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
                 variant="outline"
                 size="sm"
                 className={currentPage === pageNumber ? 'bg-[#E6E7FE] text-black' : ''}
-                onClick={() => handlePageChange(pageNumber)}
+                onClick={() => setCurrentPage(pageNumber)}
               >
                 {pageNumber}
               </Button>
@@ -205,7 +207,7 @@ export function DataTable<TData extends { transactionType: string }, TValue>({
           <Button
             variant="outline"
             size="icon"
-            onClick={() => handlePageChange(currentPage + 1)}
+            onClick={() => setCurrentPage(currentPage + 1)}
             disabled={currentPage === totalPages}
           >
             <ChevronRightIcon className="size-4" />
