@@ -128,9 +128,9 @@ export default function Transcations() {
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  function handlePageChange(pageNumber: any) {
+  function handlePageChange(pageNumber: number, transactionType: string) {
     try {
-      console.log(pageNumber);
+      console.log('page no., ', pageNumber, ' transaction type, ', transactionType);
       setTimeout(() => {
         setData(tData);
         setIsLoading(false);
@@ -142,7 +142,7 @@ export default function Transcations() {
   }
 
   useEffect(() => {
-    handlePageChange(1);
+    handlePageChange(1, 'All');
   }, []);
 
   return (
