@@ -1,7 +1,7 @@
 'use client';
 
 import { useForm } from 'react-hook-form';
-import { CirclePlus, Trash2 } from 'lucide-react';
+import { CirclePlus, Loader, LoaderCircle, Trash2 } from 'lucide-react';
 import { useState } from 'react';
 import { zodResolver } from '@hookform/resolvers/zod';
 
@@ -59,15 +59,19 @@ const defaultValues: defaultVal = {
 export default function PaymentBuyer() {
   const [isItem2Show, setIsItem2Show] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<string>('');
+  const [isLodingEmail, setIsLoadingEmail] = useState<boolean>(false);
+  const [isEmailExist, setIsEmailExist] = useState<boolean>(false);
+
   const form = useForm<TPaymentBuyer>({
-    resolver: zodResolver(paymentBuyerSchema),
+    resolver: zodResolver(paymentBuyerSchema(setIsLoadingEmail, setIsEmailExist)),
     defaultValues,
     mode: 'onChange',
     context: { paymentType },
+    reValidateMode: 'onChange',
   });
 
-  const { formState, handleSubmit } = form;
-  const { isValid, isSubmitting } = formState;
+  const { formState, handleSubmit, register } = form;
+  const { isValid, isSubmitting, errors } = formState;
 
   function handleClickGetItem2() {
     setIsItem2Show(true);
@@ -107,7 +111,19 @@ export default function PaymentBuyer() {
                 size={'base'}
                 className=" text-gray-700"
               />
-              <ReInput name="buyerEmailPhoneNo" />
+              <input
+                {...register('buyerEmailPhoneNo')}
+                className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+              />
+              {isLodingEmail ? (
+                <LoaderCircle className="size-5 animate-spin" />
+              ) : isEmailExist ? (
+                <p className="text-base font-normal text-green-500">Email is registered</p>
+              ) : errors.buyerEmailPhoneNo ? (
+                <p className="text-base font-normal text-red-500">
+                  {errors.buyerEmailPhoneNo.message}
+                </p>
+              ) : null}
             </div>
           </div>
           <div className="grid gap-5 lg:grid-cols-2">
@@ -220,6 +236,7 @@ export default function PaymentBuyer() {
               className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
               type="submit"
               isSubmitting={isSubmitting}
+              disabled={!isEmailExist}
             >
               Create Order
             </ReButton>

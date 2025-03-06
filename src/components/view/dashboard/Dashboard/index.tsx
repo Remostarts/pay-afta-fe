@@ -14,7 +14,7 @@ export default function Dashboard() {
   if (showNewOrder) {
     return (
       <section>
-        <div className="lg:m-6">
+        <div>
           <NewOrder onBack={() => setShowNewOrder(false)} />
         </div>
       </section>

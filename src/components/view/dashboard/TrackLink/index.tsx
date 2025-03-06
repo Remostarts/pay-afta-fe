@@ -124,23 +124,6 @@ export default function TrackLink() {
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  function handlePageChange(pageNumber: any) {
-    try {
-      console.log(pageNumber);
-      setTimeout(() => {
-        setData(tData);
-        setIsLoading(false);
-      }, 5000);
-    } catch (error) {
-      console.log(error);
-      setIsLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    handlePageChange(1);
-  }, []);
-
   const columns: ColumnDef<Payment>[] = [
     {
       accessorKey: 'date',
@@ -179,6 +162,23 @@ export default function TrackLink() {
       ),
     },
   ];
+
+  function handlePageChange(pageNumber: number, transactionType: string, status: string) {
+    try {
+      console.log('page no.', pageNumber, ' transaction type ', transactionType, 'status', status);
+      setTimeout(() => {
+        setData(tData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange(1, 'All', 'All');
+  }, []);
 
   const handleViewTransaction = (p0: boolean) => {
     // console.log(transaction);
