@@ -7,6 +7,7 @@ import { FormProvider, useForm } from 'react-hook-form';
 
 import { OtpProvider } from './OtpProvider';
 import { GeneralProvider } from './generalProvider';
+import { ChatProvider } from './ChatProvider';
 
 import { Toaster } from '@/components/ui/toaster';
 import { store } from '@/redux/store';
@@ -18,20 +19,22 @@ const Providers = ({ children, session }: { children: ReactNode; session: any })
     <div>
       <Provider store={store}>
         <GeneralProvider session={session}>
-          <FormProvider {...methods}>
-            <OtpProvider>
-              <NextThemesProvider
-                attribute="class"
-                forcedTheme="light"
-                defaultTheme="light"
-                disableTransitionOnChange
-              >
-                {children}
+          <ChatProvider>
+            <FormProvider {...methods}>
+              <OtpProvider>
+                <NextThemesProvider
+                  attribute="class"
+                  forcedTheme="light"
+                  defaultTheme="light"
+                  disableTransitionOnChange
+                >
+                  {children}
 
-                <Toaster />
-              </NextThemesProvider>
-            </OtpProvider>
-          </FormProvider>
+                  <Toaster />
+                </NextThemesProvider>
+              </OtpProvider>
+            </FormProvider>
+          </ChatProvider>
         </GeneralProvider>
       </Provider>
     </div>
