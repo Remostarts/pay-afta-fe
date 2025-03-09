@@ -96,7 +96,8 @@ const checkEmailExists = async (email: string) => {
 // NewOrder schema
 export const newOrderSchema = (
   setLoading: (loading: boolean) => void,
-  setIsEmailExist: Dispatch<SetStateAction<boolean>>,
+  setBuyerEmailValid: Dispatch<SetStateAction<boolean>>,
+  setSellerEmailValid: Dispatch<SetStateAction<boolean>>,
   activeTab: string
 ) => {
   // Create common schema fields
@@ -117,57 +118,92 @@ export const newOrderSchema = (
     milestone2: z.string().optional(),
     milestone2DeliveryDate: z.coerce.date().optional(),
     milestone2Amount: z.string().optional(),
+    milestone3: z.string().optional(),
+    milestone3DeliveryDate: z.coerce.date().optional(),
+    milestone3Amount: z.string().optional(),
     transactionFee: z.string().min(1, 'Transaction Fee is required.'),
   };
 
-  // Email validation function (reused for both buyer and seller)
-  const createEmailValidator = (fieldName: string) =>
-    z
-      .string()
-      .min(1, `${activeTab === 'buyer' ? 'Buyer' : 'Seller'} email or phone number required.`)
-      .superRefine(async (email, ctx) => {
-        try {
+  // Buyer email validation function
+  const buyerEmailValidator = z
+    .string()
+    .min(1, 'Buyer email or phone number required.')
+    .superRefine(async (email, ctx) => {
+      try {
+        if (activeTab === 'buyer') {
           setLoading(true);
           const exists = await checkEmailExists(email);
           setLoading(false);
 
           if (exists) {
             // Email exists - we'll treat this as success
-            setIsEmailExist(true);
+            setBuyerEmailValid(true);
             return true;
           } else {
             // Email doesn't exist - add an issue (error)
-            setIsEmailExist(false);
+            setBuyerEmailValid(false);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               message: 'Email is not registered',
             });
             return false;
           }
-        } catch (error) {
-          setLoading(false);
-          ctx.addIssue({
-            code: z.ZodIssueCode.custom,
-            message: 'Error checking email',
-          });
-          return false;
         }
-      });
+        return true;
+      } catch (error) {
+        setLoading(false);
+        setBuyerEmailValid(false);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Error checking email',
+        });
+        return false;
+      }
+    });
 
-  // Create different schemas based on active tab
-  if (activeTab === 'buyer') {
-    return z.object({
-      ...baseSchema,
-      buyerEmailPhoneNo: createEmailValidator('buyerEmailPhoneNo'),
-      sellerEmailPhoneNo: z.string().optional(),
+  // Seller email validation function
+  const sellerEmailValidator = z
+    .string()
+    .min(1, 'Seller email or phone number required.')
+    .superRefine(async (email, ctx) => {
+      try {
+        if (activeTab === 'seller') {
+          setLoading(true);
+          const exists = await checkEmailExists(email);
+          setLoading(false);
+
+          if (exists) {
+            // Email exists - we'll treat this as success
+            setSellerEmailValid(true);
+            return true;
+          } else {
+            // Email doesn't exist - add an issue (error)
+            setSellerEmailValid(false);
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Email is not registered',
+            });
+            return false;
+          }
+        }
+        return true;
+      } catch (error) {
+        setLoading(false);
+        setSellerEmailValid(false);
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Error checking email',
+        });
+        return false;
+      }
     });
-  } else {
-    return z.object({
-      ...baseSchema,
-      buyerEmailPhoneNo: z.string().optional(),
-      sellerEmailPhoneNo: createEmailValidator('sellerEmailPhoneNo'),
-    });
-  }
+
+  // Return complete schema
+  return z.object({
+    ...baseSchema,
+    buyerEmailPhoneNo: buyerEmailValidator,
+    sellerEmailPhoneNo: sellerEmailValidator,
+  });
 };
 
 export type TNewOrder = z.infer<ReturnType<typeof newOrderSchema>>;
