@@ -16,74 +16,99 @@ interface ChatListContextType {
   chats: Chat[];
   addChat: (chat: Omit<Chat, 'id'>) => string;
   session: any;
-  loadChats: () => Promise<void>;
+  // loadChats: () => Promise<void>;
   onlineUsers: OnlineUsers;
 }
 
 const ChatListContext = createContext<ChatListContextType | undefined>(undefined);
 
+const initialChats = [
+  { id: '1', title: 'Company Registration', status: 'completed', user: 'Anthony V', online: true },
+  { id: '2', title: 'Trade Mark Registration', status: 'active', user: 'Anthony V', online: false },
+  { id: '3', title: 'Founders Agreement', status: 'completed', user: 'Anthony V', online: false },
+  { id: '4', title: 'Employment Agreement', status: 'active', user: 'Anthony V', online: true },
+  {
+    id: '5',
+    title: 'Non-Disclosure Agreement',
+    status: 'completed',
+    user: 'Anthony V',
+    online: false,
+  },
+] as const;
+
 export function ChatListProvider({ children, session }: { children: ReactNode; session: any }) {
   console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 session🌼', session);
 
-  const [chats, setChats] = useState<Chat[]>([]);
+  // const [chats, setChats] = useState<Chat[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUsers>({});
   const { socket } = useSocket();
-
-  const loadChats = useCallback(async () => {
-    try {
-      const response = await fetch(`${process.env.BACKEND_URL}/chat/get-by-participant`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: session?.accessToken,
-        },
-        cache: 'no-store',
-      });
-
-      const data = await response.json();
-      console.log('🌼 🔥🔥 loadChats 🔥🔥 data🌼', data?.data);
-      setChats(data?.data);
-    } catch (error) {
-      console.log('🌼 🔥🔥 partialSignup 🔥🔥 error🌼', error);
-
-      getErrorMessage(error);
+  const [chats, setChats] = useState<Chat[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedChats = localStorage.getItem('chats');
+      return savedChats ? JSON.parse(savedChats) : initialChats;
     }
-  }, [session?.accessToken]);
+    return initialChats;
+  });
 
   useEffect(() => {
-    loadChats();
-  }, [session, socket, loadChats]);
+    localStorage.setItem('chats', JSON.stringify(chats));
+  }, [chats]);
 
-  useEffect(() => {
-    if (socket) {
-      const handleReceiveOnlineUser = (data: OnlineUsers) => {
-        console.log('🌼 🔥🔥 handleReceiveOnlineUser 🔥🔥 data🌼', data);
-        setOnlineUsers(data);
-      };
+  // const loadChats = useCallback(async () => {
+  //   try {
+  //     const response = await fetch(`${process.env.BACKEND_URL}/chat/get-by-participant`, {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         Authorization: session?.accessToken,
+  //       },
+  //       cache: 'no-store',
+  //     });
 
-      socket.on('update_online_users', handleReceiveOnlineUser);
+  //     const data = await response.json();
+  //     console.log('🌼 🔥🔥 loadChats 🔥🔥 data🌼', data?.data);
+  //     setChats(data?.data);
+  //   } catch (error) {
+  //     console.log('🌼 🔥🔥 partialSignup 🔥🔥 error🌼', error);
 
-      // Cleanup event listeners when component unmounts or socket changes
-      return () => {
-        socket.off('update_online_users');
-      };
-    }
-  }, [socket]);
+  //     getErrorMessage(error);
+  //   }
+  // }, [session?.accessToken]);
 
-  useEffect(() => {
-    if (socket) {
-      const handleReceiveChatCreated = () => {
-        // console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
-        loadChats();
-      };
-      socket.on('receive_chat_created', handleReceiveChatCreated);
+  // useEffect(() => {
+  //   loadChats();
+  // }, [session, socket, loadChats]);
 
-      // Cleanup event listeners when component unmounts or socket changes
-      return () => {
-        socket.off('receive_chat_created');
-      };
-    }
-  }, [socket, loadChats]);
+  // useEffect(() => {
+  //   if (socket) {
+  //     const handleReceiveOnlineUser = (data: OnlineUsers) => {
+  //       console.log('🌼 🔥🔥 handleReceiveOnlineUser 🔥🔥 data🌼', data);
+  //       setOnlineUsers(data);
+  //     };
+
+  //     socket.on('update_online_users', handleReceiveOnlineUser);
+
+  //     // Cleanup event listeners when component unmounts or socket changes
+  //     return () => {
+  //       socket.off('update_online_users');
+  //     };
+  //   }
+  // }, [socket]);
+
+  // useEffect(() => {
+  //   if (socket) {
+  //     const handleReceiveChatCreated = () => {
+  //       // console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
+  //       loadChats();
+  //     };
+  //     socket.on('receive_chat_created', handleReceiveChatCreated);
+
+  //     // Cleanup event listeners when component unmounts or socket changes
+  //     return () => {
+  //       socket.off('receive_chat_created');
+  //     };
+  //   }
+  // }, [socket, loadChats]);
 
   // useEffect(() => {
   //   localStorage.setItem('chats', JSON.stringify(chats));
@@ -97,7 +122,7 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
   };
 
   return (
-    <ChatListContext.Provider value={{ chats, addChat, session, loadChats, onlineUsers }}>
+    <ChatListContext.Provider value={{ chats, addChat, session, onlineUsers }}>
       {children}
     </ChatListContext.Provider>
   );

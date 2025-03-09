@@ -6,6 +6,7 @@ import { Provider } from 'react-redux';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { OtpProvider } from './OtpProvider';
+import { ChatProvider } from './ChatProvider';
 
 import { Toaster } from '@/components/ui/toaster';
 import { store } from '@/redux/store';
@@ -16,20 +17,22 @@ const Providers = ({ children }: { children: ReactNode }) => {
   return (
     <div>
       <Provider store={store}>
-        <FormProvider {...methods}>
-          <OtpProvider>
-            <NextThemesProvider
-              attribute="class"
-              forcedTheme="light"
-              defaultTheme="light"
-              disableTransitionOnChange
-            >
-              {children}
+        <ChatProvider>
+          <FormProvider {...methods}>
+            <OtpProvider>
+              <NextThemesProvider
+                attribute="class"
+                forcedTheme="light"
+                defaultTheme="light"
+                disableTransitionOnChange
+              >
+                {children}
 
-              <Toaster />
-            </NextThemesProvider>
-          </OtpProvider>
-        </FormProvider>
+                <Toaster />
+              </NextThemesProvider>
+            </OtpProvider>
+          </FormProvider>
+        </ChatProvider>
       </Provider>
     </div>
   );
