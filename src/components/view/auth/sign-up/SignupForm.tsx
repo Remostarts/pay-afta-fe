@@ -19,6 +19,7 @@ import { Form } from '@/components/ui/form';
 import { useOtp } from '@/context/OtpProvider';
 import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
+import { ReCheckBox } from '@/components/re-ui/re-checkbox/ReCheckBox';
 
 type defaultVal = {
   firstName: string;
@@ -42,6 +43,7 @@ export default function SignupForm() {
   const pathname = usePathname();
   const role = pathname?.split('/')[2];
   const date = new Date().toDateString();
+  const [isChecked, setIsChecked] = useState<boolean>(false);
   //   console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
 
   const router = useRouter();
@@ -118,12 +120,30 @@ export default function SignupForm() {
               <ReHeading heading="Confirm Password" size={'base'} />
               <RePassInput name="confirmPassword" />
             </div>
+            <div>
+              <input type="checkbox" name="" onChange={() => setIsChecked(!isChecked)} />
+              <span>
+                You agree to the{' '}
+                <Link href="terms-and-condition" className="text-blue-700">
+                  terms and conditions
+                </Link>{' '}
+                and acknowledge the{' '}
+                <Link href="privacy-policy" className="text-blue-700">
+                  privacy policy
+                </Link>{' '}
+                and{' '}
+                <Link href="refund-policy" className="text-blue-700">
+                  refund policy
+                </Link>
+              </span>
+            </div>
           </div>
           <div className="grid pt-2">
             <ReButton
               className="w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
               type="submit"
               isSubmitting={isSubmitting}
+              disabled={!isChecked}
             >
               Create Account
             </ReButton>
