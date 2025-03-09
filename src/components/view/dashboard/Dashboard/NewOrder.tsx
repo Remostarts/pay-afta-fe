@@ -1,12 +1,9 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronLeft, CirclePlus, Loader, LoaderCircle, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-
-import PaymentBuyer from './PaymentBuyer';
-import PaymentSeller from './PaymentSeller';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
@@ -39,6 +36,9 @@ type defaultVal = {
   milestone2: string;
   milestone2DeliveryDate: Date;
   milestone2Amount: string;
+  milestone3: string;
+  milestone3DeliveryDate: Date;
+  milestone3Amount: string;
   transactionFee: string;
 };
 
@@ -61,6 +61,9 @@ const defaultValues: defaultVal = {
   milestone2: '',
   milestone2DeliveryDate: new Date(),
   milestone2Amount: '',
+  milestone3: '',
+  milestone3DeliveryDate: new Date(),
+  milestone3Amount: '',
   transactionFee: '',
 };
 
@@ -69,25 +72,42 @@ export default function NewOrder({ onBack }: any) {
   const [isItem2Show, setIsItem2Show] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<string>('');
   const [isLoadingEmail, setIsLoadingEmail] = useState<boolean>(false);
-  const [isEmailExist, setIsEmailExist] = useState<boolean>(false);
+  const [isBuyerEmailValid, setIsBuyerEmailValid] = useState<boolean>(false);
+  const [isSellerEmailValid, setIsSellerEmailValid] = useState<boolean>(false);
   const [isMilestone2Show, setIsMilestone2Show] = useState<boolean>(false);
+  const [isMilestone3Show, setIsMilestone3Show] = useState<boolean>(false);
 
   const form = useForm<TNewOrder>({
-    resolver: zodResolver(newOrderSchema(setIsLoadingEmail, setIsEmailExist, activeTab)),
+    resolver: zodResolver(
+      newOrderSchema(setIsLoadingEmail, setIsBuyerEmailValid, setIsSellerEmailValid, activeTab)
+    ),
     defaultValues,
     mode: 'onChange',
     context: { paymentType, activeTab },
     reValidateMode: 'onChange',
   });
 
-  const { formState, handleSubmit, register, reset } = form;
+  const { formState, handleSubmit, register, reset, watch, setValue } = form;
   const { isValid, isSubmitting, errors } = formState;
 
-  // Reset form validation when tab changes
+  // Watch the buyer email field to detect changes
+  const buyerEmail = watch('buyerEmailPhoneNo');
+  const sellerEmail = watch('sellerEmailPhoneNo');
+
+  // Auto-switch to seller tab when buyer email is validated
+  useEffect(() => {
+    if (isBuyerEmailValid && activeTab === 'buyer') {
+      // Add a small delay to show the success message before switching
+      const timer = setTimeout(() => {
+        setActiveTab('seller');
+      }, 1000);
+      return () => clearTimeout(timer);
+    }
+  }, [isBuyerEmailValid, activeTab]);
+
+  // Handle tab change
   const handleTabChange = (value: string) => {
     setActiveTab(value);
-    setIsEmailExist(false);
-    reset({ ...form.getValues(), buyerEmailPhoneNo: '', sellerEmailPhoneNo: '' });
   };
 
   function handleClickGetItem2() {
@@ -102,8 +122,16 @@ export default function NewOrder({ onBack }: any) {
     setIsMilestone2Show(true);
   }
 
+  function handleClickGetMilestone3() {
+    setIsMilestone3Show(true);
+  }
+
   function handleClickRemoveMilestone2() {
     setIsMilestone2Show(false);
+  }
+
+  function handleClickRemoveMilestone3() {
+    setIsMilestone3Show(false);
   }
 
   function handleChangePaymentType(e: string) {
@@ -114,6 +142,9 @@ export default function NewOrder({ onBack }: any) {
     console.log(data);
   }
 
+  // Check if form can be submitted
+  const canSubmit = isBuyerEmailValid && isSellerEmailValid;
+
   return (
     <section className="bg-white p-5">
       <button
@@ -123,7 +154,7 @@ export default function NewOrder({ onBack }: any) {
         <ChevronLeft className="size-5" />
         <span className="text-lg">Create Payment Order</span>
       </button>
-      <Tabs defaultValue="buyer" className="bg-white" onValueChange={handleTabChange}>
+      <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
         <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
           <TabsTrigger
             value="buyer"
@@ -140,16 +171,11 @@ export default function NewOrder({ onBack }: any) {
               rounded-full px-6 py-3 text-base font-medium transition-all
               ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
             `}
+            disabled={!isBuyerEmailValid}
           >
             Seller
           </TabsTrigger>
         </TabsList>
-        {/* <TabsContent value="buyer">
-          <PaymentBuyer />
-        </TabsContent>
-        <TabsContent value="seller">
-          <PaymentSeller />
-        </TabsContent> */}
       </Tabs>
       <div>
         <Form {...form}>
@@ -179,11 +205,16 @@ export default function NewOrder({ onBack }: any) {
                       className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     {isLoadingEmail ? (
-                      <LoaderCircle className="size-5 animate-spin" />
-                    ) : isEmailExist ? (
-                      <p className="text-base font-normal text-green-500">Email is registered</p>
+                      <div className="mt-1 flex items-center">
+                        <LoaderCircle className="mr-2 size-4 animate-spin" />
+                        <span className="text-sm text-gray-500">Verifying email...</span>
+                      </div>
+                    ) : isBuyerEmailValid ? (
+                      <p className="mt-1 text-sm font-normal text-green-500">
+                        ✓ Email verified - You&apos;ll be moved to seller section
+                      </p>
                     ) : errors.buyerEmailPhoneNo ? (
-                      <p className="text-base font-normal text-red-500">
+                      <p className="mt-1 text-sm font-normal text-red-500">
                         {errors.buyerEmailPhoneNo.message}
                       </p>
                     ) : null}
@@ -200,11 +231,14 @@ export default function NewOrder({ onBack }: any) {
                       className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                     />
                     {isLoadingEmail ? (
-                      <LoaderCircle className="size-5 animate-spin" />
-                    ) : isEmailExist ? (
-                      <p className="text-base font-normal text-green-500">Email is registered</p>
+                      <div className="mt-1 flex items-center">
+                        <LoaderCircle className="mr-2 size-4 animate-spin" />
+                        <span className="text-sm text-gray-500">Verifying email...</span>
+                      </div>
+                    ) : isSellerEmailValid ? (
+                      <p className="mt-1 text-sm font-normal text-green-500">✓ Email verified</p>
                     ) : errors.sellerEmailPhoneNo ? (
-                      <p className="text-base font-normal text-red-500">
+                      <p className="mt-1 text-sm font-normal text-red-500">
                         {errors.sellerEmailPhoneNo.message}
                       </p>
                     ) : null}
@@ -212,6 +246,26 @@ export default function NewOrder({ onBack }: any) {
                 )}
               </div>
             </div>
+
+            {/* Summary of validated emails
+            {(isBuyerEmailValid || isSellerEmailValid) && (
+              <div className="my-4 rounded-md border border-gray-200 bg-gray-50 p-3">
+                <h3 className="mb-2 font-medium text-gray-700">Participants</h3>
+                {isBuyerEmailValid && (
+                  <div className="mb-1 flex items-center">
+                    <span className="mr-2 text-green-500">✓</span>
+                    <span className="text-sm">Buyer: {buyerEmail}</span>
+                  </div>
+                )}
+                {isSellerEmailValid && (
+                  <div className="flex items-center">
+                    <span className="mr-2 text-green-500">✓</span>
+                    <span className="text-sm">Seller: {sellerEmail}</span>
+                  </div>
+                )}
+              </div>
+            )} */}
+
             <div>
               <ReHeading heading="Item 1" size={'base'} className="text-gray-700" />
               <ReInput name="item1Name" placeholder="Enter Name" />
@@ -300,8 +354,31 @@ export default function NewOrder({ onBack }: any) {
                       />
                       <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
                     </div>
+                    <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                      <div className="flex gap-2">
+                        <CirclePlus onClick={handleClickGetMilestone3} />
+                        <span className="font-inter">Add more</span>
+                      </div>
+                      <div className="flex gap-2">
+                        <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
+                        <span className="font-inter text-[#d73737]">Delete</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {isMilestone3Show && (
+                  <div>
+                    <ReHeading heading="Milestone 3" size={'base'} className="text-gray-700" />
+                    <ReInput name="milestone3" placeholder="Describe deliverable" />
+                    <div className="grid lg:grid-cols-2 lg:gap-5">
+                      <ReDatePicker
+                        name="milestone3DeliveryDate"
+                        placeholder="Select delivery date"
+                      />
+                      <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
+                    </div>
                     <div className="flex w-full cursor-pointer items-center gap-2">
-                      <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
+                      <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
                       <span className="font-inter text-[#d73737]">Delete</span>
                     </div>
                   </div>
@@ -334,7 +411,7 @@ export default function NewOrder({ onBack }: any) {
                 className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
                 type="submit"
                 isSubmitting={isSubmitting}
-                disabled={!isEmailExist}
+                disabled={!canSubmit}
               >
                 Create Order
               </ReButton>
