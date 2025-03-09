@@ -51,6 +51,8 @@ export interface Message {
   senderId: string;
   chatId?: string;
   read?: string;
+  time: string;
+  sender: 'user' | 'receiver';
 }
 
 type Lawyer = {
@@ -67,12 +69,15 @@ type Participant = {
 
 export type Chat = {
   id: string;
-  name: string;
-  participants: Participant[];
-  status: 'active' | 'completed' | 'canceled'; // Assuming "Inactive" as another possible status
-  messages: Message[];
-  createdAt: string; // ISO timestamp
-  updatedAt: string; // ISO timestamp
+  name?: string;
+  title?: string;
+  user?: string;
+  online?: boolean;
+  participants?: Participant[];
+  status?: 'active' | 'completed' | 'canceled'; // Assuming "Inactive" as another possible status
+  messages?: Message[];
+  createdAt?: string; // ISO timestamp
+  updatedAt?: string; // ISO timestamp
 };
 
 export interface MediaItems {
