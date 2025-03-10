@@ -7,26 +7,18 @@ import { userRoles } from './constants/shared';
 const { ADMIN, USER } = userRoles;
 console.log(process.env.BACKEND_URL);
 
-const hybridRoutes = [
-  '/',
-  '/sign-in',
-  '/sign-in/admin',
-  // '/sign-in/lawyer',
-  '/sign-up',
-  '/sign-up/admin',
+const hybridRoutes = ['/', '/sign-in', '/sign-in/admin', '/sign-up', '/sign-up/admin'];
 
-  // '/sign-up/lawyer/lawyers',
-  // '/sign-up/lawyer/law-student',
-];
-const rolesRedirect: Record<string, unknown> = {
+const rolesRedirect: Record<string, string> = {
   user: `${process.env.FRONTEND_URL}/dashboard`,
-
   admin: `${process.env.FRONTEND_URL}/admin`,
 };
+
 export async function middleware(request: NextRequest) {
   const token = await getToken({ req: request });
   console.log('🌼 🔥🔥 middleware 🔥🔥 token🌼', token);
   const { pathname } = request.nextUrl;
+
   if (!token) {
     if (hybridRoutes.includes(pathname)) {
       return NextResponse.next();
@@ -37,6 +29,17 @@ export async function middleware(request: NextRequest) {
   const role = token?.role as string;
   console.log('🌼 🔥🔥 middleware 🔥🔥 role🌼', role);
 
+  if (!role) {
+    return NextResponse.redirect(`${process.env.FRONTEND_URL}/sign-in`);
+  }
+
+  // Redirect authenticated users away from `/sign-in` to their dashboard
+  if (pathname === '/' || pathname.startsWith('/sign-in')) {
+    if (role in rolesRedirect) {
+      return NextResponse.redirect(rolesRedirect[role]);
+    }
+  }
+
   if (
     (role === ADMIN && pathname.startsWith('/admin')) ||
     (role === USER && pathname.startsWith('/dashboard'))
@@ -44,31 +47,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  if (pathname === '/' && role && role in rolesRedirect) {
-    return NextResponse.redirect(rolesRedirect[role] as string);
-  }
-
-  // NextResponse.rewrite(request.
-  NextResponse.rewrite(`${process.env.FRONTEND_URL}/sign-in`);
-
   return NextResponse.redirect(`${process.env.FRONTEND_URL}`);
 }
 
-// See "Matching Paths" below to learn more
-
 export const config = {
-  matcher: [
-    // hybrid routes
-    '/',
-    '/sign-in/:page',
-    '/sign-up/:page',
-    // business routes
-    '/dashboard/:page*',
-
-    // lawyer routes
-    // '/lawyer/:page',
-
-    // admin routes
-    '/admin/:page*',
-  ],
+  matcher: ['/', '/sign-in/:page*', '/sign-up/:page*', '/dashboard/:page*', '/admin/:page*'],
 };
