@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { ChevronLeft, CirclePlus, Loader, LoaderCircle, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { toast } from 'sonner';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
@@ -15,7 +16,14 @@ import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import ReRadioGroup from '@/components/re-ui/ReRadio';
 import ReDatePicker from '@/components/re-ui/ReDatePicker';
 import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
-import { newOrderSchema, TNewOrder } from '@/lib/validations/newOrder.validation';
+import {
+  newOrderSchema,
+  TCreateOrderInput,
+  TNewOrder,
+} from '@/lib/validations/newOrder.validation';
+import loading from '@/app/loading';
+import { userProfileUpdate } from '@/lib/actions/root/user.action';
+import { createOrder } from '@/lib/actions/order/order.actions';
 
 type defaultVal = {
   transactionType: string;
@@ -76,6 +84,7 @@ export default function NewOrder({ onBack }: any) {
   const [isSellerEmailValid, setIsSellerEmailValid] = useState<boolean>(false);
   const [isMilestone2Show, setIsMilestone2Show] = useState<boolean>(false);
   const [isMilestone3Show, setIsMilestone3Show] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const form = useForm<TNewOrder>({
     resolver: zodResolver(
@@ -139,7 +148,98 @@ export default function NewOrder({ onBack }: any) {
   }
 
   async function onSubmit(data: TNewOrder) {
-    console.log(data);
+    // console.log(data);
+    // Process items: extract only non-empty items
+    const items = [];
+    if (data.item1Name && data.item1Name.trim() !== '') {
+      items.push({
+        name: data.item1Name,
+        prize: data.item1Prize || '',
+        quantity: data.item1Quantity || '',
+      });
+    }
+    if (data.item2Name && data.item2Name.trim() !== '') {
+      items.push({
+        name: data.item2Name,
+        prize: data.item2Prize || '',
+        quantity: data.item2Quantity || '',
+      });
+    }
+
+    // Convert the order delivery date into ISO string format
+    const formattedDeliveryDate = data.deliveryDate;
+
+    // Process milestones depending on payment type
+    const milestones = [];
+    if (data.paymentType === 'Milestone Payment') {
+      // For milestone payment, include milestones that have a non-empty title.
+      if (data.milestone1 && data.milestone1.trim() !== '') {
+        milestones.push({
+          title: data.milestone1,
+          amount: data.milestone1Amount || '0',
+          deliveryDate: data.milestone1DeliveryDate,
+        });
+      }
+      if (data.milestone2 && data.milestone2.trim() !== '') {
+        milestones.push({
+          title: data.milestone2,
+          amount: data.milestone2Amount || '0',
+          deliveryDate: data.milestone2DeliveryDate,
+        });
+      }
+      if (data.milestone3 && data.milestone3.trim() !== '') {
+        milestones.push({
+          title: data.milestone3,
+          amount: data.milestone3Amount || '0',
+          deliveryDate: data.milestone3DeliveryDate,
+        });
+      }
+
+      // If no valid milestone is provided, create a dummy milestone
+      if (milestones.length === 0) {
+        milestones.push({
+          title: 'Default Milestone',
+          amount: '0',
+          deliveryDate: formattedDeliveryDate,
+        });
+      }
+    } else if (data.paymentType === 'One time Payment') {
+      // For one-time payment, ignore provided milestone fields and create a dummy milestone.
+      milestones.push({
+        title: 'Full Payment',
+        amount: '0',
+        deliveryDate: formattedDeliveryDate,
+      });
+    }
+
+    // Build the final data object in the expected format
+    const processedData = {
+      buyerEmailPhoneNo: data.buyerEmailPhoneNo,
+      sellerEmailPhoneNo: data.sellerEmailPhoneNo,
+      deliveryDate: formattedDeliveryDate,
+      detailAboutItem: data.detailAboutItem,
+      paymentType: data.paymentType,
+      transactionFee: data.transactionFee,
+      transactionType: data.transactionType,
+      items, // Array of item objects
+      milestones, // Array of milestone objects (dummy or provided)
+    };
+    console.log('🌼 🔥🔥 onSubmit 🔥🔥 processedData🌼', processedData);
+
+    try {
+      const response = await createOrder(processedData as TCreateOrderInput);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response.success) {
+        toast.success('Order created successfully');
+        reset();
+      } else {
+        toast.error(response.error || 'Failed to create order');
+      }
+    } catch (error) {
+      console.error('Error creating order', error);
+      toast.error('An unexpected error occurred');
+    }
   }
 
   // Check if form can be submitted
@@ -211,7 +311,7 @@ export default function NewOrder({ onBack }: any) {
                       </div>
                     ) : isBuyerEmailValid ? (
                       <p className="mt-1 text-sm font-normal text-green-500">
-                        ✓ Email verified - You&apos;ll be moved to seller section
+                        ✓ Verified - You&apos;ll be moved to seller section
                       </p>
                     ) : errors.buyerEmailPhoneNo ? (
                       <p className="mt-1 text-sm font-normal text-red-500">
@@ -236,7 +336,7 @@ export default function NewOrder({ onBack }: any) {
                         <span className="text-sm text-gray-500">Verifying email...</span>
                       </div>
                     ) : isSellerEmailValid ? (
-                      <p className="mt-1 text-sm font-normal text-green-500">✓ Email verified</p>
+                      <p className="mt-1 text-sm font-normal text-green-500">✓ Verified</p>
                     ) : errors.sellerEmailPhoneNo ? (
                       <p className="mt-1 text-sm font-normal text-red-500">
                         {errors.sellerEmailPhoneNo.message}
@@ -410,7 +510,7 @@ export default function NewOrder({ onBack }: any) {
               <ReButton
                 className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
                 type="submit"
-                isSubmitting={isSubmitting}
+                isSubmitting={isSubmitting || loading}
                 disabled={!canSubmit}
               >
                 Create Order
