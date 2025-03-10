@@ -94,16 +94,19 @@ export default function NewOrder({ onBack }: any) {
   const buyerEmail = watch('buyerEmailPhoneNo');
   const sellerEmail = watch('sellerEmailPhoneNo');
 
-  // Auto-switch to seller tab when buyer email is validated
-  useEffect(() => {
-    if (isBuyerEmailValid && activeTab === 'buyer') {
-      // Add a small delay to show the success message before switching
-      const timer = setTimeout(() => {
-        setActiveTab('seller');
-      }, 1000);
-      return () => clearTimeout(timer);
-    }
-  }, [isBuyerEmailValid, activeTab]);
+  // console.log(buyerEmail);
+  // console.log(sellerEmail);
+
+  // // Auto-switch to seller tab when buyer email is validated
+  // useEffect(() => {
+  //   if (isBuyerEmailValid && activeTab === 'buyer') {
+  //     // Add a small delay to show the success message before switching
+  //     const timer = setTimeout(() => {
+  //       setActiveTab('seller');
+  //     }, 1000);
+  //     return () => clearTimeout(timer);
+  //   }
+  // }, [isBuyerEmailValid, activeTab]);
 
   // Handle tab change
   const handleTabChange = (value: string) => {
@@ -203,6 +206,7 @@ export default function NewOrder({ onBack }: any) {
                     <input
                       {...register('buyerEmailPhoneNo')}
                       className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      value={buyerEmail}
                     />
                     {isLoadingEmail ? (
                       <div className="mt-1 flex items-center">
@@ -229,6 +233,7 @@ export default function NewOrder({ onBack }: any) {
                     <input
                       {...register('sellerEmailPhoneNo')}
                       className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                      value={sellerEmail}
                     />
                     {isLoadingEmail ? (
                       <div className="mt-1 flex items-center">
