@@ -2,7 +2,12 @@ import { z } from 'zod';
 import { Dispatch, SetStateAction } from 'react';
 
 // Demo Data
-const emailsData = ['josafe2281@bnsteps.com', 'josafe22@bnstepsa.com', 'josafe228@bnsteps.com'];
+const emailsData = [
+  'josafe2281@bnsteps.com',
+  'josafe22@bnstepsa.com',
+  'josafe228@bnsteps.com',
+  'liseg18768@bitflirt.com',
+];
 
 // // payment seller schema
 // export const paymentSellerSchema = z.object({
@@ -29,11 +34,24 @@ const emailsData = ['josafe2281@bnsteps.com', 'josafe22@bnstepsa.com', 'josafe22
 
 // Function to check if email exists
 const checkEmailExists = async (email: string) => {
-  return new Promise<boolean>((resolve) => {
-    setTimeout(() => {
-      resolve(emailsData.includes(email));
-    }, 5000);
-  });
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/validate-user?emailPhoneNo=${email}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        // Authorization: accessToken,
+      },
+      cache: 'no-store',
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error validate user with email ${email}`);
+  }
+
+  const data = await response.json();
+  return data?.data?.exists;
 };
 
 // // payment buyer schema
@@ -61,7 +79,7 @@ const checkEmailExists = async (email: string) => {
 //             setIsEmailExist(false);
 //             ctx.addIssue({
 //               code: z.ZodIssueCode.custom,
-//               message: 'Email is not registered',
+//               message: 'Email or Phone Number is not registered',
 //             });
 //             return false;
 //           }
@@ -144,7 +162,7 @@ export const newOrderSchema = (
             setBuyerEmailValid(false);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: 'Email is not registered',
+              message: 'Email or Phone Number is not registered',
             });
             return false;
           }
@@ -181,7 +199,7 @@ export const newOrderSchema = (
             setSellerEmailValid(false);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
-              message: 'Email is not registered',
+              message: 'Email or Phone Number is not registered',
             });
             return false;
           }
@@ -207,3 +225,29 @@ export const newOrderSchema = (
 };
 
 export type TNewOrder = z.infer<ReturnType<typeof newOrderSchema>>;
+
+export const createOrderZodSchema = z.object({
+  buyerEmailPhoneNo: z.string().min(3, 'Invalid Buyer Email/Phone'),
+  sellerEmailPhoneNo: z.string().min(3, 'Invalid Seller Email/Phone'),
+  deliveryDate: z.coerce.date(),
+  detailAboutItem: z.string().min(1, 'Detail is required'),
+  paymentType: z.string(),
+  transactionFee: z.string(),
+  transactionType: z.string(),
+  items: z.array(
+    z.object({
+      name: z.string().min(1, 'Item name is required'),
+      prize: z.string(), // you can add refinements if needed
+      quantity: z.string(),
+    })
+  ),
+  milestones: z.array(
+    z.object({
+      title: z.string().min(1, 'Milestone title is required'),
+      amount: z.string(), // if needed, you can add default or numeric checks
+      deliveryDate: z.coerce.date(),
+    })
+  ),
+});
+
+export type TCreateOrderInput = z.infer<typeof createOrderZodSchema>;

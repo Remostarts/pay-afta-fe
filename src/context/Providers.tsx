@@ -6,33 +6,36 @@ import { Provider } from 'react-redux';
 import { FormProvider, useForm } from 'react-hook-form';
 
 import { OtpProvider } from './OtpProvider';
+import { GeneralProvider } from './generalProvider';
 import { ChatProvider } from './ChatProvider';
 
 import { Toaster } from '@/components/ui/toaster';
 import { store } from '@/redux/store';
 
-const Providers = ({ children }: { children: ReactNode }) => {
+const Providers = ({ children, session }: { children: ReactNode; session: any }) => {
   const methods = useForm();
 
   return (
     <div>
       <Provider store={store}>
-        <ChatProvider>
-          <FormProvider {...methods}>
-            <OtpProvider>
-              <NextThemesProvider
-                attribute="class"
-                forcedTheme="light"
-                defaultTheme="light"
-                disableTransitionOnChange
-              >
-                {children}
+        <GeneralProvider session={session}>
+          <ChatProvider>
+            <FormProvider {...methods}>
+              <OtpProvider>
+                <NextThemesProvider
+                  attribute="class"
+                  forcedTheme="light"
+                  defaultTheme="light"
+                  disableTransitionOnChange
+                >
+                  {children}
 
-                <Toaster />
-              </NextThemesProvider>
-            </OtpProvider>
-          </FormProvider>
-        </ChatProvider>
+                  <Toaster />
+                </NextThemesProvider>
+              </OtpProvider>
+            </FormProvider>
+          </ChatProvider>
+        </GeneralProvider>
       </Provider>
     </div>
   );

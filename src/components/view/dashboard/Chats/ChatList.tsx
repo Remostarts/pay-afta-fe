@@ -130,7 +130,7 @@ export default function ChatList() {
                       : 'bg-[#FCEEF6] text-[#E455A2]'
                   )}
                 >
-                  {chat.status.charAt(0).toUpperCase() + chat.status.slice(1)}
+                  {/* {chat?.status.charAt(0).toUpperCase() + chat?.status.slice(1)} */}
                 </Badge>
               </div>
               <div className="text-muted-foreground flex items-center gap-2 text-sm">

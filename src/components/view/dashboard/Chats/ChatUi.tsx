@@ -98,9 +98,9 @@ export default function ChatUI() {
   useEffect(() => {
     if (chat.id) {
       setChatId(chat.id);
-      setLawyerId(chat.participants.find((p) => p?.lawyer?.id)?.id as string);
-      setClientId(chat.participants.find((p) => !p?.lawyer?.id)?.id as string);
-      setAmount(chat.participants.find((p) => p?.lawyer?.id)?.lawyer.fee as number);
+      // setLawyerId(chat.participants.find((p) => p?.lawyer?.id)?.id as string);
+      // setClientId(chat.participants.find((p) => !p?.lawyer?.id)?.id as string);
+      // setAmount(chat.participants.find((p) => p?.lawyer?.id)?.lawyer.fee as number);
     }
   }, [chat]);
 
@@ -289,11 +289,13 @@ export default function ChatUI() {
 
     const newMessage: TChatMessage = {
       chatId,
-      receiverId: chat?.participants.find((p) => p.id !== session.id)?.id as string,
+      receiverId: 'hello world',
+      // receiverId:  (chat?.participants.find((p) => p.id !== session.id)?.id as string),
       senderId: session.id,
       content: inputMessage,
       type: 'text',
-      receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+      receiverEmail: 'hello world',
+      // receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
     };
     console.log('🌼 🔥🔥 handleSendMessage 🔥🔥 newMessage🌼', newMessage);
 
@@ -336,24 +338,24 @@ export default function ChatUI() {
               ? 'image'
               : 'text';
 
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        type: fileType,
-        fileName: file.name,
-        fileSize,
-        fileUrl,
-        senderId: session.id,
-        pages: fileType === 'pdf' ? 1 : undefined,
-        duration: fileType === 'audio' ? '0:30' : undefined,
-        audioUrl: fileType === 'audio' ? fileUrl : undefined,
-        status: 'sent',
-      };
+      // const newMessage: Message = {
+      //   id: Date.now().toString(),
+      //   type: fileType,
+      //   fileName: file.name,
+      //   fileSize,
+      //   fileUrl,
+      //   senderId: session.id,
+      //   pages: fileType === 'pdf' ? 1 : undefined,
+      //   duration: fileType === 'audio' ? '0:30' : undefined,
+      //   audioUrl: fileType === 'audio' ? fileUrl : undefined,
+      //   status: 'sent',
+      // };
 
-      addMessage(chatId, newMessage);
-      scrollToBottom();
+      // addMessage(chatId, newMessage);
+      // scrollToBottom();
 
-      setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'delivered' }), 1000);
-      setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'read' }), 2000);
+      // setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'delivered' }), 1000);
+      // setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'read' }), 2000);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [chatId, addMessage, updateMessage, logFileDetails, session.id]
@@ -466,83 +468,83 @@ export default function ChatUI() {
       setIsUploading(true);
 
       // Create temporary message for loading state
-      const tempMessage: Message = {
-        id: `temp-${Date.now()}`,
-        type: file.type.includes('image')
-          ? 'image'
-          : file.type.includes('video')
-            ? 'video'
-            : file.type.includes('audio')
-              ? 'audio'
-              : 'pdf',
-        fileName: file.name,
-        fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        senderId: session.id,
-        status: 'sending',
-      };
+      // const tempMessage: Message = {
+      //   id: `temp-${Date.now()}`,
+      //   type: file.type.includes('image')
+      //     ? 'image'
+      //     : file.type.includes('video')
+      //       ? 'video'
+      //       : file.type.includes('audio')
+      //         ? 'audio'
+      //         : 'pdf',
+      //   fileName: file.name,
+      //   fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
+      //   senderId: session.id,
+      //   status: 'sending',
+      // };
 
-      setUploadingMessage(tempMessage);
+      // setUploadingMessage(tempMessage);
       setSelectedFile(file);
 
-      const data = {
-        chatId,
-        receiverId: chat?.participants.find((p) => p.id !== session?.id)?.id as string,
-        senderId: session?.id,
-        type: file.type.includes('image')
-          ? 'image'
-          : file.type.includes('video')
-            ? 'video'
-            : file.type.includes('audio')
-              ? 'audio'
-              : 'pdf',
-      };
+      // const data = {
+      //   chatId,
+      //   receiverId: chat?.participants.find((p) => p.id !== session?.id)?.id as string,
+      //   senderId: session?.id,
+      //   type: file.type.includes('image')
+      //     ? 'image'
+      //     : file.type.includes('video')
+      //       ? 'video'
+      //       : file.type.includes('audio')
+      //         ? 'audio'
+      //         : 'pdf',
+      // };
 
-      const formData = new FormData();
-      formData.append('media', file);
-      formData.append('data', JSON.stringify(data));
+      // const formData = new FormData();
+      // formData.append('media', file);
+      // formData.append('data', JSON.stringify(data));
 
-      fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
-        method: 'POST',
-        headers: {
-          Authorization: session?.accessToken,
-        },
-        body: formData,
-        cache: 'no-store',
-      })
-        .then(async (response) => {
-          if (response.ok) {
-            await response.json();
-            // toast({
-            //   title: 'Upload Successful',
-            //   description: `File uploaded successfully: ${result.fileName}`,
-            //   variant: 'success',
-            // });
-            socket?.emit('file_uploaded', {
-              receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-            });
-            refetch();
-          } else {
-            // toast({
-            //   title: 'Upload Failed',
-            //   description: 'There was an issue uploading your file. Please try again.',
-            //   variant: 'destructive',
-            // });
-          }
-        })
-        .catch((error) => {
-          console.error('Error uploading file:', error);
-          // toast({
-          //   title: 'Error',
-          //   description: 'An unexpected error occurred while uploading the file.',
-          //   variant: 'destructive',
-          // });
-        })
-        .finally(() => {
-          uploadingRef.current = false;
-          setIsUploading(false);
-          setUploadingMessage(null);
-          setSelectedFile(null);
-        });
+      // fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
+      //   method: 'POST',
+      //   headers: {
+      //     Authorization: session?.accessToken,
+      //   },
+      //   body: formData,
+      //   cache: 'no-store',
+      // })
+      //   .then(async (response) => {
+      //     if (response.ok) {
+      //       await response.json();
+      //       // toast({
+      //       //   title: 'Upload Successful',
+      //       //   description: `File uploaded successfully: ${result.fileName}`,
+      //       //   variant: 'success',
+      //       // });
+      //       socket?.emit('file_uploaded', {
+      //         receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+      //       });
+      //       refetch();
+      //     } else {
+      //       // toast({
+      //       //   title: 'Upload Failed',
+      //       //   description: 'There was an issue uploading your file. Please try again.',
+      //       //   variant: 'destructive',
+      //       // });
+      //     }
+      //   })
+      //   .catch((error) => {
+      //     console.error('Error uploading file:', error);
+      //     // toast({
+      //     //   title: 'Error',
+      //     //   description: 'An unexpected error occurred while uploading the file.',
+      //     //   variant: 'destructive',
+      //     // });
+      //   })
+      //   .finally(() => {
+      //     uploadingRef.current = false;
+      //     setIsUploading(false);
+      //     setUploadingMessage(null);
+      //     setSelectedFile(null);
+      //   });
     },
     [chat, chatId, session?.id, refetch, session?.accessToken, socket]
   );
@@ -550,17 +552,17 @@ export default function ChatUI() {
   // function for handling chat input filed messages
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
-    const data: { chatId: string; receiverEmail: string } = {
-      chatId,
-      receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-    };
-    socket?.emit('start_typing', data);
-    if (typingTimeoutRef.current !== undefined) {
-      clearTimeout(typingTimeoutRef.current);
-    }
-    typingTimeoutRef.current = setTimeout(() => {
-      socket?.emit('stop_typing', data);
-    }, 1000);
+    // const data: { chatId: string; receiverEmail: string } = {
+    //   chatId,
+    //   receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+    // };
+    // socket?.emit('start_typing', data);
+    // if (typingTimeoutRef.current !== undefined) {
+    //   clearTimeout(typingTimeoutRef.current);
+    // }
+    // typingTimeoutRef.current = setTimeout(() => {
+    //   socket?.emit('stop_typing', data);
+    // }, 1000);
   };
 
   // function for speech recognition to start recording
@@ -580,65 +582,65 @@ export default function ChatUI() {
         const file = new File([audioBlob], 'voice-message.wav', { type: 'audio/wav' });
         console.log('🌼 🔥🔥 startRecording 🔥🔥 file🌼', file);
 
-        const data = {
-          chatId,
-          receiverId: chat?.participants.find((p) => p.id !== session?.id)?.id as string,
-          senderId: session?.id,
-          type: 'audio',
-        };
-        console.log('🌼 🔥🔥 startRecording 🔥🔥 data🌼', data);
+        // const data = {
+        //   chatId,
+        //   receiverId: chat?.participants.find((p) => p.id !== session?.id)?.id as string,
+        //   senderId: session?.id,
+        //   type: 'audio',
+        // };
+        // console.log('🌼 🔥🔥 startRecording 🔥🔥 data🌼', data);
 
-        // Prepare FormData
-        const formData = new FormData();
-        formData.append('media', file);
-        formData.append('data', JSON.stringify(data));
+        // // Prepare FormData
+        // const formData = new FormData();
+        // formData.append('media', file);
+        // formData.append('data', JSON.stringify(data));
 
-        fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
-          method: 'POST',
-          headers: {
-            Authorization: session?.accessToken,
-          },
-          body: formData,
-          cache: 'no-store',
-        })
-          .then(async (response) => {
-            console.log('🌼 🔥🔥 .then 🔥🔥 response🌼', response);
+        // fetch(`${process.env.BACKEND_URL}/chat/upload-file`, {
+        //   method: 'POST',
+        //   headers: {
+        //     Authorization: session?.accessToken,
+        //   },
+        //   body: formData,
+        //   cache: 'no-store',
+        // })
+        //   .then(async (response) => {
+        //     console.log('🌼 🔥🔥 .then 🔥🔥 response🌼', response);
 
-            if (response.ok) {
-              await response.json();
-              // toast({
-              //   title: 'Upload Successful',
-              //   description: `File uploaded successfully: ${result.fileName}`,
-              //   variant: 'success',
-              // });
-              socket?.emit('file_uploaded', {
-                receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-              });
-              refetch();
-            } else {
-              // toast({
-              //   title: 'Upload Failed',
-              //   description: 'There was an issue uploading your file. Please try again.',
-              //   variant: 'destructive',
-              // });
-            }
-          })
-          .catch((error) => {
-            console.log('🌼 🔥🔥 handleFileSelect 🔥🔥 error🌼', error);
+        //     if (response.ok) {
+        //       await response.json();
+        //       // toast({
+        //       //   title: 'Upload Successful',
+        //       //   description: `File uploaded successfully: ${result.fileName}`,
+        //       //   variant: 'success',
+        //       // });
+        //       socket?.emit('file_uploaded', {
+        //         receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+        //       });
+        //       refetch();
+        //     } else {
+        //       // toast({
+        //       //   title: 'Upload Failed',
+        //       //   description: 'There was an issue uploading your file. Please try again.',
+        //       //   variant: 'destructive',
+        //       // });
+        //     }
+        //   })
+        //   .catch((error) => {
+        //     console.log('🌼 🔥🔥 handleFileSelect 🔥🔥 error🌼', error);
 
-            console.error('Error uploading file:', error);
-            // toast({
-            //   title: 'Error',
-            //   description: 'An unexpected error occurred while uploading the file.',
-            //   variant: 'destructive',
-            // });
-          })
-          .finally(() => {
-            uploadingRef.current = false;
-          });
+        //     console.error('Error uploading file:', error);
+        //     // toast({
+        //     //   title: 'Error',
+        //     //   description: 'An unexpected error occurred while uploading the file.',
+        //     //   variant: 'destructive',
+        //     // });
+        //   })
+        //   .finally(() => {
+        //     uploadingRef.current = false;
+        //   });
 
-        addFileMessage(file, URL.createObjectURL(audioBlob));
-        audioChunksRef.current = [];
+        // addFileMessage(file, URL.createObjectURL(audioBlob));
+        // audioChunksRef.current = [];
       };
 
       recorder.start();
@@ -707,11 +709,11 @@ export default function ChatUI() {
       throw new Error(`Error updating message status for chat ${chatId}`);
     }
     setIsRead(true);
-    const data: { chatId: string; receiverEmail: string } = {
-      chatId,
-      receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-    };
-    socket?.emit('message_read', data);
+    // const data: { chatId: string; receiverEmail: string } = {
+    //   chatId,
+    //   receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+    // };
+    // socket?.emit('message_read', data);
   };
 
   // if no chats are there this will be rendered
@@ -764,7 +766,7 @@ export default function ChatUI() {
             >
               {/* <OrStrike text="Today" /> */}
 
-              <div className="min-h-full">
+              {/* <div className="min-h-full">
                 {!chat || chat.messages.length === 0 ? (
                   <div className="flex h-full flex-col items-center justify-center py-8">
                     <p className="text-center text-sm text-gray-500">
@@ -780,16 +782,12 @@ export default function ChatUI() {
                     uploadingMessage={uploadingMessage}
                   />
                 )}
-
-                {/* Typing indicators */}
                 <div className="space-y-2">
                   {remoteTyping && <TypingIndicator position="left" />}
                   {isTyping && <TypingIndicator position="left" />}
                 </div>
-
-                {/* Scroll target */}
                 <div ref={messagesEndRef} />
-              </div>
+              </div> */}
             </div>
 
             {/* Fixed height input */}
