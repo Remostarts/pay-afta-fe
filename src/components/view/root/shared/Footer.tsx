@@ -65,8 +65,19 @@ const Footer = () => {
       </div>
 
       {/* Copyright */}
-      <div className="mt-8 border-t border-gray-200 pt-6 text-center text-xs text-gray-600 sm:mt-12 sm:text-sm">
-        Copyright © {new Date().getFullYear()} PayAfta
+      <div className="mt-8 flex flex-col  border-t border-gray-200 pt-6 text-center text-xs text-gray-600 sm:mt-12 sm:text-sm">
+        <span>Copyright © {new Date().getFullYear()} PayAfta</span>
+        <span className="mt-3">
+          <Link href="terms-and-condition" className="ml-3">
+            TERMS & CONDITIONS
+          </Link>{' '}
+          <Link href="privacy-policy" className="ml-3">
+            PRIVACY POLICY
+          </Link>{' '}
+          <Link href="refund-policy" className="ml-3">
+            REFUND POLICY
+          </Link>
+        </span>
       </div>
     </footer>
   );
