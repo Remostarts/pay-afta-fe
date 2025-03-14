@@ -24,7 +24,7 @@ import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInp
 const defaultValues = {
   name: '',
   email: '',
-  phoneNo: '',
+  phoneNumber: '',
 };
 
 export function Waitlist() {
@@ -72,7 +72,7 @@ export function Waitlist() {
               </div>
               <div>
                 {/* <ReHeading heading="Phone Number" /> */}
-                <RePhoneNumberInput name="phoneNo" />
+                <RePhoneNumberInput name="phoneNumber" />
               </div>
             </div>
 
