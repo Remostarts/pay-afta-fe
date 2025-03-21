@@ -25,6 +25,7 @@ const defaultValues = {
   name: '',
   email: '',
   phoneNumber: '',
+  location: '',
 };
 
 export function Waitlist() {
@@ -73,6 +74,10 @@ export function Waitlist() {
               <div>
                 {/* <ReHeading heading="Phone Number" /> */}
                 <RePhoneNumberInput name="phoneNumber" />
+              </div>
+              <div>
+                <ReHeading heading="Location" size="base" className="text-gray-700" />
+                <ReInput name="location" />
               </div>
             </div>
 
