@@ -7,7 +7,14 @@ import { userRoles } from './constants/shared';
 const { ADMIN, USER } = userRoles;
 console.log(process.env.BACKEND_URL);
 
-const hybridRoutes = ['/', '/sign-in', '/sign-in/admin', '/sign-up', '/sign-up/admin'];
+const hybridRoutes = [
+  '/',
+  '/sign-in',
+  '/sign-in/admin',
+  '/sign-up',
+  '/sign-up/admin',
+  '/sign-up/verification',
+];
 
 const rolesRedirect: Record<string, string> = {
   user: `${process.env.FRONTEND_URL}/dashboard`,

@@ -4,9 +4,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { useState } from 'react';
 
 import Logo from '../../../../../public/Logo.svg';
 
@@ -17,9 +17,8 @@ import RePassInput from '@/components/re-ui/re-input/RePassInput';
 import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
 import { Form } from '@/components/ui/form';
 import { useOtp } from '@/context/OtpProvider';
-import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
-import { ReCheckBox } from '@/components/re-ui/re-checkbox/ReCheckBox';
+import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
 
 type defaultVal = {
   firstName: string;
@@ -122,7 +121,7 @@ export default function SignupForm() {
             </div>
             <div>
               <input type="checkbox" name="" onChange={() => setIsChecked(!isChecked)} />
-              <span>
+              <span className="ml-2">
                 You agree to the{' '}
                 <Link href="terms-and-condition" className="text-blue-700">
                   terms and conditions
