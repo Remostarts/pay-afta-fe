@@ -21,11 +21,11 @@ export default function ForgetPassword() {
     <section className="flex grow">
       <div className="grow">
         {currentStep === 1 && <FillEmail handleCurrentStep={handleCurrentStep} />}
-        {currentStep === 2 && (
+        {/* {currentStep === 2 && (
           <div className="px-8">
             <SetNewPassword handleCurrentStep={handleCurrentStep} />
           </div>
-        )}
+        )} */}
         {currentStep === 3 && (
           <div className=" px-8 py-12">
             <BackToLogin />

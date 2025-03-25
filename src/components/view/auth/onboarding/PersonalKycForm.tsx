@@ -3,6 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
+import { toast } from 'sonner';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import ReDatePicker from '@/components/re-ui/ReDatePicker';
@@ -12,9 +13,11 @@ import { Form } from '@/components/ui/form';
 import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.validation';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { DialogClose } from '@/components/ui/dialog';
+import { partialSignup } from '@/lib/actions/auth/signup.actions';
+import { kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
 
 type defaultVal = {
-  enterNin: string;
+  nin: string;
   gender: string;
   dateOfBirth: Date;
   instaUsername: string;
@@ -22,7 +25,7 @@ type defaultVal = {
 };
 
 const defaultValues: defaultVal = {
-  enterNin: '',
+  nin: '',
   gender: '',
   dateOfBirth: new Date(),
   instaUsername: '',
@@ -48,7 +51,19 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
 
   const onSubmit = async (data: TPersonalKyc) => {
     console.log(data);
-    manageCurrentStep();
+
+    try {
+      const response = await kycPersonalInfo(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        manageCurrentStep();
+      } else {
+        toast.error(response?.error || 'Failed to update personal information');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to update personal information');
+    }
   };
 
   return (
@@ -62,7 +77,7 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <ReHeading heading="Enter NIN" size={'base'} />
-            <ReInput name="enterNin" />
+            <ReInput name="nin" />
           </div>
           <div>
             <ReHeading heading="Gender" size={'base'} />

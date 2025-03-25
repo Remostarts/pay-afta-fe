@@ -1,27 +1,55 @@
 'use client';
 
 import Image from 'next/image';
-import { Dispatch, SetStateAction, useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
 // import { useOtp } from '@/context/OtpProvider';
 import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
+import { sendResetPassLink } from '@/lib/actions/auth/signup.actions';
+import { Form } from '@/components/ui/form';
+import { ReButton } from '@/components/re-ui/ReButton';
+import ReInput from '@/components/re-ui/re-input/ReInput';
 // import { sendForgetPasswordOtp } from '@/lib/actions/auth/signup.actions';
+
+const userFillEmailSchema = z.object({
+  email: z.string().min(1, 'Email is required'),
+});
+
+type TInputs = z.infer<typeof userFillEmailSchema>;
 
 interface IFillEmailProps {
   handleCurrentStep(): void;
 }
 
+const defaultValues = {
+  email: '',
+};
+
 export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
-  const [email, setEmail] = useState('');
+  // const [email, setEmail] = useState('');
+
   // const { setEmail: setEmailOtp } = useOtp();
   const handleSendCode = useSearchParamsHandler();
 
-  const handleSubmit = async () => {
-    if (email.trim() === '') {
+  const form = useForm<TInputs>({
+    resolver: zodResolver(userFillEmailSchema),
+    defaultValues,
+    mode: 'onChange',
+  });
+
+  const { handleSubmit, formState } = form;
+  const { isSubmitting } = formState;
+
+  const onSubmit = async (data: TInputs) => {
+    // console.log(data);
+    if (data.email.trim() === '') {
       toast({
         title: 'Invalid Email',
         description: 'Please enter a valid email address.',
@@ -30,12 +58,17 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
     }
 
     try {
-      // await sendForgetPasswordOtp(email);
-      toast({
-        title: 'Code Sent',
-        description: 'A verification code has been sent to your email address.',
-      });
-      handleCurrentStep();
+      const response = await sendResetPassLink(data?.email);
+
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', data?.email);
+
+      if (response?.success) {
+        toast({
+          title: 'Code Sent',
+          description: 'A verification code has been sent to your email address.',
+        });
+        handleCurrentStep();
+      }
     } catch (error) {
       console.error('Error sending verification code:', error);
       toast({
@@ -61,35 +94,28 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
 
       <div className="px-8 py-12">
         <h2 className="mb-4 font-spaceGrotesk text-xl font-bold lg:text-2xl">Email</h2>
-        <form>
-          <div className="mb-8">
-            <Input
-              name="email"
-              placeholder="Enter Email Address"
-              value={email}
-              onChange={(e) => {
-                setEmail(e.target.value);
-                // setEmailOtp(e.target.value);
-              }}
-              className="mt-2 border-gray-300 py-8"
-            />
-          </div>
-          <Button
-            type="button"
-            onClick={handleSubmit}
-            className={`w-full rounded-xl bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg`}
-          >
-            Send Recovery Link
-          </Button>
-          <div className="mt-10 text-center">
-            <p>
-              You do not have a account?{' '}
-              <Link href="/sign-up" className="font-inter font-semibold">
-                Create an account
-              </Link>
-            </p>
-          </div>
-        </form>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="mb-8">
+              <ReInput name="email" />
+            </div>
+            <ReButton
+              className="w-full rounded-xl bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
+              type="submit"
+              isSubmitting={isSubmitting}
+            >
+              Send Recovery Link
+            </ReButton>
+            <div className="mt-10 text-center">
+              <p>
+                You do not have a account?{' '}
+                <Link href="/sign-up" className="font-inter font-semibold">
+                  Create an account
+                </Link>
+              </p>
+            </div>
+          </form>
+        </Form>
       </div>
     </section>
   );

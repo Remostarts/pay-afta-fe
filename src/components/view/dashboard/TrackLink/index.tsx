@@ -1,7 +1,7 @@
 'use client';
 
 import { ColumnDef } from '@tanstack/react-table';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { DataTable } from './DataTable';
 import TransactionsSummary from './TransactionsSummary';
@@ -16,7 +16,7 @@ export type Payment = {
   payment: string;
 };
 
-const data = [
+const tData = [
   {
     id: '1',
     name: 'adsfj lasdfj',
@@ -121,6 +121,8 @@ const data = [
 
 export default function TrackLink() {
   const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
+  const [data, setData] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const columns: ColumnDef<Payment>[] = [
     {
@@ -161,6 +163,23 @@ export default function TrackLink() {
     },
   ];
 
+  function handlePageChange(pageNumber: number, transactionType: string, status: string) {
+    try {
+      console.log('page no.', pageNumber, ' transaction type ', transactionType, 'status', status);
+      setTimeout(() => {
+        setData(tData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange(1, 'All', 'All');
+  }, []);
+
   const handleViewTransaction = (p0: boolean) => {
     // console.log(transaction);
     setIsSelectedTransaction(true);
@@ -170,11 +189,17 @@ export default function TrackLink() {
     setIsSelectedTransaction(false);
   };
   return (
-    <section className="container mx-auto rounded-md bg-white p-5">
+    <section className="rounded-md bg-white p-5">
       {isSelectedTransaction ? (
         <TransactionsSummary onBack={handleBackToTable} />
       ) : (
-        <DataTable columns={columns} data={data} lable={'Track Link'} />
+        <DataTable
+          columns={columns}
+          data={data}
+          lable={'Track Link'}
+          isLoading={isLoading}
+          onPageChange={handlePageChange}
+        />
       )}
     </section>
   );

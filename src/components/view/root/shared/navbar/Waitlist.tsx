@@ -19,10 +19,13 @@ import {
 import { Form } from '@/components/ui/form';
 import { addToWhitelist } from '@/lib/actions/auth/utils.actions';
 import { TWhiteList, whiteListSchema } from '@/lib/validations/Utils';
+import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
 
 const defaultValues = {
   name: '',
   email: '',
+  phoneNumber: '',
+  location: '',
 };
 
 export function Waitlist() {
@@ -61,12 +64,20 @@ export function Waitlist() {
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="mt-3 space-y-4">
               <div>
-                <ReHeading heading="Full Name" />
+                <ReHeading heading="Full Name" size="base" className="text-gray-700" />
                 <ReInput name="name" />
               </div>
               <div>
-                <ReHeading heading="Email" size="lg" />
+                <ReHeading heading="Email" size="base" className="text-gray-700" />
                 <ReInput name="email" />
+              </div>
+              <div>
+                {/* <ReHeading heading="Phone Number" /> */}
+                <RePhoneNumberInput name="phoneNumber" />
+              </div>
+              <div>
+                <ReHeading heading="Location" size="base" className="text-gray-700" />
+                <ReInput name="location" />
               </div>
             </div>
 

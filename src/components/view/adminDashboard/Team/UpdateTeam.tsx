@@ -1,6 +1,7 @@
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useRef } from 'react';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
@@ -28,6 +29,7 @@ type IUpdateTeam = {
 };
 
 export default function UpdateTeam({ onNext }: IUpdateTeam) {
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
   const form = useForm<TUpdateTeam>({
     resolver: zodResolver(updateTeamSchema),
     defaultValues,
@@ -39,7 +41,10 @@ export default function UpdateTeam({ onNext }: IUpdateTeam) {
 
   const onSubmit = async (data: TUpdateTeam) => {
     console.log(data);
-    onNext();
+    // onNext();
+    if (closeButtonRef.current) {
+      closeButtonRef.current.click();
+    }
   };
 
   return (
@@ -68,6 +73,8 @@ export default function UpdateTeam({ onNext }: IUpdateTeam) {
             </div>
             <div className=" flex items-end justify-end">
               <ReButton
+                ref={closeButtonRef}
+                isSubmitting={isSubmitting}
                 className="mt-3 w-fit bg-[#1F7EAD] text-white hover:bg-[#1F7EAD]"
                 type="submit"
               >

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, ReactNode, useCallback, useRef } from 'react';
 
 import { Chat, Message } from '@/types/chat.type';
+import { mockChats } from '@/lib/data/chat-mock-data';
 
 interface ChatContextType {
   chats: Chat[];
@@ -16,7 +17,7 @@ interface ChatContextType {
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export function ChatProvider({ children }: { children: ReactNode }) {
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<Chat[]>(mockChats);
   const [currentChat, setCurrentChat] = useState<string | null>(null);
   const isUpdatingRef = useRef(false);
 
@@ -33,7 +34,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         if (chat.id === chatId) {
           return {
             ...chat,
-            messages: chat.messages.map((msg) =>
+            messages: (chat.messages ?? []).map((msg) =>
               msg.id === updatedMessage.id ? updatedMessage : msg
             ),
           };
@@ -61,7 +62,7 @@ export function ChatProvider({ children }: { children: ReactNode }) {
         if (chat.id === chatId) {
           return {
             ...chat,
-            messages: [...chat.messages, newMessage],
+            messages: [...(chat.messages ?? []), newMessage],
           };
         }
         setTimeout(() => {

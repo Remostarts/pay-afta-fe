@@ -1,6 +1,6 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   ColumnDef,
   flexRender,
@@ -9,9 +9,10 @@ import {
   getPaginationRowModel,
   PaginationState,
 } from '@tanstack/react-table';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Skeleton from 'react-loading-skeleton';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -22,24 +23,39 @@ import {
   TableHeader,
   TableRow,
 } from '@/components/ui/table';
+import 'react-loading-skeleton/dist/skeleton.css';
 
 interface DataTableProps<TData extends { ordersId: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   lable?: string;
+  isLoading: boolean;
+  onPageChange: (pageNumber: number) => void;
 }
+
+const PAGE_SIZE = 8;
+const DEFAULT_PAGE = 1;
 
 export function DataTable<TData extends { ordersId: string }, TValue>({
   columns,
   data,
   lable,
+  isLoading,
+  onPageChange = (pageNumber: number) => {},
 }: DataTableProps<TData, TValue>) {
-  const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
-  const [pagination, setPagination] = useState<PaginationState>({
-    pageIndex: 0,
-    pageSize: 8,
-  });
-  const route = useRouter();
+  const [visibleTableData, setVisibleTableData] = useState<TData[]>(data);
+  const [currentPage, setCurrentPage] = useState<number>(DEFAULT_PAGE);
+
+  const startIndex = (currentPage - 1) * PAGE_SIZE;
+  const endIndex = startIndex + PAGE_SIZE;
+
+  const totalPages = Math.ceil(data.length / PAGE_SIZE);
+  // const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
+  // const [pagination, setPagination] = useState<PaginationState>({
+  //   pageIndex: 0,
+  //   pageSize: 8,
+  // });
+  // const route = useRouter();
   //   ? data.filter((item) => item.transactionType === selectedTransactionType)
   //   : data;
 
@@ -47,12 +63,25 @@ export function DataTable<TData extends { ordersId: string }, TValue>({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    onPaginationChange: setPagination,
-    state: {
-      pagination,
-    },
+    // getPaginationRowModel: getPaginationRowModel(),
+    // onPaginationChange: setPagination,
+    // state: {
+    //   pagination,
+    // },
   });
+
+  useEffect(() => {
+    const visibleData = data.slice(startIndex, endIndex);
+    setVisibleTableData(visibleData);
+  }, [currentPage, data]);
+
+  const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
+
+  function handlePageChange(pageNumber: number) {
+    console.log(pageNumber);
+    setCurrentPage(pageNumber);
+    onPageChange(pageNumber);
+  }
 
   return (
     <div>
@@ -77,7 +106,13 @@ export function DataTable<TData extends { ordersId: string }, TValue>({
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {isLoading ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="p-5">
+                  <Skeleton count={5} className="w-full" />
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
@@ -103,32 +138,37 @@ export function DataTable<TData extends { ordersId: string }, TValue>({
       </div>
 
       {/* pagination  */}
-      <div className="h-2">
-        <div className="mt-2 flex items-center justify-end gap-2">
-          <select
-            value={table.getState().pagination.pageSize}
-            onChange={(e) => {
-              table.setPageSize(Number(e.target.value));
-            }}
+      <div className="flex items-center justify-center gap-8 space-x-2 py-4">
+        <div className="flex items-center space-x-2">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
           >
-            {[8, 16, 24, 32, 40].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                Row as per page: {pageSize}
-              </option>
-            ))}
-          </select>
-          <span className="flex items-center gap-1">
-            <div>Page</div>
-            <strong>
-              {table.getState().pagination.pageIndex + 1} of {table.getPageCount().toLocaleString()}
-            </strong>
-          </span>
-          <button onClick={() => table.previousPage()} disabled={!table.getCanPreviousPage()}>
-            <ChevronLeft />
-          </button>
-          <button onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
-            <ChevronRight />
-          </button>
+            <ChevronLeftIcon className="size-4" />
+          </Button>
+          {pageNumberButtons.map((pageNumber) => {
+            return (
+              <Button
+                key={pageNumber}
+                variant="outline"
+                size="sm"
+                className={currentPage === pageNumber ? 'bg-[#E6E7FE] text-black' : ''}
+                onClick={() => handlePageChange(pageNumber)}
+              >
+                {pageNumber}
+              </Button>
+            );
+          })}
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={currentPage === totalPages}
+          >
+            <ChevronRightIcon className="size-4" />
+          </Button>
         </div>
       </div>
     </div>

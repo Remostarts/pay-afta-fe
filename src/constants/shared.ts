@@ -1,6 +1,5 @@
-// export const userRoles = {
-//   BUSINESS: 'business',
-//   LAWYER: 'lawyer',
-//   ADMIN: 'admin',
-//   LAW_STUDENT: 'lawStudent',
-// };
+export const userRoles = {
+  USER: 'user',
+
+  ADMIN: 'admin',
+};

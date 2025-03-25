@@ -164,7 +164,10 @@ export default function Team() {
   const [selectedTab, setSelectedTab] = useState<TabType>('Team Members');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const [filteredTeamData, setFilteredTeamData] = useState<TeamMember[]>(teamMemberData);
-  const { currentStep, nextStep } = useDialog(1, 2);
+  // const { currentStep, nextStep } = useDialog(1, 2);
+  const [TeamData, setTeamData] = useState<TeamMember[]>([]);
+  const [rolesData, setRolesData] = useState<Roles[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
 
   const handleDelete = (item: any) => {
     console.log(item);
@@ -174,27 +177,41 @@ export default function Team() {
     console.log(item);
   };
 
-  const renderTeamDialogContent = () => {
-    switch (currentStep) {
-      case 1:
-        return <UpdateTeam onNext={nextStep} />;
-      case 2:
-        return <SuccessfulCard desc="Team dialog COntent" heading="Team" onClosed={nextStep} />;
-      default:
-        return null;
-    }
-  };
+  // function onNextForTeamDialog() {
+  //   setCurrentStepForTeamDialog(2);
+  // }
 
-  const renderRolesDialogContent = () => {
-    switch (currentStep) {
-      case 1:
-        return <UpdateRole onNext={nextStep} />;
-      case 2:
-        return <SuccessfulCard desc="Roles dialog content" heading="Roles" onClosed={nextStep} />;
-      default:
-        return null;
-    }
-  };
+  // function onClosedForTeamDialog() {
+  //   setCurrentStepForTeamDialog(1);
+  // }
+
+  // const renderTeamDialogContent = () => {
+  //   switch (currentStepForTeamDialog) {
+  //     case 1:
+  //       return <UpdateTeam onNext={onNextForTeamDialog} />;
+  //     case 2:
+  //       return (
+  //         <SuccessfulCard
+  //           desc="Team dialog Content"
+  //           heading="Team"
+  //           onClosed={onClosedForTeamDialog}
+  //         />
+  //       );
+  //     default:
+  //       return null;
+  //   }
+  // };
+
+  // const renderRolesDialogContent = () => {
+  //   switch (currentStep) {
+  //     case 1:
+  //       return <UpdateRole onNext={nextStep} />;
+  //     case 2:
+  //       return <SuccessfulCard desc="Roles dialog content" heading="Roles" onClosed={nextStep} />;
+  //     default:
+  //       return null;
+  //   }
+  // };
 
   const teamColumns: ColumnDef<TeamMember>[] = [
     {
@@ -222,7 +239,8 @@ export default function Team() {
           />
 
           <ReDialog
-            DialogComponent={renderTeamDialogContent}
+            DialogComponent={UpdateTeam}
+            // componentProps={{ onNext: onNextForTeamDialog }}
             btnLabel={<FilePenLine color="#010101" size={20} />}
             onClick={() => handleEdit(row.original)}
             classNames="w-fit lg:px-2 bg-[#F2F2F2]"
@@ -262,7 +280,7 @@ export default function Team() {
           />
 
           <ReDialog
-            DialogComponent={renderRolesDialogContent}
+            DialogComponent={UpdateRole}
             btnLabel={<FilePenLine color="#010101" size={20} />}
             onClick={() => handleEdit(row.original)}
             classNames="w-fit lg:px-2 bg-[#F2F2F2]"
@@ -272,12 +290,30 @@ export default function Team() {
     },
   ];
 
+  function handlePageChange(pageNumber: any) {
+    try {
+      console.log(pageNumber);
+      setTimeout(() => {
+        setTeamData(teamMemberData);
+        setRolesData(teamRolesData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
   useEffect(() => {
-    const filteredData = selectedStatus
-      ? teamMemberData.filter((item) => item.role === selectedStatus)
-      : teamMemberData;
-    setFilteredTeamData(filteredData);
-  }, [selectedStatus]);
+    handlePageChange(1);
+  }, []);
+
+  // useEffect(() => {
+  //   const filteredData = selectedStatus
+  //     ? teamMemberData.filter((item) => item.role === selectedStatus)
+  //     : teamMemberData;
+  //   setFilteredTeamData(filteredData);
+  // }, [selectedStatus]);
 
   // console.log(selectedTab);
 
@@ -293,9 +329,19 @@ export default function Team() {
       </div>
       <div className="container mx-auto rounded-md bg-white p-5">
         {selectedTab === 'Team Members' ? (
-          <TeamDataTable columns={teamColumns} data={filteredTeamData} />
+          <TeamDataTable
+            columns={teamColumns}
+            data={TeamData}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+          />
         ) : (
-          <RolesDataTable columns={rolesColumns} data={teamRolesData} />
+          <RolesDataTable
+            columns={rolesColumns}
+            data={rolesData}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+          />
         )}
       </div>
     </section>

@@ -1,23 +1,14 @@
-import React, { useState } from 'react';
+'use client';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
 import RePin from '../../../re-ui/RePin';
 
 import { Form } from '@/components/ui/form';
-
-const pinSchema = z
-  .object({
-    pin: z.string().length(4, 'PIN must be 4 digits'),
-    confirmPin: z.string().length(4, 'PIN must be 4 digits'),
-  })
-  .refine((data) => data.pin === data.confirmPin, {
-    message: "PINs don't match",
-    path: ['confirmPin'],
-  });
-
-type PinFormData = z.infer<typeof pinSchema>;
+import { kycPin } from '@/lib/actions/onboarding/onboarding.actions';
+import { PinFormData, pinSchema } from '@/lib/validations/onboarding.validation';
 
 interface TransactionPinProps {
   onComplete: (pin: string) => void;
@@ -25,8 +16,6 @@ interface TransactionPinProps {
 }
 
 export default function TransactionPin({ onComplete, manageCurrentStep }: TransactionPinProps) {
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
   const form = useForm<PinFormData>({
     resolver: zodResolver(pinSchema),
     defaultValues: {
@@ -35,19 +24,31 @@ export default function TransactionPin({ onComplete, manageCurrentStep }: Transa
     },
   });
 
-  const handleSubmit = async (data: PinFormData) => {
+  const { handleSubmit, formState } = form;
+  const { isSubmitting } = formState;
+
+  const onSubmit = async (data: PinFormData) => {
     try {
       // setIsSubmitting(true);
       // onComplete(data.pin);
       console.log(data);
       if (manageCurrentStep) {
-        manageCurrentStep();
+        const response = await kycPin(data);
+        console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+        if (response?.success) {
+          manageCurrentStep();
+        } else {
+          toast.error(response?.error || 'Failed to update kyc pin');
+        }
       }
     } catch (error) {
       console.error('Error submitting PIN:', error);
       form.setError('root', {
         message: 'An error occurred while setting your PIN. Please try again.',
       });
+
+      toast.error(error instanceof Error ? error.message : 'Failed to update kyc pin');
     } finally {
       // setIsSubmitting(false);
     }
@@ -55,7 +56,7 @@ export default function TransactionPin({ onComplete, manageCurrentStep }: Transa
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-6">
+      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
         <div className="text-center">
           <h1 className="font-inter text-3xl font-semibold text-gray-800">Transaction PIN</h1>
 
