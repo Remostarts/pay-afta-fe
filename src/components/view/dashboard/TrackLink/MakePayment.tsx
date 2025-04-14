@@ -4,6 +4,7 @@ import { useState } from 'react';
 
 import PaymentSuccessful from '../shared/PaymentSuccessful';
 
+import MilestoneDialog from './MilestoneDialog';
 import PaymentSummary from './PaymentSummary';
 
 import {
@@ -22,7 +23,9 @@ interface OrderAgreementProps {
 
 export default function MakePayment({ handleCurrentStepChange }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentComponent, setCurrentComponent] = useState<'summary' | 'successful'>('summary');
+  const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
+    'summary'
+  );
 
   const handleAcceptOrder = () => {
     setIsOpen(true);
@@ -30,6 +33,8 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
 
   const handleConfirmTransaction = () => {
     if (currentComponent === 'summary') {
+      setCurrentComponent('milestone');
+    } else if (currentComponent === 'milestone') {
       setCurrentComponent('successful');
     } else {
       handleCurrentStepChange(3);
@@ -56,14 +61,22 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
           <DialogContent>
             {currentComponent === 'summary' ? (
               <PaymentSummary />
+            ) : currentComponent === 'milestone' ? (
+              <MilestoneDialog
+                isInTransactionSummary={true}
+                onNext={handleConfirmTransaction}
+                onClose={() => setIsOpen(false)}
+              />
             ) : (
               <PaymentSuccessful label={'Transaction confirmed!'} />
             )}
-            <DialogFooter>
-              <ReButton onClick={handleConfirmTransaction} className="rounded-full">
-                {currentComponent === 'summary' ? 'Pay with Wallet Balance' : 'Done'}
-              </ReButton>
-            </DialogFooter>
+            {currentComponent === 'summary' && (
+              <DialogFooter>
+                <ReButton onClick={handleConfirmTransaction} className="rounded-full">
+                  Pay with Wallet Balance
+                </ReButton>
+              </DialogFooter>
+            )}
           </DialogContent>
         </Dialog>
       </div>
