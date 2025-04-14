@@ -2,15 +2,20 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { DataTable } from './DataTable';
-import TransactionsSummary from './TransactionsSummary';
+import MilestoneDialog from './MilestoneDialog';
+
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 
 export type Payment = {
   id: string;
   date: string;
   name: string;
   type: string;
+  transactionType: string;
+  milestonePayment: string;
   amount: number;
   status: string;
   payment: string;
@@ -22,6 +27,8 @@ const tData = [
     name: 'adsfj lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Buyer',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Closed',
     payment: 'In Escrow',
@@ -32,6 +39,8 @@ const tData = [
     name: 'adsfj',
     date: '24-10-2024, 10:23pm',
     type: 'Seller',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Closed',
     payment: 'Paid',
@@ -42,6 +51,8 @@ const tData = [
     name: 'adsfj lorem2',
     date: '24-10-2024, 10:23pm',
     type: 'Buyer',
+    transactionType: 'Service',
+    milestonePayment: 'Yes',
     amount: 500000.0,
     status: 'Agreement',
     payment: 'Released',
@@ -52,6 +63,8 @@ const tData = [
     name: 'adsfj kjjasdf',
     date: '24-10-2024, 10:23pm',
     type: 'Buyer',
+    transactionType: 'Service',
+    milestonePayment: 'Yes',
     amount: 500000.0,
     status: 'Agreement',
     payment: 'Refunded',
@@ -62,6 +75,8 @@ const tData = [
     name: 'adsfalskdkfj lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Seller',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Payment',
     payment: 'Released',
@@ -72,6 +87,8 @@ const tData = [
     name: 'adsfj lakksfd lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Seller',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Shipping',
     payment: 'Paid',
@@ -82,6 +99,8 @@ const tData = [
     name: 'adsfj lasdfj asdl',
     date: '24-10-2024, 10:23pm',
     type: 'Buyer',
+    transactionType: 'Service',
+    milestonePayment: 'Yes',
     amount: 500000.0,
     status: 'Shipping',
     payment: 'Paid',
@@ -92,6 +111,8 @@ const tData = [
     name: 'adsfj lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Buyer',
+    transactionType: 'Service',
+    milestonePayment: 'Yes',
     amount: 500000.0,
     status: 'Agreement',
     payment: 'Released',
@@ -102,6 +123,8 @@ const tData = [
     name: 'adsfj lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Seller',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Dispute',
     payment: 'Refunded',
@@ -112,6 +135,8 @@ const tData = [
     name: 'adsfj lasdfj',
     date: '24-10-2024, 10:23pm',
     type: 'Seller',
+    transactionType: 'Product',
+    milestonePayment: 'No',
     amount: 500000.0,
     status: 'Dispute',
     payment: 'Refunded',
@@ -123,6 +148,9 @@ export default function TrackLink() {
   const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [transactionType, setTransactionType] = useState<string>('');
+  const router = useRouter();
+  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
 
   const columns: ColumnDef<Payment>[] = [
     {
@@ -136,6 +164,27 @@ export default function TrackLink() {
     {
       accessorKey: 'type',
       header: 'Type',
+    },
+    {
+      accessorKey: 'transactionType',
+      header: 'Transaction Type',
+    },
+    {
+      accessorKey: 'milestonePayment',
+      header: 'Milestone Payment',
+      cell: ({ row }) =>
+        row.original.milestonePayment === 'Yes' ? (
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="text-blue-600 hover:underline" onClick={handleMilestoneDialog}>
+                View
+              </button>
+            </DialogTrigger>
+            {isMilestoneDialogOpen && <MilestoneDialog />}
+          </Dialog>
+        ) : (
+          <span className="rounded-md bg-red-500 px-2 py-1 text-white">No</span>
+        ),
     },
     {
       accessorKey: 'payment',
@@ -154,7 +203,7 @@ export default function TrackLink() {
       header: 'Action',
       cell: ({ row }) => (
         <button
-          onClick={() => handleViewTransaction(true)}
+          onClick={() => handleViewTransaction(true, row.original.transactionType, row.original.id)}
           className="text-blue-600 hover:underline"
         >
           View
@@ -180,27 +229,24 @@ export default function TrackLink() {
     handlePageChange(1, 'All', 'All');
   }, []);
 
-  const handleViewTransaction = (p0: boolean) => {
-    // console.log(transaction);
-    setIsSelectedTransaction(true);
+  const handleViewTransaction = (p0: boolean, transactionType: string, id: string) => {
+    console.log('transaction type', transactionType, 'id', id);
+    router.push(`/dashboard/track-links/${transactionType}/${id}`);
   };
 
-  const handleBackToTable = () => {
-    setIsSelectedTransaction(false);
+  const handleMilestoneDialog = () => {
+    setIsMilestoneDialogOpen(true);
   };
+
   return (
     <section className="rounded-md bg-white p-5">
-      {isSelectedTransaction ? (
-        <TransactionsSummary onBack={handleBackToTable} />
-      ) : (
-        <DataTable
-          columns={columns}
-          data={data}
-          lable={'Track Link'}
-          isLoading={isLoading}
-          onPageChange={handlePageChange}
-        />
-      )}
+      <DataTable
+        columns={columns}
+        data={data}
+        lable={'Track Link'}
+        isLoading={isLoading}
+        onPageChange={handlePageChange}
+      />
     </section>
   );
 }

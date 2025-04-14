@@ -25,11 +25,11 @@ interface TransactionsSummaryProps {
   onBack: () => void;
 }
 
-export default function TransactionsSummary({ onBack }: TransactionsSummaryProps) {
+export default function TransactionsSummaryForProduct({ onBack }: TransactionsSummaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
 
   return (
-    <section className="grid grid-rows-2 lg:flex lg:items-center lg:gap-10">
+    <section className="grid grid-rows-2 rounded-md bg-white p-4 lg:flex lg:items-center lg:gap-10">
       <div className="w-full rounded-md">
         <Button variant="outline" onClick={onBack} className="ml-4">
           <ChevronLeft />
