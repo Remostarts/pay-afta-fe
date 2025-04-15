@@ -18,7 +18,7 @@ export default function Layout({ children }: TChildrenProps) {
   const isDashboard = pathName.startsWith('/dashboard');
 
   return (
-    <div className="flex h-screen flex-col overflow-hidden">
+    <div className="flex h-screen flex-col">
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} className="block lg:hidden" />
 
       {isSidebarOpen && (
@@ -29,7 +29,7 @@ export default function Layout({ children }: TChildrenProps) {
         />
       )}
 
-      <div className="flex flex-1 overflow-hidden">
+      <div className="relative flex flex-1 overflow-hidden">
         <div
           className={`
             fixed left-0 top-0 z-50 h-full shadow-md transition-transform duration-300 ease-in-out
@@ -41,12 +41,12 @@ export default function Layout({ children }: TChildrenProps) {
           {isDashboard && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
         </div>
 
-        <main className="flex-1 overflow-auto bg-gray-50">
+        <main className="flex flex-1 flex-col bg-gray-50">
           <div className="hidden p-4 lg:block lg:p-6">
             {isDashboard && <ProfileHeader />}
             {isAdminDashboard && <AdminProfileHeader />}
           </div>
-          <div className="w-full p-4">{children}</div>
+          <div className="flex-1 overflow-auto p-4">{children}</div>
         </main>
       </div>
     </div>
