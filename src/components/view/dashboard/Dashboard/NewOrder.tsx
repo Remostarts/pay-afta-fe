@@ -103,6 +103,9 @@ export default function NewOrder({ onBack }: any) {
   const buyerEmail = watch('buyerEmailPhoneNo');
   const sellerEmail = watch('sellerEmailPhoneNo');
 
+  const transactionType = watch('transactionType');
+  // console.log(transactionType);
+
   // console.log(buyerEmail);
   // console.log(sellerEmail);
 
@@ -437,63 +440,87 @@ export default function NewOrder({ onBack }: any) {
                   <ReDatePicker name="deliveryDate" className="lg:w-2/5" />
                 </div>
               ) : (
-                <div>
-                  <div>
-                    <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
-                    <ReInput name="milestone1" placeholder="Describe deliverable" />
-                    <div className="grid lg:grid-cols-2 lg:gap-5">
-                      <ReDatePicker
-                        name="milestone1DeliveryDate"
-                        placeholder="Select delivery date"
-                      />
-                      <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
-                    </div>
-                    <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                      <CirclePlus onClick={handleClickGetMilestone2} />
-                      <span className="font-inter">Add more</span>
-                    </div>
-                  </div>
-                  {isMilestone2Show && (
-                    <div>
-                      <ReHeading heading="Milestone 2" size={'base'} className="text-gray-700" />
-                      <ReInput name="milestone2" placeholder="Describe deliverable" />
+                <>
+                  {transactionType === 'Product' ? (
+                    <div className="mt-5">
+                      <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
+                      <ReInput name="milestone1" placeholder="Describe deliverable" />
                       <div className="grid lg:grid-cols-2 lg:gap-5">
                         <ReDatePicker
-                          name="milestone2DeliveryDate"
+                          name="milestone1DeliveryDate"
                           placeholder="Select delivery date"
                         />
-                        <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
+                        <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
                       </div>
-                      <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                        <div className="flex gap-2">
-                          <CirclePlus onClick={handleClickGetMilestone3} />
+                    </div>
+                  ) : (
+                    <div className="mt-5">
+                      <div>
+                        <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
+                        <ReInput name="milestone1" placeholder="Describe deliverable" />
+                        <div className="grid lg:grid-cols-2 lg:gap-5">
+                          <ReDatePicker
+                            name="milestone1DeliveryDate"
+                            placeholder="Select delivery date"
+                          />
+                          <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
+                        </div>
+                        <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                          <CirclePlus onClick={handleClickGetMilestone2} />
                           <span className="font-inter">Add more</span>
                         </div>
-                        <div className="flex gap-2">
-                          <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
-                          <span className="font-inter text-[#d73737]">Delete</span>
+                      </div>
+                      {isMilestone2Show && (
+                        <div>
+                          <ReHeading
+                            heading="Milestone 2"
+                            size={'base'}
+                            className="text-gray-700"
+                          />
+                          <ReInput name="milestone2" placeholder="Describe deliverable" />
+                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                            <ReDatePicker
+                              name="milestone2DeliveryDate"
+                              placeholder="Select delivery date"
+                            />
+                            <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
+                          </div>
+                          <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                            <div className="flex gap-2">
+                              <CirclePlus onClick={handleClickGetMilestone3} />
+                              <span className="font-inter">Add more</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
+                              <span className="font-inter text-[#d73737]">Delete</span>
+                            </div>
+                          </div>
                         </div>
-                      </div>
+                      )}
+                      {isMilestone3Show && (
+                        <div>
+                          <ReHeading
+                            heading="Milestone 3"
+                            size={'base'}
+                            className="text-gray-700"
+                          />
+                          <ReInput name="milestone3" placeholder="Describe deliverable" />
+                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                            <ReDatePicker
+                              name="milestone3DeliveryDate"
+                              placeholder="Select delivery date"
+                            />
+                            <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
+                          </div>
+                          <div className="flex w-full cursor-pointer items-center gap-2">
+                            <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
+                            <span className="font-inter text-[#d73737]">Delete</span>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
-                  {isMilestone3Show && (
-                    <div>
-                      <ReHeading heading="Milestone 3" size={'base'} className="text-gray-700" />
-                      <ReInput name="milestone3" placeholder="Describe deliverable" />
-                      <div className="grid lg:grid-cols-2 lg:gap-5">
-                        <ReDatePicker
-                          name="milestone3DeliveryDate"
-                          placeholder="Select delivery date"
-                        />
-                        <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
-                      </div>
-                      <div className="flex w-full cursor-pointer items-center gap-2">
-                        <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
-                        <span className="font-inter text-[#d73737]">Delete</span>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                </>
               )}
               <div className="mt-5">
                 <ReHeading heading="Transaction Fee" size={'base'} className="text-gray-700" />
