@@ -1,3 +1,5 @@
+import { useRouter } from 'next/navigation';
+
 import {
   DialogContent,
   DialogTitle,
@@ -7,6 +9,7 @@ import {
 } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { Button } from '@/components/ui/button';
 
 interface MilestonePayment {
   payment: string;
@@ -26,6 +29,7 @@ export default function MilestoneDialog({
   onNext,
   onClose,
 }: MilestoneDialogProps) {
+  const router = useRouter();
   const milestonePayments: MilestonePayment[] = [
     {
       payment: '1ST PAYMENT',
@@ -46,6 +50,45 @@ export default function MilestoneDialog({
       status: 'Paid',
     },
   ];
+
+  const handlePayment = async () => {
+    // if (lawyerId === session?.id) return;
+    // const paymentData = {
+    //   clientId: session?.id,
+    //   lawyerId: invoice.lawyer?.id,
+    //   chatId: invoice?.chatId,
+    //   email: session?.user?.email,
+    //   amount,
+    //   installmentId,
+    // };
+    // console.log('🌼 🔥🔥 handlePayment 🔥🔥 paymentData🌼', paymentData);
+
+    // setPayingInstallmentId(installmentId);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/payment-initiate`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // Authorization: session?.accessToken, // Replace with your actual token logic
+          },
+          // body: JSON.stringify(paymentData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to create invoice. Status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('Invoice created successfully:', data);
+      router.push(data?.data?.paymentUrl);
+    } catch (error) {
+      console.error('Error creating invoice:', error);
+    }
+  };
 
   return (
     <DialogContent>
@@ -69,12 +112,28 @@ export default function MilestoneDialog({
               </div>
               <div className="flex items-center gap-4">
                 <span className="text-sm font-medium">{payment.amount}</span>
-                <Badge
+                {/* <Badge
                   variant="secondary"
                   className="rounded-full bg-green-100 px-3 py-0.5 text-green-600"
                 >
                   {payment.status}
-                </Badge>
+                </Badge> */}
+                <Button
+                  onClick={handlePayment}
+                  variant="secondary"
+                  className="cursor-pointer bg-red-100 text-red-600 hover:bg-red-100 disabled:bg-gray-100 disabled:text-gray-400"
+                  // disabled={invoice?.seen !== 'accept' || !!payingInstallmentId}
+                >
+                  {/* {payingInstallmentId === installment.id ? ( // [Fix] Check specific installment ID
+                    <>
+                      <Loader className="mr-2 size-4 animate-spin" />
+                      Processing...
+                    </>
+                  ) : (
+                    'Pay'
+                  )} */}
+                  Pay
+                </Button>
               </div>
             </div>
           ))}

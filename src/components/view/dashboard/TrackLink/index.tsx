@@ -106,42 +106,6 @@ const tData = [
     payment: 'Paid',
     action: 'View',
   },
-  {
-    id: '8',
-    name: 'adsfj lasdfj',
-    date: '24-10-2024, 10:23pm',
-    type: 'Buyer',
-    transactionType: 'Service',
-    milestonePayment: 'Yes',
-    amount: 500000.0,
-    status: 'Agreement',
-    payment: 'Released',
-    action: 'View',
-  },
-  {
-    id: '9',
-    name: 'adsfj lasdfj',
-    date: '24-10-2024, 10:23pm',
-    type: 'Seller',
-    transactionType: 'Product',
-    milestonePayment: 'No',
-    amount: 500000.0,
-    status: 'Dispute',
-    payment: 'Refunded',
-    action: 'View',
-  },
-  {
-    id: '10',
-    name: 'adsfj lasdfj',
-    date: '24-10-2024, 10:23pm',
-    type: 'Seller',
-    transactionType: 'Product',
-    milestonePayment: 'No',
-    amount: 500000.0,
-    status: 'Dispute',
-    payment: 'Refunded',
-    action: 'View',
-  },
 ];
 
 export default function TrackLink() {
@@ -151,6 +115,7 @@ export default function TrackLink() {
   const [transactionType, setTransactionType] = useState<string>('');
   const router = useRouter();
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
+  const [orders, setOrders] = useState<Payment[]>([]);
 
   const columns: ColumnDef<Payment>[] = [
     {
@@ -237,6 +202,42 @@ export default function TrackLink() {
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);
   };
+
+  // useEffect(() => {
+  //   handleLoadInvoiceHistory();
+  // }, []);
+
+  // const handleLoadInvoiceHistory = async (filter: string = 'All', page: number = 1) => {
+  //   console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 filter🌼', filter, page);
+  //   // Optional: Handle filter change
+  //   setIsLoading(true);
+
+  //   // setInvoiceHPage(page);
+
+  //   console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 page🌼', page);
+
+  //   const response = await fetch(
+  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/all?page=${page}&limit=8`,
+  //     {
+  //       method: 'GET',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //         // authorization: session?.accessToken as string,
+  //       },
+  //       cache: 'no-store',
+  //     }
+  //   );
+
+  //   if (!response.ok) {
+  //     throw new Error(`Error fetching invoice history request: ${response.statusText}`);
+  //   }
+
+  //   const data = await response.json();
+  //   console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
+
+  //   setOrders(data?.data);
+  //   setIsLoading(false);
+  // };
 
   return (
     <section className="rounded-md bg-white p-5">

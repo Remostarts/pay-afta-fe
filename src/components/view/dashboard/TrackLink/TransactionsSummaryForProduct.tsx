@@ -43,7 +43,7 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
         {currentStep === 1 ? (
           <OrderAgreement handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 2 ? (
-          <MakePayment handleCurrentStepChange={setCurrentStep} />
+          <MakePayment handleCurrentStepChange={setCurrentStep} isProduct={true} />
         ) : currentStep === 3 ? (
           <ConfirmShipping handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 4 ? (
