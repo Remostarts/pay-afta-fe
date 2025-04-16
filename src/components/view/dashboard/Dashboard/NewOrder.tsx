@@ -103,6 +103,9 @@ export default function NewOrder({ onBack }: any) {
   const buyerEmail = watch('buyerEmailPhoneNo');
   const sellerEmail = watch('sellerEmailPhoneNo');
 
+  const transactionType = watch('transactionType');
+  // console.log(transactionType);
+
   // console.log(buyerEmail);
   // console.log(sellerEmail);
 
@@ -249,281 +252,311 @@ export default function NewOrder({ onBack }: any) {
   const canSubmit = isBuyerEmailValid && isSellerEmailValid;
 
   return (
-    <section className="bg-white p-5">
-      <button
-        onClick={onBack}
-        className="mb-6 flex items-center gap-1 font-medium text-gray-700 hover:text-gray-900"
-      >
-        <ChevronLeft className="size-5" />
-        <span className="text-lg">Create Payment Order</span>
-      </button>
-      <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
-        <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
-          <TabsTrigger
-            value="buyer"
-            className={`
-              rounded-full px-6 py-3 text-base font-medium transition-all
-              ${activeTab === 'buyer' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
-            `}
-          >
-            Buyer
-          </TabsTrigger>
-          <TabsTrigger
-            value="seller"
-            className={`
-              rounded-full px-6 py-3 text-base font-medium transition-all
-              ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
-            `}
-            disabled={!isBuyerEmailValid}
-          >
-            Seller
-          </TabsTrigger>
-        </TabsList>
-      </Tabs>
-      <div>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="grid gap-5 lg:grid-cols-2">
+    <div className="min-h-full bg-white">
+      <div className="p-5">
+        <button
+          onClick={onBack}
+          className="mb-6 flex items-center gap-1 font-medium text-gray-700 hover:text-gray-900"
+        >
+          <ChevronLeft className="size-5" />
+          <span className="text-lg">Create Payment Order</span>
+        </button>
+        <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
+          <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
+            <TabsTrigger
+              value="buyer"
+              className={`
+                rounded-full px-6 py-3 text-base font-medium transition-all
+                ${activeTab === 'buyer' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
+              `}
+            >
+              Buyer
+            </TabsTrigger>
+            <TabsTrigger
+              value="seller"
+              className={`
+                rounded-full px-6 py-3 text-base font-medium transition-all
+                ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
+              `}
+              disabled={!isBuyerEmailValid}
+            >
+              Seller
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
+        <div>
+          <Form {...form}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <div className="grid gap-5 lg:grid-cols-2">
+                <div>
+                  <ReHeading heading="Transaction Type" size={'base'} className=" text-gray-700" />
+                  <ReSelect
+                    name="transactionType"
+                    options={[
+                      { label: 'Product', value: 'Product' },
+                      { label: 'Services', value: 'Services' },
+                    ]}
+                    placeholder="Select"
+                  />
+                </div>
+                <div>
+                  {activeTab === 'buyer' ? (
+                    <div>
+                      <ReHeading
+                        heading="Buyer email or phone number "
+                        size={'base'}
+                        className=" text-gray-700"
+                      />
+                      <input
+                        {...register('buyerEmailPhoneNo')}
+                        className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        value={buyerEmail}
+                      />
+                      {isLoadingEmail ? (
+                        <div className="mt-1 flex items-center">
+                          <LoaderCircle className="mr-2 size-4 animate-spin" />
+                          <span className="text-sm text-gray-500">Verifying email...</span>
+                        </div>
+                      ) : isBuyerEmailValid ? (
+                        <p className="mt-1 text-sm font-normal text-green-500">
+                          ✓ Verified - You&apos;ll be moved to seller section
+                        </p>
+                      ) : errors.buyerEmailPhoneNo ? (
+                        <p className="mt-1 text-sm font-normal text-red-500">
+                          {errors.buyerEmailPhoneNo.message}
+                        </p>
+                      ) : null}
+                    </div>
+                  ) : (
+                    <div>
+                      <ReHeading
+                        heading="Seller email or phone number "
+                        size={'base'}
+                        className=" text-gray-700"
+                      />
+                      <input
+                        {...register('sellerEmailPhoneNo')}
+                        className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        value={sellerEmail}
+                      />
+                      {isLoadingEmail ? (
+                        <div className="mt-1 flex items-center">
+                          <LoaderCircle className="mr-2 size-4 animate-spin" />
+                          <span className="text-sm text-gray-500">Verifying email...</span>
+                        </div>
+                      ) : isSellerEmailValid ? (
+                        <p className="mt-1 text-sm font-normal text-green-500">✓ Verified</p>
+                      ) : errors.sellerEmailPhoneNo ? (
+                        <p className="mt-1 text-sm font-normal text-red-500">
+                          {errors.sellerEmailPhoneNo.message}
+                        </p>
+                      ) : null}
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Summary of validated emails
+              {(isBuyerEmailValid || isSellerEmailValid) && (
+                <div className="my-4 rounded-md border border-gray-200 bg-gray-50 p-3">
+                  <h3 className="mb-2 font-medium text-gray-700">Participants</h3>
+                  {isBuyerEmailValid && (
+                    <div className="mb-1 flex items-center">
+                      <span className="mr-2 text-green-500">✓</span>
+                      <span className="text-sm">Buyer: {buyerEmail}</span>
+                    </div>
+                  )}
+                  {isSellerEmailValid && (
+                    <div className="flex items-center">
+                      <span className="mr-2 text-green-500">✓</span>
+                      <span className="text-sm">Seller: {sellerEmail}</span>
+                    </div>
+                  )}
+                </div>
+              )} */}
+
               <div>
-                <ReHeading heading="Transaction Type" size={'base'} className=" text-gray-700" />
-                <ReSelect
-                  name="transactionType"
+                <ReHeading heading="Item 1" size={'base'} className="text-gray-700" />
+                <ReInput name="item1Name" placeholder="Enter Name" />
+                <div className="grid lg:grid-cols-2 lg:gap-5">
+                  <ReInput name="item1Quantity" placeholder="Enter Quantity" />
+                  <ReInput name="item1Prize" placeholder="₦ 00.00" />
+                </div>
+                <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                  <CirclePlus onClick={handleClickGetItem2} />
+                  <span className="font-inter">Add more</span>
+                </div>
+              </div>
+              {isItem2Show && (
+                <div>
+                  <ReHeading heading="Item 2" size={'base'} className="text-gray-700" />
+                  <ReInput name="item2Name" placeholder="Enter Name" />
+                  <div className="grid lg:grid-cols-2 lg:gap-5">
+                    <ReInput name="item2Quantity" placeholder="Enter Quantity" />
+                    <ReInput name="item2Prize" placeholder="₦ 00.00" />
+                  </div>
+                  <div className="flex w-full cursor-pointer items-center gap-2">
+                    <Trash2 color="#d73737" onClick={handleClickRemoveItem2} />
+                    <span className="font-inter text-[#d73737]">Delete</span>
+                  </div>
+                </div>
+              )}
+              <div className="mt-5">
+                <ReHeading
+                  heading="Give me more details about the expected Item"
+                  size={'base'}
+                  className="text-gray-700"
+                />
+                <ReTextarea name="detailAboutItem" className="font-inter outline-none" />
+              </div>
+              <div>
+                <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
+                <ReRadioGroup
+                  name="paymentType"
                   options={[
-                    { label: 'Product', value: 'Product' },
-                    { label: 'Services', value: 'Services' },
+                    {
+                      label: 'One time Payment',
+                      value: 'One time Payment',
+                      radioDescription:
+                        'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
+                    },
+                    {
+                      label: 'Milestone Payment',
+                      value: 'Milestone Payment',
+                      radioDescription: 'Pay gradually to the seller after reaching an agreement.',
+                    },
                   ]}
-                  placeholder="Select"
+                  className="flex flex-col lg:grid lg:grid-cols-2"
+                  onChange={handleChangePaymentType}
                 />
               </div>
-              <div>
-                {activeTab === 'buyer' ? (
-                  <div>
-                    <ReHeading
-                      heading="Buyer email or phone number "
-                      size={'base'}
-                      className=" text-gray-700"
-                    />
-                    <input
-                      {...register('buyerEmailPhoneNo')}
-                      className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                      value={buyerEmail}
-                    />
-                    {isLoadingEmail ? (
-                      <div className="mt-1 flex items-center">
-                        <LoaderCircle className="mr-2 size-4 animate-spin" />
-                        <span className="text-sm text-gray-500">Verifying email...</span>
-                      </div>
-                    ) : isBuyerEmailValid ? (
-                      <p className="mt-1 text-sm font-normal text-green-500">
-                        ✓ Verified - You&apos;ll be moved to seller section
-                      </p>
-                    ) : errors.buyerEmailPhoneNo ? (
-                      <p className="mt-1 text-sm font-normal text-red-500">
-                        {errors.buyerEmailPhoneNo.message}
-                      </p>
-                    ) : null}
-                  </div>
-                ) : (
-                  <div>
-                    <ReHeading
-                      heading="Seller email or phone number "
-                      size={'base'}
-                      className=" text-gray-700"
-                    />
-                    <input
-                      {...register('sellerEmailPhoneNo')}
-                      className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                      value={sellerEmail}
-                    />
-                    {isLoadingEmail ? (
-                      <div className="mt-1 flex items-center">
-                        <LoaderCircle className="mr-2 size-4 animate-spin" />
-                        <span className="text-sm text-gray-500">Verifying email...</span>
-                      </div>
-                    ) : isSellerEmailValid ? (
-                      <p className="mt-1 text-sm font-normal text-green-500">✓ Verified</p>
-                    ) : errors.sellerEmailPhoneNo ? (
-                      <p className="mt-1 text-sm font-normal text-red-500">
-                        {errors.sellerEmailPhoneNo.message}
-                      </p>
-                    ) : null}
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Summary of validated emails
-            {(isBuyerEmailValid || isSellerEmailValid) && (
-              <div className="my-4 rounded-md border border-gray-200 bg-gray-50 p-3">
-                <h3 className="mb-2 font-medium text-gray-700">Participants</h3>
-                {isBuyerEmailValid && (
-                  <div className="mb-1 flex items-center">
-                    <span className="mr-2 text-green-500">✓</span>
-                    <span className="text-sm">Buyer: {buyerEmail}</span>
-                  </div>
-                )}
-                {isSellerEmailValid && (
-                  <div className="flex items-center">
-                    <span className="mr-2 text-green-500">✓</span>
-                    <span className="text-sm">Seller: {sellerEmail}</span>
-                  </div>
-                )}
-              </div>
-            )} */}
-
-            <div>
-              <ReHeading heading="Item 1" size={'base'} className="text-gray-700" />
-              <ReInput name="item1Name" placeholder="Enter Name" />
-              <div className="grid lg:grid-cols-2 lg:gap-5">
-                <ReInput name="item1Quantity" placeholder="Enter Quantity" />
-                <ReInput name="item1Prize" placeholder="₦ 00.00" />
-              </div>
-              <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                <CirclePlus onClick={handleClickGetItem2} />
-                <span className="font-inter">Add more</span>
-              </div>
-            </div>
-            {isItem2Show && (
-              <div>
-                <ReHeading heading="Item 2" size={'base'} className="text-gray-700" />
-                <ReInput name="item2Name" placeholder="Enter Name" />
-                <div className="grid lg:grid-cols-2 lg:gap-5">
-                  <ReInput name="item2Quantity" placeholder="Enter Quantity" />
-                  <ReInput name="item2Prize" placeholder="₦ 00.00" />
+              {paymentType === 'One time Payment' ? (
+                <div className="mt-5">
+                  <ReHeading
+                    heading="Select Delivery Date"
+                    size={'base'}
+                    className="text-gray-700"
+                  />
+                  <ReDatePicker name="deliveryDate" className="lg:w-2/5" />
                 </div>
-                <div className="flex w-full cursor-pointer items-center gap-2">
-                  <Trash2 color="#d73737" onClick={handleClickRemoveItem2} />
-                  <span className="font-inter text-[#d73737]">Delete</span>
-                </div>
-              </div>
-            )}
-            <div className="mt-5">
-              <ReHeading
-                heading="Give me more details about the expected Item"
-                size={'base'}
-                className="text-gray-700"
-              />
-              <ReTextarea name="detailAboutItem" className="font-inter outline-none" />
-            </div>
-            <div>
-              <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
-              <ReRadioGroup
-                name="paymentType"
-                options={[
-                  {
-                    label: 'One time Payment',
-                    value: 'One time Payment',
-                    radioDescription:
-                      'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
-                  },
-                  {
-                    label: 'Milestone Payment',
-                    value: 'Milestone Payment',
-                    radioDescription: 'Pay gradually to the seller after reaching an agreement.',
-                  },
-                ]}
-                className="flex flex-col lg:grid lg:grid-cols-2"
-                onChange={handleChangePaymentType}
-              />
-            </div>
-            {paymentType === 'One time Payment' ? (
+              ) : (
+                <>
+                  {transactionType === 'Product' ? (
+                    <div className="mt-5">
+                      <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
+                      <ReInput name="milestone1" placeholder="Describe deliverable" />
+                      <div className="grid lg:grid-cols-2 lg:gap-5">
+                        <ReDatePicker
+                          name="milestone1DeliveryDate"
+                          placeholder="Select delivery date"
+                        />
+                        <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="mt-5">
+                      <div>
+                        <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
+                        <ReInput name="milestone1" placeholder="Describe deliverable" />
+                        <div className="grid lg:grid-cols-2 lg:gap-5">
+                          <ReDatePicker
+                            name="milestone1DeliveryDate"
+                            placeholder="Select delivery date"
+                          />
+                          <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
+                        </div>
+                        <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                          <CirclePlus onClick={handleClickGetMilestone2} />
+                          <span className="font-inter">Add more</span>
+                        </div>
+                      </div>
+                      {isMilestone2Show && (
+                        <div>
+                          <ReHeading
+                            heading="Milestone 2"
+                            size={'base'}
+                            className="text-gray-700"
+                          />
+                          <ReInput name="milestone2" placeholder="Describe deliverable" />
+                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                            <ReDatePicker
+                              name="milestone2DeliveryDate"
+                              placeholder="Select delivery date"
+                            />
+                            <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
+                          </div>
+                          <div className="flex w-full cursor-pointer items-center justify-end gap-2">
+                            <div className="flex gap-2">
+                              <CirclePlus onClick={handleClickGetMilestone3} />
+                              <span className="font-inter">Add more</span>
+                            </div>
+                            <div className="flex gap-2">
+                              <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
+                              <span className="font-inter text-[#d73737]">Delete</span>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                      {isMilestone3Show && (
+                        <div>
+                          <ReHeading
+                            heading="Milestone 3"
+                            size={'base'}
+                            className="text-gray-700"
+                          />
+                          <ReInput name="milestone3" placeholder="Describe deliverable" />
+                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                            <ReDatePicker
+                              name="milestone3DeliveryDate"
+                              placeholder="Select delivery date"
+                            />
+                            <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
+                          </div>
+                          <div className="flex w-full cursor-pointer items-center gap-2">
+                            <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
+                            <span className="font-inter text-[#d73737]">Delete</span>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </>
+              )}
               <div className="mt-5">
-                <ReHeading heading="Select Delivery Date" size={'base'} className="text-gray-700" />
-                <ReDatePicker name="deliveryDate" className="lg:w-2/5" />
+                <ReHeading heading="Transaction Fee" size={'base'} className="text-gray-700" />
+                <ReRadioGroup
+                  name="transactionFee"
+                  options={[
+                    {
+                      label: 'I will pay for the transaction',
+                      value: 'I will pay for the transaction',
+                    },
+                    {
+                      label: 'Seller pays for the transaction fee',
+                      value: 'Seller pays for the transaction fee',
+                    },
+                    {
+                      label: 'Both Parties Pay (50/50)',
+                      value: 'Both Parties Pay (50/50)',
+                    },
+                  ]}
+                  className="flex flex-initial flex-col lg:grid lg:grid-cols-3"
+                />
               </div>
-            ) : (
-              <div>
-                <div>
-                  <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
-                  <ReInput name="milestone1" placeholder="Describe deliverable" />
-                  <div className="grid lg:grid-cols-2 lg:gap-5">
-                    <ReDatePicker
-                      name="milestone1DeliveryDate"
-                      placeholder="Select delivery date"
-                    />
-                    <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
-                  </div>
-                  <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                    <CirclePlus onClick={handleClickGetMilestone2} />
-                    <span className="font-inter">Add more</span>
-                  </div>
-                </div>
-                {isMilestone2Show && (
-                  <div>
-                    <ReHeading heading="Milestone 2" size={'base'} className="text-gray-700" />
-                    <ReInput name="milestone2" placeholder="Describe deliverable" />
-                    <div className="grid lg:grid-cols-2 lg:gap-5">
-                      <ReDatePicker
-                        name="milestone2DeliveryDate"
-                        placeholder="Select delivery date"
-                      />
-                      <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
-                    </div>
-                    <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                      <div className="flex gap-2">
-                        <CirclePlus onClick={handleClickGetMilestone3} />
-                        <span className="font-inter">Add more</span>
-                      </div>
-                      <div className="flex gap-2">
-                        <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
-                        <span className="font-inter text-[#d73737]">Delete</span>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isMilestone3Show && (
-                  <div>
-                    <ReHeading heading="Milestone 3" size={'base'} className="text-gray-700" />
-                    <ReInput name="milestone3" placeholder="Describe deliverable" />
-                    <div className="grid lg:grid-cols-2 lg:gap-5">
-                      <ReDatePicker
-                        name="milestone3DeliveryDate"
-                        placeholder="Select delivery date"
-                      />
-                      <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
-                    </div>
-                    <div className="flex w-full cursor-pointer items-center gap-2">
-                      <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
-                      <span className="font-inter text-[#d73737]">Delete</span>
-                    </div>
-                  </div>
-                )}
+              <div className="mt-5 flex items-center justify-center">
+                <ReButton
+                  className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
+                  type="submit"
+                  isSubmitting={isSubmitting || loading}
+                  disabled={!canSubmit}
+                >
+                  Create Order
+                </ReButton>
               </div>
-            )}
-            <div className="mt-5">
-              <ReHeading heading="Transaction Fee" size={'base'} className="text-gray-700" />
-              <ReRadioGroup
-                name="transactionFee"
-                options={[
-                  {
-                    label: 'I will pay for the transaction',
-                    value: 'I will pay for the transaction',
-                  },
-                  {
-                    label: 'Seller pays for the transaction fee',
-                    value: 'Seller pays for the transaction fee',
-                  },
-                  {
-                    label: 'Both Parties Pay (50/50)',
-                    value: 'Both Parties Pay (50/50)',
-                  },
-                ]}
-                className="flex flex-initial flex-col lg:grid lg:grid-cols-3"
-              />
-            </div>
-            <div className="mt-5 flex items-center justify-center">
-              <ReButton
-                className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
-                type="submit"
-                isSubmitting={isSubmitting || loading}
-                disabled={!canSubmit}
-              >
-                Create Order
-              </ReButton>
-            </div>
-          </form>
-        </Form>
+            </form>
+          </Form>
+        </div>
       </div>
-    </section>
+    </div>
   );
 }

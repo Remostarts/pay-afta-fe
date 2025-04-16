@@ -13,16 +13,14 @@ export default function Dashboard() {
 
   if (showNewOrder) {
     return (
-      <section>
-        <div>
-          <NewOrder onBack={() => setShowNewOrder(false)} />
-        </div>
-      </section>
+      <div className="min-h-full w-full">
+        <NewOrder onBack={() => setShowNewOrder(false)} />
+      </div>
     );
   }
 
   return (
-    <section>
+    <div className="min-h-full w-full">
       <div className="lg:m-4">
         <StatsSection />
       </div>
@@ -33,6 +31,6 @@ export default function Dashboard() {
         <RecentTrackLink />
         <RecentTransactions />
       </div>
-    </section>
+    </div>
   );
 }
