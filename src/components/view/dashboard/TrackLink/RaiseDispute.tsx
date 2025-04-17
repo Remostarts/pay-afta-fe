@@ -2,6 +2,7 @@
 
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { useState } from 'react';
 
 import {
   TRaiseDisputeSchema,
@@ -18,6 +19,7 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface RaiseDisputeProps {
   handleClosed: (e: boolean) => void;
   handleCurrentStepChange: (e: number) => void;
+  handleShowRiseDispute: (showRiseDispute: boolean) => void;
 }
 
 const defaultVal = {
@@ -26,7 +28,13 @@ const defaultVal = {
   uploadFile: '',
 };
 
-export default function RaiseDispute({ handleClosed, handleCurrentStepChange }: RaiseDisputeProps) {
+export default function RaiseDispute({
+  handleClosed,
+  handleCurrentStepChange,
+  handleShowRiseDispute,
+}: RaiseDisputeProps) {
+  const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
+
   const form = useForm<TRaiseDisputeSchema>({
     resolver: zodResolver(raiseDisputeSchema),
     defaultValues: defaultVal,
@@ -35,6 +43,12 @@ export default function RaiseDispute({ handleClosed, handleCurrentStepChange }: 
 
   const { formState, handleSubmit } = form;
   const { isSubmitting, isValid } = formState;
+
+  function handleShowRiseDisputeAndStepChange() {
+    setIsShowRiseDispute(true);
+    handleCurrentStepChange(5);
+    handleShowRiseDispute(true);
+  }
 
   async function onSubmit(data: TRaiseDisputeSchema) {
     console.log(data);
@@ -81,9 +95,7 @@ export default function RaiseDispute({ handleClosed, handleCurrentStepChange }: 
               <ReButton
                 disabled={isSubmitting || !isValid}
                 className="rounded-full bg-[#D42620] text-white hover:bg-[#D42620]"
-                onClick={() => {
-                  handleCurrentStepChange(5);
-                }}
+                onClick={handleShowRiseDisputeAndStepChange}
               >
                 Dispute
               </ReButton>
