@@ -10,11 +10,15 @@ import RequestRefund from './RequestRefund';
 interface RejectDeliveryProps {
   handleClosed: (e: boolean) => void;
   handleCurrentStepChange: (e: number) => void;
+  handleShowRiseDispute: (showRiseDispute: boolean) => void;
+  handleIsRequestRefund: (isRequestRefund: boolean) => void;
 }
 
 export default function RejectDelivery({
   handleClosed,
   handleCurrentStepChange,
+  handleShowRiseDispute,
+  handleIsRequestRefund,
 }: RejectDeliveryProps) {
   const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
   const [isShowRequestRefund, setIsShowRequestRefund] = useState<boolean>(false);
@@ -33,11 +37,13 @@ export default function RejectDelivery({
         <RaiseDispute
           handleClosed={handleClosed}
           handleCurrentStepChange={handleCurrentStepChange}
+          handleShowRiseDispute={handleShowRiseDispute}
         />
       ) : isShowRequestRefund ? (
         <RequestRefund
           handleClosed={handleClosed}
           handleCurrentStepChange={handleCurrentStepChange}
+          handleIsRequestRefund={handleIsRequestRefund}
         />
       ) : (
         <>

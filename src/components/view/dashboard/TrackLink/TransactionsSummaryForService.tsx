@@ -4,21 +4,14 @@ import { useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
 import Summary from './Summary';
-import MakePayment from './MakePayment';
-import ConfirmShipping from './ConfirmShipping';
+import MakePaymentInService from './MakePaymentInService';
 import Delivery from './Delivery';
 import TransactionsDispute from './TransactionsDispute';
 import OrderAgreement from './OrderAgreement';
+import StepperForService from './StepperForService';
+import TransactionApproval from './TransactionApproval';
 
-import Stepper from '@/components/ui/stepper';
 import { Button } from '@/components/ui/button';
-
-const steps = [
-  { number: 1, label: 'Agreement' },
-  { number: 2, label: 'Payment' },
-  { number: 3, label: 'Delivery' },
-  { number: 4, label: 'Closed' },
-];
 
 interface TransactionsSummaryProps {
   onBack: () => void;
@@ -26,9 +19,19 @@ interface TransactionsSummaryProps {
 
 export default function TransactionsSummaryForService({ onBack }: TransactionsSummaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [isDisputed, setIsDisputed] = useState<boolean>(false);
+  const [isReturn, setIsReturn] = useState<boolean>(false);
 
   const handleStepChange = (step: number) => {
     setCurrentStep(step);
+  };
+
+  const handleShowRiseDispute = () => {
+    setIsDisputed(true);
+  };
+
+  const handleIsRequestRefund = () => {
+    setIsReturn(true);
   };
 
   return (
@@ -42,13 +45,17 @@ export default function TransactionsSummaryForService({ onBack }: TransactionsSu
           <p className="font-inter text-gray-500">Transactions ID: 123456789</p>
           <p className="font-inter text-gray-500">November3, 2024, 18:25</p>
         </div>
-        <Stepper totalSteps={5} currentStep={currentStep} steps={steps} />
+        <StepperForService currentStep={currentStep} isDisputed={isDisputed} isReturn={isReturn} />
         {currentStep === 1 ? (
-          <OrderAgreement handleCurrentStepChange={handleStepChange} />
+          <TransactionApproval showActions={true} handleCurrentStepChange={handleStepChange} />
         ) : currentStep === 2 ? (
-          <MakePayment handleCurrentStepChange={handleStepChange} />
+          <MakePaymentInService handleCurrentStepChange={handleStepChange} />
         ) : currentStep === 3 ? (
-          <Delivery handleCurrentStepChange={handleStepChange} />
+          <Delivery
+            handleCurrentStepChange={handleStepChange}
+            handleShowRiseDispute={handleShowRiseDispute}
+            handleIsRequestRefund={handleIsRequestRefund}
+          />
         ) : (
           currentStep === 4 && <TransactionsDispute />
         )}

@@ -17,21 +17,23 @@ import {
 } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
 
-interface OrderAgreementProps {
+interface MakePaymentInServiceProps {
   handleCurrentStepChange: (step: number) => void;
+  showActions?: boolean;
 }
 
-export default function MakePayment({ handleCurrentStepChange }: OrderAgreementProps) {
+export default function MakePaymentInService({
+  handleCurrentStepChange,
+  showActions = true,
+}: MakePaymentInServiceProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
     'summary'
   );
 
-  const handleAcceptOrder = () => {
+  const handleOpenPayment = () => {
     setIsOpen(true);
   };
-
-  console.log(currentComponent);
 
   const handleConfirmTransaction = () => {
     if (currentComponent === 'summary') {
@@ -45,6 +47,18 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
     }
   };
 
+  if (!showActions) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
+        <h2 className="mb-2 text-lg font-medium">Awaiting Payment</h2>
+        <p className="text-sm text-gray-600">
+          Kindly note that the payment for the product/service is pending. You&apos;ll receive a
+          notification once the transaction is completed!
+        </p>
+      </div>
+    );
+  }
+
   return (
     <section className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
       <div className="mb-5">
@@ -57,13 +71,23 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
       <div className="flex items-center gap-5">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+            <ReButton className="w-2/5 rounded-full" onClick={handleOpenPayment}>
               Make Payment
             </ReButton>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             {currentComponent === 'summary' ? (
-              <PaymentSummary />
+              <>
+                <DialogHeader>
+                  <DialogTitle>Payment Summary</DialogTitle>
+                </DialogHeader>
+                <PaymentSummary />
+                <DialogFooter>
+                  <ReButton onClick={handleConfirmTransaction} className="rounded-full">
+                    Pay with Wallet Balance
+                  </ReButton>
+                </DialogFooter>
+              </>
             ) : currentComponent === 'milestone' ? (
               <MilestoneDialog
                 isInTransactionSummary={true}
@@ -71,14 +95,12 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
                 onClose={() => setIsOpen(false)}
               />
             ) : (
-              <PaymentSuccessful label={'Transaction confirmed!'} />
-            )}
-            {currentComponent === 'summary' && (
-              <DialogFooter>
-                <ReButton onClick={handleConfirmTransaction} className="rounded-full">
-                  Pay with Wallet Balance
-                </ReButton>
-              </DialogFooter>
+              <>
+                <DialogHeader>
+                  <DialogTitle>Payment Successful</DialogTitle>
+                </DialogHeader>
+                <PaymentSuccessful label="Transaction confirmed!" />
+              </>
             )}
           </DialogContent>
         </Dialog>

@@ -47,6 +47,8 @@ export default function MilestoneDialog({
     },
   ];
 
+  // console.log(isInTransactionSummary);
+
   return (
     <DialogContent>
       <DialogHeader>
@@ -80,11 +82,13 @@ export default function MilestoneDialog({
           ))}
         </div>
       </DialogDescription>
-      <DialogFooter>
-        <ReButton onClick={isInTransactionSummary ? onNext : onClose} className="rounded-full">
-          {isInTransactionSummary ? 'Next' : 'Close'}
-        </ReButton>
-      </DialogFooter>
+      {isInTransactionSummary && (
+        <DialogFooter>
+          <ReButton onClick={onNext} className="rounded-full">
+            Next
+          </ReButton>
+        </DialogFooter>
+      )}
     </DialogContent>
   );
 }
