@@ -19,9 +19,13 @@ import { ReButton } from '@/components/re-ui/ReButton';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
+  currentStepChange: number;
 }
 
-export default function MakePayment({ handleCurrentStepChange }: OrderAgreementProps) {
+export default function MakePayment({
+  handleCurrentStepChange,
+  currentStepChange,
+}: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
     'summary'
@@ -40,7 +44,7 @@ export default function MakePayment({ handleCurrentStepChange }: OrderAgreementP
       setCurrentComponent('successful');
       setTimeout(() => {
         setIsOpen(false);
-        handleCurrentStepChange(3);
+        handleCurrentStepChange(currentStepChange + 1);
       }, 2000);
     }
   };

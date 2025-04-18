@@ -16,9 +16,13 @@ import {
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
+  currentStepChange: number;
 }
 
-export default function OrderAgreement({ handleCurrentStepChange }: OrderAgreementProps) {
+export default function OrderAgreement({
+  handleCurrentStepChange,
+  currentStepChange,
+}: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleAcceptOrder = () => {
@@ -33,7 +37,7 @@ export default function OrderAgreement({ handleCurrentStepChange }: OrderAgreeme
   const handleRejectOrder = () => {
     // Add rejection logic here
     console.log('Order rejected');
-    handleCurrentStepChange(1);
+    handleCurrentStepChange(currentStepChange - 1);
   };
 
   return (
