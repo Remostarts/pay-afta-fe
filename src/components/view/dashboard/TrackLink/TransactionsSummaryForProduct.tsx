@@ -41,19 +41,38 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
           isReturn={isRequestRefund}
         />
         {currentStep === 1 ? (
-          <OrderAgreement handleCurrentStepChange={setCurrentStep} />
+          <OrderAgreement
+            handleCurrentStepChange={setCurrentStep}
+            currentStepChange={currentStep}
+          />
         ) : currentStep === 2 ? (
-          <MakePayment handleCurrentStepChange={setCurrentStep} />
+          <MakePayment handleCurrentStepChange={setCurrentStep} currentStepChange={currentStep} />
         ) : currentStep === 3 ? (
-          <ConfirmShipping handleCurrentStepChange={setCurrentStep} />
+          <ConfirmShipping
+            handleCurrentStepChange={setCurrentStep}
+            currentStepChange={currentStep}
+          />
         ) : currentStep === 4 ? (
           <Delivery
             handleCurrentStepChange={setCurrentStep}
             handleShowRiseDispute={setShowRiseDispute}
             handleIsRequestRefund={setIsRequestRefund}
+            currentStepChange={currentStep}
           />
+        ) : currentStep === 5 ? (
+          showRiseDispute === true ? (
+            <TransactionsDispute />
+          ) : (
+            <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+              <h2 className="mb-2 text-lg font-semibold">Transaction Completed</h2>
+              <p className="text-sm font-medium text-gray-700">
+                Congratulations! Transaction complete, product/service delivered & accepted. Payment
+                released, marking a successful and seamless process.
+              </p>
+            </div>
+          )
         ) : (
-          currentStep === 5 && <TransactionsDispute />
+          <p>NULL</p>
         )}
       </div>
       <div>

@@ -20,11 +20,13 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface MakePaymentInServiceProps {
   handleCurrentStepChange: (step: number) => void;
   showActions?: boolean;
+  currentStepChange: number;
 }
 
 export default function MakePaymentInService({
   handleCurrentStepChange,
   showActions = true,
+  currentStepChange,
 }: MakePaymentInServiceProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
@@ -42,7 +44,7 @@ export default function MakePaymentInService({
       setCurrentComponent('successful');
       setTimeout(() => {
         setIsOpen(false);
-        handleCurrentStepChange(3);
+        handleCurrentStepChange(currentStepChange + 1);
       }, 2000);
     }
   };

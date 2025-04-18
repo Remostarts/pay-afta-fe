@@ -10,8 +10,31 @@ import TransactionsDispute from './TransactionsDispute';
 import OrderAgreement from './OrderAgreement';
 import StepperForService from './StepperForService';
 import TransactionApproval from './TransactionApproval';
+import MilestoneTransaction from './MilestoneTransaction';
 
 import { Button } from '@/components/ui/button';
+
+// const sampleMilestones: {
+//   date: string;
+//   amount: number;
+//   description: string;
+//   status?: 'pending' | 'paid' | 'disputed';
+// }[] = [
+//   {
+//     date: 'November 24, 2023',
+//     amount: 150000,
+//     description:
+//       'Lorem ipsum dolor sit amet consectetur. Sed sed purus quis hendrerit sagittis neque ridiculus pellentesque ultrices. Eleifend fames quis mattis in non id.',
+//     status: 'pending',
+//   },
+//   {
+//     date: 'November 31, 2023',
+//     amount: 150000,
+//     description:
+//       'Lorem ipsum dolor sit amet consectetur. Sed sed purus quis hendrerit sagittis neque ridiculus pellentesque ultrices. Eleifend fames quis mattis in non id.',
+//     status: 'paid',
+//   },
+// ];
 
 interface TransactionsSummaryProps {
   onBack: () => void;
@@ -47,17 +70,38 @@ export default function TransactionsSummaryForService({ onBack }: TransactionsSu
         </div>
         <StepperForService currentStep={currentStep} isDisputed={isDisputed} isReturn={isReturn} />
         {currentStep === 1 ? (
-          <TransactionApproval showActions={true} handleCurrentStepChange={handleStepChange} />
-        ) : currentStep === 2 ? (
-          <MakePaymentInService handleCurrentStepChange={handleStepChange} />
-        ) : currentStep === 3 ? (
-          <Delivery
+          <TransactionApproval
+            showActions={true}
             handleCurrentStepChange={handleStepChange}
-            handleShowRiseDispute={handleShowRiseDispute}
-            handleIsRequestRefund={handleIsRequestRefund}
+            currentStepChange={currentStep}
           />
+        ) : currentStep === 2 ? (
+          <MakePaymentInService
+            handleCurrentStepChange={handleStepChange}
+            currentStepChange={currentStep}
+          />
+        ) : currentStep === 3 ? (
+          <MilestoneTransaction
+            userType="seller"
+            handleShowRiseDispute={handleShowRiseDispute}
+            handleCurrentStepChange={handleStepChange}
+            currentStepChange={currentStep}
+            handleIsDisputed={setIsDisputed}
+          />
+        ) : currentStep === 4 ? (
+          isDisputed === true ? (
+            <TransactionsDispute />
+          ) : (
+            <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+              <h2 className="mb-2 text-lg font-semibold">Transaction Completed</h2>
+              <p className="text-sm font-medium text-gray-700">
+                Congratulations! Transaction complete, product/service delivered & accepted. Payment
+                released, marking a successful and seamless process.
+              </p>
+            </div>
+          )
         ) : (
-          currentStep === 4 && <TransactionsDispute />
+          <p>NULL</p>
         )}
       </div>
       <div>

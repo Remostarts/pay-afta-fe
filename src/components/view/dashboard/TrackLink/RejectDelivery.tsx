@@ -12,6 +12,7 @@ interface RejectDeliveryProps {
   handleCurrentStepChange: (e: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  currentStepChange: number;
 }
 
 export default function RejectDelivery({
@@ -19,6 +20,7 @@ export default function RejectDelivery({
   handleCurrentStepChange,
   handleShowRiseDispute,
   handleIsRequestRefund,
+  currentStepChange,
 }: RejectDeliveryProps) {
   const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
   const [isShowRequestRefund, setIsShowRequestRefund] = useState<boolean>(false);
@@ -38,12 +40,14 @@ export default function RejectDelivery({
           handleClosed={handleClosed}
           handleCurrentStepChange={handleCurrentStepChange}
           handleShowRiseDispute={handleShowRiseDispute}
+          currentStepChange={currentStepChange}
         />
       ) : isShowRequestRefund ? (
         <RequestRefund
           handleClosed={handleClosed}
           handleCurrentStepChange={handleCurrentStepChange}
           handleIsRequestRefund={handleIsRequestRefund}
+          currentStepChange={currentStepChange}
         />
       ) : (
         <>

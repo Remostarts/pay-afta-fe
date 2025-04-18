@@ -19,16 +19,18 @@ interface TransactionApprovalProps {
   onReject?: () => void;
   className?: string;
   handleCurrentStepChange: (step: number) => void;
+  currentStepChange: number;
 }
 
-export const TransactionApproval: React.FC<TransactionApprovalProps> = ({
+function TransactionApproval({
   showActions = false,
   message = 'The buyer/seller has created a payment, Make sure you inspect the details before approving.',
   onAgree,
   onReject,
   className = '',
   handleCurrentStepChange,
-}) => {
+  currentStepChange,
+}: TransactionApprovalProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
 
   const handleAcceptOrder = () => {
@@ -39,7 +41,7 @@ export const TransactionApproval: React.FC<TransactionApprovalProps> = ({
     if (onAgree) {
       onAgree();
     }
-    handleCurrentStepChange(2);
+    handleCurrentStepChange(currentStepChange + 1);
     setIsOpen(false);
   };
 
@@ -87,6 +89,6 @@ export const TransactionApproval: React.FC<TransactionApprovalProps> = ({
       </div>
     </div>
   );
-};
+}
 
 export default TransactionApproval;

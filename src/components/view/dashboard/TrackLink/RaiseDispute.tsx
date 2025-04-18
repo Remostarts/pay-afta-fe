@@ -20,6 +20,8 @@ interface RaiseDisputeProps {
   handleClosed: (e: boolean) => void;
   handleCurrentStepChange: (e: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
+  currentStepChange: number;
+  handleIsDisputed?: (isDisputed: boolean) => void | undefined;
 }
 
 const defaultVal = {
@@ -32,6 +34,8 @@ export default function RaiseDispute({
   handleClosed,
   handleCurrentStepChange,
   handleShowRiseDispute,
+  currentStepChange,
+  handleIsDisputed,
 }: RaiseDisputeProps) {
   const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
 
@@ -46,8 +50,9 @@ export default function RaiseDispute({
 
   function handleShowRiseDisputeAndStepChange() {
     setIsShowRiseDispute(true);
-    handleCurrentStepChange(5);
+    handleCurrentStepChange(currentStepChange + 1);
     handleShowRiseDispute(true);
+    handleIsDisputed?.(true);
   }
 
   async function onSubmit(data: TRaiseDisputeSchema) {

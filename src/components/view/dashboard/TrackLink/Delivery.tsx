@@ -21,19 +21,22 @@ interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  currentStepChange: number;
 }
 
 export default function Delivery({
   handleCurrentStepChange,
   handleShowRiseDispute,
   handleIsRequestRefund,
+  currentStepChange,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const route = useRouter();
 
   const handleAcceptOrder = () => {
     // setIsOpen(true);
-    route.push('/dashboard');
+    // route.push('/dashboard');
+    handleCurrentStepChange(currentStepChange + 1);
   };
 
   const handleConfirmTransaction = () => {
@@ -75,6 +78,7 @@ export default function Delivery({
               handleCurrentStepChange={handleCurrentStepChange}
               handleShowRiseDispute={handleShowRiseDispute}
               handleIsRequestRefund={handleIsRequestRefund}
+              currentStepChange={currentStepChange}
             />
           </DialogContent>
         </Dialog>
