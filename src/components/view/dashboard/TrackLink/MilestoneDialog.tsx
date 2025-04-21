@@ -89,6 +89,7 @@ export default function MilestoneDialog({
       console.error('Error creating invoice:', error);
     }
   };
+  // console.log(isInTransactionSummary);
 
   return (
     <DialogContent>
@@ -139,11 +140,13 @@ export default function MilestoneDialog({
           ))}
         </div>
       </DialogDescription>
-      <DialogFooter>
-        <ReButton onClick={isInTransactionSummary ? onNext : onClose} className="rounded-full">
-          {isInTransactionSummary ? 'Next' : 'Close'}
-        </ReButton>
-      </DialogFooter>
+      {isInTransactionSummary && (
+        <DialogFooter>
+          <ReButton onClick={onNext} className="rounded-full">
+            Next
+          </ReButton>
+        </DialogFooter>
+      )}
     </DialogContent>
   );
 }

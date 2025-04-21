@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
 
 import PaymentSuccessful from '../shared/PaymentSuccessful';
 
@@ -18,70 +17,25 @@ import {
 } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
 
-interface OrderAgreementProps {
+interface MakePaymentInServiceProps {
   handleCurrentStepChange: (step: number) => void;
-  isProduct?: boolean;
+  showActions?: boolean;
 }
 
-export default function MakePayment({
+export default function MakePaymentInService({
   handleCurrentStepChange,
-  isProduct = false,
-}: OrderAgreementProps) {
+  showActions = true,
+}: MakePaymentInServiceProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
     'summary'
   );
-  const router = useRouter();
 
-  const handleAcceptOrder = () => {
+  const handleOpenPayment = () => {
     setIsOpen(true);
   };
 
-  const handlePayment = async () => {
-    // if (lawyerId === session?.id) return;
-    // const paymentData = {
-    //   clientId: session?.id,
-    //   lawyerId: invoice.lawyer?.id,
-    //   chatId: invoice?.chatId,
-    //   email: session?.user?.email,
-    //   amount,
-    //   installmentId,
-    // };
-    // console.log('🌼 🔥🔥 handlePayment 🔥🔥 paymentData🌼', paymentData);
-
-    // setPayingInstallmentId(installmentId);
-
-    try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/payment-initiate`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            // Authorization: session?.accessToken, // Replace with your actual token logic
-          },
-          // body: JSON.stringify(paymentData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to create invoice. Status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log('Invoice created successfully:', data);
-      router.push(data?.data?.paymentUrl);
-    } catch (error) {
-      console.error('Error creating invoice:', error);
-    }
-  };
-  console.log(currentComponent);
-
   const handleConfirmTransaction = () => {
-    if (isProduct) {
-      handlePayment();
-      return;
-    }
     if (currentComponent === 'summary') {
       setCurrentComponent('milestone');
     } else if (currentComponent === 'milestone') {
@@ -92,6 +46,18 @@ export default function MakePayment({
       }, 2000);
     }
   };
+
+  if (!showActions) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
+        <h2 className="mb-2 text-lg font-medium">Awaiting Payment</h2>
+        <p className="text-sm text-gray-600">
+          Kindly note that the payment for the product/service is pending. You&apos;ll receive a
+          notification once the transaction is completed!
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
@@ -105,13 +71,23 @@ export default function MakePayment({
       <div className="flex items-center gap-5">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+            <ReButton className="w-2/5 rounded-full" onClick={handleOpenPayment}>
               Make Payment
             </ReButton>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="sm:max-w-[425px]">
             {currentComponent === 'summary' ? (
-              <PaymentSummary />
+              <>
+                <DialogHeader>
+                  <DialogTitle>Payment Summary</DialogTitle>
+                </DialogHeader>
+                <PaymentSummary />
+                <DialogFooter>
+                  <ReButton onClick={handleConfirmTransaction} className="rounded-full">
+                    Pay with Wallet Balance
+                  </ReButton>
+                </DialogFooter>
+              </>
             ) : currentComponent === 'milestone' ? (
               <MilestoneDialog
                 isInTransactionSummary={true}
@@ -119,14 +95,12 @@ export default function MakePayment({
                 onClose={() => setIsOpen(false)}
               />
             ) : (
-              <PaymentSuccessful label={'Transaction confirmed!'} />
-            )}
-            {currentComponent === 'summary' && (
-              <DialogFooter>
-                <ReButton onClick={handleConfirmTransaction} className="rounded-full">
-                  Pay with Wallet Balance
-                </ReButton>
-              </DialogFooter>
+              <>
+                <DialogHeader>
+                  <DialogTitle>Payment Successful</DialogTitle>
+                </DialogHeader>
+                <PaymentSuccessful label="Transaction confirmed!" />
+              </>
             )}
           </DialogContent>
         </Dialog>

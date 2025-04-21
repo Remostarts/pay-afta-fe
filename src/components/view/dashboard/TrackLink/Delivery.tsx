@@ -19,9 +19,15 @@ import {
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
+  handleShowRiseDispute: (showRiseDispute: boolean) => void;
+  handleIsRequestRefund: (isRequestRefund: boolean) => void;
 }
 
-export default function Delivery({ handleCurrentStepChange }: OrderAgreementProps) {
+export default function Delivery({
+  handleCurrentStepChange,
+  handleShowRiseDispute,
+  handleIsRequestRefund,
+}: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const route = useRouter();
 
@@ -67,6 +73,8 @@ export default function Delivery({ handleCurrentStepChange }: OrderAgreementProp
             <RejectDelivery
               handleClosed={setIsOpen}
               handleCurrentStepChange={handleCurrentStepChange}
+              handleShowRiseDispute={handleShowRiseDispute}
+              handleIsRequestRefund={handleIsRequestRefund}
             />
           </DialogContent>
         </Dialog>

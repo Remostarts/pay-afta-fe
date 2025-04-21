@@ -411,24 +411,42 @@ export default function NewOrder({ onBack }: any) {
               </div>
               <div>
                 <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
-                <ReRadioGroup
-                  name="paymentType"
-                  options={[
-                    {
-                      label: 'One time Payment',
-                      value: 'One time Payment',
-                      radioDescription:
-                        'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
-                    },
-                    {
-                      label: 'Milestone Payment',
-                      value: 'Milestone Payment',
-                      radioDescription: 'Pay gradually to the seller after reaching an agreement.',
-                    },
-                  ]}
-                  className="flex flex-col lg:grid lg:grid-cols-2"
-                  onChange={handleChangePaymentType}
-                />
+                {transactionType === 'Product' ? (
+                  <ReRadioGroup
+                    name="paymentType"
+                    options={[
+                      {
+                        label: 'One time Payment',
+                        value: 'One time Payment',
+                        radioDescription:
+                          'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
+                      },
+                    ]}
+                    className="flex flex-col lg:grid lg:grid-cols-1"
+                    onChange={handleChangePaymentType}
+                    // defaultValue="One time Payment"
+                  />
+                ) : (
+                  <ReRadioGroup
+                    name="paymentType"
+                    options={[
+                      {
+                        label: 'One time Payment',
+                        value: 'One time Payment',
+                        radioDescription:
+                          'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
+                      },
+                      {
+                        label: 'Milestone Payment',
+                        value: 'Milestone Payment',
+                        radioDescription:
+                          'Pay gradually to the seller after reaching an agreement.',
+                      },
+                    ]}
+                    className="flex flex-col lg:grid lg:grid-cols-2"
+                    onChange={handleChangePaymentType}
+                  />
+                )}
               </div>
               {paymentType === 'One time Payment' ? (
                 <div className="mt-5">
@@ -441,19 +459,7 @@ export default function NewOrder({ onBack }: any) {
                 </div>
               ) : (
                 <>
-                  {transactionType === 'Product' ? (
-                    <div className="mt-5">
-                      <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
-                      <ReInput name="milestone1" placeholder="Describe deliverable" />
-                      <div className="grid lg:grid-cols-2 lg:gap-5">
-                        <ReDatePicker
-                          name="milestone1DeliveryDate"
-                          placeholder="Select delivery date"
-                        />
-                        <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
-                      </div>
-                    </div>
-                  ) : (
+                  {transactionType === 'Services' && paymentType === 'Milestone Payment' && (
                     <div className="mt-5">
                       <div>
                         <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />

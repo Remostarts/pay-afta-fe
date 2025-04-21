@@ -9,17 +9,9 @@ import ConfirmShipping from './ConfirmShipping';
 import Delivery from './Delivery';
 import TransactionsDispute from './TransactionsDispute';
 import OrderAgreement from './OrderAgreement';
+import StepperForProduct from './StepperForProduct';
 
-import Stepper from '@/components/ui/stepper';
 import { Button } from '@/components/ui/button';
-
-const steps = [
-  { number: 1, label: 'Agreement' },
-  { number: 2, label: 'Payment' },
-  { number: 3, label: 'Shipping' },
-  { number: 4, label: 'Delivery' },
-  { number: 5, label: 'Closed' },
-];
 
 interface TransactionsSummaryProps {
   onBack: () => void;
@@ -27,6 +19,10 @@ interface TransactionsSummaryProps {
 
 export default function TransactionsSummaryForProduct({ onBack }: TransactionsSummaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
+  const [showRiseDispute, setShowRiseDispute] = useState<boolean>(false);
+  const [isRequestRefund, setIsRequestRefund] = useState<boolean>(false);
+
+  // console.log(isRequestRefund);
 
   return (
     <section className="grid grid-rows-2 rounded-md bg-white p-4 lg:flex lg:items-center lg:gap-10">
@@ -39,7 +35,11 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
           <p className="font-inter text-gray-500">Transactions ID: 123456789</p>
           <p className="font-inter text-gray-500">November3, 2024, 18:25</p>
         </div>
-        <Stepper totalSteps={5} currentStep={currentStep} steps={steps} />
+        <StepperForProduct
+          currentStep={currentStep}
+          isDisputed={showRiseDispute}
+          isReturn={isRequestRefund}
+        />
         {currentStep === 1 ? (
           <OrderAgreement handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 2 ? (
@@ -47,7 +47,11 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
         ) : currentStep === 3 ? (
           <ConfirmShipping handleCurrentStepChange={setCurrentStep} />
         ) : currentStep === 4 ? (
-          <Delivery handleCurrentStepChange={setCurrentStep} />
+          <Delivery
+            handleCurrentStepChange={setCurrentStep}
+            handleShowRiseDispute={setShowRiseDispute}
+            handleIsRequestRefund={setIsRequestRefund}
+          />
         ) : (
           currentStep === 5 && <TransactionsDispute />
         )}
