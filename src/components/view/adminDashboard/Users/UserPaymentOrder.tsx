@@ -1,6 +1,12 @@
+'use client';
+
 import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useState } from 'react';
 
 import { UserWalletDataTable } from './UserWalletDataTable';
+import UserFilterDataSection from './UserFilterDataSection';
+
+import { ReHeading } from '@/components/re-ui/ReHeading';
 
 export type Payment = {
   type: string;
@@ -41,7 +47,7 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const data = [
+const tData = [
   {
     type: 'Withdrawal',
     amount: '₦1,500,000.00',
@@ -99,6 +105,31 @@ const data = [
 ];
 
 export default function UserPaymentOrder() {
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [data, setData] = useState<Payment[]>([]);
+
+  function handlePageChange({
+    pageNumber = 1,
+    selectedDate = 'Today',
+    selectedStatusType = 'Active',
+  }: any) {
+    try {
+      console.log(pageNumber);
+      console.log(selectedDate);
+      console.log(selectedStatusType);
+      setTimeout(() => {
+        setData(tData);
+        setIsLoading(false);
+      }, 5000);
+    } catch (error) {
+      console.log(error);
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange(1);
+  }, []);
   return (
     <section>
       <div className="grid grid-cols-2 gap-4">
@@ -112,8 +143,17 @@ export default function UserPaymentOrder() {
         </div>
       </div>
       <div>
+        <div className="flex justify-between">
+          <ReHeading heading="History" />
+          <UserFilterDataSection handlePageChange={handlePageChange} />
+        </div>
         <div className="container mx-auto rounded-md bg-white p-5">
-          <UserWalletDataTable columns={columns} data={data} />
+          <UserWalletDataTable
+            onPageChange={handlePageChange}
+            isLoading={isLoading}
+            columns={columns}
+            data={data}
+          />
         </div>
       </div>
     </section>
