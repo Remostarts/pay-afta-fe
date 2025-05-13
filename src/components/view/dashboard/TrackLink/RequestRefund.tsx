@@ -18,6 +18,7 @@ interface RequestRefundProps {
   handleClosed: (e: boolean) => void;
   handleCurrentStepChange: (e: number) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  currentStepChange: number;
 }
 
 const defaultVal = {
@@ -29,6 +30,7 @@ export default function RequestRefund({
   handleClosed,
   handleCurrentStepChange,
   handleIsRequestRefund,
+  currentStepChange,
 }: RequestRefundProps) {
   const form = useForm<TRequestRefundSchema>({
     resolver: zodResolver(requestRefundSchema),
@@ -41,7 +43,7 @@ export default function RequestRefund({
 
   function handleIsRequestRefundAndStepChange() {
     handleIsRequestRefund(true);
-    handleCurrentStepChange(5);
+    handleCurrentStepChange(currentStepChange + 1);
   }
 
   async function onSubmit(data: TRequestRefundSchema) {

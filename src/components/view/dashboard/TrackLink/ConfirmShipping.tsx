@@ -6,11 +6,15 @@ import { ReButton } from '@/components/re-ui/ReButton';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
+  currentStepChange: number;
 }
 
-export default function ConfirmShipping({ handleCurrentStepChange }: OrderAgreementProps) {
+export default function ConfirmShipping({
+  handleCurrentStepChange,
+  currentStepChange,
+}: OrderAgreementProps) {
   const handleAcceptOrder = () => {
-    handleCurrentStepChange(4);
+    handleCurrentStepChange(currentStepChange + 1);
   };
 
   return (

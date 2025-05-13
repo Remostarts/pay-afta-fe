@@ -84,7 +84,11 @@ export default function MilestoneDialog({
 
       const data = await response.json();
       console.log('Invoice created successfully:', data);
-      router.push(data?.data?.paymentUrl);
+      // onNext();
+      // router.push(data?.data?.paymentUrl);
+      if (typeof window !== 'undefined') {
+        window.open(data?.data?.paymentUrl, '_blank', 'noopener,noreferrer');
+      }
     } catch (error) {
       console.error('Error creating invoice:', error);
     }

@@ -21,11 +21,13 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   isProduct?: boolean;
+  currentStepChange: number;
 }
 
 export default function MakePayment({
   handleCurrentStepChange,
   isProduct = false,
+  currentStepChange,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
@@ -70,7 +72,10 @@ export default function MakePayment({
 
       const data = await response.json();
       console.log('Invoice created successfully:', data);
-      router.push(data?.data?.paymentUrl);
+      // router.push(data?.data?.paymentUrl);
+      if (typeof window !== 'undefined') {
+        window.open(data?.data?.paymentUrl, '_blank', 'noopener,noreferrer');
+      }
     } catch (error) {
       console.error('Error creating invoice:', error);
     }
@@ -80,6 +85,11 @@ export default function MakePayment({
   const handleConfirmTransaction = () => {
     if (isProduct) {
       handlePayment();
+      setCurrentComponent('successful');
+      setTimeout(() => {
+        setIsOpen(false);
+        handleCurrentStepChange(currentStepChange + 1);
+      }, 2000);
       return;
     }
     if (currentComponent === 'summary') {
@@ -88,7 +98,7 @@ export default function MakePayment({
       setCurrentComponent('successful');
       setTimeout(() => {
         setIsOpen(false);
-        handleCurrentStepChange(3);
+        handleCurrentStepChange(currentStepChange + 1);
       }, 2000);
     }
   };
