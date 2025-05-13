@@ -140,6 +140,7 @@ const tData = [
 
 export default function Users() {
   const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -150,9 +151,14 @@ export default function Users() {
     setData(filteredData);
   }
 
+  console.log(selectedDate);
+  console.log(selectedStatusType);
+
   function handlePageChange(pageNumber: any) {
     try {
       console.log(pageNumber);
+      console.log(selectedDate);
+      console.log(selectedStatusType);
       setTimeout(() => {
         setData(tData);
         setIsLoading(false);
@@ -178,7 +184,10 @@ export default function Users() {
   return (
     <section>
       <div>
-        <FilterDataSection setSelectedStatusType={setSelectedStatusType} />
+        <FilterDataSection
+          setSelectedStatusType={setSelectedStatusType}
+          setSelectedDate={setSelectedDate}
+        />
       </div>
       <div className=" rounded-md bg-white p-5">
         <DataTable

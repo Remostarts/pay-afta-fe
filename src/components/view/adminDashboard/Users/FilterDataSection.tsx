@@ -13,14 +13,18 @@ import {
 
 type FilterDataSectionProps = {
   setSelectedStatusType: Dispatch<SetStateAction<string | null>>;
+  setSelectedDate: Dispatch<SetStateAction<string | null>>;
 };
 
-export default function FilterDataSection({ setSelectedStatusType }: FilterDataSectionProps) {
+export default function FilterDataSection({
+  setSelectedStatusType,
+  setSelectedDate,
+}: FilterDataSectionProps) {
   return (
     <div className="mb-2 flex items-center justify-end rounded-md bg-white p-4">
       {/* date section  */}
       <div>
-        <Select>
+        <Select onValueChange={(e) => setSelectedDate(e)}>
           <SelectTrigger className="w-[180px]">
             <SelectValue placeholder="Select a Date" />
           </SelectTrigger>
@@ -30,7 +34,6 @@ export default function FilterDataSection({ setSelectedStatusType }: FilterDataS
               <SelectItem value="Today">Today</SelectItem>
               <SelectItem value="Last Week">Last Week</SelectItem>
               <SelectItem value="This Month">This Month</SelectItem>
-              <SelectItem value="Last Month">Last Month</SelectItem>
               <SelectItem value="Last Month">Last Month</SelectItem>
               <SelectItem value="Custom Range">Custom Range</SelectItem>
             </SelectGroup>
