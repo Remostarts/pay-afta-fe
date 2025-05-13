@@ -18,17 +18,17 @@ import {
 } from '@/components/ui/select';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
-type FilterDataSectionProps = {
+type UserFilterDataSectionProps = {
   // setSelectedStatusType: Dispatch<SetStateAction<string | null>>;
   // setSelectedDate: Dispatch<SetStateAction<string | null>>;
-  handlePageChange({ pageNumber, selectedDate, selectedStatusType }: any): void;
+  handlePageChange({ pageNumber, selectedDate }: any): void;
 };
 
-export default function FilterDataSection({
+export default function UserFilterDataSection({
   // setSelectedStatusType,
   // setSelectedDate,
   handlePageChange,
-}: FilterDataSectionProps) {
+}: UserFilterDataSectionProps) {
   const [dateOption, setDateOption] = useState<string | null>(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
@@ -105,36 +105,6 @@ export default function FilterDataSection({
               />
             </PopoverContent>
           </Popover>
-        </div>
-
-        {/* state section  */}
-        <div className="ml-4">
-          <Select onValueChange={(e) => handlePageChange({ selectedStatusType: e })}>
-            <SelectTrigger className="w-[180px]">
-              <SelectValue placeholder="Select a State" />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              <SelectGroup>
-                <SelectLabel>State</SelectLabel>
-                <SelectItem value="Active">Active</SelectItem>
-                <SelectItem value="Suspended">Suspended</SelectItem>
-                <SelectItem value="Pending">Pending</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-
-        {/* export button  */}
-        <div>
-          <button className="ml-4 flex items-center gap-1 rounded-md bg-[#1F7EAD] px-4 py-2 text-white">
-            <Image
-              src="/assets/admin-dashboard/users/export-icon.svg"
-              width={20}
-              height={20}
-              alt="export"
-            />
-            Export
-          </button>
         </div>
       </div>
     </div>

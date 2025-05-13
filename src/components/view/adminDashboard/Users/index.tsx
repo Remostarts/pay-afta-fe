@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { DataTable } from './DataTable';
 import FilterDataSection from './FilterDataSection';
 import UserDetails from './Userdetails';
+import { DatePickerWithRange } from './DatePicker';
 
 export type Payment = {
   userId: string;
@@ -139,22 +140,26 @@ const tData = [
 ];
 
 export default function Users() {
-  const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string | null>(null);
+  // const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
+  // const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
-  function filterSelectedStatusType() {
-    const filteredData = selectedStatusType
-      ? data.filter((item) => item.status === selectedStatusType)
-      : data;
-    setData(filteredData);
-  }
+  // function filterSelectedStatusType() {
+  //   const filteredData = selectedStatusType
+  //     ? data.filter((item) => item.status === selectedStatusType)
+  //     : data;
+  //   setData(filteredData);
+  // }
 
-  console.log(selectedDate);
-  console.log(selectedStatusType);
+  // console.log(selectedDate);
+  // console.log(selectedStatusType);
 
-  function handlePageChange(pageNumber: any) {
+  function handlePageChange({
+    pageNumber = 1,
+    selectedDate = 'Today',
+    selectedStatusType = 'Active',
+  }: any) {
     try {
       console.log(pageNumber);
       console.log(selectedDate);
@@ -173,9 +178,9 @@ export default function Users() {
     handlePageChange(1);
   }, []);
 
-  useEffect(() => {
-    filterSelectedStatusType();
-  }, [selectedStatusType]);
+  // useEffect(() => {
+  //   filterSelectedStatusType();
+  // }, [selectedStatusType]);
 
   //   console.log(filteredDataByStatus);
 
@@ -185,8 +190,9 @@ export default function Users() {
     <section>
       <div>
         <FilterDataSection
-          setSelectedStatusType={setSelectedStatusType}
-          setSelectedDate={setSelectedDate}
+          // setSelectedStatusType={setSelectedStatusType}
+          // setSelectedDate={setSelectedDate}
+          handlePageChange={handlePageChange}
         />
       </div>
       <div className=" rounded-md bg-white p-5">

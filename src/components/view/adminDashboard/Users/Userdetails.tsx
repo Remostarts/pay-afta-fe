@@ -1,3 +1,5 @@
+'use client';
+
 import Image from 'next/image';
 
 import UserWallet from './UserWallet';
@@ -73,10 +75,25 @@ export default function UserDetails() {
 
       <div className=" rounded-md bg-white p-5 md:col-span-3">
         <Tabs defaultValue="Wallet" className="w-full">
-          <TabsList className="flex w-full items-center justify-between">
-            <TabsTrigger value="Wallet">Wallet</TabsTrigger>
-            <TabsTrigger value="Payment Order">Payment Order</TabsTrigger>
-            <TabsTrigger value="Virtual Card">Virtual Card</TabsTrigger>
+          <TabsList className="flex w-full items-center justify-between bg-transparent">
+            <TabsTrigger
+              value="Wallet"
+              className="relative px-4 py-2 data-[state=active]:font-bold data-[state=active]:text-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:h-0.5 data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:content-['']"
+            >
+              Wallet
+            </TabsTrigger>
+            <TabsTrigger
+              value="Payment Order"
+              className="relative px-4 py-2 data-[state=active]:font-bold data-[state=active]:text-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:h-0.5 data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:content-['']"
+            >
+              Payment Order
+            </TabsTrigger>
+            <TabsTrigger
+              value="Virtual Card"
+              className="relative px-4 py-2 data-[state=active]:font-bold data-[state=active]:text-black data-[state=active]:after:absolute data-[state=active]:after:bottom-0 data-[state=active]:after:left-0 data-[state=active]:after:h-0.5 data-[state=active]:after:w-full data-[state=active]:after:bg-black data-[state=active]:after:content-['']"
+            >
+              Virtual Card
+            </TabsTrigger>
           </TabsList>
           <TabsContent value="Wallet">
             <UserWallet />
