@@ -15,9 +15,10 @@ import { Button } from '@/components/ui/button';
 
 interface TransactionsSummaryProps {
   onBack: () => void;
+  id: string;
 }
 
-export default function TransactionsSummaryForProduct({ onBack }: TransactionsSummaryProps) {
+export default function TransactionsSummaryForProduct({ onBack, id }: TransactionsSummaryProps) {
   const [currentStep, setCurrentStep] = useState<number>(1);
   const [showRiseDispute, setShowRiseDispute] = useState<boolean>(false);
   const [isRequestRefund, setIsRequestRefund] = useState<boolean>(false);
@@ -32,7 +33,7 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
         </Button>
         <h1 className="font-inter text-xl font-bold text-gray-700">Transactions Summary</h1>
         <div className="mb-5 grid grid-cols-2">
-          <p className="font-inter text-gray-500">Transactions ID: 123456789</p>
+          <p className="font-inter text-gray-500">Transactions ID: {id}</p>
           <p className="font-inter text-gray-500">November3, 2024, 18:25</p>
         </div>
         <StepperForProduct
@@ -46,7 +47,11 @@ export default function TransactionsSummaryForProduct({ onBack }: TransactionsSu
             currentStepChange={currentStep}
           />
         ) : currentStep === 2 ? (
-          <MakePayment handleCurrentStepChange={setCurrentStep} currentStepChange={currentStep} />
+          <MakePayment
+            handleCurrentStepChange={setCurrentStep}
+            currentStepChange={currentStep}
+            isProduct={true}
+          />
         ) : currentStep === 3 ? (
           <ConfirmShipping
             handleCurrentStepChange={setCurrentStep}

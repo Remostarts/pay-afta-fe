@@ -24,6 +24,7 @@ interface GeneralContextType {
   setAmount: (amount: number) => void;
   user: TUser | null;
   loadUserData: () => void;
+  session: any;
 }
 
 const GeneralContext = createContext<GeneralContextType | undefined>(undefined);
@@ -84,6 +85,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         setAmount,
         user,
         loadUserData,
+        session,
       }}
     >
       {children}
