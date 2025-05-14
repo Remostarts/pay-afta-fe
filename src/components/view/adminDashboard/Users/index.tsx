@@ -2,11 +2,14 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 import { DataTable } from './DataTable';
 import FilterDataSection from './FilterDataSection';
 import UserDetails from './Userdetails';
 import { DatePickerWithRange } from './DatePicker';
+
+import { UsersApiResponse } from '@/types/admin/users.type';
 
 export type Payment = {
   userId: string;
@@ -144,6 +147,9 @@ export default function Users() {
   // const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [users, setUsers] = useState<UsersApiResponse>({} as UsersApiResponse);
+  const [page, setPage] = useState(1);
+  const [loading, setLoading] = useState(false);
 
   // function filterSelectedStatusType() {
   //   const filteredData = selectedStatusType
@@ -177,6 +183,41 @@ export default function Users() {
   useEffect(() => {
     handlePageChange(1);
   }, []);
+
+  const handleTransactionFilterChange = async (filter: string = 'All', page: number = 1) => {
+    // if (!user?.id) return;
+    console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 filter🌼', filter, page);
+    // Optional: Handle filter change
+    setLoading(true);
+
+    setPage(page);
+
+    console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 page🌼', page);
+
+    try {
+      const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/`, {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          // authorization: session?.accessToken as string,
+        },
+        cache: 'no-store',
+      });
+      const data = await response.json();
+
+      console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 data🌼', data);
+
+      if (data?.success) {
+        setUsers(data?.data);
+      } else {
+        toast.error(data?.errorName || 'Failed to load users');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Failed to load users');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // useEffect(() => {
   //   filterSelectedStatusType();
