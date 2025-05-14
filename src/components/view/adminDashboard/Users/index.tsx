@@ -7,7 +7,6 @@ import { toast } from 'sonner';
 import { DataTable } from './DataTable';
 import FilterDataSection from './FilterDataSection';
 import UserDetails from './Userdetails';
-import { DatePickerWithRange } from './DatePicker';
 
 import { UsersApiResponse } from '@/types/admin/users.type';
 
