@@ -6,7 +6,6 @@ import { useEffect, useState } from 'react';
 import { DataTable } from './DataTable';
 import FilterDataSection from './FilterDataSection';
 import UserDetails from './Userdetails';
-import { DatePickerWithRange } from './DatePicker';
 
 export type Payment = {
   userId: string;

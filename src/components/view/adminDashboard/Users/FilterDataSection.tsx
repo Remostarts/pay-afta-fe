@@ -3,9 +3,9 @@
 import Image from 'next/image';
 import { Dispatch, SetStateAction, useState } from 'react';
 import { format } from 'date-fns';
-import { DateRange } from 'react-day-picker';
+import { DateRange, DayPicker } from 'react-day-picker';
 
-import { DatePickerWithRange } from './DatePicker';
+import { DatePickerWithRange } from '../shared/DatePicker';
 
 import {
   Select,
