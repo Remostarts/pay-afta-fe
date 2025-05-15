@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { ReDataTable } from '../shared/ReDateTable';
+
 import FilterDataSection from './FilterDataSection';
 import { DataTable } from './DataTable';
 import TransactionModal from './TransactionModal';
@@ -133,48 +135,75 @@ const tData = [
   },
 ];
 
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  Status?: string;
+}
+
 export default function Transactions() {
-  const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 8;
 
-  function filterSelectedStatusType() {
-    const filteredData = selectedStatusType
-      ? data.filter((item) => item.status === selectedStatusType)
-      : data;
-    setData(filteredData);
-  }
-
-  function handlePageChange(pageNumber: any) {
+  function handlePageChange(params: PageChangeParams = {}) {
+    const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
     try {
-      console.log(pageNumber);
+      console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
+        setTotalCount(tData.length);
         setData(tData);
+        setPage(pageNumber);
         setIsLoading(false);
-      }, 5000);
+      }, 500);
     } catch (error) {
-      console.log(error);
+      console.error('Error loading data:', error);
       setIsLoading(false);
+      setData([]);
     }
   }
 
   useEffect(() => {
-    handlePageChange(1);
-  }, []);
+    handlePageChange({ pageNumber: 1 });
 
-  useEffect(() => {
-    filterSelectedStatusType();
-  }, [selectedStatusType]);
+    setData(tData);
+  }, []);
 
   return (
     <div>
-      <FilterDataSection setSelectedStatusType={setSelectedStatusType} />
-      <div className="container mx-auto rounded-md bg-white p-5">
-        <DataTable
+      <div className="rounded-md bg-white p-5">
+        <ReDataTable
           columns={columns}
           data={data}
           isLoading={isLoading}
           onPageChange={handlePageChange}
+          rowClickMode="dialog"
+          DialogComponent={TransactionModal}
+          count={totalCount}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          dateFilter={{
+            enabled: true,
+            defaultValue: 'Today',
+          }}
+          filters={[
+            {
+              name: 'Status',
+              placeholder: 'Select a State',
+              options: [
+                { label: 'Active', value: 'Active' },
+                { label: 'Suspended', value: 'Suspended' },
+                { label: 'Pending', value: 'Pending' },
+              ],
+            },
+          ]}
+          export={{
+            enabled: true,
+            buttonText: 'Export',
+          }}
         />
       </div>
     </div>

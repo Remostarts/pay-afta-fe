@@ -1,3 +1,5 @@
+'use client';
+
 import { Badge } from '@/components/ui/badge';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 
@@ -17,9 +19,11 @@ interface TransactionModalProps {
     reference: string;
     date: string;
   };
+  row: any;
 }
 
-export default function TransactionModal({ transaction }: TransactionModalProps) {
+export default function TransactionModal({ transaction, row }: TransactionModalProps) {
+  console.log(row);
   return (
     <section>
       <div className="space-y-6 rounded-md bg-white p-6">

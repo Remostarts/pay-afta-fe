@@ -16,6 +16,9 @@ import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 import { DatePickerWithRange } from '../shared/DatePicker';
+import { DialogTableRow } from '../Transactions/DialogTableRow';
+
+import TransactionModal from './TransactionModal';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -38,7 +41,22 @@ import {
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
+
 import 'react-loading-skeleton/dist/skeleton.css';
+
+const sampleTransaction = {
+  id: 'US-123456789',
+  userId: 'User ID',
+  fullName: 'Full Name',
+  status: 'Successful' as const,
+  type: 'Money Recieved',
+  amount: '₦200,000.00',
+  senderBank: 'Lorem Ipsum',
+  senderAccount: '0011223344',
+  senderName: 'Lorem Ipsum',
+  reference: 'ht62gbs-7wyhe-i98id-29uejh-8uh-d9uh8id-dyhd',
+  date: '5 Jun, 2024 10:30PM',
+};
 
 export type RowClickMode = 'link' | 'dialog' | 'none';
 
@@ -276,27 +294,25 @@ export function ReDataTable<TData, TValue>({
     );
   };
 
-  // Row wrapped in dialog trigger
-  const renderDialogRow = (row: any, handleRowClick: () => void) => (
-    <Dialog key={row.id}>
-      <DialogTrigger asChild>
-        <TableRow
-          className={cn('cursor-pointer hover:bg-muted/50', rowClassName)}
-          data-state={row.getIsSelected() && 'selected'}
-          onClick={handleRowClick}
-        >
-          {row.getVisibleCells().map((cell: any) => (
-            <TableCell key={cell.id} className={cn('transition-colors', cellClassName)}>
-              {flexRender(cell.column.columnDef.cell, cell.getContext())}
-            </TableCell>
-          ))}
-        </TableRow>
-      </DialogTrigger>
-      <DialogContent>
-        {DialogComponent && <DialogComponent row={row} {...getDialogProps(row)} />}
-      </DialogContent>
-    </Dialog>
-  );
+  const renderDialogRow = (row: any, handleRowClick: () => void) => {
+    return (
+      <DialogTableRow
+        key={row.id}
+        row={row}
+        DialogComponent={TransactionModal}
+        dialogProps={{
+          transaction: sampleTransaction,
+          row,
+        }}
+        onRowClick={(row) => {
+          if (onRowClick) onRowClick(row);
+          handleRowClick();
+        }}
+        rowClassName={rowClassName}
+        cellClassName={cellClassName}
+      />
+    );
+  };
 
   // Render the filters
   const renderFilters = () => {
