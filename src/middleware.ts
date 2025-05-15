@@ -18,7 +18,7 @@ const hybridRoutes = [
 
 const rolesRedirect: Record<string, string> = {
   user: `${process.env.FRONTEND_URL}/dashboard`,
-  admin: `${process.env.FRONTEND_URL}/admin`,
+  admin: `${process.env.FRONTEND_URL}/admin-dashboard`,
 };
 
 export async function middleware(request: NextRequest) {
@@ -48,7 +48,7 @@ export async function middleware(request: NextRequest) {
   }
 
   if (
-    (role === ADMIN && pathname.startsWith('/admin')) ||
+    (role === ADMIN && pathname.startsWith('/admin-dashboard')) ||
     (role === USER && pathname.startsWith('/dashboard'))
   ) {
     return NextResponse.next();
@@ -58,5 +58,11 @@ export async function middleware(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/', '/sign-in/:page*', '/sign-up/:page*', '/dashboard/:page*', '/admin/:page*'],
+  matcher: [
+    '/',
+    '/sign-in/:page*',
+    '/sign-up/:page*',
+    '/dashboard/:page*',
+    '/admin-dashboard/:page*',
+  ],
 };

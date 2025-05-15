@@ -4,9 +4,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
-import { DataTable } from './DataTable';
-import FilterDataSection from './FilterDataSection';
-import UserDetails from './Userdetails';
+import { ReDataTable } from '../shared/ReDateTable';
 
 import { UsersApiResponse } from '@/types/admin/users.type';
 
@@ -49,7 +47,6 @@ const columns: ColumnDef<Payment>[] = [
         }[status] || '';
 
       return <div className={styles}>{status}</div>;
-      //   console.log(status);
     },
   },
 ];
@@ -141,53 +138,48 @@ const tData = [
   },
 ];
 
+// Define the type for page change parameters
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  Status?: string;
+}
+
 export default function Users() {
-  // const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
-  // const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [users, setUsers] = useState<UsersApiResponse>({} as UsersApiResponse);
   const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 8;
 
-  // function filterSelectedStatusType() {
-  //   const filteredData = selectedStatusType
-  //     ? data.filter((item) => item.status === selectedStatusType)
-  //     : data;
-  //   setData(filteredData);
-  // }
-
-  // console.log(selectedDate);
-  // console.log(selectedStatusType);
-
-  function handlePageChange({
-    pageNumber = 1,
-    selectedDate = 'Today',
-    selectedStatusType = 'Active',
-  }: any) {
+  function handlePageChange(params: PageChangeParams = {}) {
+    const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
     try {
-      console.log(pageNumber);
-      console.log(selectedDate);
-      console.log(selectedStatusType);
+      console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
+        setTotalCount(tData.length);
         setData(tData);
+        setPage(pageNumber);
         setIsLoading(false);
-      }, 5000);
+      }, 500);
     } catch (error) {
-      console.log(error);
+      console.error('Error loading data:', error);
       setIsLoading(false);
+      setData([]);
     }
   }
 
   useEffect(() => {
-    handlePageChange(1);
+    handlePageChange({ pageNumber: 1 });
+
+    setData(tData);
   }, []);
 
   const handleTransactionFilterChange = async (filter: string = 'All', page: number = 1) => {
     // if (!user?.id) return;
     console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 filter🌼', filter, page);
     // Optional: Handle filter change
-    setLoading(true);
+    // setLoading(true);
 
     setPage(page);
 
@@ -207,14 +199,14 @@ export default function Users() {
       console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 data🌼', data);
 
       if (data?.success) {
-        setUsers(data?.data);
+        // setUsers(data?.data);
       } else {
         toast.error(data?.errorName || 'Failed to load users');
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to load users');
     } finally {
-      setLoading(false);
+      // setLoading(false);
     }
   };
 
@@ -228,19 +220,37 @@ export default function Users() {
 
   return (
     <section>
-      <div>
-        <FilterDataSection
-          // setSelectedStatusType={setSelectedStatusType}
-          // setSelectedDate={setSelectedDate}
-          handlePageChange={handlePageChange}
-        />
-      </div>
-      <div className=" rounded-md bg-white p-5">
-        <DataTable
+      <div className="rounded-md bg-white p-5">
+        <ReDataTable
           columns={columns}
           data={data}
           isLoading={isLoading}
           onPageChange={handlePageChange}
+          rowClickMode="link"
+          getLinkHref={(row) => `/admin-dashboard/users/${row.original.userId}`}
+          count={totalCount}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          dateFilter={{
+            enabled: true,
+            defaultValue: 'Today',
+          }}
+          filters={[
+            {
+              name: 'Status',
+              placeholder: 'Select a State',
+              options: [
+                { label: 'Active', value: 'Active' },
+                { label: 'Suspended', value: 'Suspended' },
+                { label: 'Pending', value: 'Pending' },
+              ],
+            },
+          ]}
+          export={{
+            enabled: true,
+            buttonText: 'Export',
+          }}
         />
       </div>
     </section>
