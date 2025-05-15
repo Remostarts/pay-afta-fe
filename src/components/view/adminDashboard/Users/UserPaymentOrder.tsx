@@ -3,10 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import { UserWalletDataTable } from './UserWalletDataTable';
-import UserFilterDataSection from './UserFilterDataSection';
-
-import { ReHeading } from '@/components/re-ui/ReHeading';
+import { ReDataTable } from '../shared/ReDateTable';
 
 export type Payment = {
   type: string;
@@ -104,32 +101,42 @@ const tData = [
   },
 ];
 
-export default function UserPaymentOrder() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [data, setData] = useState<Payment[]>([]);
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  selectedStatusType?: string;
+}
 
-  function handlePageChange({
-    pageNumber = 1,
-    selectedDate = 'Today',
-    selectedStatusType = 'Active',
-  }: any) {
+export default function UserPaymentOrder() {
+  const [data, setData] = useState<Payment[]>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 8;
+
+  function handlePageChange(params: PageChangeParams = {}) {
+    const { pageNumber = 1, selectedDate = 'Today', selectedStatusType = 'Active' } = params;
     try {
-      console.log(pageNumber);
-      console.log(selectedDate);
-      console.log(selectedStatusType);
+      console.log({ pageNumber, selectedDate, selectedStatusType });
       setTimeout(() => {
+        setTotalCount(tData.length);
         setData(tData);
+        setPage(pageNumber);
         setIsLoading(false);
-      }, 5000);
+      }, 500);
     } catch (error) {
-      console.log(error);
+      console.error('Error loading data:', error);
       setIsLoading(false);
+      setData([]);
     }
   }
 
   useEffect(() => {
-    handlePageChange(1);
+    handlePageChange({ pageNumber: 1 });
+
+    setData(tData);
   }, []);
+
   return (
     <section>
       <div className="grid grid-cols-2 gap-4">
@@ -143,16 +150,22 @@ export default function UserPaymentOrder() {
         </div>
       </div>
       <div>
-        <div className="flex justify-between">
-          <ReHeading heading="History" />
-          <UserFilterDataSection handlePageChange={handlePageChange} />
-        </div>
-        <div className="container mx-auto rounded-md bg-white p-5">
-          <UserWalletDataTable
-            onPageChange={handlePageChange}
-            isLoading={isLoading}
+        <div className="rounded-md bg-white p-5">
+          <ReDataTable
             columns={columns}
             data={data}
+            isLoading={isLoading}
+            onPageChange={handlePageChange}
+            rowClickMode="none"
+            label="History"
+            count={totalCount}
+            page={page}
+            setPage={setPage}
+            pageSize={pageSize}
+            dateFilter={{
+              enabled: true,
+              defaultValue: 'Today',
+            }}
           />
         </div>
       </div>

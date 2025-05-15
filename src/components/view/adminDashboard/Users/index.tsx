@@ -3,9 +3,7 @@
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
 
-import { DataTable } from './DataTable';
-import FilterDataSection from './FilterDataSection';
-import UserDetails from './Userdetails';
+import { ReDataTable } from '../shared/ReDateTable';
 
 export type Payment = {
   userId: string;
@@ -46,7 +44,6 @@ const columns: ColumnDef<Payment>[] = [
         }[status] || '';
 
       return <div className={styles}>{status}</div>;
-      //   console.log(status);
     },
   },
 ];
@@ -138,68 +135,76 @@ const tData = [
   },
 ];
 
+// Define the type for page change parameters
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  Status?: string;
+}
+
 export default function Users() {
-  // const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
-  // const [selectedDate, setSelectedDate] = useState<string | null>(null);
   const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const pageSize = 8;
 
-  // function filterSelectedStatusType() {
-  //   const filteredData = selectedStatusType
-  //     ? data.filter((item) => item.status === selectedStatusType)
-  //     : data;
-  //   setData(filteredData);
-  // }
-
-  // console.log(selectedDate);
-  // console.log(selectedStatusType);
-
-  function handlePageChange({
-    pageNumber = 1,
-    selectedDate = 'Today',
-    selectedStatusType = 'Active',
-  }: any) {
+  function handlePageChange(params: PageChangeParams = {}) {
+    const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
     try {
-      console.log(pageNumber);
-      console.log(selectedDate);
-      console.log(selectedStatusType);
+      console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
+        setTotalCount(tData.length);
         setData(tData);
+        setPage(pageNumber);
         setIsLoading(false);
-      }, 5000);
+      }, 500);
     } catch (error) {
-      console.log(error);
+      console.error('Error loading data:', error);
       setIsLoading(false);
+      setData([]);
     }
   }
 
   useEffect(() => {
-    handlePageChange(1);
+    handlePageChange({ pageNumber: 1 });
+
+    setData(tData);
   }, []);
-
-  // useEffect(() => {
-  //   filterSelectedStatusType();
-  // }, [selectedStatusType]);
-
-  //   console.log(filteredDataByStatus);
-
-  //   console.log(selectedStatusType);
 
   return (
     <section>
-      <div>
-        <FilterDataSection
-          // setSelectedStatusType={setSelectedStatusType}
-          // setSelectedDate={setSelectedDate}
-          handlePageChange={handlePageChange}
-        />
-      </div>
-      <div className=" rounded-md bg-white p-5">
-        <DataTable
+      <div className="rounded-md bg-white p-5">
+        <ReDataTable
           columns={columns}
           data={data}
           isLoading={isLoading}
           onPageChange={handlePageChange}
+          rowClickMode="link"
+          getLinkHref={(row) => `/admin-dashboard/users/${row.original.userId}`}
+          count={totalCount}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          dateFilter={{
+            enabled: true,
+            defaultValue: 'Today',
+          }}
+          filters={[
+            {
+              name: 'Status',
+              placeholder: 'Select a State',
+              options: [
+                { label: 'Active', value: 'Active' },
+                { label: 'Suspended', value: 'Suspended' },
+                { label: 'Pending', value: 'Pending' },
+              ],
+            },
+          ]}
+          export={{
+            enabled: true,
+            buttonText: 'Export',
+          }}
         />
       </div>
     </section>

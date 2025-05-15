@@ -166,20 +166,6 @@ export default function Transactions() {
     filterSelectedStatusType();
   }, [selectedStatusType]);
 
-  const sampleTransaction = {
-    id: 'US-123456789',
-    userId: 'User ID',
-    fullName: 'Full Name',
-    status: 'Successful' as const,
-    type: 'Money Recieved',
-    amount: '₦200,000.00',
-    senderBank: 'Lorem Ipsum',
-    senderAccount: '0011223344',
-    senderName: 'Lorem Ipsum',
-    reference: 'ht62gbs-7wyhe-i98id-29uejh-8uh-d9uh8id-dyhd',
-    date: '5 Jun, 2024 10:30PM',
-  };
-
   return (
     <div>
       <FilterDataSection setSelectedStatusType={setSelectedStatusType} />
@@ -191,15 +177,6 @@ export default function Transactions() {
           onPageChange={handlePageChange}
         />
       </div>
-
-      {/* <ReDialog
-        btnLabel="Open Dialog"
-        DialogComponent={TransactionModal}
-        componentProps={{
-          transaction: sampleTransaction,
-        }}
-        // onOpenChange={(open) => console.log('Dialog state:', open)}
-      /> */}
     </div>
   );
 }
