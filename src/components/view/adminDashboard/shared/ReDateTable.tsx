@@ -17,7 +17,8 @@ import { DateRange } from 'react-day-picker';
 
 import { DatePickerWithRange } from '../shared/DatePicker';
 import { DialogTableRow } from '../Transactions/DialogTableRow';
-import TransactionModal from '../Transactions/TransactionModal';
+
+import TransactionModal from './TransactionModal';
 
 import { Button } from '@/components/ui/button';
 import {
