@@ -14,6 +14,7 @@ export type TOrderResponse = {
     page: number;
     limit: number;
     total: number;
+    pending: number;
   };
   data: TOrder[];
 };

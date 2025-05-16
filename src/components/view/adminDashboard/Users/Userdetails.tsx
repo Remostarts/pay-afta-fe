@@ -153,10 +153,10 @@ export default function UserDetails() {
             </TabsTrigger>
           </TabsList>
           <TabsContent value="Wallet">
-            <UserWallet />
+            <UserWallet userId={userId as string} />
           </TabsContent>
           <TabsContent value="Payment Order">
-            <UserPaymentOrder />
+            <UserPaymentOrder userId={userId as string} />
           </TabsContent>
           <TabsContent value="Virtual Card">
             <UserVirtualCard />

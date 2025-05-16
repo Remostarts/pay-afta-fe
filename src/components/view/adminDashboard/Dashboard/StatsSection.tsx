@@ -6,24 +6,24 @@ import Image from 'next/image';
 const stats = [
   {
     title: 'Total Balance',
-    value: '9,000,000.00',
+    value: '19000',
     icon: '/assets/admin-dashboard/dashboard/total-balance.svg',
     //   backgroundColor: 'bg-[#03045B]',
   },
   {
     title: 'Escrow Balance',
-    value: '10,000',
+    value: '0',
     icon: '/assets/admin-dashboard/dashboard/escrow-balance.svg',
     //   backgroundColor: 'bg-[#3A3DF8]',
   },
   {
     title: 'Total Users',
-    value: '54,8786',
+    value: '4',
     icon: '/assets/admin-dashboard/dashboard/total-users.svg',
   },
   {
     title: 'Card Balance',
-    value: '10,000',
+    value: '0',
     icon: '/assets/admin-dashboard/dashboard/card-balance.svg',
     //   backgroundColor: 'bg-[white]',
   },
