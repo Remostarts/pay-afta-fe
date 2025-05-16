@@ -30,46 +30,9 @@ import {
 
 const data = [
   {
-    name: 'Page A',
-    Credit: 4000,
-    Debit: 2400,
-    amt: 2400,
-  },
-  {
-    name: 'Page B',
-    Credit: 3000,
-    Debit: 1398,
-    amt: 2210,
-  },
-  {
-    name: 'Page C',
-    Credit: 2000,
-    Debit: 9800,
-    amt: 2290,
-  },
-  {
-    name: 'Page D',
-    Credit: 2780,
-    Debit: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    Credit: 1890,
-    Debit: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    Credit: 2390,
-    Debit: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    Credit: 3490,
-    Debit: 4300,
-    amt: 2100,
+    month: 'May',
+    debit: 10,
+    credit: 0,
   },
 ];
 
@@ -156,7 +119,7 @@ export default function TransactionsChart({ changeDate }: transactionChartProps)
       </div>
       <div className="mt-2 rounded-md border-2 border-gray-200 bg-white p-3">
         <p className="font-inter text-sm text-gray-500">Total Transaction</p>
-        <span className="font-inter text-xl font-semibold">₦709,500.00</span>
+        <span className="font-inter text-xl font-semibold">₦19000</span>
       </div>
       <div className="mt-3 h-[400px] rounded-md border-2 border-gray-200 bg-white md:p-4">
         <ResponsiveContainer width="100%" height="100%">
@@ -170,12 +133,12 @@ export default function TransactionsChart({ changeDate }: transactionChartProps)
             }}
           >
             <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="name" />
+            <XAxis dataKey="month" />
             <YAxis />
             <Tooltip />
             <Legend />
-            <Line type="monotone" dataKey="Debit" stroke="#D42620" activeDot={{ r: 4 }} />
-            <Line type="monotone" dataKey="Credit" stroke="#0F973C" />
+            <Line type="monotone" dataKey="debit" stroke="#D42620" activeDot={{ r: 4 }} />
+            <Line type="monotone" dataKey="credit" stroke="#0F973C" />
           </LineChart>
         </ResponsiveContainer>
       </div>

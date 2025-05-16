@@ -66,7 +66,7 @@ export default function UserDetails() {
       <div className=" rounded-md bg-white p-5 md:col-span-2">
         <div>
           <Image
-            src={user?.profileImage || '/assets/admin-dashboard/users/user-avatar.png'}
+            src={user?.profileImage || '/assets/admin-dashboard/users/prof-avatar.svg'}
             alt="user profile"
             width={120}
             height={120}

@@ -30,46 +30,20 @@ import {
 
 const data = [
   {
-    name: 'Page A',
-    uv: 4000,
-    pv: 2400,
-    amt: 2400,
+    month: 'Feb',
+    count: 5,
   },
   {
-    name: 'Page B',
-    uv: 3000,
-    pv: 1398,
-    amt: 2210,
+    month: 'Apr',
+    count: 15,
   },
   {
-    name: 'Page C',
-    uv: 2000,
-    pv: 9800,
-    amt: 2290,
+    month: 'Nov',
+    count: 6,
   },
   {
-    name: 'Page D',
-    uv: 2780,
-    pv: 3908,
-    amt: 2000,
-  },
-  {
-    name: 'Page E',
-    uv: 1890,
-    pv: 4800,
-    amt: 2181,
-  },
-  {
-    name: 'Page F',
-    uv: 2390,
-    pv: 3800,
-    amt: 2500,
-  },
-  {
-    name: 'Page G',
-    uv: 3490,
-    pv: 4300,
-    amt: 2100,
+    month: 'Dec',
+    count: 1,
   },
 ];
 
@@ -157,24 +131,26 @@ export default function AnalysisChart({ changeDate }: AnalysisChartProps) {
       <div className="grid grid-cols-2 gap-4">
         <div className="mt-2 rounded-md border-2 border-gray-200 bg-white p-3">
           <p className="font-inter text-sm text-gray-500">Users</p>
-          <p className="font-inter text-xl font-semibold">500.00</p>
-          <p>
+          <p className="font-inter text-xl font-semibold">4</p>
+          {/* <p>
             <span className="text-sm text-[#FF3347]">-0.5%</span>from the last week
-          </p>
+          </p> */}
         </div>
         <div className="mt-2 rounded-md border-2 border-gray-200 bg-white p-3">
           <p className="font-inter text-sm text-gray-500">Payment Orders</p>
-          <p className="font-inter text-xl font-semibold">₦709,500.00</p>
-          <p>
+          <p className="font-inter text-xl font-semibold">₦19000</p>
+          {/* <p>
             <span className="text-sm text-[#FF3347]">-0.5%</span>from the last week
-          </p>
+          </p> */}
         </div>
       </div>
       <div className="mt-3 h-[360px] rounded-md border-2 border-gray-200 bg-white md:p-4">
-        <ReHeading heading="New Customers" size={'lg'} />
+        <ReHeading heading="Customers" size={'lg'} />
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={data}>
-            <Line type="monotone" dataKey="pv" stroke="#8884d8" strokeWidth={2} />
+            <XAxis dataKey="month" />
+            <Tooltip />
+            <Line type="monotone" dataKey="count" stroke="#8884d8" strokeWidth={2} />
           </LineChart>
         </ResponsiveContainer>
       </div>

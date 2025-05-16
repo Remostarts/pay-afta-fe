@@ -6,6 +6,8 @@ import { X } from 'lucide-react';
 
 import { sideNavMenu } from '../../../../constants/dashboard/shared';
 
+import { useGeneral } from '@/context/generalProvider';
+
 interface SidebarProps {
   onClose?: () => void;
 }
@@ -13,6 +15,7 @@ interface SidebarProps {
 export default function Sidebar({ onClose }: SidebarProps) {
   const pathName = usePathname();
   const currPage = pathName?.split('/')[2];
+  const { user } = useGeneral();
 
   return (
     <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
@@ -64,7 +67,9 @@ export default function Sidebar({ onClose }: SidebarProps) {
               height={40}
               className=" rounded-full"
             />
-            <span className="font-inter font-medium tracking-wider">Pual Simeon</span>
+            <span className="font-inter font-medium tracking-wider">
+              {user?.firstName} {user?.lastName}
+            </span>
             <Image
               src="/assets/dashboard/Dashboard/power-button.svg"
               alt="profile-img"

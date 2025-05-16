@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { X } from 'lucide-react';
 
 import { sideNavMenu } from '@/constants/admin-dashboard/shared';
+import { useGeneral } from '@/context/generalProvider';
 
 interface SidebarProps {
   onClose?: () => void;
@@ -15,6 +16,7 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
   const currPage = pathName?.split('/')[2];
   // console.log(currPage);
   const rootPath = pathName.startsWith('/admin-dashboard');
+  const { user } = useGeneral();
 
   return (
     <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
@@ -61,13 +63,15 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
           ))}
           <li className="mt-8 flex items-center gap-4">
             <Image
-              src="/assets/admin-dashboard/dashboard/user-profile.png"
+              src="/assets/admin-dashboard/users/prof-avatar.svg"
               alt="profile-img"
               width={40}
               height={40}
               className=" rounded-full"
             />
-            <span className="font-inter font-medium tracking-wider">Pual Simeon</span>
+            <span className="font-inter font-medium tracking-wider">
+              {user?.firstName} {user?.lastName}
+            </span>
             <Link href="/admin-dashboard/setting">
               <Image
                 src="/assets/admin-dashboard/dashboard/setting-icon.svg"
