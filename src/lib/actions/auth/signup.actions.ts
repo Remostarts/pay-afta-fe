@@ -2,7 +2,6 @@
 
 import { getServerSession } from 'next-auth';
 
-import { TChangePassInputs } from '@/components/view/adminDashboard/Setting/Profile';
 import { authOptions } from '@/lib/AuthOptions';
 import { getErrorMessage } from '@/lib/responseError';
 import {
@@ -11,6 +10,7 @@ import {
   TInitialSignUp,
 } from '@/lib/validations/userAuth.validations';
 import { EmailVerificationParams, ResetPasswordParams } from '@/types/auth.type';
+import { TChangePassInputs } from '@/lib/validations/setting.validation';
 // import { authOptions } from '@/lib/AuthOptions';
 
 console.log(process.env.BACKEND_URL);
