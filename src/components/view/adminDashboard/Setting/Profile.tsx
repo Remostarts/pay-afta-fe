@@ -86,7 +86,7 @@ export default function Profile() {
             </div>
           </div>
           <div className="col-span-2">
-            <ReButton className="mt-5 rounded-full lg:w-2/5" disabled={true}>
+            <ReButton className="mt-5 rounded-full lg:w-2/5" disabled={false}>
               {' '}
               Edit Information
             </ReButton>

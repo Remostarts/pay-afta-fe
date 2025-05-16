@@ -135,6 +135,8 @@ export function ReDataTable<TData, TValue>({
   export: exportConfig = { enabled: false },
   filterContainerClassName,
 }: ReDataTableProps<TData, TValue>) {
+  console.log('🌼 🔥🔥 data🌼', data);
+
   const [visibleTableData, setVisibleTableData] = useState<TData[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(page);
   const [selectedFilters, setSelectedFilters] = useState<Record<string, string>>({});
@@ -149,15 +151,15 @@ export function ReDataTable<TData, TValue>({
   const table = useReactTable({
     data,
     columns,
-    pageCount: Math.max(1, Math.ceil(count / initialPageSize)),
+    // pageCount: Math.max(1, Math.ceil(count / initialPageSize)),
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
-    state: {
-      pagination: {
-        pageIndex: page - 1,
-        pageSize: initialPageSize,
-      },
-    },
+    // getPaginationRowModel: getPaginationRowModel(),
+    // state: {
+    //   pagination: {
+    //     pageIndex: page - 1,
+    //     pageSize: initialPageSize,
+    //   },
+    // },
   });
 
   const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
@@ -177,7 +179,7 @@ export function ReDataTable<TData, TValue>({
     } else {
       setSelectedDateRange(null);
       setDateOption(value);
-      handlePageChangeWithFilters(page, selectedFilters, value);
+      handlePageChangeWithFilters(1, selectedFilters, value);
     }
   };
 
@@ -205,8 +207,7 @@ export function ReDataTable<TData, TValue>({
     filters = selectedFilters,
     date = dateOption
   ) => {
-    if (pageNumber < 1 || pageNumber > Math.ceil(count / initialPageSize)) return;
-
+    // if (pageNumber < 1 || pageNumber > Math.ceil(count / initialPageSize)) return;
     setCurrentPage(pageNumber);
     setPage(pageNumber);
     onPageChange({
@@ -226,7 +227,7 @@ export function ReDataTable<TData, TValue>({
   };
 
   useEffect(() => {
-    const visibleData = data.slice(startIndex, endIndex);
+    const visibleData = data?.slice(startIndex, endIndex);
     setVisibleTableData(visibleData);
   }, [currentPage, data, startIndex, endIndex]);
 
@@ -340,10 +341,11 @@ export function ReDataTable<TData, TValue>({
                       <SelectContent className="bg-white">
                         <SelectGroup>
                           <SelectLabel>Date</SelectLabel>
-                          <SelectItem value="Today">Today</SelectItem>
-                          <SelectItem value="Last Week">Last Week</SelectItem>
-                          <SelectItem value="This Month">This Month</SelectItem>
-                          <SelectItem value="Last Month">Last Month</SelectItem>
+                          <SelectItem value="all">All</SelectItem>
+                          <SelectItem value="today">Today</SelectItem>
+                          <SelectItem value="last_week">Last Week</SelectItem>
+                          <SelectItem value="this_month">This Month</SelectItem>
+                          <SelectItem value="last_month">Last Month</SelectItem>
                           <SelectItem value="Custom Range" className="text-[#1F7EAD]">
                             Custom Range
                           </SelectItem>
@@ -444,7 +446,7 @@ export function ReDataTable<TData, TValue>({
                   <Skeleton count={5} className="w-full" />
                 </TableCell>
               </TableRow>
-            ) : table.getRowModel().rows?.length ? (
+            ) : table?.getRowCount() ? (
               table.getRowModel().rows.map(renderTableRow)
             ) : (
               <TableRow>
@@ -458,39 +460,41 @@ export function ReDataTable<TData, TValue>({
       </div>
 
       {/* Pagination */}
-      <div className="flex flex-col items-center justify-center gap-8 space-x-2 py-4 md:flex-row">
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => handlePageChangeWithFilters(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeftIcon className="size-4" />
-          </Button>
-          {pageNumberButtons.map((pageNumber) => {
-            return (
-              <Button
-                key={pageNumber}
-                variant="outline"
-                size="sm"
-                className={currentPage === pageNumber ? 'bg-[#E6E7FE] text-black' : ''}
-                onClick={() => handlePageChangeWithFilters(pageNumber)}
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => handlePageChangeWithFilters(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRightIcon className="size-4" />
-          </Button>
+      {pageNumberButtons.length ? (
+        <div className="flex flex-col items-center justify-center gap-8 space-x-2 py-4 md:flex-row">
+          <div className="flex items-center space-x-2">
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChangeWithFilters(currentPage - 1)}
+              disabled={currentPage === 1}
+            >
+              <ChevronLeftIcon className="size-4" />
+            </Button>
+            {pageNumberButtons.map((pageNumber) => {
+              return (
+                <Button
+                  key={pageNumber}
+                  variant="outline"
+                  size="sm"
+                  className={currentPage === pageNumber ? 'bg-[#E6E7FE] text-black' : ''}
+                  onClick={() => handlePageChangeWithFilters(pageNumber)}
+                >
+                  {pageNumber}
+                </Button>
+              );
+            })}
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={() => handlePageChangeWithFilters(currentPage + 1)}
+              disabled={currentPage === totalPages}
+            >
+              <ChevronRightIcon className="size-4" />
+            </Button>
+          </div>
         </div>
-      </div>
+      ) : undefined}
     </div>
   );
 }

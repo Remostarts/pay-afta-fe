@@ -169,14 +169,14 @@ export default function PaymentOrder() {
           pageSize={pageSize}
           dateFilter={{
             enabled: true,
-            defaultValue: 'Today',
+            defaultValue: '',
           }}
           filters={[
             {
               name: 'Status',
               placeholder: 'Select a State',
               options: [
-                { label: 'All', value: 'All' },
+                { label: 'All', value: 'all' },
                 { label: 'Successful', value: 'Successful' },
                 { label: 'Failed', value: 'Failed' },
                 { label: 'Suspended', value: 'Suspended' },
