@@ -64,7 +64,7 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
 
   const renderHeader = () => {
     return (
-      <div className="flex items-center justify-between pb-2">
+      <div className="flex items-center justify-between bg-white pb-2 ">
         <button onClick={goToPreviousMonth} className="p-1">
           <ChevronLeft className="size-5" />
         </button>
@@ -79,7 +79,7 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
   const renderDayNames = () => {
     const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
     return (
-      <div className="grid grid-cols-7 py-2 text-center">
+      <div className="grid grid-cols-7 bg-white py-2 text-center">
         {dayNames.map((day, i) => (
           <div key={i} className="text-sm">
             {day}
@@ -180,7 +180,7 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
     return (
       <div className="mt-1">
         {weeks.map((week, weekIndex) => (
-          <div key={weekIndex} className="grid grid-cols-7">
+          <div key={weekIndex} className="z-10 grid grid-cols-7 bg-white">
             {week.map((day, dayIndex) => {
               const isToday = day.date.toDateString() === new Date().toDateString();
               const isSelected =
@@ -197,7 +197,7 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
                 <button
                   key={dayIndex}
                   className={cn(
-                    'h-8 w-full flex items-center justify-center text-sm',
+                    'h-8 w-full flex items-center justify-center text-sm z-10',
                     !day.currentMonth && 'text-gray-400',
                     isToday && !isSelected && 'font-bold',
                     bgClass
