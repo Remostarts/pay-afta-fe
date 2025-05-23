@@ -2,16 +2,11 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';
+import { toast } from 'sonner';
 
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { toast } from '@/components/ui/use-toast';
-// import { useOtp } from '@/context/OtpProvider';
-import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
 import { sendResetPassLink } from '@/lib/actions/auth/signup.actions';
 import { Form } from '@/components/ui/form';
 import { ReButton } from '@/components/re-ui/ReButton';
@@ -24,20 +19,11 @@ const userFillEmailSchema = z.object({
 
 type TInputs = z.infer<typeof userFillEmailSchema>;
 
-interface IFillEmailProps {
-  handleCurrentStep(): void;
-}
-
 const defaultValues = {
   email: '',
 };
 
-export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
-  // const [email, setEmail] = useState('');
-
-  // const { setEmail: setEmailOtp } = useOtp();
-  const handleSendCode = useSearchParamsHandler();
-
+export default function FillEmail() {
   const form = useForm<TInputs>({
     resolver: zodResolver(userFillEmailSchema),
     defaultValues,
@@ -50,10 +36,7 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
   const onSubmit = async (data: TInputs) => {
     // console.log(data);
     if (data.email.trim() === '') {
-      toast({
-        title: 'Invalid Email',
-        description: 'Please enter a valid email address.',
-      });
+      toast.error('Please enter a valid email address.');
       return;
     }
 
@@ -63,18 +46,11 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', data?.email);
 
       if (response?.success) {
-        toast({
-          title: 'Code Sent',
-          description: 'A verification code has been sent to your email address.',
-        });
-        handleCurrentStep();
+        toast.success('A password reset link has been sent to your email address.');
       }
     } catch (error) {
       console.error('Error sending verification code:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred',
-      });
+      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   };
 

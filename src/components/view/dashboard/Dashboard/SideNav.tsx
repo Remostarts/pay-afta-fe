@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
 import { X } from 'lucide-react';
+import { signOut } from 'next-auth/react';
 
 import { sideNavMenu } from '../../../../constants/dashboard/shared';
 
@@ -16,6 +17,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
   const pathName = usePathname();
   const currPage = pathName?.split('/')[2];
   const { user } = useGeneral();
+
+  const handleLogout = () => {
+    signOut();
+  };
 
   return (
     <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
@@ -61,7 +66,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           ))}
           <li className="mt-8 flex items-center gap-4">
             <Image
-              src="/assets/dashboard/Dashboard/profile-img.png"
+              src="/assets/admin-dashboard/users/prof-avatar.svg"
               alt="profile-img"
               width={40}
               height={40}
@@ -71,6 +76,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
               {user?.firstName} {user?.lastName}
             </span>
             <Image
+              onClick={handleLogout}
               src="/assets/dashboard/Dashboard/power-button.svg"
               alt="profile-img"
               width={25}

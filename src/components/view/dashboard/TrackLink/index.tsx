@@ -32,21 +32,6 @@ export type Order = {
   status: string;
 };
 
-// const tData = [
-//   {
-//     id: '1',
-//     name: 'adsfj lasdfj',
-//     date: '24-10-2024, 10:23pm',
-//     type: 'Buyer',
-//     transactionType: 'Product',
-//     milestonePayment: 'No',
-//     amount: 500000.0,
-//     status: 'Closed',
-//     payment: 'In Escrow',
-//     action: 'View',
-//   }
-// ];
-
 export default function TrackLink() {
   const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
   const [data, setData] = useState<Order[]>([]);
@@ -130,10 +115,6 @@ export default function TrackLink() {
       ),
     },
   ];
-
-  useEffect(() => {
-    handlePageChange(1, '', '');
-  }, []);
 
   async function handlePageChange(page: number, transactionType: string, status: string) {
     try {

@@ -4,25 +4,21 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import Image from 'next/image';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
+import { toast } from 'sonner';
 
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { Form } from '@/components/ui/form';
-import { toast } from '@/components/ui/use-toast';
 import { resetPassword } from '@/lib/actions/auth/signup.actions';
 import { TResetPassword, resetPasswordSchema } from '@/lib/validations/userAuth.validations';
-
-interface ISetNewPasswordProps {
-  handleCurrentStep(): void;
-}
 
 const defaultValues = {
   newPassword: '',
   confirmPassword: '',
 };
 
-export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordProps) {
+export default function SetNewPassword() {
   const searchParams = useSearchParams();
   const code = searchParams.get('code') as string;
   console.log('🌼 🔥🔥 SetNewPassword 🔥🔥 code🌼', code);
@@ -53,20 +49,14 @@ export default function SetNewPassword({ handleCurrentStep }: ISetNewPasswordPro
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
-        toast({
-          title: 'Password reset successfully',
-          description: 'You can now login.',
-        });
+        toast.success('Password reset successfully');
       }
 
       router.push('/sign-in');
-      handleCurrentStep();
+      // handleCurrentStep();
     } catch (error) {
       console.error('Error sending verification code:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred',
-      });
+      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
     }
   };
 

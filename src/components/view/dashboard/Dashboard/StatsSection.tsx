@@ -2,6 +2,8 @@
 
 import Image from 'next/image';
 
+import { useGeneral } from '@/context/generalProvider';
+
 // Mock data for stats
 const stats = [
   {
@@ -21,17 +23,23 @@ const stats = [
   },
 ];
 export default function StatsSection() {
+  const { user } = useGeneral();
   return (
-    <div className="mt-5 grid lg:grid-cols-3">
-      {stats?.map((stat, index) => (
-        <div key={index} className={`ml-2 mt-2 rounded-lg border bg-white p-8`}>
-          {/* <div><Image src={stat?.icon} alt={stat?.title} width={40} height={40} /></div> */}
-          <div>
-            <p className="font-inter text-sm text-gray-600">{stat?.title}</p>
-            <p className="font-inter text-lg font-semibold">₦ {stat?.value || 0.0}</p>
-          </div>
+    <div className="mt-5 grid lg:grid-cols-2">
+      <div className={`ml-2 mt-2 rounded-lg border bg-white p-8`}>
+        {/* <div><Image src={stat?.icon} alt={stat?.title} width={40} height={40} /></div> */}
+        <div>
+          <p className="font-inter text-sm text-gray-600">Wallet Balance</p>
+          <p className="font-inter text-lg font-semibold">₦ {user?.walletBalance}</p>
         </div>
-      ))}
+      </div>
+      <div className={`ml-2 mt-2 rounded-lg border bg-white p-8`}>
+        {/* <div><Image src={stat?.icon} alt={stat?.title} width={40} height={40} /></div> */}
+        <div>
+          <p className="font-inter text-sm text-gray-600">Escrow Balance</p>
+          <p className="font-inter text-lg font-semibold">₦ {user?.escrowBalance}</p>
+        </div>
+      </div>
     </div>
   );
 }

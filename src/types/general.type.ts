@@ -19,4 +19,6 @@ export type TUser = {
   profileImage: string | null;
   coverImage: string | null;
   profile: Profile | null;
+  walletBalance: number;
+  escrowBalance: number;
 };

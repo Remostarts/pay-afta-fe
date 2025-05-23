@@ -126,7 +126,6 @@ export default function Profile() {
 
       if (response.success) {
         toast.success('Password changed successfully');
-        open('changePasswordSuccess');
         // Reset form or redirect user as needed
         changePasswordForm.reset();
       } else {
