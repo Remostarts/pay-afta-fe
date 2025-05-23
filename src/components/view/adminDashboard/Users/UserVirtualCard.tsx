@@ -45,61 +45,61 @@ const columns: ColumnDef<Payment>[] = [
 ];
 
 const tData = [
-  {
-    type: 'Withdrawal',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Pending',
-  },
-  {
-    type: 'Wallet Funded',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    type: 'Withdrawal',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    type: 'Wallet Funded',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    type: 'Withdrawal',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    type: 'Wallet Funded',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Suspended',
-  },
-  {
-    type: 'Withdrawal',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    type: 'Wallet Funded',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Suspended',
-  },
-  {
-    type: 'Withdrawal',
-    amount: '₦1,500,000.00',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-];
+  // {
+  //   type: 'Withdrawal',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Pending',
+  // },
+  // {
+  //   type: 'Wallet Funded',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+  // {
+  //   type: 'Withdrawal',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+  // {
+  //   type: 'Wallet Funded',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+  // {
+  //   type: 'Withdrawal',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+  // {
+  //   type: 'Wallet Funded',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Suspended',
+  // },
+  // {
+  //   type: 'Withdrawal',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+  // {
+  //   type: 'Wallet Funded',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Suspended',
+  // },
+  // {
+  //   type: 'Withdrawal',
+  //   amount: '₦1,500,000.00',
+  //   date: '15 Jun, 2024',
+  //   status: 'Active',
+  // },
+] as Payment[];
 
 interface PageChangeParams {
   pageNumber?: number;

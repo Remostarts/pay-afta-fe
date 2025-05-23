@@ -7,6 +7,7 @@ import { toast } from 'sonner';
 import { ReDataTable } from '../shared/ReDateTable';
 
 import { TUser, UsersApiResponse } from '@/types/admin/users.type';
+import { formatISODateToReadable } from '@/helpers/utils/makeTimeReadable';
 
 export type Payment = {
   userId: string;
@@ -39,6 +40,9 @@ const columns: ColumnDef<TUser>[] = [
   {
     accessorKey: 'createdAt',
     header: 'DATE JOINED',
+    cell({ row }) {
+      return <div>{formatISODateToReadable(row?.original?.createdAt)}</div>;
+    },
   },
   {
     accessorKey: 'status',
@@ -48,100 +52,13 @@ const columns: ColumnDef<TUser>[] = [
 
       const styles =
         {
-          Active: 'bg-[#E9F5FB] text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
-          Pending: 'bg-[#E9F5FB] text-[#1F7EAD] text-center py-1 text-sm font-medium font-inter',
-          Suspended: 'bg-[#FCE9E9] text-[#D42620] text-center py-1 text-sm font-medium font-inter',
+          active: 'bg-[#E9F5FB] text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
+          pending: 'bg-[#E9F5FB] text-[#1F7EAD] text-center py-1 text-sm font-medium font-inter',
+          suspended: 'bg-[#FCE9E9] text-[#D42620] text-center py-1 text-sm font-medium font-inter',
         }[status] || '';
 
       return <div className={styles}>{status}</div>;
     },
-  },
-];
-
-const tData = [
-  {
-    userId: 'US-123456789',
-    name: 'John Doe',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Pending',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Abram Lipshutz',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Tiana Bergson',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Cristofer Dias',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Kadin Workman',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Wilson Aminoff',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Suspended',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Phillip Passaquindici Arcand',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Kianna Bator',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Suspended',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Tiana Levin',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Tiana Levin',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Tiana Levin',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
-  },
-  {
-    userId: 'US-123456789',
-    name: 'Tiana Levin',
-    email: 'Jaxson@gmail.com',
-    date: '15 Jun, 2024',
-    status: 'Active',
   },
 ];
 
@@ -160,7 +77,7 @@ export default function Users() {
   const pageSize = 8;
   const [users, setUsers] = useState<UsersApiResponse>({} as UsersApiResponse);
 
-  const handleTransactionFilterChange = async (
+  const handleUserFilterChange = async (
     params: PageChangeParams = {
       pageNumber: 1,
       selectedDate: '',
@@ -198,7 +115,7 @@ export default function Users() {
 
     try {
       const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users?status=${params?.Status?.Status === 'all' ? '' : params?.Status?.Status}&createdAt=${params?.selectedDate === 'all' ? '' : params?.selectedDate}&sortBy=createdAt&sortOrder=desc&page=${params?.pageNumber}&limit=2&startDate=${startDate}&endDate=${endDate}`,
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users?status=${params?.Status?.Status === 'all' ? '' : params?.Status?.Status}&createdAt=${params?.selectedDate === 'all' ? '' : params?.selectedDate}&sortBy=createdAt&sortOrder=desc&page=${params?.pageNumber}&limit=${pageSize}&startDate=${startDate}&endDate=${endDate}`,
         {
           method: 'GET',
           headers: {
@@ -225,7 +142,7 @@ export default function Users() {
   };
 
   useEffect(() => {
-    handleTransactionFilterChange({ pageNumber: 1 });
+    handleUserFilterChange({ pageNumber: 1 });
   }, []);
 
   // useEffect(() => {
@@ -243,13 +160,13 @@ export default function Users() {
           columns={columns}
           data={users?.data}
           isLoading={isLoading}
-          onPageChange={handleTransactionFilterChange}
+          onPageChange={handleUserFilterChange}
           rowClickMode="link"
           getLinkHref={(row) => `/admin-dashboard/users/${row?.original?.id}`}
           count={users?.meta?.total}
           page={page}
           setPage={setPage}
-          pageSize={2}
+          pageSize={pageSize}
           dateFilter={{
             enabled: true,
             defaultValue: '',
