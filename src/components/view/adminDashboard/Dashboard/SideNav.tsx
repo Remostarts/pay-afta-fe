@@ -14,9 +14,10 @@ interface SidebarProps {
 export default function AdminSidebar({ onClose }: SidebarProps) {
   const pathName = usePathname();
   const currPage = pathName?.split('/')[2];
-  // console.log(currPage);
+  console.log(currPage);
   const rootPath = pathName.startsWith('/admin-dashboard');
   const { user } = useGeneral();
+  console.log(rootPath);
 
   return (
     <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
@@ -42,7 +43,7 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
             <li className="my-4" key={nav.id}>
               <Link
                 href={`/admin-dashboard/${nav.alt}`}
-                className={`flex items-center gap-4 rounded-r-md p-3 text-black hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
+                className={`flex items-center gap-4 rounded-r-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
                   nav.alt === currPage &&
                   'border-l-4 border-l-[#1F7EAD] bg-[#E9F5FB] text-[#1F7EAD]'
                 }`}
