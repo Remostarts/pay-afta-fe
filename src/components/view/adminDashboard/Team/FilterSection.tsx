@@ -1,5 +1,9 @@
 import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { format } from 'date-fns';
+import { DateRange } from 'react-day-picker';
+
+import { DatePickerWithRange } from '../shared/DatePicker';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
@@ -11,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 type TabType = 'Role' | 'Team Members';
 
@@ -21,6 +26,41 @@ type FilterProps = {
 };
 
 export default function FilterSection({ selectedTab, onTabChange, onStatusChange }: FilterProps) {
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
+  const [dateOption, setDateOption] = useState<string | null>(null);
+
+  console.log(selectedDateRange);
+  // console.log(dateOption);
+
+  // Handle date filter change
+  const handleDateChange = (value: string) => {
+    if (value === 'Custom Range') {
+      setPopoverOpen(true);
+      setDateOption(value);
+    } else {
+      setSelectedDateRange(null);
+      setDateOption(value);
+    }
+  };
+
+  // Handle custom date range selection
+  const handleApplyDateRange = (range: DateRange | undefined) => {
+    if (range?.from && range?.to) {
+      const formattedRange = `${format(range.from, 'MMM d, yyyy')} - ${format(range.to, 'MMM d, yyyy')}`;
+      setSelectedDateRange(formattedRange);
+    }
+    setPopoverOpen(false);
+  };
+
+  // Handle cancel date range
+  const handleCancelDateRange = () => {
+    setPopoverOpen(false);
+    if (!selectedDateRange) {
+      setDateOption(null);
+    }
+  };
+
   return (
     <div className="mb-2 flex flex-col gap-4 rounded-md bg-white p-4 lg:flex-row lg:items-center lg:justify-between">
       {/* Tabs section  */}
@@ -43,23 +83,41 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
 
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:gap-4">
         {/* date section  */}
-        <div className="w-full sm:w-auto">
-          <Select>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Select a Date" />
-            </SelectTrigger>
-            <SelectContent className="bg-white">
-              <SelectGroup>
-                <SelectLabel>Date</SelectLabel>
-                <SelectItem value="Today">Today</SelectItem>
-                <SelectItem value="Last Week">Last Week</SelectItem>
-                <SelectItem value="This Month">This Month</SelectItem>
-                <SelectItem value="Last Month">Last Month</SelectItem>
-                <SelectItem value="Last Month">Last Month</SelectItem>
-                <SelectItem value="Custom Range">Custom Range</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
+        <div>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <div>
+                <Select
+                  value={dateOption || undefined}
+                  onValueChange={handleDateChange}
+                  // defaultValue={defaultValue}
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder={'Select Date'} />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup>
+                      <SelectLabel>Date</SelectLabel>
+                      <SelectItem value="all">All</SelectItem>
+                      <SelectItem value="today">Today</SelectItem>
+                      <SelectItem value="last_week">Last Week</SelectItem>
+                      <SelectItem value="this_month">This Month</SelectItem>
+                      <SelectItem value="last_month">Last Month</SelectItem>
+                      <SelectItem value="Custom Range" className="text-[#1F7EAD]">
+                        Custom Range
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto bg-white p-0" align="start">
+              <DatePickerWithRange
+                onApply={handleApplyDateRange}
+                onCancel={handleCancelDateRange}
+              />
+            </PopoverContent>
+          </Popover>
         </div>
 
         {/* state section  */}

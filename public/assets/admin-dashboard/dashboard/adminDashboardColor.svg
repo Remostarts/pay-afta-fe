@@ -1,0 +1,49 @@
+<svg width="18" height="20" viewBox="0 0 18 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="18" height="20" fill="#171717"/>
+<g id="Dashboard" clip-path="url(#clip0_3543_6760)">
+<rect width="1440" height="902" transform="translate(-63 -134)" fill="#F9FAFB"/>
+<g id="Sidebar" filter="url(#filter0_d_3543_6760)">
+<rect x="-43" y="-114" width="296" height="600" rx="8" fill="white"/>
+<rect x="-43" y="-114" width="296" height="600" rx="8" stroke="#E9F5FB"/>
+<g id="Frame 1209">
+<g id="General">
+<mask id="path-2-inside-1_3543_6760" fill="white">
+<path d="M-19 -14H229V334H-19V-14Z"/>
+</mask>
+<path d="M229 334V333H-19V334V335H229V334Z" fill="#F2F2F2" mask="url(#path-2-inside-1_3543_6760)"/>
+<g id="List">
+<g id="Navigation Item">
+<mask id="path-4-inside-2_3543_6760" fill="white">
+<path d="M-19 -14H225C227.209 -14 229 -12.2091 229 -10V30C229 32.2091 227.209 34 225 34H-19V-14Z"/>
+</mask>
+<path d="M-19 -14H225C227.209 -14 229 -12.2091 229 -10V30C229 32.2091 227.209 34 225 34H-19V-14Z" fill="#E9F5FB"/>
+<path d="M-19 -14H229H-19ZM229 34H-19H229ZM-21 34V-14H-17V34H-21ZM229 -14V34V-14Z" fill="#1F7EAD" mask="url(#path-4-inside-2_3543_6760)"/>
+<g id="Label">
+<g id="Icons">
+<g id="menu-home">
+<path id="Subtract" fill-rule="evenodd" clip-rule="evenodd" d="M18 15.9668V8.15033C18 6.93937 17.4604 5.7925 16.5301 5.02652L11.5301 0.909345C10.0577 -0.303117 7.9423 -0.303114 6.46986 0.909348L1.46986 5.02652C0.539645 5.7925 0 6.93937 0 8.15033V15.9668C0 18.1943 1.79086 20 4 20H14C16.2091 20 18 18.1943 18 15.9668ZM4.25 10C4.25 9.58579 4.58579 9.25 5 9.25H13C13.4142 9.25 13.75 9.58579 13.75 10C13.75 10.4142 13.4142 10.75 13 10.75H5C4.58579 10.75 4.25 10.4142 4.25 10ZM5 13.25C4.58579 13.25 4.25 13.5858 4.25 14C4.25 14.4142 4.58579 14.75 5 14.75H13C13.4142 14.75 13.75 14.4142 13.75 14C13.75 13.5858 13.4142 13.25 13 13.25H5Z" fill="#1F7EAD"/>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs>
+<filter id="filter0_d_3543_6760" x="-87.5" y="-141.5" width="385" height="689" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix"/>
+<feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+<feMorphology radius="4" operator="dilate" in="SourceAlpha" result="effect1_dropShadow_3543_6760"/>
+<feOffset dy="17"/>
+<feGaussianBlur stdDeviation="20"/>
+<feColorMatrix type="matrix" values="0 0 0 0 0.439216 0 0 0 0 0.564706 0 0 0 0 0.690196 0 0 0 0.11 0"/>
+<feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_3543_6760"/>
+<feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_3543_6760" result="shape"/>
+</filter>
+<clipPath id="clip0_3543_6760">
+<rect width="1440" height="902" fill="white" transform="translate(-63 -134)"/>
+</clipPath>
+</defs>
+</svg>

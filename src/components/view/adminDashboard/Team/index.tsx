@@ -168,6 +168,7 @@ export default function Team() {
   const [TeamData, setTeamData] = useState<TeamMember[]>([]);
   const [rolesData, setRolesData] = useState<Roles[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  // const [currentStepForTeamDialog, setCurrentStepForTeamDialog] = useState<number>(1);
 
   const handleDelete = (item: any) => {
     console.log(item);
@@ -176,6 +177,8 @@ export default function Team() {
   const handleEdit = (item: any) => {
     console.log(item);
   };
+
+  // console.log(currentStepForTeamDialog);
 
   // function onNextForTeamDialog() {
   //   setCurrentStepForTeamDialog(2);
