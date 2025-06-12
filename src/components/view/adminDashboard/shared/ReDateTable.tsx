@@ -20,6 +20,7 @@ import { DialogTableRow } from '../Transactions/DialogTableRow';
 
 import TransactionModal from './TransactionModal';
 
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -91,6 +92,8 @@ interface ReDataTableProps<TData, TValue> {
   label?: string;
   isLoading?: boolean;
   onPageChange?: ({ pageNumber, Status, selectedDate }?: any) => void;
+  isTabs?: boolean;
+  onTabChange?: (value: any) => void;
   // Row interaction type
   rowClickMode?: RowClickMode;
   // For 'link' mode
@@ -118,6 +121,8 @@ export function ReDataTable<TData, TValue>({
   data,
   label,
   isLoading,
+  isTabs,
+  onTabChange,
   onPageChange = () => {},
   rowClickMode = 'none',
   getLinkHref,
@@ -323,7 +328,30 @@ export function ReDataTable<TData, TValue>({
 
     return (
       <div className={cn('mb-2 flex flex-col rounded-md bg-white p-4', filterContainerClassName)}>
-        <div className="flex items-center justify-end">
+        <div className={cn('flex items-center', isTabs ? 'justify-between' : 'justify-end')}>
+          {/* Tabs section  */}
+          {isTabs && (
+            <div className="w-full lg:w-auto">
+              <Tabs
+                defaultValue="Team Members"
+                className="w-full rounded-[4px] p-1 lg:h-[56] lg:w-[408]"
+              >
+                <TabsList className="grid w-full grid-cols-2 rounded-lg border-2 border-[#A9D8EF] bg-[#E9F5FB]">
+                  {(['Team Members', 'Role'] as const).map((tab) => (
+                    <TabsTrigger
+                      key={tab}
+                      value={tab}
+                      onClick={() => onTabChange?.(tab)}
+                      className="rounded-lg font-inter text-[#7EC4E7] data-[state=active]:bg-[#1F7EAD] data-[state=active]:text-white"
+                    >
+                      {tab}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            </div>
+          )}
+
           {/* Date filter */}
           {dateFilter.enabled && (
             <div>
@@ -419,7 +447,7 @@ export function ReDataTable<TData, TValue>({
             <div>{renderFilters()}</div>
           </>
         ) : (
-          <div className="ml-auto">{renderFilters()}</div>
+          <div className="ml-auto w-full">{renderFilters()}</div>
         )}
       </div>
 

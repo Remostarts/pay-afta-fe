@@ -30,7 +30,7 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
   const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
   const [dateOption, setDateOption] = useState<string | null>(null);
 
-  console.log(selectedDateRange);
+  // console.log(selectedDateRange);
   // console.log(dateOption);
 
   // Handle date filter change
@@ -41,6 +41,7 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
     } else {
       setSelectedDateRange(null);
       setDateOption(value);
+      onStatusChange(value);
     }
   };
 
@@ -49,6 +50,7 @@ export default function FilterSection({ selectedTab, onTabChange, onStatusChange
     if (range?.from && range?.to) {
       const formattedRange = `${format(range.from, 'MMM d, yyyy')} - ${format(range.to, 'MMM d, yyyy')}`;
       setSelectedDateRange(formattedRange);
+      onStatusChange(formattedRange);
     }
     setPopoverOpen(false);
   };
