@@ -23,7 +23,11 @@ const defaultValues = {
   email: '',
 };
 
-export default function FillEmail() {
+interface IFillEmailProps {
+  handleCurrentStep(): void;
+}
+
+export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
   const form = useForm<TInputs>({
     resolver: zodResolver(userFillEmailSchema),
     defaultValues,
@@ -48,6 +52,7 @@ export default function FillEmail() {
       if (response?.success) {
         toast.success('A password reset link has been sent to your email address.');
       }
+      handleCurrentStep();
     } catch (error) {
       console.error('Error sending verification code:', error);
       toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');

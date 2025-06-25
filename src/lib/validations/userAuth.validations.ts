@@ -1,7 +1,26 @@
 import * as z from 'zod';
 
-// initial signup schema
+// select user category
+export const userCategorySchema = z.object({
+  selectedOption: z.enum(['user', 'logisticsUser'], {
+    required_error: 'Please Select an option',
+  }),
+});
 
+export type IUserCategory = z.infer<typeof userCategorySchema>;
+
+// initial signup for logistic
+export const initialSignUpForLogisticSchema = z.object({
+  companyName: z.string().min(1, 'Company name is required'),
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().min(1, 'Email is required'),
+  phoneNumber: z.string().min(1, 'Phone number is required'),
+});
+
+export type TInitialSignUpForLogistic = z.infer<typeof initialSignUpForLogisticSchema>;
+
+// initial signup schema
 export const initialSignUpSchema = z
   .object({
     firstName: z.string().min(1, 'First name is required'),
