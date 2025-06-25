@@ -5,6 +5,7 @@ export const personalKycSchema = z.object({
   nin: z.string().min(1, 'NIN is required'),
   gender: z.string().min(1, 'Gender is required'),
   dateOfBirth: z.coerce.date(),
+  username: z.string().min(1, 'user name is required'),
   instaUsername: z.string().optional(),
   facebookUsername: z.string().optional(),
 });

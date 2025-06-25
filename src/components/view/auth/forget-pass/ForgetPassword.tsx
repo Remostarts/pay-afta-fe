@@ -1,12 +1,36 @@
 'use client';
 
-import FillEmail from '@/components/view/auth/forget-pass/FillEmail';
+// import { useSearchParams } from 'next/navigation';
+import { useState } from 'react';
+
+import SetNewPassword from '../sign-in/SetNewPassword';
+import BackToLogin from '../sign-in/BackToLogin';
+
+import FillEmail from './FillEmail';
 
 export default function ForgetPassword() {
+  // const searchParams = useSearchParams();
+  // const currentStep = Number(searchParams.get('step'));
+  const [currentStep, setCurrentStep] = useState<number>(1);
+
+  function handleCurrentStep() {
+    setCurrentStep(currentStep + 1);
+  }
+
   return (
     <section className="flex grow">
       <div className="grow">
-        <FillEmail />
+        {currentStep === 1 && <FillEmail handleCurrentStep={handleCurrentStep} />}
+        {currentStep === 2 && (
+          <div className="px-8">
+            <SetNewPassword />
+          </div>
+        )}
+        {currentStep === 3 && (
+          <div className=" px-8 py-12">
+            <BackToLogin />
+          </div>
+        )}
       </div>
     </section>
   );

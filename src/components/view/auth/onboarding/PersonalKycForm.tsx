@@ -20,6 +20,7 @@ type defaultVal = {
   nin: string;
   gender: string;
   dateOfBirth: Date;
+  username: string;
   instaUsername: string;
   facebookUsername: string;
 };
@@ -28,6 +29,7 @@ const defaultValues: defaultVal = {
   nin: '',
   gender: '',
   dateOfBirth: new Date(),
+  username: '',
   instaUsername: '',
   facebookUsername: '',
 };
@@ -86,6 +88,10 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
           <div>
             <ReHeading heading="Date" size={'base'} />
             <ReDatePicker name="dateOfBirth" placeholder="Select" />
+          </div>
+          <div>
+            <ReHeading heading="Username" size={'base'} />
+            <ReInput name="username" placeholder="" />
           </div>
           <div>
             <ReHeading heading="Instagram Username (optional)" size={'base'} />
