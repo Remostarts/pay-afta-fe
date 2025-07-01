@@ -34,10 +34,7 @@ export default function RecentTransactions() {
           Recent Transactions
           {/* <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-sm">2</span> */}
         </h2>
-        <button
-          className="text-sm text-blue-600"
-          onClick={() => route.push('/dashboard/transactions')}
-        >
+        <button className="text-sm text-blue-600" onClick={() => route.push('/dashboard/wallets')}>
           VIEW ALL
         </button>
       </div>

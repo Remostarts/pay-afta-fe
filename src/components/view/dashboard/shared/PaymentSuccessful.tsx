@@ -18,19 +18,21 @@ export default function PaymentSuccessful({ label, amount, bankName }: PaymentSu
             height={120}
           />
         </div>
-        <h2 className="mb-2 text-center font-inter text-2xl font-bold">{label}</h2>
-        {label === 'Withdrawal Successful' ? (
+        <h2 className="mb-2 text-center font-inter text-2xl font-bold">
+          {label || 'Transfer Successful'}
+        </h2>
+        {label === 'Withdrawal Successful' || label === 'Transfer Successful' ? (
           <p className="mb-4 text-center font-inter text-gray-600">
-            You sent ₦{amount} to {bankName}.
+            You sent ₦{amount?.toLocaleString()} to {bankName}.
           </p>
         ) : label === 'Transaction confirmed!' ? (
           <p className="mb-4 text-center font-inter text-gray-600">
             Proceeding to make the payment for the transaction.
           </p>
         ) : label === 'Payment Successful' ? (
-          <p>
-            Your payment of ₦300,000.00 has been successfully secured in escrow, ensuring a safe and
-            smooth transaction process.
+          <p className="mb-4 text-center font-inter text-gray-600">
+            Your payment of ₦{amount?.toLocaleString()} has been successfully secured in escrow,
+            ensuring a safe and smooth transaction process.
           </p>
         ) : null}
       </div>

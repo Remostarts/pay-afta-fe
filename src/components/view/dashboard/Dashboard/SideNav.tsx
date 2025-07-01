@@ -54,7 +54,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
               <li className="my-4" key={nav.id}>
                 {isChildren ? (
                   <div>
-                    <Accordion type="single" collapsible className="w-full" defaultValue="item-1">
+                    <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value="item-1">
                         <div className="flex justify-around">
                           <Image
@@ -63,7 +63,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                             width={24}
                             height={24}
                           />
-                          <AccordionTrigger className="font-inter font-medium tracking-wider">
+                          <AccordionTrigger className="font-inter font-medium tracking-wider [&>svg]:hidden">
                             {nav.name}
                           </AccordionTrigger>
                         </div>

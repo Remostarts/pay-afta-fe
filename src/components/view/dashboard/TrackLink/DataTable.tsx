@@ -136,7 +136,7 @@ export function DataTable<
           <button
             className="flex w-3/5 items-center gap-5 rounded-md border p-5"
             onClick={() => {
-              route.push('/dashboard');
+              route.push('/dashboard/new-order');
             }}
           >
             <Image
