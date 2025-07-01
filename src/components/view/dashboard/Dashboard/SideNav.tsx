@@ -7,6 +7,12 @@ import { signOut } from 'next-auth/react';
 
 import { sideNavMenu } from '../../../../constants/dashboard/shared';
 
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from '@/components/ui/accordion';
 import { useGeneral } from '@/context/generalProvider';
 
 interface SidebarProps {
@@ -42,28 +48,69 @@ export default function Sidebar({ onClose }: SidebarProps) {
       </div>
       <nav className="mx-auto flex overflow-y-auto p-4">
         <ul>
-          {sideNavMenu.map((nav) => (
-            <li className="my-4" key={nav.id}>
-              <Link
-                href={`/dashboard/${nav.alt}`}
-                className={`flex items-center gap-4 rounded-md p-3 text-black hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
-                  nav.alt === currPage && 'bg-[#E9F5FB] text-[#1F7EAD]'
-                }`}
-                onClick={() => {
-                  if (onClose && window.innerWidth < 1024) {
-                    onClose();
-                  }
-                }}
-              >
-                {nav.alt === currPage ? (
-                  <Image src={nav.imgColor} alt={`${nav.alt}-icon`} width={24} height={24} />
+          {sideNavMenu.map((nav) => {
+            const isChildren = nav.isChildrean;
+            return (
+              <li className="my-4" key={nav.id}>
+                {isChildren ? (
+                  <div>
+                    <Accordion type="single" collapsible className="w-full">
+                      <AccordionItem value="item-1">
+                        <div className="flex justify-around">
+                          <Image
+                            src={nav.imgBlack}
+                            alt={`${nav.alt}-icon`}
+                            width={24}
+                            height={24}
+                          />
+                          <AccordionTrigger className="font-inter font-medium tracking-wider [&>svg]:hidden">
+                            {nav.name}
+                          </AccordionTrigger>
+                        </div>
+                        <AccordionContent className="flex flex-col items-center gap-4 text-balance">
+                          {[nav.newOrder, nav.viewOrder].map((subNav) => {
+                            return (
+                              <div key={subNav.id} className="flex items-center gap-2">
+                                <Link
+                                  href={`/dashboard/${subNav.alt}`}
+                                  onClick={() => {
+                                    if (onClose && window.innerWidth < 1024) {
+                                      onClose();
+                                    }
+                                  }}
+                                >
+                                  <span className="font-inter tracking-wider">{subNav.name}</span>
+                                </Link>
+                              </div>
+                            );
+                          })}
+                        </AccordionContent>
+                      </AccordionItem>
+                    </Accordion>
+                  </div>
                 ) : (
-                  <Image src={nav.imgBlack} alt={`${nav.alt}-icon`} width={24} height={24} />
+                  <Link
+                    href={`/dashboard/${nav.alt}`}
+                    className={`flex items-center gap-4 rounded-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
+                      nav.alt === currPage && 'bg-[#E9F5FB] text-[#1F7EAD]'
+                    }`}
+                    onClick={() => {
+                      if (onClose && window.innerWidth < 1024) {
+                        onClose();
+                      }
+                    }}
+                  >
+                    {nav.alt === currPage ? (
+                      <Image src={nav.imgColor} alt={`${nav.alt}-icon`} width={24} height={24} />
+                    ) : (
+                      <Image src={nav.imgBlack} alt={`${nav.alt}-icon`} width={24} height={24} />
+                    )}
+                    <span className="font-inter font-medium tracking-wider">{nav.name}</span>
+                  </Link>
                 )}
-                <span className="font-inter font-medium tracking-wider">{nav.name}</span>
-              </Link>
-            </li>
-          ))}
+              </li>
+            );
+          })}
           <li className="mt-8 flex items-center gap-4">
             <Image
               src="/assets/admin-dashboard/users/prof-avatar.svg"
