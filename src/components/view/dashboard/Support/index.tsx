@@ -10,10 +10,8 @@ export default function Support() {
       <p className=" text-gray-500">
         Elevate your experience with dedicated support and helpful resources.
       </p>
-      <div>
+      <div className="md:flex md:items-center md:justify-between">
         <Faqs />
-      </div>
-      <div>
         <ContactUs />
       </div>
     </section>

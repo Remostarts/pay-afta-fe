@@ -5,6 +5,7 @@ import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
 import { Faq } from '@/constants/dashboard/support/faq';
+import { ReHeading } from '@/components/re-ui/ReHeading';
 
 export default function Faqs() {
   const [activeButton, setActiveButton] = useState(1);
@@ -13,13 +14,14 @@ export default function Faqs() {
 
   return (
     <>
-      <div className="container relative mx-auto mt-8 box-border w-full text-left font-inter md:mt-20">
+      <div className="relative mt-8 w-full rounded-md border border-gray-200 p-3 font-inter md:mt-20">
         {/* Container with responsive padding and layout */}
         <div className=" md:px-20">
           {/* Header Section */}
-          <h1 className="text-gray text-center font-inter text-4xl font-semibold ">
+          {/* <h1 className="text-gray text-center font-inter text-4xl font-semibold ">
             Frequently Asked Questions
-          </h1>
+          </h1> */}
+          <ReHeading heading="Frequently Asked Questions" size={'2xl'} />
 
           {/* Questions */}
           <div className="mt-6 space-y-4">

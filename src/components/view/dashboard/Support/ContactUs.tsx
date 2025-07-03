@@ -19,19 +19,19 @@ export default function ContactUs() {
 
   return (
     <section className="mt-3 flex w-full items-center justify-center">
-      <div className="mt-6 w-full rounded-md border border-gray-200 bg-white p-3 sm:w-[400px]">
+      <div className="mt-6 w-full rounded-md border border-gray-200 bg-[#F2F2F2] p-3 sm:w-[400px]">
         {/* <ReHeading heading="Having Trouble?" size={'2xl'} className="text-center" /> */}
-        <h1 className="text-center font-inter text-2xl font-semibold">Having Trouble?</h1>
-        <p className="text-center font-inter text-gray-500">
+        <h1 className="p-2 text-center font-inter text-2xl font-semibold">Having Trouble?</h1>
+        <p className="p-2 text-center font-inter text-gray-500">
           Explore common issues below or select &apos;Other&apos; for personalized assistance.
         </p>
         <div>
           <ReHeading heading="Email" size={'base'} />
-          <ReInput name="email" placeholder="Support@payafta.com" readonly />
+          <p className=" p-2 font-inter text-gray-600">Support@PayAfta.com</p>
         </div>
         <div>
           <ReHeading heading="Phone" size={'base'} />
-          <ReInput name="phone" placeholder="0487985444" readonly />
+          <p className=" p-2 font-inter text-gray-600">07066995653</p>
         </div>
         <div className="grid place-items-center pt-2">
           <Dialog>
