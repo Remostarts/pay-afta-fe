@@ -1,3 +1,9 @@
+import Delivery from '@/components/view/dashboard/Delivery';
+
 export default function Page() {
-  return <div>delivery</div>;
+  return (
+    <section>
+      <Delivery />
+    </section>
+  );
 }
