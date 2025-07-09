@@ -16,7 +16,6 @@ import { format } from 'date-fns';
 import { DateRange } from 'react-day-picker';
 
 import { DatePickerWithRange } from '../shared/DatePicker';
-import { DialogTableRow } from '../Transactions/DialogTableRow';
 
 import TransactionModal from './TransactionModal';
 
@@ -251,12 +250,12 @@ export function ReDataTable<TData, TValue>({
         }
         return renderLinkRow(row, getLinkHref(row), handleRowClick);
 
-      case 'dialog':
-        if (!DialogComponent) {
-          console.error('DialogComponent is required when rowClickMode is "dialog"');
-          return renderStandardRow(row, handleRowClick);
-        }
-        return renderDialogRow(row, handleRowClick);
+      // case 'dialog':
+      //   if (!DialogComponent) {
+      //     console.error('DialogComponent is required when rowClickMode is "dialog"');
+      //     return renderStandardRow(row, handleRowClick);
+      //   }
+      //   return renderDialogRow(row, handleRowClick);
 
       case 'none':
       default:
@@ -300,25 +299,25 @@ export function ReDataTable<TData, TValue>({
     );
   };
 
-  const renderDialogRow = (row: any, handleRowClick: () => void) => {
-    return (
-      <DialogTableRow
-        key={row.id}
-        row={row}
-        DialogComponent={TransactionModal}
-        dialogProps={{
-          transaction: sampleTransaction,
-          row,
-        }}
-        onRowClick={(row) => {
-          if (onRowClick) onRowClick(row);
-          handleRowClick();
-        }}
-        rowClassName={rowClassName}
-        cellClassName={cellClassName}
-      />
-    );
-  };
+  // const renderDialogRow = (row: any, handleRowClick: () => void) => {
+  //   return (
+  //     <DialogTableRow
+  //       key={row.id}
+  //       row={row}
+  //       DialogComponent={TransactionModal}
+  //       dialogProps={{
+  //         transaction: sampleTransaction,
+  //         row,
+  //       }}
+  //       onRowClick={(row: any) => {
+  //         if (onRowClick) onRowClick(row);
+  //         handleRowClick();
+  //       }}
+  //       rowClassName={rowClassName}
+  //       cellClassName={cellClassName}
+  //     />
+  //   );
+  // };
 
   // Render the filters
   const renderFilters = () => {
