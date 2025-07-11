@@ -62,7 +62,7 @@ export const config = {
     '/',
     '/sign-in/:page*',
     '/sign-up/:page*',
-    // '/dashboard/:page*',
+    '/dashboard/:page*',
     '/admin-dashboard/:page*',
   ],
 };
