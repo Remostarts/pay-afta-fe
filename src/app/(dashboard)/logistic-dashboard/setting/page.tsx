@@ -1,3 +1,9 @@
+import Settings from '@/components/view/logisticDashboard/Settings';
+
 export default function Page() {
-  return <section>setting</section>;
+  return (
+    <section>
+      <Settings />
+    </section>
+  );
 }
