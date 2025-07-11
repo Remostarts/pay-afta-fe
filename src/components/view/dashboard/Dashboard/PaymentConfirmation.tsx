@@ -40,28 +40,30 @@ const PaymentConfirmation = ({
     <section>
       {!isShowTranscationPin && (
         <div className="mx-auto max-w-md rounded-lg bg-white">
-          <h2 className="mb-2 text-center font-inter text-2xl font-bold">Confirm Payment</h2>
+          <h2 className="mb-2 text-center font-inter text-2xl font-bold">
+            Review & Confirm Payment
+          </h2>
           <p className="mb-4 text-center font-inter text-gray-600">
             Verify the details below before completing the payment.
           </p>
           <div className="mb-4 flex items-center justify-between">
             <p className="font-inter font-medium text-gray-700">Amount</p>
-            <p className="text-xl text-gray-900">{amount}</p>
+            <p className="text-xl text-gray-900">₦{amount?.toLocaleString()}</p>
           </div>
           <div className="mb-4 flex items-center justify-between">
             <p className="font-inter font-medium text-gray-700">Bank Name</p>
-            <p className="font-inter text-gray-900">{bankName || 'Bank Name'}</p>
+            <p className="font-inter text-gray-900">{bankName}</p>
           </div>
           <div className="mb-4 flex items-center justify-between">
             <p className="font-inter font-medium text-gray-700">Account Number</p>
-            <p className="font-inter text-gray-900">{accountNumber || 123456789}</p>
+            <p className="font-inter text-gray-900">{accountNumber}</p>
           </div>
           <div className="mb-4 flex items-center justify-between">
             <p className="font-inter font-medium text-gray-700">Account Name</p>
-            <p className="font-inter text-gray-900">{accountName || 'Jon'}</p>
+            <p className="font-inter text-gray-900">{accountName}</p>
           </div>
           <ReButton className="w-full rounded-full font-inter" onClick={handleClick}>
-            Proceed to Payment
+            Authorize Payment
           </ReButton>
         </div>
       )}

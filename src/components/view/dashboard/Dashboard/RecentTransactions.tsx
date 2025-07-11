@@ -3,25 +3,25 @@ import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
 // Mock data for pending services
-const pendingServices = [
-  {
-    transactionsType: 'Link Payment',
-    paymentAmount: '1,000,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
-  {
-    transactionsType: 'Withdrawal',
-    paymentAmount: '1,000,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
-  {
-    transactionsType: 'Credit',
-    paymentAmount: '1,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
+const pendingServices: any[] = [
+  // {
+  //   transactionsType: 'Link Payment',
+  //   paymentAmount: '1,000,000',
+  //   date: '25th Sep,2023',
+  //   payment: 'successful',
+  // },
+  // {
+  //   transactionsType: 'Withdrawal',
+  //   paymentAmount: '1,000,000',
+  //   date: '25th Sep,2023',
+  //   payment: 'successful',
+  // },
+  // {
+  //   transactionsType: 'Credit',
+  //   paymentAmount: '1,000',
+  //   date: '25th Sep,2023',
+  //   payment: 'successful',
+  // },
 ];
 
 export default function RecentTransactions() {
@@ -34,16 +34,13 @@ export default function RecentTransactions() {
           Recent Transactions
           {/* <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-sm">2</span> */}
         </h2>
-        <button
-          className="text-sm text-blue-600"
-          onClick={() => route.push('/dashboard/transactions')}
-        >
+        <button className="text-sm text-blue-600" onClick={() => route.push('/dashboard/wallets')}>
           VIEW ALL
         </button>
       </div>
       <div className="">
         {pendingServices?.length > 0 ? (
-          pendingServices.map((service, index) => (
+          pendingServices?.map((service, index) => (
             <div key={index} className="flex gap-4 border-b pb-4 last:border-b-0">
               <div className="shrink-0">
                 <span className="inline-block">

@@ -36,7 +36,7 @@ export default function AdminProfileHeader() {
             <Search />
           </div>
           <Image
-            src="/assets/admin-dashboard/dashboard/user-profile.png"
+            src="/assets/admin-dashboard/users/prof-avatar.svg"
             alt="user-profile"
             width={40}
             height={40}

@@ -17,6 +17,8 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface RequestRefundProps {
   handleClosed: (e: boolean) => void;
   handleCurrentStepChange: (e: number) => void;
+  handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  currentStepChange: number;
 }
 
 const defaultVal = {
@@ -27,6 +29,8 @@ const defaultVal = {
 export default function RequestRefund({
   handleClosed,
   handleCurrentStepChange,
+  handleIsRequestRefund,
+  currentStepChange,
 }: RequestRefundProps) {
   const form = useForm<TRequestRefundSchema>({
     resolver: zodResolver(requestRefundSchema),
@@ -36,6 +40,11 @@ export default function RequestRefund({
 
   const { formState, handleSubmit } = form;
   const { isSubmitting, isValid } = formState;
+
+  function handleIsRequestRefundAndStepChange() {
+    handleIsRequestRefund(true);
+    handleCurrentStepChange(currentStepChange + 1);
+  }
 
   async function onSubmit(data: TRequestRefundSchema) {
     console.log(data);
@@ -79,9 +88,7 @@ export default function RequestRefund({
             <ReButton
               disabled={isSubmitting || !isValid}
               className="rounded-full bg-[#1A1A1A] text-white hover:bg-[#1A1A1A]"
-              onClick={() => {
-                handleCurrentStepChange(5);
-              }}
+              onClick={handleIsRequestRefundAndStepChange}
             >
               Agree
             </ReButton>

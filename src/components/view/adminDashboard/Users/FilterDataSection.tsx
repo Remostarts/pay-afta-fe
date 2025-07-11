@@ -1,5 +1,11 @@
+'use client';
+
 import Image from 'next/image';
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
+import { format } from 'date-fns';
+import { DateRange, DayPicker } from 'react-day-picker';
+
+import { DatePickerWithRange } from '../shared/DatePicker';
 
 import {
   Select,
@@ -10,62 +16,126 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
 type FilterDataSectionProps = {
-  setSelectedStatusType: Dispatch<SetStateAction<string | null>>;
+  // setSelectedStatusType: Dispatch<SetStateAction<string | null>>;
+  // setSelectedDate: Dispatch<SetStateAction<string | null>>;
+  handlePageChange({ pageNumber, selectedDate, selectedStatusType }: any): void;
 };
 
-export default function FilterDataSection({ setSelectedStatusType }: FilterDataSectionProps) {
+export default function FilterDataSection({
+  // setSelectedStatusType,
+  // setSelectedDate,
+  handlePageChange,
+}: FilterDataSectionProps) {
+  const [dateOption, setDateOption] = useState<string | null>(null);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [selectedDateRange, setSelectedDateRange] = useState<string | null>(null);
+
+  const handleDateChange = (value: string) => {
+    if (value === 'Custom Range') {
+      setPopoverOpen(true);
+      setDateOption(value);
+    } else {
+      setSelectedDateRange(null);
+      setDateOption(value);
+      handlePageChange({ selectedDate: value });
+    }
+  };
+
+  const handleApplyDateRange = (range: DateRange | undefined) => {
+    if (range?.from && range?.to) {
+      const formattedRange = `${format(range.from, 'MMM d, yyyy')} - ${format(range.to, 'MMM d, yyyy')}`;
+      setSelectedDateRange(formattedRange);
+      handlePageChange({ selectedDate: formattedRange });
+    }
+    setPopoverOpen(false);
+  };
+
+  const handleCancelDateRange = () => {
+    setPopoverOpen(false);
+    if (!selectedDateRange) {
+      setDateOption(null);
+    }
+  };
+
+  // const getDisplayValue = () => {
+  //   if (dateOption === 'Custom Range' && selectedDateRange) {
+  //     return selectedDateRange;
+  //   }
+  //   return dateOption || 'Select a Date';
+  // };
+
   return (
-    <div className="mb-2 flex items-center justify-end rounded-md bg-white p-4">
-      {/* date section  */}
-      <div>
-        <Select>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a Date" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            <SelectGroup>
-              <SelectLabel>Date</SelectLabel>
-              <SelectItem value="Today">Today</SelectItem>
-              <SelectItem value="Last Week">Last Week</SelectItem>
-              <SelectItem value="This Month">This Month</SelectItem>
-              <SelectItem value="Last Month">Last Month</SelectItem>
-              <SelectItem value="Last Month">Last Month</SelectItem>
-              <SelectItem value="Custom Range">Custom Range</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+    <div className="mb-2 flex flex-col rounded-md bg-white p-4">
+      <div className="flex items-center justify-end">
+        {/* date section  */}
+        <div>
+          <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+            <PopoverTrigger asChild>
+              <div>
+                <Select
+                  value={dateOption || undefined}
+                  onValueChange={handleDateChange}
+                  defaultValue="Today"
+                >
+                  <SelectTrigger className="w-[180px]">
+                    <SelectValue placeholder="This Month" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-white">
+                    <SelectGroup>
+                      <SelectLabel>Date</SelectLabel>
+                      <SelectItem value="Today">Today</SelectItem>
+                      <SelectItem value="Last Week">Last Week</SelectItem>
+                      <SelectItem value="This Month">This Month</SelectItem>
+                      <SelectItem value="Last Month">Last Month</SelectItem>
+                      <SelectItem value="Custom Range" className="text-[#1F7EAD]">
+                        Custom Range
+                      </SelectItem>
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+              </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto bg-white p-0" align="start">
+              <DatePickerWithRange
+                onApply={handleApplyDateRange}
+                onCancel={handleCancelDateRange}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
 
-      {/* state section  */}
-      <div className="ml-4">
-        <Select onValueChange={(e) => setSelectedStatusType(e)}>
-          <SelectTrigger className="w-[180px]">
-            <SelectValue placeholder="Select a State" />
-          </SelectTrigger>
-          <SelectContent className="bg-white">
-            <SelectGroup>
-              <SelectLabel>State</SelectLabel>
-              <SelectItem value="Active">Active</SelectItem>
-              <SelectItem value="Suspended">Suspended</SelectItem>
-              <SelectItem value="Pending">Pending</SelectItem>
-            </SelectGroup>
-          </SelectContent>
-        </Select>
-      </div>
+        {/* state section  */}
+        <div className="ml-4">
+          <Select onValueChange={(e) => handlePageChange({ selectedStatusType: e })}>
+            <SelectTrigger className="w-[180px]">
+              <SelectValue placeholder="Select a State" />
+            </SelectTrigger>
+            <SelectContent className="bg-white">
+              <SelectGroup>
+                <SelectLabel>State</SelectLabel>
+                <SelectItem value="Active">Active</SelectItem>
+                <SelectItem value="Suspended">Suspended</SelectItem>
+                <SelectItem value="Pending">Pending</SelectItem>
+              </SelectGroup>
+            </SelectContent>
+          </Select>
+        </div>
 
-      {/* export button  */}
-      <div>
-        <button className="ml-4 flex items-center gap-1 rounded-md bg-[#1F7EAD] px-4 py-2 text-white">
-          <Image
-            src="/assets/admin-dashboard/users/export-icon.svg"
-            width={20}
-            height={20}
-            alt="export"
-          />
-          Export
-        </button>
+        {/* export button  */}
+        <div>
+          <button className="ml-4 flex items-center gap-1 rounded-md bg-[#1F7EAD] px-4 py-2 text-white">
+            <Image
+              src="/assets/admin-dashboard/users/export-icon.svg"
+              width={20}
+              height={20}
+              alt="export"
+            />
+            Export
+          </button>
+        </div>
       </div>
     </div>
   );

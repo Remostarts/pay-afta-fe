@@ -23,9 +23,18 @@ interface TReSelectProps {
   placeholder?: string;
   options: { value: string; label: string }[];
   required?: boolean;
+  onChange?: (value: string) => void;
 }
 
-const ReSelect = ({ name, label, description, placeholder, options, required }: TReSelectProps) => {
+const ReSelect = ({
+  name,
+  label,
+  description,
+  placeholder,
+  options,
+  required,
+  onChange,
+}: TReSelectProps) => {
   const { control } = useFormContext();
 
   return (

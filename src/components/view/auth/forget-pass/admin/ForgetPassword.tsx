@@ -23,7 +23,7 @@ export default function ForgetPassword() {
         {currentStep === 1 && <FillEmail handleCurrentStep={handleCurrentStep} />}
         {currentStep === 2 && (
           <div className="px-8">
-            <SetNewPassword handleCurrentStep={handleCurrentStep} />
+            <SetNewPassword />
           </div>
         )}
         {currentStep === 3 && (

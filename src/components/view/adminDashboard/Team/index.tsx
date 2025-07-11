@@ -6,6 +6,7 @@ import { FilePenLine, Trash2 } from 'lucide-react';
 import Image from 'next/image';
 
 import { useDialog } from '../../../../hooks/useDialog';
+import { ReDataTable } from '../shared/ReDateTable';
 
 import StatsSection from './StatsSection';
 import { TeamDataTable } from './TeamDataTable';
@@ -160,6 +161,14 @@ const teamRolesData = [
   },
 ];
 
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  Status?: {
+    Status: string;
+  };
+}
+
 export default function Team() {
   const [selectedTab, setSelectedTab] = useState<TabType>('Team Members');
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
@@ -168,6 +177,12 @@ export default function Team() {
   const [TeamData, setTeamData] = useState<TeamMember[]>([]);
   const [rolesData, setRolesData] = useState<Roles[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
+  // const [currentStepForTeamDialog, setCurrentStepForTeamDialog] = useState<number>(1);
+
+  console.log(selectedStatus);
+  console.log(selectedTab);
 
   const handleDelete = (item: any) => {
     console.log(item);
@@ -176,42 +191,6 @@ export default function Team() {
   const handleEdit = (item: any) => {
     console.log(item);
   };
-
-  // function onNextForTeamDialog() {
-  //   setCurrentStepForTeamDialog(2);
-  // }
-
-  // function onClosedForTeamDialog() {
-  //   setCurrentStepForTeamDialog(1);
-  // }
-
-  // const renderTeamDialogContent = () => {
-  //   switch (currentStepForTeamDialog) {
-  //     case 1:
-  //       return <UpdateTeam onNext={onNextForTeamDialog} />;
-  //     case 2:
-  //       return (
-  //         <SuccessfulCard
-  //           desc="Team dialog Content"
-  //           heading="Team"
-  //           onClosed={onClosedForTeamDialog}
-  //         />
-  //       );
-  //     default:
-  //       return null;
-  //   }
-  // };
-
-  // const renderRolesDialogContent = () => {
-  //   switch (currentStep) {
-  //     case 1:
-  //       return <UpdateRole onNext={nextStep} />;
-  //     case 2:
-  //       return <SuccessfulCard desc="Roles dialog content" heading="Roles" onClosed={nextStep} />;
-  //     default:
-  //       return null;
-  //   }
-  // };
 
   const teamColumns: ColumnDef<TeamMember>[] = [
     {
@@ -290,6 +269,12 @@ export default function Team() {
     },
   ];
 
+  const renderColumns = selectedTab === 'Team Members' ? teamColumns : rolesColumns;
+
+  function handleTabsChange(value: any) {
+    setSelectedTab(value);
+  }
+
   function handlePageChange(pageNumber: any) {
     try {
       console.log(pageNumber);
@@ -320,29 +305,28 @@ export default function Team() {
   return (
     <section>
       <StatsSection />
-      <div className="mt-3">
-        <FilterSection
-          selectedTab={selectedTab}
-          onTabChange={setSelectedTab}
-          onStatusChange={setSelectedStatus}
+      <div className="mt-3 rounded-md bg-white p-5">
+        <ReDataTable<TeamMember | Roles, TeamMember | Roles>
+          columns={renderColumns as ColumnDef<TeamMember | Roles>[]}
+          data={selectedTab === 'Team Members' ? TeamData : rolesData}
+          isLoading={isLoading}
+          isTabs={true}
+          onTabChange={handleTabsChange}
+          onPageChange={handlePageChange}
+          rowClickMode="none"
+          count={8}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          dateFilter={{
+            enabled: true,
+            defaultValue: '',
+          }}
+          export={{
+            enabled: true,
+            buttonText: 'Export',
+          }}
         />
-      </div>
-      <div className="container mx-auto rounded-md bg-white p-5">
-        {selectedTab === 'Team Members' ? (
-          <TeamDataTable
-            columns={teamColumns}
-            data={TeamData}
-            isLoading={isLoading}
-            onPageChange={handlePageChange}
-          />
-        ) : (
-          <RolesDataTable
-            columns={rolesColumns}
-            data={rolesData}
-            isLoading={isLoading}
-            onPageChange={handlePageChange}
-          />
-        )}
       </div>
     </section>
   );

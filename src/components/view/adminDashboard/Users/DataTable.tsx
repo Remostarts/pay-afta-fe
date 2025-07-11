@@ -30,7 +30,7 @@ interface DataTableProps<TData extends { userId: string }, TValue> {
   data: TData[];
   lable?: string;
   isLoading: boolean;
-  onPageChange: (pageNumber: number) => void;
+  onPageChange({ pageNumber, selectedDate, selectedStatusType }: any): void;
 }
 
 const PAGE_SIZE = 8;
@@ -80,7 +80,7 @@ export function DataTable<TData extends { userId: string }, TValue>({
   function handlePageChange(pageNumber: number) {
     console.log(pageNumber);
     setCurrentPage(pageNumber);
-    onPageChange(pageNumber);
+    onPageChange({ pageNumber });
   }
 
   return (

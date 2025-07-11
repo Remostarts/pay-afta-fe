@@ -2,24 +2,20 @@
 
 import { useEffect, useState } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
+import { toast } from 'sonner';
+
+import { ReDataTable } from '../shared/ReDateTable';
 
 import FilterDataSection from './FilterDataSection';
 import { DataTable } from './DataTable';
 import TransactionModal from './TransactionModal';
 
 import { ReDialog } from '@/components/re-ui/ReDialog';
+import { Transaction, TransactionResponse } from '@/types/admin/transactions.type';
 
-export type Payment = {
-  transactionId: string;
-  type: string;
-  user: string;
-  amount: string;
-  status: string;
-};
-
-const columns: ColumnDef<Payment>[] = [
+const columns: ColumnDef<Transaction>[] = [
   {
-    accessorKey: 'transactionId',
+    accessorKey: 'id',
     header: 'TRANSACTION ID',
   },
   {
@@ -27,8 +23,15 @@ const columns: ColumnDef<Payment>[] = [
     header: 'TYPE',
   },
   {
-    accessorKey: 'user',
+    accessorKey: 'buyerFirstName',
     header: 'USER',
+    cell({ row }) {
+      return (
+        <div>
+          {row.original.buyerFirstName} {row.original.buyerLastName}
+        </div>
+      );
+    },
   },
   {
     accessorKey: 'amount',
@@ -42,9 +45,9 @@ const columns: ColumnDef<Payment>[] = [
 
       const styles =
         {
-          Sucessful: 'bg-[#E9F5FB] text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
-          Pending: 'bg-[#E9F5FB] text-[#1F7EAD] text-center py-1 text-sm font-medium font-inter',
-          Failed: 'bg-[#FCE9E9] text-[#D42620] text-center py-1 text-sm font-medium font-inter',
+          SUCCESSFUL: 'bg-[#E9F5FB] text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
+          PENDING: 'bg-[#E9F5FB] text-[#1F7EAD] text-center py-1 text-sm font-medium font-inter',
+          FAILED: 'bg-[#FCE9E9] text-[#D42620] text-center py-1 text-sm font-medium font-inter',
         }[status] || '';
 
       return <div className={styles}>{status}</div>;
@@ -53,153 +56,125 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const tData = [
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Jaxson Saris',
-    amount: '₦200,000.00',
-    status: 'Pending',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Escrow Hold',
-    user: 'Abram Lipshutz',
-    amount: '₦200,000.00',
-    status: 'Sucessful',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Jaxson Saris',
-    amount: '₦200,000.00',
-    status: 'Sucessful',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Tiana Bergson',
-    amount: '₦200,000.00',
-    status: 'Pending',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Escrow Hold',
-    user: 'Tiana Bergson',
-    amount: '₦200,000.00',
-    status: 'Sucessful',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Escrow Paid',
-    user: 'Cristofer Dias',
-    amount: '₦200,000.00',
-    status: 'Failed',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Escrow Received',
-    user: 'Kadin Workman',
-    amount: '₦200,000.00',
-    status: 'Failed',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Wilson Aminoff',
-    amount: '₦200,000.00',
-    status: 'Failed',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Jaxson Saris',
-    amount: '₦200,000.00',
-    status: 'Failed',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Money Received',
-    user: 'Kadin Workman',
-    amount: '₦200,000.00',
-    status: 'Sucessful',
-  },
-  {
-    transactionId: 'US-123456789',
-    type: 'Transfer 2 Wallet',
-    user: 'Jaxson Saris',
-    amount: '₦200,000.00',
-    status: 'Sucessful',
-  },
-];
+interface PageChangeParams {
+  pageNumber?: number;
+  selectedDate?: string;
+  Status?: {
+    Status: string;
+  };
+}
 
 export default function Transactions() {
-  const [selectedStatusType, setSelectedStatusType] = useState<string | null>(null);
-  const [data, setData] = useState<Payment[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [page, setPage] = useState(1);
+  const pageSize = 8;
+  const [transactions, setTransactions] = useState<TransactionResponse>({} as TransactionResponse);
 
-  function filterSelectedStatusType() {
-    const filteredData = selectedStatusType
-      ? data.filter((item) => item.status === selectedStatusType)
-      : data;
-    setData(filteredData);
-  }
+  const handleTransactionsFilterChange = async (
+    params: PageChangeParams = {
+      pageNumber: 1,
+      selectedDate: '',
+      Status: { Status: '' },
+    }
+  ) => {
+    console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 params🌼', params);
 
-  function handlePageChange(pageNumber: any) {
+    // Optional: Handle filter change
+    setIsLoading(true);
+
+    let startDate, endDate;
+
+    // Check if the value is a date range like "May 5, 2025 - May 7, 2025"
+    if (params?.selectedDate && params?.selectedDate?.includes(' - ')) {
+      const date = params?.selectedDate?.split(' - ');
+
+      const startDateI = new Date(date[0]);
+      const endDateI = new Date(date[1]);
+
+      const formattedStart = startDateI.toISOString().split('T')[0]; // "YYYY-MM-DD"
+      const formattedEnd = endDateI.toISOString().split('T')[0]; // "YYYY-MM-DD"
+
+      startDate = formattedStart;
+      endDate = formattedEnd;
+      params.selectedDate = '';
+    }
+
+    console.log('🌼 🔥🔥 Users 🔥🔥 startDate🌼', startDate);
+    console.log('🌼 🔥🔥 Users 🔥🔥 endDate🌼', endDate);
+
+    setPage(params?.pageNumber || 1);
+
+    console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 page🌼', page);
+
     try {
-      console.log(pageNumber);
-      setTimeout(() => {
-        setData(tData);
-        setIsLoading(false);
-      }, 5000);
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/transactions?status=${params?.Status?.Status === 'all' ? '' : params?.Status?.Status}&createdAt=${params?.selectedDate === 'all' ? '' : params?.selectedDate}&sortBy=createdAt&sortOrder=desc&page=${params?.pageNumber}&limit=${pageSize}&startDate=${startDate}&endDate=${endDate}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // authorization: session?.accessToken as string,
+          },
+          cache: 'no-store',
+        }
+      );
+      const data = await response.json();
+
+      console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 data🌼', data);
+
+      if (data?.success) {
+        setTransactions(data?.data);
+      } else {
+        toast.error(data?.errorName || 'Failed to load users');
+      }
     } catch (error) {
-      console.log(error);
+      toast.error(error instanceof Error ? error.message : 'Failed to load users');
+    } finally {
       setIsLoading(false);
     }
-  }
-
-  useEffect(() => {
-    handlePageChange(1);
-  }, []);
-
-  useEffect(() => {
-    filterSelectedStatusType();
-  }, [selectedStatusType]);
-
-  const sampleTransaction = {
-    id: 'US-123456789',
-    userId: 'User ID',
-    fullName: 'Full Name',
-    status: 'Successful' as const,
-    type: 'Money Recieved',
-    amount: '₦200,000.00',
-    senderBank: 'Lorem Ipsum',
-    senderAccount: '0011223344',
-    senderName: 'Lorem Ipsum',
-    reference: 'ht62gbs-7wyhe-i98id-29uejh-8uh-d9uh8id-dyhd',
-    date: '5 Jun, 2024 10:30PM',
   };
+
+  useEffect(() => {
+    handleTransactionsFilterChange({ pageNumber: 1 });
+  }, []);
 
   return (
     <div>
-      <FilterDataSection setSelectedStatusType={setSelectedStatusType} />
-      <div className="container mx-auto rounded-md bg-white p-5">
-        <DataTable
+      <div className="rounded-md bg-white p-5">
+        <ReDataTable
           columns={columns}
-          data={data}
+          data={transactions?.data}
           isLoading={isLoading}
-          onPageChange={handlePageChange}
+          onPageChange={handleTransactionsFilterChange}
+          rowClickMode="dialog"
+          DialogComponent={TransactionModal}
+          count={transactions?.meta?.total}
+          page={page}
+          setPage={setPage}
+          pageSize={pageSize}
+          dateFilter={{
+            enabled: true,
+            defaultValue: '',
+          }}
+          filters={[
+            {
+              name: 'Status',
+              placeholder: 'Select a State',
+              options: [
+                { label: 'All', value: 'all' },
+                { label: 'PENDING', value: 'PENDING' },
+                { label: 'SUCCESSFUL', value: 'SUCCESSFUL' },
+                { label: 'FAILED', value: 'FAILED' },
+              ],
+              /* 'PENDING' | 'SUCCESSFUL' | 'FAILED' */
+            },
+          ]}
+          export={{
+            enabled: true,
+            buttonText: 'Export',
+          }}
         />
       </div>
-
-      {/* <ReDialog
-        btnLabel="Open Dialog"
-        DialogComponent={TransactionModal}
-        componentProps={{
-          transaction: sampleTransaction,
-        }}
-        // onOpenChange={(open) => console.log('Dialog state:', open)}
-      /> */}
     </div>
   );
 }
