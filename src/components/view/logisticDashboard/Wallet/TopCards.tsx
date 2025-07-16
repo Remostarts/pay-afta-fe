@@ -4,7 +4,7 @@ import Image from 'next/image';
 import React from 'react';
 
 const TopCards = () => (
-  <div className="mt-5 grid gap-4 lg:grid-cols-3">
+  <div className="grid gap-4 lg:grid-cols-2">
     {/* Wallet Balance Card */}
 
     <div className="relative ml-2 mt-2 overflow-hidden rounded-xl bg-[#03045B] p-8 shadow-lg">
@@ -57,14 +57,6 @@ const TopCards = () => (
           <p className="font-inter text-2xl font-bold text-white">₦ 0.00</p>
         </div>
       </div>
-    </div>
-
-    {/* Earnings this week  */}
-    <div className="rounded-xl border border-gray-200 bg-white p-6 text-[#1A1A1A]">
-      <div className="text-sm opacity-80">
-        Earnings this week <span className="ml-1 text-xs">ⓘ</span>
-      </div>
-      <div className="my-2 text-2xl font-bold">₦0.00</div>
     </div>
   </div>
 );

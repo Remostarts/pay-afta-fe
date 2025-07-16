@@ -7,8 +7,6 @@ import Link from 'next/link';
 import { ReDataTable } from '../shared/ReDateTable';
 import TransactionModal from '../shared/TransactionModal';
 
-import { Transaction } from '@/types/trackLink';
-
 export type Payment = {
   deliveryId: string;
   date: string;
