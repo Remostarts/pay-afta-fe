@@ -21,14 +21,20 @@ export default function Navbar() {
             How It Works
           </Link>
           <Link href="#" className="text-gray-600 hover:text-gray-900">
+            Delivery
+          </Link>
+          <Link href="#" className="text-gray-600 hover:text-gray-900">
             Pricing
           </Link>
           <Link href="#" className="text-gray-600 hover:text-gray-900">
+            Support
+          </Link>
+          {/* <Link href="#" className="text-gray-600 hover:text-gray-900">
             About
           </Link>
           <Link href="#" className="text-gray-600 hover:text-gray-900">
             Contact
-          </Link>
+          </Link> */}
         </nav>
 
         <div className="flex items-center space-x-4">
