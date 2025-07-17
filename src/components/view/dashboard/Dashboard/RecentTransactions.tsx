@@ -30,11 +30,14 @@ export default function RecentTransactions() {
   return (
     <div className="mt-5 rounded-lg bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
-        <h2 className="flex items-center text-lg font-semibold text-gray-800">
+        <h2 className="flex items-center font-inter text-lg font-semibold text-[#333333]">
           Recent Transactions
           {/* <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-sm">2</span> */}
         </h2>
-        <button className="text-sm text-blue-600" onClick={() => route.push('/dashboard/wallets')}>
+        <button
+          className="font-inter text-sm font-bold text-[#6B6DFA]"
+          onClick={() => route.push('/dashboard/wallets')}
+        >
           VIEW ALL
         </button>
       </div>

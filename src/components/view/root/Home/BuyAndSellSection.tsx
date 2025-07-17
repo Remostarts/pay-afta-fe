@@ -7,7 +7,7 @@ export default function BuyAndSellSection() {
         What Can You Buy And Sell Using PayAfta?
       </h2>
       <div className="grid grid-cols-1 gap-12 md:grid-cols-2 md:items-center md:justify-center">
-        <div className="md:flex md:w-full md:flex-col md:items-center">
+        <div className="rounded-lg bg-[#E8FDEF] p-4 md:flex md:w-full md:flex-col md:items-center">
           <h3 className="mb-4 font-inter text-xl font-semibold">Physical Products</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-3 font-inter">
@@ -42,7 +42,8 @@ export default function BuyAndSellSection() {
             </li>
           </ul>
         </div>
-        <div className="md:flex md:w-full md:flex-col md:items-center">
+
+        <div className="rounded-lg bg-[#E6E7FE] p-4 md:flex md:w-full md:flex-col md:items-center ">
           <h3 className="mb-4 font-inter text-2xl font-semibold">Services</h3>
           <ul className="space-y-2">
             <li className="flex items-center gap-3 font-inter">

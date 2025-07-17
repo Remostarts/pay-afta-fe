@@ -26,10 +26,10 @@ export default function Dashboard() {
   return (
     <div className="min-h-full w-full">
       <div className="flex items-center justify-between lg:mx-4">
-        <ReHeading heading="Dashboard" />
+        <ReHeading heading="Dashboard" className="font-inter font-semibold text-[#333333]" />
         <Link
           href="/dashboard/new-order"
-          className="flex items-center gap-1 rounded-md border-2 border-[#E6E6E6] bg-white p-4 font-inter"
+          className="flex items-center gap-1 rounded-md border-2 border-[#E6E6E6] bg-white p-4 font-inter font-medium text-[#333333]"
         >
           <Image
             alt="new order"

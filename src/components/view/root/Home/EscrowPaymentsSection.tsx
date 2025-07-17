@@ -4,8 +4,8 @@ export default function EscrowPaymentsSection() {
   return (
     <section className="container mx-auto grid grid-cols-1 items-center gap-12 rounded-xl bg-[#E9F5FB] px-4 py-12 md:grid-cols-2 md:px-8">
       <div>
-        <h2 className="text-navy-blue mb-6 text-3xl font-bold md:text-4xl">
-          Set Up Escrow Payments With PayAfta
+        <h2 className="mb-6 font-playfair text-3xl font-bold text-[#03045B] md:text-6xl">
+          Set Up Escrow Payments with PayAfta
         </h2>
         <ul className="space-y-4 text-gray-600">
           <li className="flex items-center gap-3 font-inter">
@@ -46,7 +46,7 @@ export default function EscrowPaymentsSection() {
       </div>
       <div>
         <Image
-          src="/assets/root/home/Device.png"
+          src="/assets/root/home/iPhone 12 Pro mockup.png"
           alt="Phone"
           width={400}
           height={597}
