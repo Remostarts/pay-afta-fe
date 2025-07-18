@@ -20,13 +20,13 @@ export default function Navbar() {
           <Link href="#" className="text-gray-600 hover:text-gray-900">
             How It Works
           </Link>
-          <Link href="#" className="text-gray-600 hover:text-gray-900">
+          <Link href="/delivery" className="text-gray-600 hover:text-gray-900">
             Delivery
           </Link>
-          <Link href="#" className="text-gray-600 hover:text-gray-900">
+          <Link href="/pricing" className="text-gray-600 hover:text-gray-900">
             Pricing
           </Link>
-          <Link href="#" className="text-gray-600 hover:text-gray-900">
+          <Link href="/support" className="text-gray-600 hover:text-gray-900">
             Support
           </Link>
           {/* <Link href="#" className="text-gray-600 hover:text-gray-900">

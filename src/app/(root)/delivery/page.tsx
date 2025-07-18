@@ -83,7 +83,7 @@ export default function PayAftaLanding() {
       </section>
 
       {/* How Delivery Works */}
-      <section className="bg-gray-50 py-16">
+      <section className=" py-16">
         <div className="container mx-auto px-4">
           <h2 className="mb-12 font-playfair text-3xl font-bold text-[#03045B] lg:text-7xl">
             How Delivery Works
@@ -97,7 +97,7 @@ export default function PayAftaLanding() {
                   className={`cursor-pointer border-l-4 p-5 transition-all duration-300 ${
                     activeStep === step.id
                       ? 'border-[#03045B] bg-white'
-                      : 'border-gray-300 bg-gray-50 hover:bg-white hover:shadow-sm'
+                      : 'border-gray-300 hover:bg-white hover:shadow-sm'
                   }`}
                   onMouseEnter={() => setActiveStep(step.id)}
                 >
