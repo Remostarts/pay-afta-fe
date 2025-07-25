@@ -14,6 +14,7 @@ const hybridRoutes = [
   '/sign-up',
   '/sign-up/admin',
   '/sign-up/verification',
+  '/onboarding',
 ];
 
 const rolesRedirect: Record<string, string> = {
@@ -46,9 +47,11 @@ export async function middleware(request: NextRequest) {
   }
 
   // Handle onboarding route protection
-  const onboardingStatus = token?.onboardingStatus as boolean;
-  if (pathname === '/onboarding' && onboardingStatus) {
-    return NextResponse.redirect(`${process.env.FRONTEND_URL}/dashboard`);
+  if (pathname === '/onboarding') {
+    if (!token) {
+      return NextResponse.redirect(`${process.env.FRONTEND_URL}/sign-in`);
+    }
+    return NextResponse.next();
   }
 
   if (

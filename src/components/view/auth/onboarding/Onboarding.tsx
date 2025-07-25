@@ -58,7 +58,9 @@ export default function Onboarding() {
   }
 
   function handleClick() {
-    route.push('/dashboard');
+    if (currentStep >= 3) {
+      route.push('/dashboard');
+    }
   }
 
   return (

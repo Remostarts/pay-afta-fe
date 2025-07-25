@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 import ReOtp from '@/components/re-ui/ReOtp';
 import { Button } from '@/components/ui/button';
@@ -78,10 +79,6 @@ export default function VerificationCode() {
     }
   };
 
-  const handleProceed = () => {
-    router.push('/onboarding');
-  };
-
   return (
     <section>
       <div>
@@ -122,12 +119,12 @@ export default function VerificationCode() {
           </DialogHeader>
           <h1 className="mb-8 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
           <DialogFooter className="w-full">
-            <Button
-              className="w-full rounded-full bg-[#03045B] py-6 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
-              onClick={handleProceed}
+            <Link
+              href="/onboarding"
+              className="w-full rounded-full bg-[#03045B] py-2 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
             >
               Proceed to dashboard
-            </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>

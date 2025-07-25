@@ -18,11 +18,6 @@ export default function Layout({ children }: TChildrenProps) {
   const router = useRouter();
   const { onboardingStatus } = useGeneral();
 
-  // if (onboardingStatus === false) {
-  //   router.push('/onboarding');
-  //   return null;
-  // }
-
   // Check if path starts with either /dashboard or /admin-dashboard
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');
   const isDashboard = pathName.startsWith('/dashboard');
