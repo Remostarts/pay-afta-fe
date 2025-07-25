@@ -1,7 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
+import { useGeneral } from '@/context/generalProvider';
 import Header from '@/components/view/dashboard/Dashboard/Header';
 import { TChildrenProps } from '@/types';
 import Sidebar from '@/components/view/dashboard/Dashboard/SideNav';
@@ -14,6 +15,8 @@ import LogisticProfileHeader from '@/components/view/logisticDashboard/shared/Lo
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathName = usePathname();
+  const router = useRouter();
+  const { onboardingStatus } = useGeneral();
 
   // Check if path starts with either /dashboard or /admin-dashboard
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');
