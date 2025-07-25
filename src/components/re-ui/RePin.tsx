@@ -105,7 +105,7 @@ export default function RePin({
   );
 
   return (
-    <div className={`flex flex-wrap justify-center ${className}`}>
+    <div className={`flex flex-wrap ${className}`}>
       {Array(count)
         .fill('')
         .map((_, index) => (

@@ -62,11 +62,11 @@ export default function Onboarding() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-3xl rounded-lg bg-white p-6 shadow-lg">
+    <div className="mx-auto w-full max-w-3xl rounded-lg bg-white p-6">
       {/* Header */}
       <div className="mb-8 flex items-center justify-between">
-        <h1 className="font-inter text-2xl font-bold text-gray-900">Onboarding</h1>
-        <span className="font-inter text-gray-600">{currentStep}/3 Complete</span>
+        <h1 className="font-inter text-xl font-semibold text-[#010101]">Onboarding</h1>
+        <span className="font-inter text-gray-700">{currentStep}/3 Complete</span>
       </div>
 
       {/* Cards */}
@@ -81,8 +81,8 @@ export default function Onboarding() {
             >
               <div className="flex items-center justify-between">
                 <div className="space-y-1">
-                  <h2 className="font-inter text-lg font-medium text-gray-900">{step?.title}</h2>
-                  <p className="font-inter text-sm text-gray-500">{step?.description}</p>
+                  <h2 className="font-inter text-lg font-medium text-gray-700">{step?.title}</h2>
+                  <p className="font-inter text-sm text-gray-600">{step?.description}</p>
                 </div>
                 {isStepCompleted ? (
                   <Image

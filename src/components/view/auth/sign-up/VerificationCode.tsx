@@ -79,7 +79,7 @@ export default function VerificationCode() {
   };
 
   const handleProceed = () => {
-    router.push('/sign-in'); // Navigate to the next page
+    router.push('/onboarding');
   };
 
   return (
@@ -114,16 +114,16 @@ export default function VerificationCode() {
       </Button>
       {/* Dialog for success */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="flex flex-col items-center justify-center text-center sm:max-w-[425px]">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="flex justify-center">
               <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
             </DialogTitle>
           </DialogHeader>
-          <h1 className="mb-5 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
-          <DialogFooter>
+          <h1 className="mb-8 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
+          <DialogFooter className="w-full">
             <Button
-              className="w-full rounded-full bg-[#03045B] py-5 font-inter text-lg font-semibold text-white hover:bg-[#03045B]"
+              className="w-full rounded-full bg-[#03045B] py-6 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
               onClick={handleProceed}
             >
               Proceed to dashboard
