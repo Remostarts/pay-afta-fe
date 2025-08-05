@@ -1,12 +1,5 @@
 'use client';
 
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogTitle,
-  DialogDescription,
-} from '@radix-ui/react-dialog';
 import Link from 'next/link';
 
 import { ReHeading } from '@/components/re-ui/ReHeading';
