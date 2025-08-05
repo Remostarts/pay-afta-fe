@@ -70,7 +70,7 @@ export default function SelectCategory({ handleCategory }: ICategoryHandler) {
                   <Image alt="user" src="/assets/auth/user.svg" width={40} height={40} />
                 )}
               </div>
-              <div className=" flex-1">
+              <div className=" flex-1 text-left">
                 <h3 className="text-lg font-semibold text-gray-900">Individual</h3>
                 <p className="text-sm text-gray-600">Choose this if you a buyer and seller</p>
               </div>
@@ -122,7 +122,7 @@ export default function SelectCategory({ handleCategory }: ICategoryHandler) {
                   <Image alt="logistic" src="/assets/auth/logistic.svg" width={40} height={40} />
                 )}
               </div>
-              <div>
+              <div className=" flex-1 text-left">
                 <h3 className="text-lg font-semibold text-gray-900">Logistic Partner</h3>
                 <p className="text-sm text-gray-600">
                   Choose this if you are a third-party delivery company

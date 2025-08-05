@@ -77,7 +77,7 @@ export default function Profile() {
   const { isSubmitting: profileIsSubmitting } = profileFormState;
 
   // Availability state
-  const [availability, setAvailability] = useState(true);
+  const [availability, setAvailability] = useState(false);
   const [activeDay, setActiveDay] = useState('Mon');
   const days = ['Mon', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
 
@@ -190,7 +190,7 @@ export default function Profile() {
             <span className="font-medium">Availability Toggle</span>
             {/* <ReSwitch name="availabilityToggle" className="text-green-600" /> */}
             <ReToggle checked={availability} onChange={handleAvailabilityToggle} />
-            <span className="ml-2 font-medium text-green-600">On</span>
+            <span className="ml-2 font-medium text-green-600">{availability}</span>
           </div>
           <div className="mb-4">
             <div className="mb-2 flex flex-wrap gap-2">
@@ -200,7 +200,7 @@ export default function Profile() {
                     key={day}
                     type="button"
                     // className={`rounded px-3 py-1 text-sm ${idx === 0 ? 'bg-blue-700 text-white' : 'bg-gray-100 text-gray-700'}`}
-                    className={`rounded-none border-b-2 px-3 py-2 text-sm ${activeDay === day ? 'border-blue-700 text-blue-700' : 'border-transparent text-gray-700'}`}
+                    className={`rounded-none border-b-2 px-3 py-2 text-sm ${activeDay === day ? 'border-[#03045B] text-[#03045B]' : 'border-transparent text-gray-700'}`}
                     onClick={() => setActiveDay(day)}
                   >
                     {day}
