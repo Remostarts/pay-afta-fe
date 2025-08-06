@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { ChevronRight } from 'lucide-react';
 
 import GetInTouch from './GetInTouch';
 import SuccessModal from './SuccessModal';
@@ -37,7 +38,7 @@ export default function ContactUs() {
           <Dialog>
             <DialogTrigger asChild>
               <ReButton className="m:text-lg w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-5">
-                Contact Us
+                Contact Us <ChevronRight size={20} />
               </ReButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[481px]">
