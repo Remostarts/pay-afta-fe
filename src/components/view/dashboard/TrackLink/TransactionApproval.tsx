@@ -64,7 +64,7 @@ function TransactionApproval({
       <div className="flex gap-4">
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
-            <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+            <ReButton className="rounded-full md:w-2/5" onClick={handleAcceptOrder}>
               Agree to Transaction
             </ReButton>
           </DialogTrigger>
