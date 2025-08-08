@@ -1,6 +1,8 @@
 import { ArrowRight, ShieldCheck } from 'lucide-react';
 import Image from 'next/image';
 
+import { Waitlist } from '../shared/navbar/Waitlist';
+
 import Faqs from './Faq';
 import HeroSection from './HeroSection';
 import WorksSection from './WorkSection';

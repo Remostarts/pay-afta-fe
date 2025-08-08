@@ -1,7 +1,7 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 
@@ -28,8 +28,25 @@ const defaultValues = {
   location: '',
 };
 
-export function Waitlist() {
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+interface WaitlistProps {
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
+}
+
+export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
+  const [isModalOpen, setIsModalOpen] = useState(open || false);
+
+  useEffect(() => {
+    if (open !== undefined) {
+      setIsModalOpen(open);
+    }
+  }, [open]);
+
+  const handleOpenChange = (value: boolean) => {
+    setIsModalOpen(value);
+    onOpenChange?.(value);
+  };
+
   const form = useForm<TWhiteList>({
     resolver: zodResolver(whiteListSchema),
     defaultValues,
@@ -52,7 +69,7 @@ export function Waitlist() {
   };
 
   return (
-    <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
+    <Dialog open={isModalOpen} onOpenChange={handleOpenChange}>
       <DialogTrigger asChild>
         <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
@@ -72,7 +89,6 @@ export function Waitlist() {
                 <ReInput name="email" />
               </div>
               <div>
-                {/* <ReHeading heading="Phone Number" /> */}
                 <RePhoneNumberInput name="phoneNumber" />
               </div>
               <div>
@@ -92,9 +108,6 @@ export function Waitlist() {
             </div>
           </form>
         </Form>
-        {/* <DialogFooter>
-          <Button type="submit">Save changes</Button>
-        </DialogFooter> */}
       </DialogContent>
     </Dialog>
   );
