@@ -1,11 +1,24 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
 import Logo from '../../../../../../public/Logo.svg';
 
 import { Waitlist } from './Waitlist';
 
 export default function Navbar() {
+  const [showWaitlist, setShowWaitlist] = useState(false);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowWaitlist(true);
+    }, 3000);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 border-b border-gray-100 bg-white">
       <div className="container mx-auto flex items-center justify-between p-4">
@@ -51,7 +64,7 @@ export default function Navbar() {
             Get Started
           </Link>
           <div>
-            <Waitlist />
+            <Waitlist open={showWaitlist} onOpenChange={setShowWaitlist} />
           </div>
         </div>
       </div>
