@@ -7,6 +7,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from '@radix-ui/react-dialog';
+import Link from 'next/link';
 
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { DialogHeader } from '@/components/ui/dialog';
@@ -20,64 +21,25 @@ export default function Compliance() {
       </div>
       <div>
         <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button variant="outline" className="mb-3 w-full">
-                User Agreemnt
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>User Agreemnt </DialogTitle>
-                <DialogDescription>
-                  Lorem ipsum dolor sit amet consectetur. Felis sed nulla nisi et dolor sed aenean.
-                  Leo ornare nulla porta consectetur iaculis et lacus pellentesque. Fermentum
-                  maecenas suspendisse nisi quis adipiscing quisque lobortis. Natoque tincidunt
-                  pretium feugiat euismod sed commodo amet est.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <Link href="/refund-policy">
+            <Button className="mb-3 w-full" variant="outline">
+              User Agreemnt
+            </Button>
+          </Link>
         </div>
         <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="mb-3 w-full" variant="outline">
-                Privacy Policy
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Privacy Policy</DialogTitle>
-                <DialogDescription>
-                  Lorem ipsum dolor sit amet consectetur. Felis sed nulla nisi et dolor sed aenean.
-                  Leo ornare nulla porta consectetur iaculis et lacus pellentesque. Fermentum
-                  maecenas suspendisse nisi quis adipiscing quisque lobortis. Natoque tincidunt
-                  pretium feugiat euismod sed commodo amet est.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <Link href="/privacy-policy">
+            <Button className="mb-3 w-full" variant="outline">
+              Privacy Policy
+            </Button>
+          </Link>
         </div>
         <div>
-          <Dialog>
-            <DialogTrigger asChild>
-              <Button className="w-full" variant="outline">
-                Terms of service
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Terms of service</DialogTitle>
-                <DialogDescription>
-                  Lorem ipsum dolor sit amet consectetur. Felis sed nulla nisi et dolor sed aenean.
-                  Leo ornare nulla porta consectetur iaculis et lacus pellentesque. Fermentum
-                  maecenas suspendisse nisi quis adipiscing quisque lobortis. Natoque tincidunt
-                  pretium feugiat euismod sed commodo amet est.
-                </DialogDescription>
-              </DialogHeader>
-            </DialogContent>
-          </Dialog>
+          <Link href="/terms-and-condition">
+            <Button className="w-full" variant="outline">
+              Terms of service
+            </Button>
+          </Link>
         </div>
       </div>
     </div>

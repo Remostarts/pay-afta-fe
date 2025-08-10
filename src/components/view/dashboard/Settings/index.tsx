@@ -41,7 +41,7 @@ export default function Settings() {
               key={tab.key}
               className={`border-b-2 p-2 transition-colors duration-200 ${
                 activeTab === tab.key
-                  ? 'border-blue-700 font-semibold text-blue-700'
+                  ? 'border-[#03045B] font-semibold text-[#03045B]'
                   : 'border-transparent text-gray-600'
               }`}
               onClick={() => setActiveTab(tab.key)}
@@ -65,7 +65,7 @@ export default function Settings() {
                     value={tab.key}
                     className={`border-b-2 p-2 transition-colors duration-200 ${
                       activeTab === tab.key
-                        ? 'border-blue-700 font-semibold text-blue-700'
+                        ? 'border-[#03045B] font-semibold text-[#03045B]'
                         : 'border-transparent text-gray-600'
                     }`}
                   >

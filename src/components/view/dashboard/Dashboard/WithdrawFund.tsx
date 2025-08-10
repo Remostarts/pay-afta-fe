@@ -3,6 +3,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { useState } from 'react';
+import Image from 'next/image';
 
 import PaymentConfirmation from './PaymentConfirmation';
 
@@ -20,7 +21,7 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 const defaultValues = {
   bankName: '',
   accountNumber: '',
-  accountName: '',
+  amountWithdraw: '',
 };
 
 const defaultValuesForTransferFund = {
@@ -74,7 +75,14 @@ export default function WithdrawFund() {
               className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('bank')}
             >
-              <span className="text-xl">🏦</span>
+              <span className="text-xl">
+                <Image
+                  alt="to bank"
+                  src="/assets/dashboard/Dashboard/toBank.svg"
+                  width={40}
+                  height={40}
+                />
+              </span>
               <div className="flex flex-col items-start">
                 <span className="font-semibold">To Bank</span>
                 <span className="text-xs text-gray-500">Send money to external bank accounts</span>
@@ -84,7 +92,15 @@ export default function WithdrawFund() {
               className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('settlement')}
             >
-              <span className="text-xl">🏦</span>
+              <span className="text-xl">
+                {' '}
+                <Image
+                  alt="to bank"
+                  src="/assets/dashboard/Dashboard/toSettlementBank.svg"
+                  width={40}
+                  height={40}
+                />
+              </span>
               <div className="flex flex-col items-start">
                 <span className="font-semibold">To Settlement Bank</span>
                 <span className="text-xs text-gray-500">Send money to saved bank account</span>
@@ -143,7 +159,7 @@ export default function WithdrawFund() {
                 <div>
                   <ReHeading heading="Account Number" size={'base'} />
                   <ReInput
-                    type="text"
+                    type="number"
                     name="accountNumber"
                     placeholder="Enter account number"
                     inputMode="numeric"

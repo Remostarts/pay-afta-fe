@@ -16,11 +16,15 @@ import { kycBankInfo, kycPersonalInfo } from '@/lib/actions/onboarding/onboardin
 type defaultVal = {
   bankName: string;
   accountNumber: string;
+  bvn: string;
+  isDefaultPayout: boolean;
 };
 
 const defaultValues: defaultVal = {
   bankName: '',
   accountNumber: '',
+  bvn: '',
+  isDefaultPayout: false,
 };
 
 export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
@@ -31,7 +35,7 @@ export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
   });
 
   const { handleSubmit, formState } = form;
-  const { isValid, isSubmitting } = formState;
+  const { isSubmitting } = formState;
 
   async function onSubmit(data: TSettlementKyc) {
     console.log(data);
@@ -58,9 +62,24 @@ export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
             <ReHeading heading="Select your bank name" size={'base'} />
             <ReSelect placeholder="select" name="bankName" options={nigeriaBanks} />
           </div>
-          <div>
+          <div className="mt-5">
             <ReHeading heading="Enter 10 digit account number" size={'base'} />
             <ReInput name="accountNumber" type="number" />
+          </div>
+          <div className="mt-5">
+            <ReHeading heading="BVN (Bank Verification Number)" size={'base'} />
+            <ReInput name="bvn" type="number" placeholder="00000000000" />
+          </div>
+          <div className="mt-5 flex items-center font-inter">
+            <input
+              type="checkbox"
+              name="isDefaultPayout"
+              onChange={(e) => form.setValue('isDefaultPayout', e.target.checked)}
+              className="mr-2"
+            />
+            <span className="text-sm text-gray-600">
+              Set this account as my default payout method
+            </span>
           </div>
           <div className="mt-3 flex justify-end">
             <ReButton

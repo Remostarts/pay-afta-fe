@@ -90,3 +90,19 @@ export async function kycPin(formData: PinFormData) {
     getErrorMessage(error);
   }
 }
+
+export async function checkUsername(username: string) {
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/check-username`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ username }),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 checkUsername 🔥🔥 error🌼', error);
+    getErrorMessage(error);
+  }
+}

@@ -8,7 +8,7 @@ export const metadata = {
 
 export default function OnboardingLayout({ children }: TChildrenProps) {
   return (
-    <div className="min-h-screen w-full items-center">
+    <div className="min-h-screen w-full items-center bg-[#F9F9F9]">
       {/* Logo section */}
       <div className="flex items-center justify-center p-6">
         <Image src="/Logo.svg" alt="pay-afta-logo" width={110} height={40} priority />

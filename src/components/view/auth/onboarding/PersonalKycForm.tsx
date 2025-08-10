@@ -4,6 +4,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
+import { useState, useEffect } from 'react';
+import Image from 'next/image';
+import debounce from 'lodash/debounce';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import ReDatePicker from '@/components/re-ui/ReDatePicker';
@@ -14,7 +17,7 @@ import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.va
 import { ReButton } from '@/components/re-ui/ReButton';
 import { DialogClose } from '@/components/ui/dialog';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
-import { kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { checkUsername, kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
 
 type defaultVal = {
   nin: string;
@@ -48,8 +51,28 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
     mode: 'onChange',
   });
 
-  const { handleSubmit, formState } = form;
+  const { handleSubmit, formState, watch } = form;
   const { isSubmitting, isValid } = formState;
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+
+  const checkUsernameValidity = debounce(async (username: string) => {
+    if (username.length < 3) return;
+    try {
+      const response = await checkUsername(username);
+      setIsUsernameValid(!response.taken);
+    } catch (error) {
+      console.error('Username check failed:', error);
+    }
+  }, 500);
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === 'username') {
+        checkUsernameValidity(value.username as string);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const onSubmit = async (data: TPersonalKyc) => {
     console.log(data);
@@ -81,17 +104,31 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
             <ReHeading heading="Enter NIN" size={'base'} />
             <ReInput name="nin" />
           </div>
-          <div>
-            <ReHeading heading="Gender" size={'base'} />
-            <ReSelect name="gender" placeholder="Select" options={genderOptions} />
-          </div>
-          <div>
-            <ReHeading heading="Date" size={'base'} />
-            <ReDatePicker name="dateOfBirth" placeholder="Select" />
+          <div className="grid grid-cols-2 items-center gap-3">
+            <div>
+              <ReHeading heading="Gender" size={'base'} />
+              <ReSelect name="gender" placeholder="Select" options={genderOptions} />
+            </div>
+            <div>
+              <ReHeading heading="Date" size={'base'} />
+              <ReDatePicker name="dateOfBirth" placeholder="Select" />
+            </div>
           </div>
           <div>
             <ReHeading heading="Username" size={'base'} />
-            <ReInput name="username" placeholder="" />
+            <div className="relative">
+              <ReInput name="username" placeholder="" />
+              {isUsernameValid && (
+                <div className="absolute right-3 top-1/2 -translate-y-1/2">
+                  <Image
+                    src="/assets/auth/onboarding/check 2.svg"
+                    alt="valid username"
+                    width={20}
+                    height={20}
+                  />
+                </div>
+              )}
+            </div>
           </div>
           <div>
             <ReHeading heading="Instagram Username (optional)" size={'base'} />

@@ -9,6 +9,7 @@ import RePin from '../../../re-ui/RePin';
 import { Form } from '@/components/ui/form';
 import { kycPin } from '@/lib/actions/onboarding/onboarding.actions';
 import { PinFormData, pinSchema } from '@/lib/validations/onboarding.validation';
+import { ReHeading } from '@/components/re-ui/ReHeading';
 
 interface TransactionPinProps {
   onComplete: (pin: string) => void;
@@ -57,17 +58,17 @@ export default function TransactionPin({ onComplete, manageCurrentStep }: Transa
   return (
     <Form {...form}>
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-        <div className="text-center">
-          <h1 className="font-inter text-3xl font-semibold text-gray-800">Transaction PIN</h1>
+        <div className="">
+          <h1 className="font-inter text-2xl font-semibold text-gray-800">Transaction PIN</h1>
 
           <div className="mt-8">
-            <p className="mb-4 font-inter text-xl font-semibold">Enter PIN</p>
+            <ReHeading heading="Enter Verification Code" size={'base'} />
             <RePin
               count={4}
               name="pin"
               onChange={(value) => form.setValue('pin', value)}
               error={!!form.formState.errors.pin}
-              className="mb-2"
+              className="my-2"
             />
             {form.formState.errors.pin && (
               <p className="text-sm text-red-500">{form.formState.errors.pin.message}</p>
@@ -75,13 +76,13 @@ export default function TransactionPin({ onComplete, manageCurrentStep }: Transa
           </div>
 
           <div className="mt-6">
-            <p className="mb-4 font-inter text-xl font-semibold">Confirm PIN</p>
+            <ReHeading heading="Confirm Verification Code" size={'base'} />
             <RePin
               count={4}
               name="confirmPin"
               onChange={(value) => form.setValue('confirmPin', value)}
               error={!!form.formState.errors.confirmPin}
-              className="mb-2"
+              className="my-2"
             />
             {form.formState.errors.confirmPin && (
               <p className="text-sm text-red-500">{form.formState.errors.confirmPin.message}</p>

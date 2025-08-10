@@ -24,6 +24,7 @@ interface GeneralContextType {
   setAmount: (amount: number) => void;
   user: TUser | null;
   loadUserData: () => void;
+  onboardingStatus: boolean;
   session: any;
 }
 
@@ -44,7 +45,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   const [amount, setAmount] = useState<number>(0);
   console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 amount🌼', amount);
   const [user, setUser] = useState<TUser | null>(null);
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 user🌼', user);
+  const [onboardingStatus, setOnboardingStatus] = useState<boolean>(false);
 
   const loadUserData = useCallback(async () => {
     try {
@@ -59,6 +60,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
 
       const data = await response.json();
       setUser(data?.data);
+      setOnboardingStatus(data?.data?.onboardingStatus || false);
     } catch (error) {
       getErrorMessage(error);
     }
@@ -85,6 +87,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         setAmount,
         user,
         loadUserData,
+        onboardingStatus,
         session,
       }}
     >

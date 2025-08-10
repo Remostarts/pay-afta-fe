@@ -3,6 +3,7 @@
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
+import Link from 'next/link';
 
 import ReOtp from '@/components/re-ui/ReOtp';
 import { Button } from '@/components/ui/button';
@@ -78,10 +79,6 @@ export default function VerificationCode() {
     }
   };
 
-  const handleProceed = () => {
-    router.push('/sign-in'); // Navigate to the next page
-  };
-
   return (
     <section>
       <div>
@@ -114,20 +111,20 @@ export default function VerificationCode() {
       </Button>
       {/* Dialog for success */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
-          <DialogHeader>
-            <DialogTitle>
+        <DialogContent className="flex flex-col items-center justify-center text-center sm:max-w-[425px]">
+          <DialogHeader className="mb-4">
+            <DialogTitle className="flex justify-center">
               <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
             </DialogTitle>
           </DialogHeader>
-          <h1 className="mb-5 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
-          <DialogFooter>
-            <Button
-              className="w-full rounded-full bg-[#03045B] py-5 font-inter text-lg font-semibold text-white hover:bg-[#03045B]"
-              onClick={handleProceed}
+          <h1 className="mb-8 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
+          <DialogFooter className="w-full">
+            <Link
+              href="/onboarding"
+              className="w-full rounded-full bg-[#03045B] py-2 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
             >
               Proceed to dashboard
-            </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>
