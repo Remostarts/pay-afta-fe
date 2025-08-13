@@ -77,7 +77,7 @@ export default function TrackLink() {
         ) : row.original.transactionType === 'Services' ? (
           <Dialog>
             <DialogTrigger asChild>
-              <button className="text-blue-600 hover:underline" onClick={handleMilestoneDialog}>
+              <button className="cursor-pointer text-blue-600" onClick={handleMilestoneDialog}>
                 View
               </button>
             </DialogTrigger>
@@ -108,9 +108,9 @@ export default function TrackLink() {
       cell: ({ row }) => (
         <button
           onClick={() => handleViewTransaction(true, row.original.transactionType, row.original.id)}
-          className="text-blue-600 hover:underline"
+          className="cursor-pointer text-[#333333]"
         >
-          View
+          Track
         </button>
       ),
     },
@@ -206,7 +206,7 @@ export default function TrackLink() {
       <DataTable
         columns={columns}
         data={orders}
-        lable={'Track Link'}
+        lable={'Order History'}
         isLoading={isLoading}
         onPageChange={handlePageChange}
       />
