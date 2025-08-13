@@ -128,7 +128,7 @@ export default function WithdrawFund() {
                     Switch Account
                   </button>
                 </div>
-                <div className="space-y-1 rounded-md border border-dashed border-black bg-gray-100 p-4">
+                <div className="space-y-1 rounded-md border border-dashed border-black bg-[#F8F8F8] p-4">
                   <p className="font-inter text-sm text-gray-600">Bank Name: 0011223344</p>
                   <p className="font-inter text-sm text-gray-600">Account Name: Account Name</p>
                 </div>

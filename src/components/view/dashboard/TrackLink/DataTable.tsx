@@ -8,12 +8,6 @@ import {
   useReactTable,
   getPaginationRowModel,
 } from '@tanstack/react-table';
-import {
-  DropdownMenu,
-  DropdownMenuTrigger,
-  DropdownMenuContent,
-  DropdownMenuCheckboxItem,
-} from '@radix-ui/react-dropdown-menu';
 import { ChevronLeftIcon, ChevronRightIcon, ChevronDownIcon } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -38,6 +32,8 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import 'react-loading-skeleton/dist/skeleton.css';
+import ReInput from '@/components/re-ui/re-input/ReInput';
+import { Input } from '@/components/ui/input';
 
 interface DataTableProps<TData extends { payment: string; status: string }, TValue> {
   columns: ColumnDef<TData, TValue>[];
@@ -125,16 +121,20 @@ export function DataTable<
     onPageChange(pageNumber, transactionType, status);
   }
 
+  function handleChange(e: any) {
+    console.log(e.target.value);
+  }
+
   return (
     <div>
-      <div className=" mb-4 flex items-center justify-between">
-        <div className="grid grid-rows-2">
-          <h2 className="text-2xl font-medium">{lable}</h2>
-          {/* <Input onChange={handleChange} placeholder="Search by Name" className="w-full" /> */}
+      <div className=" mb-4 md:flex md:items-center md:justify-between">
+        <div className="w-[400px] md:grid md:grid-rows-2">
+          <h2 className="font-inter text-2xl font-medium">{lable}</h2>
+          <Input onChange={handleChange} placeholder="Search" className="mt-2 w-full" />
         </div>
-        <div className="flex flex-col gap-5">
+        <div className="mt-5 gap-5 md:flex md:flex-col md:items-end">
           <button
-            className="flex w-3/5 items-center gap-5 rounded-md border p-5"
+            className="flex w-3/5 items-center gap-5 rounded-md border p-2"
             onClick={() => {
               route.push('/dashboard/new-order');
             }}
@@ -147,7 +147,7 @@ export function DataTable<
             />
             <span className="font-inter text-xl font-semibold">New Order</span>
           </button>
-          <div className="flex items-center gap-2">
+          <div className="mt-5 flex items-center gap-2">
             {/* payment filter DropdownMenu */}
             <Select onValueChange={(e) => setSelectedTransactionType(e === 'All' ? null : e)}>
               <SelectTrigger className="w-[180px]">
@@ -157,10 +157,10 @@ export function DataTable<
                 <SelectGroup>
                   <SelectLabel>Transaction Type</SelectLabel>
                   <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="In Escrow">In Escrow</SelectItem>
-                  <SelectItem value="Paid">Paid</SelectItem>
-                  <SelectItem value="Released">Released</SelectItem>
-                  <SelectItem value="Card Funded">Card Funded</SelectItem>
+                  <SelectItem value="Product Order">Product Order</SelectItem>
+                  <SelectItem value="Service Order">Service Order</SelectItem>
+                  <SelectItem value="Ongoing Orders">Ongoing Orders</SelectItem>
+                  <SelectItem value="Completed Orders">Completed Orders</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
@@ -174,11 +174,13 @@ export function DataTable<
                 <SelectGroup>
                   <SelectLabel>Status</SelectLabel>
                   <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="Closed">Closed</SelectItem>
-                  <SelectItem value="Agreement">Agreement</SelectItem>
-                  <SelectItem value="Payment">Payment</SelectItem>
-                  <SelectItem value="Shipping">Shipping</SelectItem>
+                  <SelectItem value="Awaiting Agreement">Awaiting Agreement</SelectItem>
+                  <SelectItem value="Awaiting Payment">Awaiting Payment</SelectItem>
+                  <SelectItem value="In-transit">In-transit</SelectItem>
+                  <SelectItem value="Canceled">Canceled</SelectItem>
                   <SelectItem value="Dispute">Dispute</SelectItem>
+                  <SelectItem value="Delivered">Delivered</SelectItem>
+                  <SelectItem value="Settled">Settled</SelectItem>
                 </SelectGroup>
               </SelectContent>
             </Select>
