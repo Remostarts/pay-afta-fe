@@ -3,7 +3,7 @@ import Image from 'next/image';
 export default function WorksSection() {
   return (
     <>
-      <div className="container mx-auto flex flex-col items-center justify-center bg-white px-4  md:py-14">
+      <div className="container mx-auto mt-5 flex flex-col items-center justify-center bg-white px-4  md:py-14">
         <div className="mb-12 flex flex-col items-center justify-center">
           <h2 className="text-navy-blue text-center font-playfair text-5xl font-bold text-[#03045B] md:text-7xl">
             How It Works

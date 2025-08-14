@@ -17,6 +17,13 @@ const Footer = () => {
     { href: '/blog', label: 'Blog' },
   ];
 
+  const legalLinks = [
+    { href: '/terms-and-condition', label: 'Terms' },
+    { href: '/privacy-policy', label: 'Privacy Policy' },
+    { href: '/refund-policy', label: 'Refund Policy' },
+    { href: '#', label: 'Cookies' },
+  ];
+
   const socialLinks = [
     { icon: Facebook, href: '#', label: 'Facebook' },
     { icon: Twitter, href: '#', label: 'Twitter' },
@@ -27,9 +34,9 @@ const Footer = () => {
   return (
     <footer className="border-t border-gray-200 bg-white">
       <div className="container mx-auto max-w-[1440px] px-4 py-12 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 gap-8 md:grid-cols-2 lg:grid-cols-4">
+        <div className="flex flex-col items-center justify-between sm:flex-row">
           {/* Company Info */}
-          <div className="flex flex-col space-y-6">
+          <div className="flex flex-col space-y-6 md:w-[250px]">
             <Link href="/" className="inline-block w-fit">
               <Image
                 src="/Logo.svg"
@@ -46,36 +53,38 @@ const Footer = () => {
             </p>
           </div>
 
-          {/* Product Links */}
-          <div>
-            <h3 className="mb-6 font-semibold text-gray-900">Product</h3>
-            <ul className="space-y-4">
-              {productLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
+          <div className="mt-3 flex gap-20 md:mt-0 md:items-center md:justify-between">
+            {/* Product Links */}
+            <div>
+              <h3 className="mb-6 font-semibold text-gray-900">Product</h3>
+              <ul className="space-y-4">
+                {productLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+
+            {/* legal Links */}
+            <div>
+              <h3 className="mb-6 font-semibold text-gray-900">legal</h3>
+              <ul className="space-y-4">
+                {legalLinks.map((link) => (
+                  <li key={link.href}>
+                    <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
+                      {link.label}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
 
-          {/* Company Links */}
-          {/* <div>
-            <h3 className="mb-6 font-semibold text-gray-900">Company</h3>
-            <ul className="space-y-4">
-              {companyLinks.map((link) => (
-                <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-gray-600 hover:text-gray-900">
-                    {link.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div> */}
-
           {/* Contact Info */}
-          <div>
+          {/* <div>
             <h3 className="mb-6 font-semibold text-gray-900">Contact</h3>
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
@@ -96,7 +105,7 @@ const Footer = () => {
                 ))}
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
 
         {/* Copyright and Legal */}
@@ -106,18 +115,16 @@ const Footer = () => {
               © {new Date().getFullYear()} PayAfta. All rights reserved.
             </p>
             <div className="flex space-x-6">
-              <Link
-                href="/terms-and-condition"
-                className="text-sm text-gray-500 hover:text-gray-900"
-              >
-                Terms & Conditions
-              </Link>
-              <Link href="/privacy-policy" className="text-sm text-gray-500 hover:text-gray-900">
-                Privacy Policy
-              </Link>
-              <Link href="/refund-policy" className="text-sm text-gray-500 hover:text-gray-900">
-                Refund Policy
-              </Link>
+              {socialLinks.map((social) => (
+                <Link
+                  key={social.label}
+                  href={social.href}
+                  className="text-gray-400 hover:text-gray-500"
+                  aria-label={social.label}
+                >
+                  <social.icon className="size-5" />
+                </Link>
+              ))}
             </div>
           </div>
         </div>
