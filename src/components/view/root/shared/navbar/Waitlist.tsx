@@ -24,8 +24,8 @@ import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInp
 const defaultValues = {
   name: '',
   email: '',
-  phoneNumber: '',
-  location: '',
+  // phoneNumber: '',
+  // location: '',
 };
 
 interface WaitlistProps {
@@ -75,7 +75,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
-          <DialogTitle>Join Waitlist</DialogTitle>
+          <DialogTitle>Get Early Access and Special Offers</DialogTitle>
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
