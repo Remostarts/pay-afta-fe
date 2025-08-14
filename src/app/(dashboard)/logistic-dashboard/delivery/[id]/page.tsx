@@ -1,3 +1,9 @@
+import OrderDeliveryTracker from '@/components/view/logisticDashboard/TrackLink';
+
 export default function Page() {
-  return <section>track link</section>;
+  return (
+    <section>
+      <OrderDeliveryTracker />
+    </section>
+  );
 }
