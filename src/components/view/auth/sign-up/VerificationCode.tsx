@@ -120,7 +120,7 @@ export default function VerificationCode() {
           <h1 className="mb-8 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
           <DialogFooter className="w-full">
             <Link
-              href="/onboarding"
+              href="/dashboard"
               className="w-full rounded-full bg-[#03045B] py-2 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
             >
               Proceed to dashboard

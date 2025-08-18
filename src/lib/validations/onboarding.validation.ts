@@ -5,7 +5,11 @@ export const personalKycSchema = z.object({
   nin: z.string().min(1, 'NIN is required'),
   gender: z.string().min(1, 'Gender is required'),
   dateOfBirth: z.coerce.date(),
-  username: z.string().min(1, 'user name is required'),
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be at most 30 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
   instaUsername: z.string().optional(),
   facebookUsername: z.string().optional(),
 });

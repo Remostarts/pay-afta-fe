@@ -8,6 +8,10 @@ type Profile = {
   universityAttended: string | null;
   yearOfGraduation: number | null;
   nigeriaLawSchoolCurrentlyAt: string | null;
+  onBoardingStatus: boolean;
+  personalKycStatus: boolean;
+  settlementKycStatus: boolean;
+  pinSet: boolean;
 };
 
 export type TUser = {
