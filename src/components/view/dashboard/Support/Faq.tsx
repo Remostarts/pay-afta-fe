@@ -16,7 +16,7 @@ export default function Faqs() {
     <>
       <div className="relative mt-8 w-full rounded-md border border-gray-200 p-3 font-inter md:mt-20">
         {/* Container with responsive padding and layout */}
-        <div className=" md:px-20">
+        <div className=" md:px-2">
           {/* Header Section */}
           {/* <h1 className="text-gray text-center font-inter text-4xl font-semibold ">
             Frequently Asked Questions
@@ -26,7 +26,7 @@ export default function Faqs() {
           {/* Questions */}
           <div className="mt-6 space-y-4">
             {Faq?.map((questionItem, index) => (
-              <div key={questionItem?.id} className="border-black-100 border-b pb-4">
+              <div key={questionItem?.id} className="border-black-100 pb-4">
                 <button
                   className="flex w-full items-center justify-between px-1 text-left"
                   onClick={() => setExpandedQuestion(expandedQuestion === index ? null : index)}

@@ -15,19 +15,18 @@ import {
 } from '@/components/ui/select';
 
 const stats = [
-  { label: 'Pending', value: 20, border: 'from-[#0a0a3c] to-transparent', text: 'text-[#0a0a3c]' },
-  { label: 'Ongoing', value: 12, border: 'from-[#7dcefb] to-transparent', text: 'text-[#0a0a3c]' },
-  { label: 'Completed', value: 8, border: 'from-[#7d7dfb] to-transparent', text: 'text-[#0a0a3c]' },
+  { label: 'Pending', value: 20, border: 'bg-[#0a0a3c]', text: 'text-[#0a0a3c]' },
+  { label: 'Ongoing', value: 12, border: 'bg-[#7dcefb]', text: 'text-[#0a0a3c]' },
+  { label: 'Completed', value: 8, border: 'bg-[#7d7dfb]', text: 'text-[#0a0a3c]' },
   {
     label: 'Failed Attempt',
     value: 2,
-    border: 'from-[#ff4d4f] to-transparent',
-    // text: 'text-[#ff4d4f]',
+    border: 'bg-[#ff4d4f]',
   },
 ];
 
 const DeliveryAnalysis = () => (
-  <div className="mb-8 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
+  <div className="mb-8 mt-5 rounded-2xl bg-white p-6 shadow-sm sm:p-8">
     <div className="mb-6 flex items-center justify-between">
       <div className="text-lg font-semibold">Delivery Analysis</div>
       <Select>

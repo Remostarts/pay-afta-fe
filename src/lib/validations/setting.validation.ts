@@ -48,3 +48,17 @@ export const changePasswordSchema = z
   });
 
 export type TChangePassInputs = z.infer<typeof changePasswordSchema>;
+
+// Change Transcation Pin schema
+export const pinSchema = z
+  .object({
+    oldPin: z.string().length(4, 'PIN must be 4 digits'),
+    pin: z.string().length(4, 'PIN must be 4 digits'),
+    confirmPin: z.string().length(4, 'PIN must be 4 digits'),
+  })
+  .refine((data) => data.pin === data.confirmPin, {
+    message: "PINs don't match",
+    path: ['confirmPin'],
+  });
+
+export type PinFormData = z.infer<typeof pinSchema>;
