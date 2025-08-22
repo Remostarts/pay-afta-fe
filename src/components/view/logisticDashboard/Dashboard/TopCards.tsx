@@ -1,7 +1,11 @@
 'use client';
 
-import Image from 'next/image';
 import React from 'react';
+import { SendHorizontal } from 'lucide-react';
+
+import WithdrawFund from './WithdrawFund';
+
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 const TopCards = () => (
   <div className="mt-5 grid gap-4 lg:grid-cols-3">
@@ -28,6 +32,26 @@ const TopCards = () => (
               </div> */}
           </div>
           <p className="font-inter text-2xl font-bold text-white">₦ 0.00</p>
+        </div>
+        <div className="mt-4 flex items-center gap-3 sm:mt-0">
+          <Dialog>
+            <DialogTrigger asChild>
+              <button className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2 text-center font-inter font-semibold text-[#03045B]">
+                Withdraw
+                {/* <Image
+                    alt="transfer"
+                    src="/assets/dashboard/Dashboard/transfer.svg"
+                    width={16}
+                    height={16}
+                    className="brightness-0 invert"
+                  /> */}
+                <SendHorizontal width={20} height={20} />
+              </button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[425px]">
+              <WithdrawFund />
+            </DialogContent>
+          </Dialog>
         </div>
       </div>
     </div>
