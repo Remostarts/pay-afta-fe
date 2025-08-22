@@ -6,20 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "lint:fix": "eslint --ignore-path .eslintignore src --ext .ts,.tsx,.js,.jsx --report-unused-disable-directives --fix",
-    "lint:check": "eslint --ignore-path .eslintignore src --ext .ts,.tsx,.js,.jsx --report-unused-disable-directives",
-    "prettier:fix": "prettier --write 'src/**/*.{js,jsx,ts,tsx,css,html}'",
-    "prettier:check": "prettier --ignore-path .gitignore --check 'src/**/*.{js,jsx,ts,tsx,css,html}'",
-    "prepare": "npx husky install"
-  },
-  "lint-staged": {
-    "src/**/*.{js,jsx,ts,tsx}": [
-      "npm run lint:fix",
-      "npm run prettier:fix",
-      "npm run lint:check",
-      "npm run prettier:check"
-    ]
+    "lint": "next lint"
   },
   "dependencies": {
     "@hookform/resolvers": "^3.9.0",
