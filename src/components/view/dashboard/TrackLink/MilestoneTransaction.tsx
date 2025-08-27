@@ -62,6 +62,7 @@ function MilestoneTransaction({
               </DialogTrigger>
               <DialogContent className="sm:max-w-[425px]">
                 <RaiseDispute
+                  userRole={userType}
                   handleClosed={handleDisputeClose}
                   handleCurrentStepChange={handleCurrentStepChange || (() => {})}
                   handleShowRiseDispute={handleShowRiseDispute || (() => {})}

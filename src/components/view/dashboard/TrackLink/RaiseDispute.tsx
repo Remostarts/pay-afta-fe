@@ -22,6 +22,7 @@ interface RaiseDisputeProps {
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   currentStepChange: number;
   handleIsDisputed?: (isDisputed: boolean) => void | undefined;
+  userRole: 'buyer' | 'seller';
 }
 
 const defaultVal = {
@@ -36,6 +37,7 @@ export default function RaiseDispute({
   handleShowRiseDispute,
   currentStepChange,
   handleIsDisputed,
+  userRole,
 }: RaiseDisputeProps) {
   const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
 

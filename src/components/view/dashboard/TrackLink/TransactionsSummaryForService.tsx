@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import Summary from './Summary';
+import ServiceSummary from './ServiceSummary';
 import MakePaymentInService from './MakePaymentInService';
 import Delivery from './Delivery';
 import TransactionsDispute from './TransactionsDispute';
@@ -141,7 +141,8 @@ export default function TransactionsSummaryForService({ onBack, id }: Transactio
         )}
       </div>
       <div>
-        <Summary
+        <ServiceSummary
+          showActions={true}
           name="Paul Simeon"
           paymentMethod="Milestone Payment"
           deliveryDate="November 24, 2023"
