@@ -45,6 +45,8 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   const [amount, setAmount] = useState<number>(0);
   console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 amount🌼', amount);
   const [user, setUser] = useState<TUser | null>(null);
+  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 user🌼', user);
+
   const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
 
   const loadUserData = useCallback(async () => {

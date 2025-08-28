@@ -14,6 +14,14 @@ type Profile = {
   pinSet: boolean;
 };
 
+type WalletItem = {
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  walletId: string;
+  balance: number;
+};
+
 export type TUser = {
   id: string;
   firstName: string;
@@ -23,6 +31,6 @@ export type TUser = {
   profileImage: string | null;
   coverImage: string | null;
   profile: Profile | null;
-  walletBalance: number;
   escrowBalance: number;
+  Wallet: WalletItem[];
 };
