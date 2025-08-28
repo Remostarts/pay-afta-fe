@@ -41,6 +41,13 @@ export const sideNavMenu = [
     name: 'Team',
     alt: 'team',
   },
+  {
+    id: 7,
+    imgBlack: '/assets/admin-dashboard/dashboard/deliveryPartner.svg',
+    imgColor: '/assets/admin-dashboard/dashboard/deliveryPartnerColor.svg',
+    name: 'Delivery Partners',
+    alt: 'delivery-partners',
+  },
   // {
   //   id: 7,
   //   imgBlack: '/assets/admin-dashboard/dashboard/settings.svg',

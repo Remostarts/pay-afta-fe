@@ -3,57 +3,44 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import PaymentSuccessful from '../shared/PaymentSuccessful';
-
+import PaymentSuccessful from './PaymentSuccessful';
+import BankTransferModal from './BankTransferModal';
 import MilestoneDialog from './MilestoneDialog';
 import PaymentSummary from './PaymentSummary';
 import TransactionSummary from './TransactionSummary';
 
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   isProduct?: boolean;
   currentStepChange: number;
+  showActions?: boolean;
+  userRole: 'buyer' | 'seller';
 }
 
 export default function MakePayment({
   handleCurrentStepChange,
   isProduct = false,
   currentStepChange,
+  showActions = false,
+  userRole,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
-    'summary'
-  );
+  const [currentComponent, setCurrentComponent] = useState<
+    'summary' | 'milestone' | 'successful' | 'bankTransfer'
+  >('summary');
+  const [selectedPayment, setSelectedPayment] = useState('wallet');
+  const totalAmount = 335050.0;
   const router = useRouter();
 
   const handleAcceptOrder = () => {
     setIsOpen(true);
+    setCurrentComponent('summary');
   };
 
-  const handlePayment = async () => {
-    // if (lawyerId === session?.id) return;
-    // const paymentData = {
-    //   clientId: session?.id,
-    //   lawyerId: invoice.lawyer?.id,
-    //   chatId: invoice?.chatId,
-    //   email: session?.user?.email,
-    //   amount,
-    //   installmentId,
-    // };
-    // console.log('🌼 🔥🔥 handlePayment 🔥🔥 paymentData🌼', paymentData);
-
-    // setPayingInstallmentId(installmentId);
-
+  const handleWalletPayment = async () => {
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/payment-initiate`,
@@ -61,9 +48,11 @@ export default function MakePayment({
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            // Authorization: session?.accessToken, // Replace with your actual token logic
           },
-          // body: JSON.stringify(paymentData),
+          body: JSON.stringify({
+            amount: totalAmount,
+            paymentMethod: 'wallet',
+          }),
         }
       );
 
@@ -73,36 +62,68 @@ export default function MakePayment({
 
       const data = await response.json();
       console.log('Invoice created successfully:', data);
-      // router.push(data?.data?.paymentUrl);
-      if (typeof window !== 'undefined') {
+
+      if (data?.data?.paymentUrl && typeof window !== 'undefined') {
         window.open(data?.data?.paymentUrl, '_blank', 'noopener,noreferrer');
       }
+
+      // Show success component after wallet payment
+      setCurrentComponent('successful');
     } catch (error) {
       console.error('Error creating invoice:', error);
     }
   };
-  console.log(currentComponent);
 
-  const handleConfirmTransaction = () => {
+  const handleBankTransferSelect = () => {
+    setCurrentComponent('bankTransfer');
+  };
+
+  const handleBankTransferSuccess = () => {
+    // Called when bank transfer process is complete
+    setCurrentComponent('successful');
+  };
+
+  const handleBackToSummary = () => {
+    setCurrentComponent('summary');
+  };
+
+  const handleMilestoneNext = () => {
+    setCurrentComponent('successful');
+    setTimeout(() => {
+      setIsOpen(false);
+      handleCurrentStepChange(currentStepChange + 1);
+    }, 2000);
+  };
+
+  const handleCloseDialog = () => {
+    setIsOpen(false);
+    setCurrentComponent('summary');
+  };
+
+  const handleSuccessComplete = () => {
     if (isProduct) {
-      handlePayment();
-      setCurrentComponent('successful');
       setTimeout(() => {
         setIsOpen(false);
         handleCurrentStepChange(currentStepChange + 1);
       }, 2000);
       return;
     }
-    if (currentComponent === 'summary') {
-      setCurrentComponent('milestone');
-    } else if (currentComponent === 'milestone') {
-      setCurrentComponent('successful');
-      setTimeout(() => {
-        setIsOpen(false);
-        handleCurrentStepChange(currentStepChange + 1);
-      }, 2000);
-    }
+
+    // For service transactions, go to milestone
+    setCurrentComponent('milestone');
   };
+
+  if (!showActions) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
+        <h2 className="mb-2 text-lg font-medium font-inter">Awaiting Payment</h2>
+        <p className="text-sm text-gray-600 font-inter">
+          Kindly note that the payment for the product/service is pending. You well receive a
+          notification once the transaction is completed.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section>
@@ -122,31 +143,45 @@ export default function MakePayment({
               </ReButton>
             </DialogTrigger>
             <DialogContent>
-              {currentComponent === 'summary' ? (
-                <PaymentSummary />
-              ) : currentComponent === 'milestone' ? (
+              {currentComponent === 'summary' && (
+                <PaymentSummary
+                  onWalletPayment={handleWalletPayment}
+                  onBankTransferSelect={handleBankTransferSelect}
+                  onClose={handleCloseDialog}
+                />
+              )}
+
+              {currentComponent === 'bankTransfer' && (
+                <BankTransferModal
+                  isOpen={true}
+                  onClose={handleBackToSummary}
+                  amount={totalAmount}
+                  onSuccess={handleBankTransferSuccess}
+                />
+              )}
+
+              {/* {currentComponent === 'milestone' && (
                 <MilestoneDialog
                   isInTransactionSummary={true}
-                  onNext={handleConfirmTransaction}
-                  onClose={() => setIsOpen(false)}
+                  onNext={handleMilestoneNext}
+                  onClose={handleCloseDialog}
                 />
-              ) : (
-                <PaymentSuccessful label={'Transaction confirmed!'} />
-              )}
-              {currentComponent === 'summary' && (
-                <DialogFooter>
-                  <ReButton onClick={handleConfirmTransaction} className="rounded-full">
-                    Pay with Wallet Balance
-                  </ReButton>
-                </DialogFooter>
+              )} */}
+
+              {currentComponent === 'successful' && (
+                <PaymentSuccessful
+                  label={isProduct ? 'Payment Successful' : 'Transaction confirmed!'}
+                  amount={totalAmount}
+                  onComplete={handleSuccessComplete}
+                />
               )}
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div>
+      {/* <div>
         <TransactionSummary />
-      </div>
+      </div> */}
     </section>
   );
 }

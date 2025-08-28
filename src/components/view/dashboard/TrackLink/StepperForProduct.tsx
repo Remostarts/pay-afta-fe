@@ -12,12 +12,14 @@ interface StepperForProductProps {
   currentStep: number;
   isReturn?: boolean;
   isDisputed?: boolean;
+  isRefunded?: boolean; // Added to track refunded state
 }
 
 export default function StepperForProduct({
   currentStep,
   isReturn = false,
   isDisputed = false,
+  isRefunded = false,
 }: StepperForProductProps) {
   const getSteps = (): Step[] => {
     if (isDisputed) {
@@ -30,20 +32,20 @@ export default function StepperForProduct({
       ];
     }
 
-    if (isReturn) {
+    if (isReturn || isRefunded) {
       return [
-        { number: 1, label: 'Agreement', status: 'refunded' },
-        { number: 2, label: 'Payment', status: 'refunded' },
-        { number: 3, label: 'Shipping', status: 'refunded' },
+        { number: 1, label: 'Agreement', status: 'completed' },
+        { number: 2, label: 'Payment', status: 'completed' },
+        { number: 3, label: 'Shipping', status: 'completed' },
         {
           number: 4,
           label: 'Return',
-          status: currentStep === 4 ? 'current' : currentStep > 4 ? 'completed' : 'upcoming',
+          status: currentStep === 4 && isReturn ? 'current' : 'completed',
         },
         {
           number: 5,
           label: 'Refunded',
-          status: currentStep === 5 ? 'current' : currentStep > 5 ? 'completed' : 'upcoming',
+          status: currentStep === 5 && isRefunded ? 'refunded' : 'upcoming',
         },
       ];
     }
@@ -71,7 +73,7 @@ export default function StepperForProduct({
       },
       {
         number: 5,
-        label: 'Closed',
+        label: 'Completed',
         status: currentStep === 5 ? 'current' : currentStep > 5 ? 'completed' : 'upcoming',
       },
     ];
@@ -115,7 +117,7 @@ export default function StepperForProduct({
                           : 'border-gray-200 bg-white text-gray-400'
                 }`}
             >
-              {step.status === 'completed' ? (
+              {step.status === 'completed' || step.status === 'refunded' ? (
                 <Check className="size-5" />
               ) : (
                 <span className="text-sm">{step.number}</span>
@@ -132,7 +134,9 @@ export default function StepperForProduct({
                       ? 'text-green-500'
                       : step.status === 'disputed'
                         ? 'text-red-500'
-                        : 'text-gray-400'
+                        : step.status === 'refunded'
+                          ? 'text-[#666666]'
+                          : 'text-gray-400'
                 }`}
             >
               {step.label}
