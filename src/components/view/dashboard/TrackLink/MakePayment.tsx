@@ -160,13 +160,13 @@ export default function MakePayment({
                 />
               )}
 
-              {currentComponent === 'milestone' && (
+              {/* {currentComponent === 'milestone' && (
                 <MilestoneDialog
                   isInTransactionSummary={true}
                   onNext={handleMilestoneNext}
                   onClose={handleCloseDialog}
                 />
-              )}
+              )} */}
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful

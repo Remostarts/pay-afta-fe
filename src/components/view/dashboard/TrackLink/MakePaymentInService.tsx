@@ -2,11 +2,10 @@
 
 import { useState } from 'react';
 
-import PaymentSuccessful from '../shared/PaymentSuccessful';
-
+import PaymentSuccessful from './PaymentSuccessful';
 import MilestoneDialog from './MilestoneDialog';
-import PaymentSummary from './PaymentSummary';
-import TransactionSummary from './TransactionSummary';
+import BankTransferModal from './BankTransferModal';
+import PaymentSummaryForService from './PaymentSummaryForService';
 
 import {
   Dialog,
@@ -21,6 +20,7 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface MakePaymentInServiceProps {
   handleCurrentStepChange: (step: number) => void;
   showActions?: boolean;
+  isProduct: boolean;
   currentStepChange: number;
 }
 
@@ -28,14 +28,55 @@ export default function MakePaymentInService({
   handleCurrentStepChange,
   showActions = true,
   currentStepChange,
+  isProduct,
 }: MakePaymentInServiceProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
-  const [currentComponent, setCurrentComponent] = useState<'summary' | 'milestone' | 'successful'>(
-    'summary'
-  );
+  const [currentComponent, setCurrentComponent] = useState<
+    'summary' | 'milestone' | 'successful' | 'bankTransfer'
+  >('summary');
+  const totalAmount = 335050.0;
 
   const handleOpenPayment = () => {
     setIsOpen(true);
+  };
+
+  const handleBankTransferSelect = () => {
+    setCurrentComponent('milestone');
+  };
+
+  const handleBackToSummary = () => {
+    setCurrentComponent('summary');
+  };
+
+  const handleBankTransferSuccess = () => {
+    // Called when bank transfer process is complete
+    setCurrentComponent('successful');
+  };
+
+  const handleMilestoneNext = () => {
+    setCurrentComponent('successful');
+    setTimeout(() => {
+      setIsOpen(false);
+      handleCurrentStepChange(currentStepChange + 1);
+    }, 2000);
+  };
+
+  const handleCloseDialog = () => {
+    setIsOpen(false);
+    setCurrentComponent('summary');
+  };
+
+  const handleSuccessComplete = () => {
+    if (isProduct) {
+      setTimeout(() => {
+        setIsOpen(false);
+        handleCurrentStepChange(currentStepChange + 1);
+      }, 2000);
+      return;
+    }
+
+    // For service transactions, go to milestone
+    setCurrentComponent('milestone');
   };
 
   const handleConfirmTransaction = () => {
@@ -80,39 +121,44 @@ export default function MakePaymentInService({
               </ReButton>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
-              {currentComponent === 'summary' ? (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>Payment Summary</DialogTitle>
-                  </DialogHeader>
-                  <PaymentSummary />
-                  <DialogFooter>
-                    <ReButton onClick={handleConfirmTransaction} className="rounded-full">
-                      Pay with Wallet Balance
-                    </ReButton>
-                  </DialogFooter>
-                </>
-              ) : currentComponent === 'milestone' ? (
+              {currentComponent === 'summary' && (
+                <PaymentSummaryForService
+                  onWalletPayment={() => {}}
+                  onBankTransferSelect={handleBankTransferSelect}
+                />
+              )}
+
+              {currentComponent === 'bankTransfer' && (
+                <BankTransferModal
+                  isOpen={true}
+                  onClose={handleBackToSummary}
+                  amount={totalAmount}
+                  onSuccess={handleBankTransferSuccess}
+                />
+              )}
+
+              {currentComponent === 'milestone' && (
                 <MilestoneDialog
                   isInTransactionSummary={true}
-                  onNext={handleConfirmTransaction}
-                  onClose={() => setIsOpen(false)}
+                  onNext={handleMilestoneNext}
+                  onClose={handleCloseDialog}
                 />
-              ) : (
-                <>
-                  <DialogHeader>
-                    <DialogTitle>Payment Successful</DialogTitle>
-                  </DialogHeader>
-                  <PaymentSuccessful label="Transaction confirmed!" />
-                </>
+              )}
+
+              {currentComponent === 'successful' && (
+                <PaymentSuccessful
+                  label={'Transaction confirmed!'}
+                  amount={totalAmount}
+                  onComplete={handleSuccessComplete}
+                />
               )}
             </DialogContent>
           </Dialog>
         </div>
       </div>
-      <div>
+      {/* <div>
         <TransactionSummary />
-      </div>
+      </div> */}
     </section>
   );
 }
