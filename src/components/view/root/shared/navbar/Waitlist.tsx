@@ -75,6 +75,11 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
         <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
       <DialogContent className="max-w-4xl p-5 border-0 bg-[#03045B]">
+        <DialogHeader>
+          <DialogTitle>
+            <span className="sr-only">Join Our Waitlist</span>
+          </DialogTitle>
+        </DialogHeader>
         <div className="relative grid grid-cols-1 sm:grid-cols-2">
           {/* Left side - Form */}
           <div className="flex-1">

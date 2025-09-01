@@ -5,7 +5,7 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 
 import { useSocket } from './socketProvider';
 
-import { getErrorMessage } from '@/lib/responseError';
+// import { getErrorMessage } from '@/lib/responseError';
 import { Chat } from '@/types/chat.type';
 
 type OnlineUsers = {
