@@ -18,7 +18,11 @@ export default function TransactionPage() {
   return (
     <section className="min-h-screen w-full rounded-md bg-gray-50">
       {transactionType === 'Product' ? (
-        <TransactionsSummaryForProduct onBack={handleBackToTable} id={id as string} />
+        <TransactionsSummaryForProduct
+          onBack={handleBackToTable}
+          id={id as string}
+          userRole="seller"
+        />
       ) : (
         <TransactionsSummaryForService onBack={handleBackToTable} id={id as string} />
       )}

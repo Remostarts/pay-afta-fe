@@ -63,7 +63,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                             width={24}
                             height={24}
                           />
-                          <AccordionTrigger className="font-inter font-medium tracking-wider [&>svg]:hidden">
+                          <AccordionTrigger className="font-inter font-medium tracking-wider [&>svg]:hidden text-[#999999]">
                             {nav.name}
                           </AccordionTrigger>
                         </div>
@@ -105,7 +105,11 @@ export default function Sidebar({ onClose }: SidebarProps) {
                     ) : (
                       <Image src={nav.imgBlack} alt={`${nav.alt}-icon`} width={24} height={24} />
                     )}
-                    <span className="font-inter font-medium tracking-wider">{nav.name}</span>
+                    <span
+                      className={`font-inter font-medium tracking-wider ${nav.alt === currPage ? 'text-[#1F7EAD]' : 'text-[#999999]'}`}
+                    >
+                      {nav.name}
+                    </span>
                   </Link>
                 )}
               </li>

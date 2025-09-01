@@ -442,7 +442,7 @@ export function ReDataTable<TData, TValue>({
       <div className="mb-4 flex items-center justify-between">
         {label ? (
           <>
-            <h2 className="text-2xl font-medium">{label}</h2>
+            <h2 className="font-inter text-2xl font-medium">{label}</h2>
             <div>{renderFilters()}</div>
           </>
         ) : (
@@ -453,11 +453,11 @@ export function ReDataTable<TData, TValue>({
       {/* Table */}
       <div className="rounded-md border bg-white">
         <Table>
-          <TableHeader className="bg-[#E9F5FB]">
+          <TableHeader className="bg-[#F8F8F8]">
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="font-inter text-[#1F7EAD]">
+                  <TableHead key={header.id} className="font-inter text-[#666666]">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}

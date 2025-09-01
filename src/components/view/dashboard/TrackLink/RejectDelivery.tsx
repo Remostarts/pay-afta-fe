@@ -12,7 +12,9 @@ interface RejectDeliveryProps {
   handleCurrentStepChange: (e: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  handleRequestRefundFlow: () => void;
   currentStepChange: number;
+  userRole: 'buyer' | 'seller';
 }
 
 export default function RejectDelivery({
@@ -20,7 +22,9 @@ export default function RejectDelivery({
   handleCurrentStepChange,
   handleShowRiseDispute,
   handleIsRequestRefund,
+  handleRequestRefundFlow,
   currentStepChange,
+  userRole,
 }: RejectDeliveryProps) {
   const [isShowRiseDispute, setIsShowRiseDispute] = useState<boolean>(false);
   const [isShowRequestRefund, setIsShowRequestRefund] = useState<boolean>(false);
@@ -33,6 +37,12 @@ export default function RejectDelivery({
     setIsShowRequestRefund(true);
   }
 
+  // Handle successful refund request submission
+  function handleRefundSubmitted() {
+    handleClosed(false); // Close the dialog
+    handleRequestRefundFlow(); // Trigger the refund flow in parent
+  }
+
   return (
     <section>
       {isShowRiseDispute ? (
@@ -41,13 +51,16 @@ export default function RejectDelivery({
           handleCurrentStepChange={handleCurrentStepChange}
           handleShowRiseDispute={handleShowRiseDispute}
           currentStepChange={currentStepChange}
+          userRole={userRole}
         />
       ) : isShowRequestRefund ? (
         <RequestRefund
           handleClosed={handleClosed}
           handleCurrentStepChange={handleCurrentStepChange}
           handleIsRequestRefund={handleIsRequestRefund}
+          handleRequestRefundFlow={handleRefundSubmitted} // Use the new handler
           currentStepChange={currentStepChange}
+          userRole={userRole}
         />
       ) : (
         <>
@@ -72,12 +85,12 @@ export default function RejectDelivery({
               <ChevronRight />
             </button>
             <button
-              className="-2 mb-3 flex w-full items-center justify-between rounded-md bg-gray-50"
+              className="mb-3 flex w-full items-center justify-between rounded-md bg-gray-50 p-2"
               onClick={handleRequestRefund}
             >
               <Image
                 src="/assets/dashboard/Transactions/wallet with cash.svg"
-                alt="Raise a Dispute"
+                alt="Request Refund"
                 width={40}
                 height={40}
               />

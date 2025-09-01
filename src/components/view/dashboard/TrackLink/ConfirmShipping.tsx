@@ -9,15 +9,31 @@ import { ReButton } from '@/components/re-ui/ReButton';
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   currentStepChange: number;
+  showActions?: boolean;
+  userRole: 'buyer' | 'seller';
 }
 
 export default function ConfirmShipping({
   handleCurrentStepChange,
   currentStepChange,
+  showActions = false,
+  userRole,
 }: OrderAgreementProps) {
   const handleAcceptOrder = () => {
     handleCurrentStepChange(currentStepChange + 1);
   };
+
+  if (!showActions) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
+        <h2 className="mb-2 text-lg font-medium font-inter">On the way</h2>
+        <p className="text-sm text-gray-600 font-inter">
+          Your product or service is now on its way. Expect delivery soon, and feel free to track
+          the progress using the provided details. Thank you for your purchase.
+        </p>
+      </div>
+    );
+  }
 
   return (
     <section>
@@ -35,7 +51,7 @@ export default function ConfirmShipping({
           </ReButton>
         </div>
       </div>
-      <TransactionSummary />
+      {/* <TransactionSummary /> */}
     </section>
   );
 }

@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 
-import Summary from './Summary';
+import ServiceSummary from './ServiceSummary';
 import MakePaymentInService from './MakePaymentInService';
 import Delivery from './Delivery';
 import TransactionsDispute from './TransactionsDispute';
@@ -12,8 +12,8 @@ import OrderAgreement from './OrderAgreement';
 import StepperForService from './StepperForService';
 import TransactionApproval from './TransactionApproval';
 import MilestoneTransaction from './MilestoneTransaction';
+import TransactionSummary from './TransactionSummary';
 
-import { Button } from '@/components/ui/button';
 import { useGeneral } from '@/context/generalProvider';
 import { TOrder } from '@/types/trackLink';
 
@@ -94,13 +94,15 @@ export default function TransactionsSummaryForService({ onBack, id }: Transactio
   };
 
   return (
-    <section className="rounded-md bg-white p-4 lg:flex lg:gap-10">
-      <div className="w-full rounded-md">
-        <Button variant="outline" onClick={onBack} className="ml-4">
-          <ChevronLeft />
-        </Button>
-        <h1 className="font-inter text-xl font-bold text-gray-700">Order Summary</h1>
-        <div className="mb-5 grid grid-cols-2">
+    <section
+      className={currentStep === 1 ? 'grid grid-rows-2 lg:flex lg:gap-10' : 'flex flex-col gap-4'}
+    >
+      <div className={`rounded-md bg-white p-4 max-w-xl`}>
+        <div className="flex items-center ">
+          <ChevronLeft onClick={onBack} />
+          <h1 className="font-inter text-xl font-bold text-gray-700"> Escrow Summary</h1>
+        </div>
+        <div className="mb-5 flex items-center justify-between">
           <p className="font-inter text-gray-500">Transactions ID: {id}</p>
           <p className="font-inter text-gray-500">November3, 2024, 18:25</p>
         </div>
@@ -113,6 +115,7 @@ export default function TransactionsSummaryForService({ onBack, id }: Transactio
           />
         ) : currentStep === 2 ? (
           <MakePaymentInService
+            isProduct={false}
             handleCurrentStepChange={handleStepChange}
             currentStepChange={currentStep}
           />
@@ -140,15 +143,20 @@ export default function TransactionsSummaryForService({ onBack, id }: Transactio
           <p>NULL</p>
         )}
       </div>
-      <div>
-        <Summary
-          name="Paul Simeon"
-          paymentMethod="Milestone Payment"
-          deliveryDate="November 24, 2023"
-          item="Lorem ipsum dolor sit amet consectetur. Id scelerisque condimentum sagittis accumsan viverra est scelerisque volutpat eleifend. Non placerat viverra hac mi in lorem."
-          quantity={70}
-          price={300000}
-        />
+      <div className="rounded-md max-w-xl bg-white p-4">
+        {currentStep === 1 ? (
+          <ServiceSummary
+            showActions={true}
+            name="Paul Simeon"
+            paymentMethod="Milestone Payment"
+            deliveryDate="November 24, 2023"
+            item="Lorem ipsum dolor sit amet consectetur. Id scelerisque condimentum sagittis accumsan viverra est scelerisque volutpat eleifend. Non placerat viverra hac mi in lorem."
+            quantity={70}
+            price={300000}
+          />
+        ) : (
+          <TransactionSummary />
+        )}
       </div>
     </section>
   );

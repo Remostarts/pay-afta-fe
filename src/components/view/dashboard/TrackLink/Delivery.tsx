@@ -3,52 +3,99 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 
-import PaymentSuccessful from '../shared/PaymentSuccessful';
-
 import RejectDelivery from './RejectDelivery';
+import RaiseDispute from './RaiseDispute';
 
 import { ReButton } from '@/components/re-ui/ReButton';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
-interface OrderAgreementProps {
+interface DeliveryProps {
   handleCurrentStepChange: (step: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
+  handleRefundRequested: (refundRequested: boolean) => void;
   currentStepChange: number;
+  userRole: 'buyer' | 'seller';
+  showActions?: boolean;
+  handleAcceptDelivery: () => void;
+  handleRejectDelivery: () => void;
 }
 
 export default function Delivery({
   handleCurrentStepChange,
   handleShowRiseDispute,
   handleIsRequestRefund,
+  handleRefundRequested,
   currentStepChange,
-}: OrderAgreementProps) {
+  userRole,
+  showActions = false,
+  handleAcceptDelivery,
+  handleRejectDelivery,
+}: DeliveryProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const route = useRouter();
 
   const handleAcceptOrder = () => {
-    // setIsOpen(true);
-    // route.push('/dashboard');
+    handleAcceptDelivery();
     handleCurrentStepChange(currentStepChange + 1);
   };
 
-  const handleConfirmTransaction = () => {
-    // handleCurrentStepChange(5);
-    setIsOpen(false);
+  const handleRejectOrder = () => {
+    setIsOpen(true);
   };
 
-  const handleRejectOrder = () => {
-    // Add rejection logic here
-    setIsOpen(true);
-    // handleCurrentStepChange(5);
+  const handleRequestRefundFlow = () => {
+    setIsOpen(false);
+    handleRefundRequested(true);
+    // Don't advance step yet, wait for refund process
   };
+
+  if (!showActions) {
+    return (
+      <section className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
+        <div className="mb-5">
+          <h1 className="font-inter text-xl font-bold text-gray-800">
+            Have you delivered this order?
+          </h1>
+          <p className="font-inter text-gray-600">
+            Please be informed that the buyer is currently in the process of reviewing the delivered
+            product/service. Once you receive the release code from the buyer, please enter it to
+            complete the transaction.
+          </p>
+        </div>
+        {userRole === 'seller' && (
+          <div className="flex items-center gap-5">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <ReButton
+                  className="w-2/5 rounded-full border-2 border-[#03045B] bg-white text-[#03045B] hover:bg-white"
+                  onClick={handleRejectOrder}
+                >
+                  Dispute
+                </ReButton>
+              </DialogTrigger>
+              <DialogContent>
+                <RaiseDispute
+                  handleClosed={setIsOpen}
+                  handleCurrentStepChange={handleCurrentStepChange}
+                  handleShowRiseDispute={handleShowRiseDispute}
+                  currentStepChange={currentStepChange}
+                  userRole={userRole}
+                />
+              </DialogContent>
+            </Dialog>
+            <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+              Confirm Delivery
+            </ReButton>
+          </div>
+        )}
+        <p className="mt-4 font-inter text-gray-600">
+          Confirm product delivery within <span className="text-green-600">24:00:00</span> hours. If
+          no action is taken, the transaction auto-completes.
+        </p>
+      </section>
+    );
+  }
 
   return (
     <section className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">
@@ -57,8 +104,8 @@ export default function Delivery({
           Is the delivery satisfactory?
         </h1>
         <p className="font-inter text-gray-600">
-          Your feedback matters! Take a moment to review the delivery and let us know if you&apos;re
-          satisfied. If everything looks good, feel free to accept. If not, no worries – you can
+          Your feedback matters! Take a moment to review the delivery and let us know if you are
+          satisfied. If everything looks good, feel free to accept. If not, no worries you can
           easily dispute any issues here.
         </p>
       </div>
@@ -78,7 +125,9 @@ export default function Delivery({
               handleCurrentStepChange={handleCurrentStepChange}
               handleShowRiseDispute={handleShowRiseDispute}
               handleIsRequestRefund={handleIsRequestRefund}
+              handleRequestRefundFlow={handleRequestRefundFlow}
               currentStepChange={currentStepChange}
+              userRole={userRole}
             />
           </DialogContent>
         </Dialog>

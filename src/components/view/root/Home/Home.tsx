@@ -113,7 +113,7 @@ export default function Home() {
       </section>
 
       {/* How It Works Section */}
-      <WorksSection />
+      {/* <WorksSection /> */}
 
       {/* What Can You Buy Section */}
       <BuyAndSellSection />

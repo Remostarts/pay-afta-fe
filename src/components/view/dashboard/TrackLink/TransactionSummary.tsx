@@ -9,8 +9,8 @@ import {
 
 export default function TransactionSummary() {
   return (
-    <div className="mx-auto max-w-2xl rounded-lg bg-white p-6 shadow-sm">
-      <Accordion type="single" collapsible className="w-full">
+    <div className="max-w-7xl mx-auto rounded-lg bg-white p-6 shadow-sm">
+      <Accordion type="single" collapsible className="max-w-6xl">
         <AccordionItem value="item-1">
           <AccordionTrigger className="flex items-center rounded-lg bg-gray-100 p-3">
             {/* Header Section */}

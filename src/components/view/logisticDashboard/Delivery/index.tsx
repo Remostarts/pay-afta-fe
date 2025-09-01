@@ -30,7 +30,7 @@ const columns: ColumnDef<Payment>[] = [
   },
   {
     accessorKey: 'status',
-    header: 'status',
+    header: 'Status',
     cell({ row }) {
       const status = row.getValue('status') as string;
 

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import Link from 'next/link';
+import Image from 'next/image';
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
@@ -16,14 +17,11 @@ import { ReButton } from '@/components/re-ui/ReButton';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import ReRadioGroup from '@/components/re-ui/ReRadio';
 import ReDatePicker from '@/components/re-ui/ReDatePicker';
-import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
 import {
   newOrderSchema,
   TCreateOrderInput,
   TNewOrder,
 } from '@/lib/validations/newOrder.validation';
-import loading from '@/app/loading';
-import { userProfileUpdate } from '@/lib/actions/root/user.action';
 import { createOrder } from '@/lib/actions/order/order.actions';
 
 type defaultVal = {
@@ -253,7 +251,7 @@ export default function NewOrder({ onBack }: any) {
   const canSubmit = isBuyerEmailValid && isSellerEmailValid;
 
   return (
-    <div className="min-h-full bg-white">
+    <div className="min-h-full rounded-xl bg-white">
       <div className="p-5">
         <button
           // onClick={onBack}
@@ -269,20 +267,32 @@ export default function NewOrder({ onBack }: any) {
             <TabsTrigger
               value="buyer"
               className={`
-                rounded-full px-6 py-3 text-base font-medium transition-all
+                gap-2 rounded-full px-6 py-3 text-base font-medium transition-all
                 ${activeTab === 'buyer' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
               `}
             >
+              <Image
+                alt="buyer"
+                src={`${activeTab === 'buyer' ? '/assets/dashboard/Dashboard/activeBuyer.svg' : '/assets/dashboard/Dashboard/InactiveBuyer.svg'}`}
+                width={20}
+                height={20}
+              />
               I am the Buyer
             </TabsTrigger>
             <TabsTrigger
               value="seller"
               className={`
-                rounded-full px-6 py-3 text-base font-medium transition-all
+                gap-2 rounded-full px-6 py-3 text-base font-medium transition-all
                 ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
               `}
               disabled={!isBuyerEmailValid}
             >
+              <Image
+                alt="buyer"
+                src={`${activeTab === 'seller' ? '/assets/dashboard/Dashboard/activeSeller.svg' : '/assets/dashboard/Dashboard/InactiveSeller.svg'}`}
+                width={20}
+                height={20}
+              />
               I am the Seller
             </TabsTrigger>
           </TabsList>

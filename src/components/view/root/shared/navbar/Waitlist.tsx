@@ -4,6 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import Image from 'next/image';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
@@ -73,41 +74,62 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
       <DialogTrigger asChild>
         <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader>
-          <DialogTitle>Join Waitlist</DialogTitle>
-        </DialogHeader>
-        <Form {...form}>
-          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-            <div className="mt-3 space-y-4">
-              <div>
-                <ReHeading heading="Full Name" size="base" className="text-gray-700" />
-                <ReInput name="name" />
-              </div>
-              <div>
-                <ReHeading heading="Email" size="base" className="text-gray-700" />
-                <ReInput name="email" />
-              </div>
-              <div>
-                <RePhoneNumberInput name="phoneNumber" />
-              </div>
-              <div>
-                <ReHeading heading="Location" size="base" className="text-gray-700" />
-                <ReInput name="location" />
-              </div>
-            </div>
+      <DialogContent className="max-w-4xl p-5 border-0 bg-[#03045B]">
+        <div className="relative grid grid-cols-1 sm:grid-cols-2">
+          {/* Left side - Form */}
+          <div className="flex-1">
+            <div className="max-w-sm">
+              <h1 className="text-5xl font-bold text-white font-playfair mb-2">
+                Join Our Waitlist
+              </h1>
+              <p className="text-white mb-8">
+                Be among the first to use PayAfta, get Early access with instant updates.
+              </p>
 
-            <div className="grid place-items-center pt-2">
-              <ReButton
-                className="w-full rounded-xl py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
-                type="submit"
-                isSubmitting={isSubmitting}
-              >
-                Join
-              </ReButton>
+              <Form {...form}>
+                <form
+                  onSubmit={handleSubmit(onSubmit)}
+                  className="space-y-6 bg-white px-6 py-3 rounded-lg"
+                >
+                  {/* First Name and Last Name row */}
+                  <div>
+                    <ReHeading heading="Full Name" size="base" className="text-gray-700" />
+                    <ReInput name="name" />
+                  </div>
+                  <div>
+                    <ReHeading heading="Email" size="base" className="text-gray-700" />
+                    <ReInput name="email" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <RePhoneNumberInput name="phoneNumber" />
+                    </div>
+                    <div>
+                      <ReHeading heading="Location" size="base" className="text-gray-700" />
+                      <ReInput name="location" />
+                    </div>
+                  </div>
+                  {/* Submit Button */}
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-[#03045B] rounded-full text-white font-semibold py-4 px-6 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {isSubmitting ? 'Getting Early Access...' : 'Get Early Access'}
+                  </button>
+                </form>
+              </Form>
             </div>
-          </form>
-        </Form>
+          </div>
+
+          {/* Right side - Hero image and content */}
+          <div className="flex-1 hidden sm:flex relative">
+            {/* Main image area */}
+            <div className="relative h-full flex items-center justify-center">
+              <Image alt="waitlist" src="/assets/root/home/waitlist.png" width={668} height={634} />
+            </div>
+          </div>
+        </div>
       </DialogContent>
     </Dialog>
   );
