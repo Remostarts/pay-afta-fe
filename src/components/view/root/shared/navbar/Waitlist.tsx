@@ -82,7 +82,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
         className="
           max-w-[95vw] sm:max-w-full max-h-[95vh]
           p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto
-          lg:max-w-none lg:w-screen lg:h-screen lg:max-h-none lg:rounded-2xl
+          lg:max-w-none lg:w-screen lg:h-screen lg:max-h-none lg:rounded-3xl
         "
       >
         <DialogClose asChild>
@@ -95,11 +95,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
             <X className="h-5 w-5" aria-hidden="true" />
           </Button>
         </DialogClose>
-        <DialogHeader>
-          <DialogTitle>
-            <span className="sr-only">Join Our Waitlist</span>
-          </DialogTitle>
-        </DialogHeader>
+   
         <div className="relative flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8">
           {/* Left side - Form */}
           <div className="flex-1 order-2 lg:order-1 w-full">
