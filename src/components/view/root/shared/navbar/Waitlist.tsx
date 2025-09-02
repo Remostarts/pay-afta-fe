@@ -5,9 +5,10 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import Image from 'next/image';
+import { DialogClose } from '@/components/ui/dialog';
+import { X } from 'lucide-react';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import { ReButton } from '@/components/re-ui/ReButton';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { Button } from '@/components/ui/button';
 import {
@@ -19,7 +20,7 @@ import {
 } from '@/components/ui/dialog';
 import { Form } from '@/components/ui/form';
 import { addToWhitelist } from '@/lib/actions/auth/utils.actions';
-import { TWhiteList, whiteListSchema } from '@/lib/validations/Utils';
+import { type TWhiteList, whiteListSchema } from '@/lib/validations/Utils';
 import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInput';
 
 const defaultValues = {
@@ -65,7 +66,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
     console.log('onSubmit', result);
     if (result?.result === 'success') {
       setIsModalOpen(false);
-      toast.success(' Congratulations! You have been added to the waitlist');
+      toast.success('Congratulations! You have been added to the waitlist');
       form.reset();
     } else {
       toast.error('Sorry, Try again.');
@@ -77,7 +78,23 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
       <DialogTrigger asChild>
         <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] sm:max-w-full max-h-[95vh] p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto">
+      <DialogContent
+        className="
+          max-w-[95vw] sm:max-w-full max-h-[95vh]
+          p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto
+          lg:max-w-none lg:w-screen lg:h-screen lg:max-h-none lg:rounded-2xl
+        "
+      >
+        <DialogClose asChild>
+          <Button
+            variant="outline"
+            size="icon"
+            className="absolute right-3 top-3 text-white hover:bg-white/10 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none"
+            aria-label="Close"
+          >
+            <X className="h-5 w-5" aria-hidden="true" />
+          </Button>
+        </DialogClose>
         <DialogHeader>
           <DialogTitle>
             <span className="sr-only">Join Our Waitlist</span>
@@ -160,7 +177,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
                   src="/assets/root/home/waitlist.png"
                   width={668}
                   height={634}
-                  className="w-full h-auto object-contain"
+                  className="w-full h-auto object-contain mt-7"
                   priority
                 />
               </div>
