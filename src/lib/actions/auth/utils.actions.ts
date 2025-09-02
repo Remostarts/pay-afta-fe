@@ -5,6 +5,7 @@ import { TWhiteList, whiteListSchema } from '@/lib/validations/Utils';
 
 export async function addToWhitelist(data: TWhiteList) {
   const validation = whiteListSchema.safeParse(data);
+  console.log(validation);
   if (!validation.success) {
     let zodErrors = '';
     validation.error.issues.forEach((issue) => {
