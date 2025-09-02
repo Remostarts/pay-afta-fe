@@ -24,6 +24,8 @@ import { RePhoneNumberInput } from '@/components/re-ui/re-input/RePhoneNumberInp
 
 const defaultValues = {
   name: '',
+  firstName: '',
+  lastName: '',
   email: '',
   phoneNumber: '',
   location: '',
@@ -64,6 +66,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
     if (result?.result === 'success') {
       setIsModalOpen(false);
       toast.success(' Congratulations! You have been added to the waitlist');
+      form.reset();
     } else {
       toast.error('Sorry, Try again.');
     }
@@ -74,43 +77,64 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
       <DialogTrigger asChild>
         <Button variant="outline">Join Waitlist</Button>
       </DialogTrigger>
-      <DialogContent className="max-w-4xl p-5 border-0 bg-[#03045B]">
+      <DialogContent className="max-w-[95vw] sm:max-w-full max-h-[95vh] p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto">
         <DialogHeader>
           <DialogTitle>
             <span className="sr-only">Join Our Waitlist</span>
           </DialogTitle>
         </DialogHeader>
-        <div className="relative grid grid-cols-1 sm:grid-cols-2">
+        <div className="relative flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8">
           {/* Left side - Form */}
-          <div className="flex-1">
-            <div className="max-w-sm">
-              <h1 className="text-5xl font-bold text-white font-playfair mb-2">
-                Join Our Waitlist
-              </h1>
-              <p className="text-white mb-8">
-                Be among the first to use PayAfta, get Early access with instant updates.
-              </p>
-
+          <div className="flex-1 order-2 lg:order-1 w-full">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white font-playfair mb-2 text-center lg:text-left">
+              Join Our Waitlist
+            </h1>
+            <p className="text-white mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2xl font-inter text-center lg:text-left">
+              Be among the first to use PayAfta, get Early access with instant updates.
+            </p>
+            <div className="w-full max-w-2xl mx-auto lg:mx-0">
               <Form {...form}>
                 <form
                   onSubmit={handleSubmit(onSubmit)}
-                  className="space-y-6 bg-white px-6 py-3 rounded-lg"
+                  className="space-y-4 sm:space-y-6 bg-white px-3 sm:px-6 py-3 sm:py-4 rounded-lg"
                 >
                   {/* First Name and Last Name row */}
-                  <div>
-                    <ReHeading heading="Full Name" size="base" className="text-gray-700" />
-                    <ReInput name="name" />
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
+                    <div>
+                      <ReHeading
+                        heading="First name"
+                        size="base"
+                        className="text-gray-700 text-sm sm:text-base"
+                      />
+                      <ReInput name="firstName" />
+                    </div>
+                    <div>
+                      <ReHeading
+                        heading="Last name"
+                        size="base"
+                        className="text-gray-700 text-sm sm:text-base"
+                      />
+                      <ReInput name="lastName" />
+                    </div>
                   </div>
                   <div>
-                    <ReHeading heading="Email" size="base" className="text-gray-700" />
+                    <ReHeading
+                      heading="Email"
+                      size="base"
+                      className="text-gray-700 text-sm sm:text-base"
+                    />
                     <ReInput name="email" />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                     <div>
                       <RePhoneNumberInput name="phoneNumber" />
                     </div>
                     <div>
-                      <ReHeading heading="Location" size="base" className="text-gray-700" />
+                      <ReHeading
+                        heading="Location"
+                        size="base"
+                        className="text-gray-700 text-sm sm:text-base"
+                      />
                       <ReInput name="location" />
                     </div>
                   </div>
@@ -118,7 +142,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="w-full bg-[#03045B] rounded-full text-white font-semibold py-4 px-6 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="w-full bg-[#03045B] rounded-full text-white font-semibold py-3 sm:py-4 px-4 sm:px-6 text-sm sm:text-base transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {isSubmitting ? 'Getting Early Access...' : 'Get Early Access'}
                   </button>
@@ -128,10 +152,18 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
           </div>
 
           {/* Right side - Hero image and content */}
-          <div className="flex-1 hidden sm:flex relative">
-            {/* Main image area */}
-            <div className="relative h-full flex items-center justify-center">
-              <Image alt="waitlist" src="/assets/root/home/waitlist.png" width={668} height={634} />
+          <div className="flex-1 order-1 lg:order-2 mb-4 lg:mb-0 w-full flex relative">
+            <div className="relative w-full flex items-center justify-center">
+              <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
+                <Image
+                  alt="waitlist"
+                  src="/assets/root/home/waitlist.png"
+                  width={668}
+                  height={634}
+                  className="w-full h-auto object-contain"
+                  priority
+                />
+              </div>
             </div>
           </div>
         </div>
