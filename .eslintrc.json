@@ -36,6 +36,7 @@
      "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": 0,
     "@typescript-eslint/no-explicit-any": "warn",
+     "import/no-duplicates": "off",
     
   "import/order": "off",
 
