@@ -1,7 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
 import { ColumnDef } from '@tanstack/react-table';
+import { useEffect, useState } from 'react';
 import { ReDataTable } from '../shared/ReDateTable';
 
 export type Payment = {
