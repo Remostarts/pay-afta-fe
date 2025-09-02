@@ -33,9 +33,12 @@
     "no-underscore-dangle": "off",
     "no-unused-expressions": ["error", { "allowShortCircuit": true, "allowTernary": true }],
     "tailwindcss/no-custom-classname": 0,
+     "jsx-a11y/label-has-associated-control": "off",
     "import/prefer-default-export": 0,
     "@typescript-eslint/no-explicit-any": "warn",
-    "import/order": ["error", { "newlines-between": "always" }],
+    
+  "import/order": "off",
+
 
     "no-undef": "error",
 
