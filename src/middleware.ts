@@ -72,5 +72,6 @@ export const config = {
     '/onboarding',
     '/dashboard/:page*',
     '/admin-dashboard/:page*',
+    // '/logistic-dashboard/:page*',
   ],
 };
