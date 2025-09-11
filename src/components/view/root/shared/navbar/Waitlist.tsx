@@ -95,7 +95,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
             <X className="h-5 w-5" aria-hidden="true" />
           </Button>
         </DialogClose>
-   
+
         <div className="relative flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8">
           {/* Left side - Form */}
           <div className="flex-1 order-2 lg:order-1 w-full">
