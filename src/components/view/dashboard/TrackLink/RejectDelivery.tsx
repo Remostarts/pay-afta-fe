@@ -6,6 +6,7 @@ import { useState } from 'react';
 
 import RaiseDispute from './RaiseDispute';
 import RequestRefund from './RequestRefund';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface RejectDeliveryProps {
   handleClosed: (e: boolean) => void;
@@ -14,7 +15,7 @@ interface RejectDeliveryProps {
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
   handleRequestRefundFlow: () => void;
   currentStepChange: number;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
 }
 
 export default function RejectDelivery({

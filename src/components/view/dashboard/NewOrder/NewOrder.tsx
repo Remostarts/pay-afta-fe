@@ -159,14 +159,14 @@ export default function NewOrder({ onBack }: any) {
     if (data.item1Name && data.item1Name.trim() !== '') {
       items.push({
         name: data.item1Name,
-        prize: data.item1Prize || '',
+        price: data.item1Prize || '',
         quantity: data.item1Quantity || '',
       });
     }
     if (data.item2Name && data.item2Name.trim() !== '') {
       items.push({
         name: data.item2Name,
-        prize: data.item2Prize || '',
+        price: data.item2Prize || '',
         quantity: data.item2Quantity || '',
       });
     }
@@ -204,7 +204,7 @@ export default function NewOrder({ onBack }: any) {
       if (milestones.length === 0) {
         milestones.push({
           title: 'Default Milestone',
-          amount: '0',
+          amount: items.reduce((total, item) => total + Number(item.price || 0), 0).toString(),
           deliveryDate: formattedDeliveryDate,
         });
       }
@@ -212,7 +212,7 @@ export default function NewOrder({ onBack }: any) {
       // For one-time payment, ignore provided milestone fields and create a dummy milestone.
       milestones.push({
         title: 'Full Payment',
-        amount: '0',
+        amount: items.reduce((total, item) => total + Number(item.price || 0), 0).toString(),
         deliveryDate: formattedDeliveryDate,
       });
     }

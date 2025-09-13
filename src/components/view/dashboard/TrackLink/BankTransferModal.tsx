@@ -4,12 +4,14 @@ import { useState, useEffect } from 'react';
 import { Copy, Check, X, ArrowLeft } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { TWalletData } from '@/types/order';
 
 interface BankTransferModalProps {
   isOpen: boolean;
   onClose: () => void;
   amount: number;
   onSuccess?: () => void;
+  oneTimeUseWallet?: TWalletData;
 }
 
 export default function BankTransferModal({
@@ -17,6 +19,7 @@ export default function BankTransferModal({
   onClose,
   amount,
   onSuccess,
+  oneTimeUseWallet,
 }: BankTransferModalProps) {
   const [timeLeft, setTimeLeft] = useState(29 * 60 + 59); // 29:59 in seconds
   const [copiedField, setCopiedField] = useState<string | null>(null);
@@ -93,7 +96,7 @@ export default function BankTransferModal({
 
           <div className="mb-4">
             <p className="text-gray-800 text-2xl font-inter">
-              Transfer <span className="font-semibold">₦{amount.toLocaleString()}.00</span> to
+              Transfer <span className="font-semibold">₦{oneTimeUseWallet?.balance}.00</span> to
               PayAfta
             </p>
           </div>
@@ -101,13 +104,13 @@ export default function BankTransferModal({
           <div className="space-y-4 mb-6">
             <div>
               <p className="text-sm text-gray-600 block mb-1">Bank Name</p>
-              <p className="text-gray-900 font-medium">Wema Bank</p>
+              <p className="text-gray-900 font-medium">{oneTimeUseWallet?.bankName}</p>
             </div>
 
             <div>
               <p className="text-sm text-gray-600 block mb-1">Account Number</p>
               <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                <span className="text-gray-900 font-medium">001223344</span>
+                <span className="text-gray-900 font-medium">{oneTimeUseWallet?.accountNumber}</span>
                 <button
                   onClick={() => copyToClipboard('001223344', 'account')}
                   className="text-gray-400 hover:text-gray-600 p-1"
@@ -124,7 +127,7 @@ export default function BankTransferModal({
             <div>
               <p className="text-sm text-gray-600 block mb-1">Amount</p>
               <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
-                <span className="text-gray-900 font-medium">₦{amount.toLocaleString()}.00</span>
+                <span className="text-gray-900 font-medium">₦{oneTimeUseWallet?.balance}.00</span>
                 <button
                   onClick={() => copyToClipboard(amount.toString(), 'amount')}
                   className="text-gray-400 hover:text-gray-600 p-1"

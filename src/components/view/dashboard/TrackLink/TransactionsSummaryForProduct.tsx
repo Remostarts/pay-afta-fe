@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
 import Summary from './Summary';
@@ -14,22 +14,37 @@ import OrderAgreement from './OrderAgreement';
 import StepperForProduct from './StepperForProduct';
 
 import { Button } from '@/components/ui/button';
+import { getOrder } from '@/lib/actions/order/order.actions';
+import { toast } from 'sonner';
+import { OrderDetails } from '@/types/order';
+import { useGeneral } from '@/context/generalProvider';
 
 interface TransactionsSummaryProps {
   onBack: () => void;
   id: string;
-  userRole: 'buyer' | 'seller';
 }
 
-export default function TransactionsSummaryForProduct({
-  onBack,
-  id,
-  userRole,
-}: TransactionsSummaryProps) {
-  const [currentStep, setCurrentStep] = useState<number>(1);
+export type UserRole = 'buyer' | 'seller' | null;
+
+export default function TransactionsSummaryForProduct({ onBack, id }: TransactionsSummaryProps) {
+  const [currentStep, setCurrentStep] = useState<number>(-1);
   const [showRiseDispute, setShowRiseDispute] = useState<boolean>(false);
   const [isReturn, setIsReturn] = useState<boolean>(false); // Tracks if product is in return stage
   const [isRefunded, setIsRefunded] = useState<boolean>(false); // Tracks if refund is processed
+  const [order, setOrder] = useState<OrderDetails | null>(null);
+  const { user } = useGeneral();
+  const [userRole, setUserRole] = useState<UserRole>(null);
+  console.log(
+    '🌼 🔥🔥 TransactionsSummaryForProduct 🔥🔥 userRole🌼',
+    userRole,
+    'buyerId',
+    order?.buyerId,
+    'sellerId',
+    order?.sellerId,
+    'userId',
+    user?.id
+  );
+  const [progressLoading, setProgressLoading] = useState<boolean>(false);
 
   // Handler for Accept button in Delivery
   const handleAcceptDelivery = () => {
@@ -54,6 +69,30 @@ export default function TransactionsSummaryForProduct({
     setCurrentStep(5); // Move to Refunded stage
   };
 
+  async function loadOrder() {
+    if (!id) return;
+    setProgressLoading(true);
+    try {
+      const response = await getOrder(id);
+      console.log('🌼 🔥🔥 loadOrder 🔥🔥 response🌼', response);
+      if (response?.success) {
+        setUserRole((prev) => user?.id === response?.data?.buyerId ? 'buyer' : user?.id === response?.data?.sellerId ? 'seller' : null);
+        setOrder(response?.data);
+        setCurrentStep(response?.data?.currentStep + 1);
+      } else {
+        toast.error(response?.error || 'failed to load order');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'failed to load order');
+    } finally {
+      setProgressLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadOrder();
+  }, [id]);
+
   return (
     <section
       className={currentStep === 1 ? 'grid grid-rows-2 lg:flex lg:gap-10' : 'flex flex-col gap-4'}
@@ -63,6 +102,9 @@ export default function TransactionsSummaryForProduct({
           <ChevronLeft onClick={onBack} />
           <h1 className="font-inter text-xl font-bold text-gray-700"> Escrow Summary</h1>
         </div>
+        <h4 className={`text-red-500 ${progressLoading ? 'animate-pulse' : 'hidden'}`}>
+          loading ....
+        </h4>
         <div className="mb-5 flex items-center justify-between">
           <p className="font-inter text-gray-500">Transactions ID: {id}</p>
           <p className="font-inter text-gray-500">November 3, 2024, 18:25</p>
@@ -78,7 +120,11 @@ export default function TransactionsSummaryForProduct({
             handleCurrentStepChange={setCurrentStep}
             currentStepChange={currentStep}
             userRole={userRole}
-            showActions={true}
+            showActions={userRole === 'buyer'}
+            order={order ?? null}
+            loadOrder={loadOrder}
+            setProgressLoading={setProgressLoading}
+            progressLoading={progressLoading}
           />
         ) : currentStep === 2 ? (
           <MakePayment
@@ -86,7 +132,11 @@ export default function TransactionsSummaryForProduct({
             currentStepChange={currentStep}
             userRole={userRole}
             isProduct={true}
-            showActions={true}
+            showActions={userRole === 'buyer'}
+            order={order ?? null}
+            loadOrder={loadOrder}
+            setProgressLoading={setProgressLoading}
+            progressLoading={progressLoading}
           />
         ) : currentStep === 3 ? (
           <ConfirmShipping

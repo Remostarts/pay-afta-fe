@@ -4,23 +4,38 @@ import { useState, useEffect } from 'react';
 import { X, Info } from 'lucide-react';
 
 import { ReButton } from '@/components/re-ui/ReButton';
+import { useGeneral } from '@/context/generalProvider';
 
 interface PaymentSummaryProps {
   onWalletPayment?: () => void;
   onBankTransferSelect?: () => void;
   onClose?: () => void;
+  progressLoading: boolean;
+  amount: number;
 }
 
 export default function PaymentSummary({
   onWalletPayment,
   onBankTransferSelect,
   onClose,
+  progressLoading,
+  amount,
 }: PaymentSummaryProps) {
+  const { user } = useGeneral();
   const [selectedPayment, setSelectedPayment] = useState('wallet');
+  const [walletBalance, setWalletBalance] = useState(0);
+  const [hasInsufficientBalance, setHasInsufficientBalance] = useState<boolean>(false);
 
-  const walletBalance = 500000.0; // ₦200,000.00
-  const totalAmount = 335050.0; // ₦335,050.00
-  const hasInsufficientBalance = walletBalance < totalAmount;
+  useEffect(() => {
+    setWalletBalance((prev) => Number(user?.Wallet[0].balance) || prev);
+    
+    setHasInsufficientBalance((prev) => Number(user?.Wallet[0].balance) < amount);
+    console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 amount🌼', amount);
+    
+    console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 walletBalance🌼', walletBalance);
+    
+    console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 user🌼', typeof user?.Wallet[0].balance, typeof walletBalance, Number(user?.Wallet[0].balance));
+  }, [user, amount]);
 
   useEffect(() => {
     if (hasInsufficientBalance) {
@@ -53,21 +68,22 @@ export default function PaymentSummary({
       <div className="space-y-4 mb-6">
         <div className="flex justify-between items-center">
           <span className="text-gray-600">Transaction Amount</span>
-          <span className="text-gray-900 font-medium">₦334,000.00</span>
+          <span className="text-gray-900 font-medium">₦{amount}.00</span>
         </div>
 
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
-            <span className="text-gray-600">Escrow fee @2.5%</span>
+            {/* <span className="text-gray-600">Escrow fee @2.5%</span> */}
+            <span className="text-gray-600">Escrow fee @0%</span>
             <Info size={14} className="text-gray-400" />
           </div>
-          <span className="text-gray-900 font-medium">₦1,050.00</span>
+          <span className="text-gray-900 font-medium">₦0.00</span>
         </div>
 
         <div className="border-t pt-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-900 font-semibold text-lg">Total</span>
-            <span className="text-gray-900 font-bold text-xl">₦335,050.00</span>
+            <span className="text-gray-900 font-bold text-xl">₦{amount}.00</span>
           </div>
         </div>
       </div>
@@ -138,7 +154,12 @@ export default function PaymentSummary({
         </div>
       </div>
 
-      <ReButton className="rounded-full w-full" onClick={handlePaymentClick}>
+      <ReButton
+        disabled={amount === 0}
+        isSubmitting={progressLoading}
+        className="rounded-full w-full"
+        onClick={handlePaymentClick}
+      >
         {selectedPayment === 'wallet' ? 'Pay with Wallet Balance' : 'Pay via Bank Transfer'}
       </ReButton>
     </div>

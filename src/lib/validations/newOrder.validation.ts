@@ -237,7 +237,7 @@ export const createOrderZodSchema = z.object({
   items: z.array(
     z.object({
       name: z.string().min(1, 'Item name is required'),
-      prize: z.string(), // you can add refinements if needed
+      price: z.string(), // you can add refinements if needed
       quantity: z.string(),
     })
   ),
