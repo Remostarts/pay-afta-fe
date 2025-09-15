@@ -24,7 +24,7 @@ export default function Layout({ children }: TChildrenProps) {
   const isLogisticDashboard = pathName.startsWith('/logistic-dashboard');
 
   return (
-    <div className="flex h-screen flex-col">
+    <div className="flex h-screen flex-col overflow-hidden">
       <Header onMenuClick={() => setIsSidebarOpen(!isSidebarOpen)} className="block lg:hidden" />
 
       {isSidebarOpen && (
@@ -38,7 +38,7 @@ export default function Layout({ children }: TChildrenProps) {
       <div className="relative flex flex-1 overflow-hidden">
         <div
           className={`
-            fixed left-0 top-0 z-50 h-full shadow-md transition-transform duration-300 ease-in-out
+            fixed left-0 top-0 z-50 h-full overflow-hidden shadow-md transition-transform duration-300 ease-in-out
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
             lg:relative lg:block
           `}
@@ -48,13 +48,13 @@ export default function Layout({ children }: TChildrenProps) {
           {isLogisticDashboard && <LogisticSidebar onClose={() => setIsSidebarOpen(false)} />}
         </div>
 
-        <main className="flex flex-1 flex-col bg-gray-50">
+        <main className="flex flex-1 flex-col bg-gray-50 overflow-hidden">
           <div className="hidden p-4 lg:block lg:p-6">
             {isDashboard && <ProfileHeader />}
             {isAdminDashboard && <AdminProfileHeader />}
             {isLogisticDashboard && <LogisticProfileHeader />}
           </div>
-          <div className="flex-1 overflow-auto p-4">{children}</div>
+          <div className="flex-1 overflow-y-auto scroll-smooth p-4">{children}</div>
         </main>
       </div>
     </div>

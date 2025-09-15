@@ -24,8 +24,15 @@ export const sideNavMenu = [
     id: 4,
     imgBlack: '/assets/admin-dashboard/dashboard/payment-order-icon.svg',
     imgColor: '/assets/admin-dashboard/dashboard/paymentorderColorIcon.svg',
-    name: 'Payment Order',
+    name: 'Escrow Orders',
     alt: 'payment-order',
+  },
+  {
+    id: 4,
+    imgBlack: '/assets/admin-dashboard/dashboard/payment-order-icon.svg',
+    imgColor: '/assets/admin-dashboard/dashboard/paymentorderColorIcon.svg',
+    name: 'Fee and Rate',
+    alt: 'fee-and-rate',
   },
   {
     id: 5,
@@ -47,6 +54,13 @@ export const sideNavMenu = [
     imgColor: '/assets/admin-dashboard/dashboard/deliveryPartnerColor.svg',
     name: 'Delivery Partners',
     alt: 'delivery-partners',
+  },
+  {
+    id: 4,
+    imgBlack: '/assets/admin-dashboard/dashboard/payment-order-icon.svg',
+    imgColor: '/assets/admin-dashboard/dashboard/paymentorderColorIcon.svg',
+    name: 'Delivery Date',
+    alt: 'delivery-date',
   },
   // {
   //   id: 7,
