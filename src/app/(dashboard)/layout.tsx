@@ -38,7 +38,7 @@ export default function Layout({ children }: TChildrenProps) {
       <div className="relative flex flex-1 overflow-hidden">
         <div
           className={`
-            fixed left-0 top-0 z-50 h-full overflow-hidden shadow-md transition-transform duration-300 ease-in-out
+            fixed left-0 top-0 z-50 h-full overflow-hidden shadow-md transition-transform duration-300 ease-in-out scroll-smooth no-scrollbar
             ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'} 
             lg:relative lg:block
           `}

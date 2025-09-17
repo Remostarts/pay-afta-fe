@@ -2,7 +2,7 @@ export type TUserDetails = {
   id: string;
   firstName: string;
   lastName: string;
-  profileImage: string | null;
+  profileImage: string | null | '/assets/admin-dashboard/dashboard/dummyUserImage.jpg';
   email: string;
   phone: string;
   status: 'active' | 'suspended' | 'pending';
