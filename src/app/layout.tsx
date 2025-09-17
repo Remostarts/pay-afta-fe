@@ -35,7 +35,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: TChildrenProps) {
   const session = (await getServerSession(authOptions)) as any;
-  console.log('🌼 🔥🔥 RootLayout 🔥🔥 session🌼', session);
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={` ${(inter.variable, playfair.variable)}  `}>
