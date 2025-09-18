@@ -1,0 +1,42 @@
+name: Publish and Deploy
+
+on:
+  push:
+    branches: ['main']
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Login to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_TOKEN }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Build Docker Image
+        run: docker build . --file Dockerfile --tag "${{ secrets.DOCKERHUB_USERNAME }}/pay-afta-fe:latest"
+
+      - name: Push Docker Image
+        run: docker push "${{ secrets.DOCKERHUB_USERNAME }}/pay-afta-fe:latest"
+
+  deploy:
+    needs: publish # This makes sure deploy runs only after publish succeeds
+    runs-on: self-hosted
+
+    steps:
+      - name: Stop the old container
+        run: docker stop pay-afta-fe || true
+
+      - name: Remove the old container
+        run: docker rm pay-afta-fe || true
+
+      - name: Delete the old image
+        run: docker rmi ${{ secrets.DOCKERHUB_USERNAME }}/pay-afta-fe:latest || true
+
+      - name: Pull the image from Docker Hub
+        run: docker pull ${{ secrets.DOCKERHUB_USERNAME }}/pay-afta-fe:latest
+
+      - name: Run the image
+        run: sudo docker run -d -p 3000:3000 --name pay-afta-fe ${{ secrets.DOCKERHUB_USERNAME }}/pay-afta-fe:latest
