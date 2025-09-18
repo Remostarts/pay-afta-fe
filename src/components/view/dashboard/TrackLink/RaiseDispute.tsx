@@ -15,6 +15,7 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import ReImageInput from '@/components/re-ui/re-image/ReImage';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface RaiseDisputeProps {
   handleClosed: (e: boolean) => void;
@@ -22,7 +23,7 @@ interface RaiseDisputeProps {
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   currentStepChange: number;
   handleIsDisputed?: (isDisputed: boolean) => void | undefined;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
 }
 
 const defaultVal = {

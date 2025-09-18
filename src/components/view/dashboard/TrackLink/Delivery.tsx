@@ -8,6 +8,7 @@ import RaiseDispute from './RaiseDispute';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface DeliveryProps {
   handleCurrentStepChange: (step: number) => void;
@@ -15,7 +16,7 @@ interface DeliveryProps {
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
   handleRefundRequested: (refundRequested: boolean) => void;
   currentStepChange: number;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
   showActions?: boolean;
   handleAcceptDelivery: () => void;
   handleRejectDelivery: () => void;

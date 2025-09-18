@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 
 import { useGeneral } from '@/context/generalProvider';
@@ -16,7 +16,18 @@ export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
-  const { onboardingStatus } = useGeneral();
+  const { onboardingStatus, user } = useGeneral();
+  console.log('🌼 🔥🔥 Layout 🔥🔥 user🌼', user);
+
+  console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
+
+  useEffect(() => {
+    console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
+
+    if (onboardingStatus === false) {
+      router.push('/onboarding');
+    }
+  }, [onboardingStatus, router]);
 
   // Check if path starts with either /dashboard or /admin-dashboard
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');

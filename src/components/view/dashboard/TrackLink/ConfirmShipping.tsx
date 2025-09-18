@@ -5,12 +5,13 @@ import React, { useState } from 'react';
 import TransactionSummary from './TransactionSummary';
 
 import { ReButton } from '@/components/re-ui/ReButton';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   currentStepChange: number;
   showActions?: boolean;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
 }
 
 export default function ConfirmShipping({

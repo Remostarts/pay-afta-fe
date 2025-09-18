@@ -12,6 +12,7 @@ import { Form } from '@/components/ui/form';
 import { nigeriaBanks } from '@/lib/data/nigeriaBanks';
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
 import { kycBankInfo, kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { useGeneral } from '@/context/generalProvider';
 
 type defaultVal = {
   bankName: string;
@@ -27,7 +28,7 @@ const defaultValues: defaultVal = {
   isDefaultPayout: false,
 };
 
-export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
+export default function SettlementKycForm() {
   const form = useForm<TSettlementKyc>({
     resolver: zodResolver(settlementKycSchema),
     defaultValues,
@@ -36,6 +37,7 @@ export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
 
   const { handleSubmit, formState } = form;
   const { isSubmitting } = formState;
+  const { loadUserData } = useGeneral();
 
   async function onSubmit(data: TSettlementKyc) {
     console.log(data);
@@ -44,7 +46,7 @@ export default function SettlementKycForm({ manageCurrentStep = () => {} }) {
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
-        manageCurrentStep();
+        loadUserData();
       } else {
         toast.error(response?.error || 'Failed to update kyc bank information');
       }

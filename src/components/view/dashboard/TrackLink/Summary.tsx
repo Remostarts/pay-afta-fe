@@ -1,8 +1,9 @@
 import React from 'react';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface SummaryProps {
   showActions?: boolean;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
   name: string;
   paymentMethod: string;
   deliveryDate: string;

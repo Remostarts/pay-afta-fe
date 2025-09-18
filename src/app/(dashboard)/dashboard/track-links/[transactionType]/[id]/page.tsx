@@ -21,7 +21,6 @@ export default function TransactionPage() {
         <TransactionsSummaryForProduct
           onBack={handleBackToTable}
           id={id as string}
-          userRole="seller"
         />
       ) : (
         <TransactionsSummaryForService onBack={handleBackToTable} id={id as string} />

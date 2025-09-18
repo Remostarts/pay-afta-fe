@@ -15,12 +15,21 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
+import { UserRole } from './TransactionsSummaryForProduct';
+import { OrderDetails } from '@/types/order';
+import { UpdateOrderProgressDTO } from '@/lib/validations/order';
+import { updateOrderProgress } from '@/lib/actions/order/order.actions';
+import { toast } from 'sonner';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   currentStepChange: number;
   showActions?: boolean;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
+  order?: OrderDetails | null;
+  loadOrder?: () => Promise<void>;
+  setProgressLoading: (loading: boolean) => void;
+  progressLoading: boolean;
 }
 
 export default function OrderAgreement({
@@ -28,18 +37,48 @@ export default function OrderAgreement({
   currentStepChange,
   showActions = false,
   userRole,
+  order,
+  loadOrder,
+  setProgressLoading,
+  progressLoading,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
-
   const handleAcceptOrder = () => {
-    setIsOpen(true);
+    console.log('🌼 🔥🔥 handleAcceptOrder 🔥🔥 handleAcceptOrder🌼');
+    // setIsOpen(true);
   };
 
-  const handleConfirmTransaction = () => {
-    handleCurrentStepChange(2);
-    setIsOpen(false);
+  const handleConfirmTransaction = async () => {
+    setProgressLoading(true)
+    try {
+      const response = await updateOrderProgress(
+        {
+          status: 'AGREEMENT',
+          step: 1,
+          notes: 'Agreement signed',
+        } as UpdateOrderProgressDTO,
+        order?.id as string
+      );
+      console.log('🌼 🔥🔥 loadOrder 🔥🔥 response🌼', response);
+      if (response?.success) {
+        if (loadOrder) {
+          loadOrder();
+        }
+        setIsOpen(false);
+      } else {
+        toast.error(response?.error || 'Failed to update order progress history');
+      }
+    } catch (error) {
+      toast.error(
+        error instanceof Error ? error.message : 'Failed to update order progress history'
+      );
+    } finally {
+      setProgressLoading(false);
+    }
+
+    // handleCurrentStepChange(2);
   };
 
   const handleRejectOrder = () => {
@@ -67,7 +106,15 @@ export default function OrderAgreement({
     setShowConfirmDialog(false);
   };
 
-  if (!showActions) {
+  if (progressLoading) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
+        <h2 className="mb-2 text-lg font-medium font-inter">Loading...</h2>
+      </div>
+    );
+  }
+
+  if (userRole === 'seller' && order?.status === 'PENDING') {
     return (
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
         <h2 className="mb-2 text-lg font-medium font-inter">Awaiting Approval</h2>
@@ -78,7 +125,7 @@ export default function OrderAgreement({
       </div>
     );
   }
-
+  if(userRole === 'buyer' && order?.status === 'PENDING')
   return (
     <section className="mt-5 rounded-xl border-2 border-gray-200 bg-[#E6E6E6] p-5">
       <div className="mb-5">

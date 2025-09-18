@@ -11,13 +11,22 @@ import TransactionSummary from './TransactionSummary';
 
 import { Dialog, DialogContent, DialogFooter, DialogTrigger } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { UserRole } from './TransactionsSummaryForProduct';
+import { OrderDetails, TWalletData } from '@/types/order';
+import { toast } from 'sonner';
+import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/order.actions';
+import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   isProduct?: boolean;
   currentStepChange: number;
   showActions?: boolean;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
+  order?: OrderDetails | null;
+  loadOrder?: () => Promise<void>;
+  setProgressLoading: (loading: boolean) => void;
+  progressLoading: boolean;
 }
 
 export default function MakePayment({
@@ -26,6 +35,10 @@ export default function MakePayment({
   currentStepChange,
   showActions = false,
   userRole,
+  order,
+  loadOrder,
+  setProgressLoading,
+  progressLoading,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<
@@ -34,6 +47,7 @@ export default function MakePayment({
   const [selectedPayment, setSelectedPayment] = useState('wallet');
   const totalAmount = 335050.0;
   const router = useRouter();
+  const [oneTimeUseWallet, setOneTimeUseWallet] = useState<TWalletData | null>(null);
 
   const handleAcceptOrder = () => {
     setIsOpen(true);
@@ -41,41 +55,51 @@ export default function MakePayment({
   };
 
   const handleWalletPayment = async () => {
+    setProgressLoading(true);
+    const data = {
+      buyerId: order?.buyerId,
+      amount: Number(order?.milestones[0]?.amount),
+      sellerId: order?.sellerId,
+      orderId: order?.id,
+      milestoneId: order?.milestones[0]?.id,
+    } as TPersonalWalletPaymentInput;
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/invoice/payment-initiate`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            amount: totalAmount,
-            paymentMethod: 'wallet',
-          }),
-        }
-      );
+      const response = await makeWalletPayment(data);
+      console.log('🌼 🔥🔥 handleWalletPayment 🔥🔥 response🌼', response);
 
-      if (!response.ok) {
-        throw new Error(`Failed to create invoice. Status: ${response.status}`);
+      if (response?.success) {
+        setCurrentComponent('successful');
+      } else {
+        toast.error(response?.error || 'failed to make payment');
       }
-
-      const data = await response.json();
-      console.log('Invoice created successfully:', data);
-
-      if (data?.data?.paymentUrl && typeof window !== 'undefined') {
-        window.open(data?.data?.paymentUrl, '_blank', 'noopener,noreferrer');
-      }
-
-      // Show success component after wallet payment
-      setCurrentComponent('successful');
     } catch (error) {
-      console.error('Error creating invoice:', error);
+      toast.error(error instanceof Error ? error.message : 'failed to make payment');
+    } finally {
+      setProgressLoading(false);
     }
   };
 
-  const handleBankTransferSelect = () => {
-    setCurrentComponent('bankTransfer');
+  const handleBankTransferSelect = async () => {
+    setProgressLoading(true);
+    const data = {
+      amount: Number(order?.milestones[0]?.amount),
+      orderId: order?.id,
+    } as TOneTimeUseWallet;
+    try {
+      const response = await createOneTimeUseWallet(data);
+      console.log('🌼 🔥🔥 handleBankTransferSelect 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        setOneTimeUseWallet(response?.data);
+        setCurrentComponent('bankTransfer');
+      } else {
+        toast.error(response?.error || 'failed to make payment');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'failed to make payment');
+    } finally {
+      setProgressLoading(false);
+    }
   };
 
   const handleBankTransferSuccess = () => {
@@ -113,6 +137,14 @@ export default function MakePayment({
     setCurrentComponent('milestone');
   };
 
+  if (progressLoading) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
+        <h2 className="mb-2 text-lg font-medium font-inter">Loading...</h2>
+      </div>
+    );
+  }
+
   if (!showActions) {
     return (
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
@@ -148,6 +180,8 @@ export default function MakePayment({
                   onWalletPayment={handleWalletPayment}
                   onBankTransferSelect={handleBankTransferSelect}
                   onClose={handleCloseDialog}
+                  progressLoading={progressLoading}
+                  amount={order?.milestones ? Number(order.milestones[0]?.amount) : 0}
                 />
               )}
 
@@ -157,6 +191,7 @@ export default function MakePayment({
                   onClose={handleBackToSummary}
                   amount={totalAmount}
                   onSuccess={handleBankTransferSuccess}
+                  oneTimeUseWallet={oneTimeUseWallet ?? undefined}
                 />
               )}
 
