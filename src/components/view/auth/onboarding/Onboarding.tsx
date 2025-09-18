@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowRight } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
@@ -20,6 +20,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
+import { useGeneral } from '@/context/generalProvider';
 
 const steps = [
   {
@@ -47,14 +48,27 @@ const steps = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState<number>(0);
+  console.log('🌼 🔥🔥 Onboarding 🔥🔥 currentStep🌼', currentStep);
+
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
+  console.log('🌼 🔥🔥 Onboarding 🔥🔥 completedSteps🌼', completedSteps);
+
   const route = useRouter();
+  const { user } = useGeneral();
+  console.log(
+    '🌼 🔥🔥 Onboarding 🔥🔥 user🌼',
+    user?.profile?.personalKycStatus,
+    user?.profile?.settlementKycStatus,
+    user?.profile?.pinSet
+  );
 
   // console.log(currentStep);
 
   function manageCurrentStep() {
     setCompletedSteps((prev) => [...prev, currentStep]);
-    setCurrentStep(currentStep + 1);
+    console.log('🌼 🔥🔥 manageCurrentStep 🔥🔥 prev', currentStep);
+    setCurrentStep((prev) => prev + 1);
+    console.log('🌼 🔥🔥 manageCurrentStep 🔥🔥 later', currentStep);
   }
 
   function handleClick() {
@@ -62,6 +76,21 @@ export default function Onboarding() {
       route.push('/dashboard');
     }
   }
+
+  useEffect(() => {
+    if (user?.profile?.personalKycStatus) {
+      setCompletedSteps((prev) => [...prev, 0]);
+      setCurrentStep(1);
+    }
+    if (user?.profile?.settlementKycStatus) {
+      setCompletedSteps((prev) => [...prev, 1]);
+      setCurrentStep(2);
+    }
+    if (user?.profile?.pinSet) {
+      setCompletedSteps((prev) => [...prev, 2]);
+      setCurrentStep(3);
+    }
+  }, [user?.profile?.personalKycStatus, user?.profile?.settlementKycStatus, user?.profile?.pinSet]);
 
   return (
     <div className="mx-auto w-full max-w-3xl rounded-lg bg-white p-6">
@@ -106,7 +135,6 @@ export default function Onboarding() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <StepForm
-                        manageCurrentStep={manageCurrentStep}
                         onComplete={function (pin: string): void {
                           throw new Error('Function not implemented.');
                         }}

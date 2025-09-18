@@ -7,13 +7,14 @@ import RaiseDispute from './RaiseDispute';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { UserRole } from './TransactionsSummaryForProduct';
 
 interface ReturnProductProps {
   handleCurrentStepChange: (step: number) => void;
   handleShowRiseDispute: (showRiseDispute: boolean) => void;
   handleIsRequestRefund: (isRequestRefund: boolean) => void;
   currentStepChange: number;
-  userRole: 'buyer' | 'seller';
+  userRole: UserRole;
   showActions?: boolean;
   handleReturnCompleted: () => void;
 }

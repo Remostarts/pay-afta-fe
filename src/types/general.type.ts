@@ -8,6 +8,18 @@ type Profile = {
   universityAttended: string | null;
   yearOfGraduation: number | null;
   nigeriaLawSchoolCurrentlyAt: string | null;
+  onBoardingStatus: boolean;
+  personalKycStatus: boolean;
+  settlementKycStatus: boolean;
+  pinSet: boolean;
+};
+
+type WalletItem = {
+  accountName: string;
+  accountNumber: string;
+  bankName: string;
+  walletId: string;
+  balance: number;
 };
 
 export type TUser = {
@@ -19,6 +31,6 @@ export type TUser = {
   profileImage: string | null;
   coverImage: string | null;
   profile: Profile | null;
-  walletBalance: number;
   escrowBalance: number;
+  Wallet: WalletItem[];
 };

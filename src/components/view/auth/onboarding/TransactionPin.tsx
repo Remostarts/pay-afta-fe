@@ -10,13 +10,13 @@ import { Form } from '@/components/ui/form';
 import { kycPin } from '@/lib/actions/onboarding/onboarding.actions';
 import { PinFormData, pinSchema } from '@/lib/validations/onboarding.validation';
 import { ReHeading } from '@/components/re-ui/ReHeading';
+import { useGeneral } from '@/context/generalProvider';
 
 interface TransactionPinProps {
   onComplete: (pin: string) => void;
-  manageCurrentStep?: () => void;
 }
 
-export default function TransactionPin({ onComplete, manageCurrentStep }: TransactionPinProps) {
+export default function TransactionPin({ onComplete }: TransactionPinProps) {
   const form = useForm<PinFormData>({
     resolver: zodResolver(pinSchema),
     defaultValues: {
@@ -27,21 +27,20 @@ export default function TransactionPin({ onComplete, manageCurrentStep }: Transa
 
   const { handleSubmit, formState } = form;
   const { isSubmitting } = formState;
+  const { loadUserData } = useGeneral();
 
   const onSubmit = async (data: PinFormData) => {
     try {
       // setIsSubmitting(true);
       // onComplete(data.pin);
       console.log(data);
-      if (manageCurrentStep) {
-        const response = await kycPin(data);
-        console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+      const response = await kycPin(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
-        if (response?.success) {
-          manageCurrentStep();
-        } else {
-          toast.error(response?.error || 'Failed to update kyc pin');
-        }
+      if (response?.success) {
+        loadUserData();
+      } else {
+        toast.error(response?.error || 'Failed to update kyc pin');
       }
     } catch (error) {
       console.error('Error submitting PIN:', error);

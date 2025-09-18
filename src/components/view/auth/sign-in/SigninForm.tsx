@@ -46,6 +46,12 @@ export const SigninForm = () => {
     event?.preventDefault();
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 data🌼', data);
 
+    // Test logistics user credentials
+    if (data.email === 'logistics@test.com' && data.password === 'logistics123') {
+      router.push('/logistic-dashboard');
+      return;
+    }
+
     const result = await signIn('pay-afta-backend', { ...data, role: 'user', redirect: false });
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 result🌼', result);
 

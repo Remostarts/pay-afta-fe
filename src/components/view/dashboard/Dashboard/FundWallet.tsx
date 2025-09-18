@@ -3,8 +3,10 @@
 import { ChevronRight, Copy } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { useGeneral } from '@/context/generalProvider';
 
 export default function FundWallet() {
+  const { user } = useGeneral();
   const accountDetails = {
     bankName: 'STERLING BANK',
     accountNumber: '0099881122',
@@ -28,19 +30,19 @@ export default function FundWallet() {
         <div className="mt-5 flex flex-col items-center justify-center space-y-6">
           <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Bank Name:</p>
-            <p className="font-inter font-semibold">{accountDetails.bankName}</p>
+            <p className="font-inter font-semibold">{user?.Wallet[0]?.bankName}</p>
           </div>
 
           <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Account Number:</p>
             <div className="flex items-center gap-2 rounded-full bg-gray-100 p-1">
               <div className="bg-muted rounded-md px-4 py-2 font-inter font-semibold">
-                {accountDetails.accountNumber}
+                {user?.Wallet[0]?.accountNumber}
               </div>
               <Button
                 variant="ghost"
                 size="icon"
-                onClick={() => copyToClipboard(accountDetails.accountNumber)}
+                onClick={() => copyToClipboard(user?.Wallet[0]?.accountNumber as string)}
                 className="shrink-0"
               >
                 <Copy className="size-4" />
@@ -51,7 +53,7 @@ export default function FundWallet() {
 
           <div className="">
             <p className="text-muted-foreground text-center font-inter text-sm">Account Name:</p>
-            <p className="font-inter font-semibold">{accountDetails.accountName}</p>
+            <p className="font-inter font-semibold">{user?.Wallet[0]?.accountName}</p>
           </div>
         </div>
       </div>

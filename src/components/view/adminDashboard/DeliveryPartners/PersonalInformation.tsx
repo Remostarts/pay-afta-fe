@@ -1,16 +1,28 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Pencil, Upload } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Delivery from './Delivery';
 import Transaction from './Transaction';
 
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import Link from 'next/link';
+import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { toast } from 'sonner';
 
 export function PersonalInformation() {
   const [tabValue, setTabValue] = useState('ProfileInfo');
+  const [status, setStatus] = useState<'verified' | 'unverified'>('unverified');
+  const [profileImage, setProfileImage] = useState<string>('');
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const availabilityData = [
     { day: 'Sunday', hours: 'No' },
     { day: 'Monday', hours: '9:30 - 6:30PM' },
@@ -22,6 +34,27 @@ export function PersonalInformation() {
   ];
 
   const serviceZones = ['Lekki', 'Ajah', 'Ikorodu'];
+
+  const handleStatusChange = (newStatus: 'verified' | 'unverified') => {
+    setStatus(newStatus);
+    toast.success(`Status changed to ${newStatus}`);
+    // Here you would make an API call to update the status
+    console.log('Status changed to:', newStatus);
+  };
+
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
+  };
+
+  const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (file) {
+      const imageUrl = URL.createObjectURL(file);
+      setProfileImage(imageUrl);
+      // Here you would upload the image to your server
+      console.log('Selected image file:', file);
+    }
+  };
 
   return (
     <div className="w-full bg-white min-h-screen rounded-lg">
@@ -63,6 +96,64 @@ export function PersonalInformation() {
             </nav>
           </div>
         </TabsList>
+
+        <div className="flex items-center justify-between p-4 bg-background">
+          {/* Profile Avatar with Verification Badge */}
+          <div className="relative">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleImageChange}
+              accept="image/*"
+              className="hidden"
+            />
+            <Avatar className="h-16 w-16 cursor-pointer rounded-full" onClick={handleImageClick}>
+              <AvatarImage
+                src={profileImage || '/assets/admin-dashboard/dashboard/dummyUserImage.jpg'}
+                alt="Profile picture"
+                className="rounded-full object-cover"
+                width={150}
+                height={150}
+              />
+              <AvatarFallback>JD</AvatarFallback>
+            </Avatar>
+            {/* Verification Badge */}
+            <div
+              className="absolute -bottom-1 -right-1 bg-blue-500 rounded-full p-1 cursor-pointer"
+              onClick={handleImageClick}
+            >
+              <Pencil className="h-3 w-3 text-white fill-current" />
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="secondary"
+                  className="bg-gray-800 hover:bg-gray-700 text-white font-medium px-4 py-2 text-sm"
+                >
+                  CHANGE STATUS
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem onClick={() => handleStatusChange('verified')}>
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  Verify
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleStatusChange('unverified')}>
+                  <span className="mr-2">❌</span>
+                  Unverify
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Button className="bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 text-sm">
+              EDIT PROFILE
+            </Button>
+          </div>
+        </div>
 
         <TabsContent value="ProfileInfo">
           <div className="p-4 md:p-6 space-y-8">

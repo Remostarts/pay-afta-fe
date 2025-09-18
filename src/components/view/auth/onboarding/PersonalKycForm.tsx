@@ -17,7 +17,11 @@ import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.va
 import { ReButton } from '@/components/re-ui/ReButton';
 import { DialogClose } from '@/components/ui/dialog';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
-import { checkUsername, kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import {
+  usernameValidityCheck,
+  kycPersonalInfo,
+} from '@/lib/actions/onboarding/onboarding.actions';
+import { useGeneral } from '@/context/generalProvider';
 
 type defaultVal = {
   nin: string;
@@ -43,7 +47,7 @@ const genderOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
+export default function PersonalKycForm() {
   const route = useRouter();
   const form = useForm<TPersonalKyc>({
     resolver: zodResolver(personalKycSchema),
@@ -54,14 +58,39 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
   const { handleSubmit, formState, watch } = form;
   const { isSubmitting, isValid } = formState;
   const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [usernameValidityLoading, setUsernameValidityLoading] = useState(false);
+  const { loadUserData } = useGeneral();
 
   const checkUsernameValidity = debounce(async (username: string) => {
+    setIsUsernameValid(false);
     if (username.length < 3) return;
+    setUsernameValidityLoading(true);
     try {
-      const response = await checkUsername(username);
-      setIsUsernameValid(!response.taken);
+      const response = await usernameValidityCheck(username);
+      console.log('🌼 🔥🔥 PersonalKycForm 🔥🔥 response🌼', response);
+
+      if (response?.statusCode === 200) {
+        if (!response?.data?.available)
+          form.setError('username', {
+            type: 'server',
+            message: 'username is not available',
+          });
+        else if (response?.data?.available) setIsUsernameValid(true);
+      }
+
+      // else setIsUsernameValid(false);
+      // form.setError('username', {
+      //   type: 'server',
+      //   message: response?.errorMessages[0]?.message,
+      // });
     } catch (error) {
-      console.error('Username check failed:', error);
+      console.log('🌼 🔥🔥 PersonalKycForm 🔥🔥 error🌼', error);
+      form.setError('username', {
+        type: 'server',
+        message: 'Failed to check username availability',
+      });
+    } finally {
+      setUsernameValidityLoading(false);
     }
   }, 500);
 
@@ -76,13 +105,17 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
 
   const onSubmit = async (data: TPersonalKyc) => {
     console.log(data);
+    if (usernameValidityLoading) {
+      toast.info('Wait for username availability check to finish');
+      return;
+    }
 
     try {
       const response = await kycPersonalInfo(data);
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
-        manageCurrentStep();
+        loadUserData();
       } else {
         toast.error(response?.error || 'Failed to update personal information');
       }
@@ -119,6 +152,9 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
             <div className="relative">
               <ReInput name="username" placeholder="" />
               {isUsernameValid && (
+                <p className="mb-2 text-sm text-green-500">username is available</p>
+              )}
+              {/*  {isUsernameValid && (
                 <div className="absolute right-3 top-1/2 -translate-y-1/2">
                   <Image
                     src="/assets/auth/onboarding/check 2.svg"
@@ -127,7 +163,7 @@ export default function PersonalKycForm({ manageCurrentStep = () => {} }) {
                     height={20}
                   />
                 </div>
-              )}
+              )} */}
             </div>
           </div>
           <div>
