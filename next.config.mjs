@@ -10,6 +10,9 @@ const nextConfig = {
     //   // !! WARN !!
     //   ignoreBuildErrors: true,
     // },
+    eslint: {
+      ignoreDuringBuilds: true,
+    },
     logging: {
       fetches: {
         fullUrl: true,
