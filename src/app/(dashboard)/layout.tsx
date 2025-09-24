@@ -24,7 +24,7 @@ export default function Layout({ children }: TChildrenProps) {
   useEffect(() => {
     console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
 
-    if (onboardingStatus === false) {
+    if (onboardingStatus === false && user?.role !== 'admin' && user?.role !== 'logistic') {
       router.push('/onboarding');
     }
   }, [onboardingStatus, router]);
