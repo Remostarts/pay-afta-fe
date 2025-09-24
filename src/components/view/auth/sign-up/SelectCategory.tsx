@@ -10,6 +10,7 @@ import { Form } from '@/components/ui/form';
 import { IUserCategory, userCategorySchema } from '@/lib/validations/userAuth.validations';
 import ReRadioGroup from '@/components/re-ui/ReRadio';
 import { ReButton } from '@/components/re-ui/ReButton';
+import Link from 'next/link';
 
 type defaultVal = {
   user: string;
@@ -45,7 +46,9 @@ export default function SelectCategory({ handleCategory }: ICategoryHandler) {
   return (
     <section>
       <div>
-        <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        </Link>
       </div>
       <div>
         <h1 className="mt-5 font-inter text-2xl font-bold">Select your category</h1>

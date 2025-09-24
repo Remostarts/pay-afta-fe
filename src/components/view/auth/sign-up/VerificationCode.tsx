@@ -82,12 +82,14 @@ export default function VerificationCode() {
   return (
     <section>
       <div>
-        <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
+        </Link>
       </div>
       <div className="mt-5">
         <h1 className="font-inter text-2xl font-bold">Verification</h1>
         <p className="font-inter text-sm font-semibold text-gray-600">
-          Enter the 4 digit code sent to +2347011223344.
+          Enter the 4 digit code sent to {email}
         </p>
       </div>
       <div className="mt-10 flex w-full flex-col items-start p-4">

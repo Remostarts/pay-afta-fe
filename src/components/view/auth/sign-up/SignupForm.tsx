@@ -81,7 +81,9 @@ export default function SignupForm() {
   return (
     <section>
       <div>
-        <Image src={Logo} alt="Pay afta" width={176} height={64} />
+        <Link href="/">
+          <Image src={Logo} alt="Pay afta" width={176} height={64} />
+        </Link>
       </div>
       <div>
         <h1 className="mt-3 font-inter text-2xl font-bold">Sign up</h1>

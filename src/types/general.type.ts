@@ -28,6 +28,7 @@ export type TUser = {
   lastName: string;
   email: string;
   phone: string | null;
+  role: 'user' | 'admin' | 'logistic';
   profileImage: string | null;
   coverImage: string | null;
   profile: Profile | null;

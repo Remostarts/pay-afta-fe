@@ -10,4 +10,7 @@ export type TUserDetails = {
     dateOfBirth: string; // ISO date string format
     gender: 'male' | 'female' | string; // extend if needed
   };
+  logistic?: {
+    companyName?: string;
+  };
 };

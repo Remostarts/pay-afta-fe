@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import Delivery from './Delivery';
 import Transaction from './Transaction';
 
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Link from 'next/link';
 import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
 import {
@@ -16,12 +16,18 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { toast } from 'sonner';
+import { useParams } from 'next/navigation';
+import { TUserDetails } from '@/types/admin/user.type';
 
 export function PersonalInformation() {
   const [tabValue, setTabValue] = useState('ProfileInfo');
   const [status, setStatus] = useState<'verified' | 'unverified'>('unverified');
   const [profileImage, setProfileImage] = useState<string>('');
   const fileInputRef = useRef<HTMLInputElement>(null);
+    const { id } = useParams();
+    console.log('🌼 🔥🔥 UserDetails 🔥🔥 userId🌼', id);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [user, setUser] = useState<TUserDetails>({} as TUserDetails);
 
   const availabilityData = [
     { day: 'Sunday', hours: 'No' },
@@ -56,6 +62,72 @@ export function PersonalInformation() {
     }
   };
 
+    const handleLoadUserData = async (userId: string) => {
+      // Optional: Handle filter change
+      setIsLoading(true);
+  
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users/${userId}`, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            // authorization: session?.accessToken as string,
+          },
+          cache: 'no-store',
+        });
+        const data = await response.json();
+  
+        console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 data🌼', data);
+  
+        if (data?.success) {
+          setUser(data?.data);
+        } else {
+          toast.error(data?.errorName || 'Failed to load users');
+        }
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to load users');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+  
+    useEffect(() => {
+      handleLoadUserData(id as string);
+    }, [id]);
+
+    // change logistic verification status
+      const handleLogisticVerification = async (status: boolean) => {
+      console.log('🌼 🔥🔥 handleLogisticVerification 🔥🔥 status🌼', status);
+
+      // Optional: Handle filter change
+      setIsLoading(true);
+  
+      try {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/admin/users/verify/${id}`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            // authorization: session?.accessToken as string,
+          },
+          cache: 'no-store',
+          body: JSON.stringify({ isVerified: status }),
+        });
+        const data = await response.json();
+  
+        console.log('🌼 🔥🔥 handleTransactionFilterChange 🔥🔥 data🌼', data);
+  
+        if (data?.success) {
+          toast.success(`User has been ${status ? 'verified' : 'unverified'}`);
+        } else {
+          toast.error(data?.errorName || 'Failed to update verification status');
+        }
+      } catch (error) {
+        toast.error(error instanceof Error ? error.message : 'Failed to update verification status');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
   return (
     <div className="w-full bg-white min-h-screen rounded-lg">
       {/* Header */}
@@ -67,7 +139,7 @@ export function PersonalInformation() {
         </Link>
         <div>
           <h1 className="text-lg font-semibold text-gray-900">Nipost EMS</h1>
-          <p className="text-sm text-gray-500">Users / US-123456789</p>
+          <p className="text-sm text-gray-500">Users / {id}</p>
         </div>
       </div>
       {/* Navigation Tabs */}
@@ -138,13 +210,13 @@ export function PersonalInformation() {
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent>
-                <DropdownMenuItem onClick={() => handleStatusChange('verified')}>
+                <DropdownMenuItem onClick={() => handleLogisticVerification(true)}>
                   <CheckCircle className="mr-2 h-4 w-4" />
                   Verify
                 </DropdownMenuItem>
-                <DropdownMenuItem onClick={() => handleStatusChange('unverified')}>
+                <DropdownMenuItem onClick={() => handleLogisticVerification(false)}>
                   <span className="mr-2">❌</span>
-                  Unverify
+                  Reject
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
@@ -163,15 +235,15 @@ export function PersonalInformation() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm text-gray-500 mb-1">Business Name:</label>
-                  <p className="text-base text-gray-900 font-medium">Nipost EMS</p>
+                  <p className="text-base text-gray-900 font-medium">{user?.logistic?.companyName || "Not Available"}</p>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-500 mb-1">Phone:</label>
-                  <p className="text-base text-gray-900 font-medium">07012345678</p>
+                  <p className="text-base text-gray-900 font-medium">{user?.phone}</p>
                 </div>
                 <div className="md:col-span-2">
                   <label className="block text-sm text-gray-500 mb-1">Email Address:</label>
-                  <p className="text-base text-gray-900 font-medium">support@nipost.ems</p>
+                  <p className="text-base text-gray-900 font-medium">{user?.email}</p>
                 </div>
               </div>
             </section>
@@ -182,14 +254,15 @@ export function PersonalInformation() {
               <div>
                 <label className="block text-sm text-gray-500 mb-2">City/Regions:</label>
                 <div className="flex flex-wrap gap-2">
-                  {serviceZones.map((zone, index) => (
+                  {/* {serviceZones.map((zone, index) => (
                     <span
                       key={index}
                       className="px-3 py-1 bg-gray-100 text-gray-900 text-sm font-medium rounded-md"
                     >
                       {zone}
                     </span>
-                  ))}
+                  ))} */}
+                  Not Available
                 </div>
               </div>
             </section>
@@ -198,19 +271,20 @@ export function PersonalInformation() {
             <section className=" border-2 border-[#f1f1f1] rounded-lg p-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Availability</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-                {availabilityData.map((item, index) => (
+                {/* {availabilityData.map((item, index) => (
                   <div key={index} className="space-y-1">
                     <label className="block text-sm text-gray-500">{item.day}:</label>
                     <p className="text-base text-gray-900 font-medium">{item.hours}</p>
                   </div>
-                ))}
+                ))} */}
+
               </div>
             </section>
 
             {/* Delivery Preference */}
             <section className=" border-2 border-[#f1f1f1] rounded-lg p-4">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Delivery Preference</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
+              {/* <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                 <div>
                   <label className="block text-sm text-gray-500 mb-1">Pick Up:</label>
                   <p className="text-base text-gray-900 font-medium">Yes</p>
@@ -223,7 +297,8 @@ export function PersonalInformation() {
                   <label className="block text-sm text-gray-500 mb-1">Pay on delivery:</label>
                   <p className="text-base text-gray-900 font-medium">Yes</p>
                 </div>
-              </div>
+              </div> */}
+              Not Available
             </section>
           </div>
         </TabsContent>

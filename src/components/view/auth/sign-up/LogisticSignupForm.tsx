@@ -71,7 +71,23 @@ export default function LogisticSignupForm() {
 
   const onSubmit = async (data: TInitialSignUpForLogistic) => {
     console.log(data);
-    setIsRegistrationCompleted(true);
+    // setIsRegistrationCompleted(true);
+
+    try {
+      setEmail(data.email);
+      const response = await partialSignup(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
+
+      if (response?.success) {
+        router.push('/sign-up/verification');
+      } else {
+        toast.error(response?.error || 'Sign up Failed');
+      }
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Sign up Failed');
+    }
+
+    console.log(data);
   };
 
   return (
@@ -81,7 +97,9 @@ export default function LogisticSignupForm() {
       ) : (
         <section>
           <div>
-            <Image src={Logo} alt="Pay afta" width={176} height={64} />
+            <Link href="/">
+              <Image src={Logo} alt="Pay afta" width={176} height={64} />
+            </Link>
           </div>
           <div>
             <h1 className="mt-3 font-inter text-2xl font-bold">Register as a Logistics Partner</h1>
@@ -112,6 +130,14 @@ export default function LogisticSignupForm() {
                 <div>
                   {/* <ReHeading heading="Phone Number" size="lg" /> */}
                   <RePhoneNumberInput name="phoneNumber" />
+                </div>
+                <div>
+                  <ReHeading heading="Password" size={'base'} />
+                  <RePassInput name="password" />
+                </div>
+                <div>
+                  <ReHeading heading="Confirm Password" size={'base'} />
+                  <RePassInput name="confirmPassword" />
                 </div>
                 <div>
                   <input type="checkbox" name="" onChange={() => setIsChecked(!isChecked)} />
