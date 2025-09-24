@@ -235,7 +235,7 @@ export function PersonalInformation() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <label className="block text-sm text-gray-500 mb-1">Business Name:</label>
-                  <p className="text-base text-gray-900 font-medium">No available</p>
+                  <p className="text-base text-gray-900 font-medium">{user?.logistic?.companyName || "Not Available"}</p>
                 </div>
                 <div>
                   <label className="block text-sm text-gray-500 mb-1">Phone:</label>
