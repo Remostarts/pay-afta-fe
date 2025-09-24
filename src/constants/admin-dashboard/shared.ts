@@ -63,11 +63,18 @@ export const sideNavMenu = [
     alt: 'delivery-date',
   },
   {
-    id: 9,
+    id: 10,
     imgBlack: '/assets/admin-dashboard/dashboard/notificationIcon.svg',
     imgColor: '/assets/admin-dashboard/dashboard/notificationColorIcon.svg',
     name: 'Notification',
     alt: 'notification',
+  },
+  {
+    id: 11,
+    imgBlack: '/assets/admin-dashboard/dashboard/rider-icon.svg',
+    imgColor: '/assets/admin-dashboard/dashboard/riderColorIcon.svg',
+    name: 'Rider',
+    alt: 'rider',
   },
   // {
   //   id: 7,
