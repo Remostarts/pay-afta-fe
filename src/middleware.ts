@@ -4,7 +4,7 @@ import { NextResponse } from 'next/server';
 
 import { userRoles } from './constants/shared';
 
-const { ADMIN, USER } = userRoles;
+const { ADMIN, USER, LOGISTIC } = userRoles;
 console.log(process.env.BACKEND_URL);
 
 const hybridRoutes = [
@@ -20,6 +20,7 @@ const hybridRoutes = [
 const rolesRedirect: Record<string, string> = {
   user: `${process.env.FRONTEND_URL}/dashboard`,
   admin: `${process.env.FRONTEND_URL}/admin-dashboard`,
+  logistic: `${process.env.FRONTEND_URL}/logistic-dashboard`,
 };
 
 export async function middleware(request: NextRequest) {
@@ -56,7 +57,8 @@ export async function middleware(request: NextRequest) {
 
   if (
     (role === ADMIN && pathname.startsWith('/admin-dashboard')) ||
-    (role === USER && pathname.startsWith('/dashboard'))
+    (role === USER && pathname.startsWith('/dashboard')) ||
+    (role === LOGISTIC && pathname.startsWith('/logistic-dashboard'))
   ) {
     return NextResponse.next();
   }
@@ -72,6 +74,6 @@ export const config = {
     '/onboarding',
     '/dashboard/:page*',
     '/admin-dashboard/:page*',
-    // '/logistic-dashboard/:page*',
+    '/logistic-dashboard/:page*',
   ],
 };

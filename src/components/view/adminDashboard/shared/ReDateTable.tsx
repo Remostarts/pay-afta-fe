@@ -267,12 +267,12 @@ export function ReDataTable<TData, TValue>({
   // Standard row with optional click handler
   const renderStandardRow = (row: any, handleRowClick: () => void) => (
     <TableRow
-      key={row.id}
+      key={row?.id}
       className={cn('hover:bg-muted/50', rowClassName, { 'cursor-pointer': !!onRowClick })}
-      data-state={row.getIsSelected() && 'selected'}
+      data-state={row?.getIsSelected() && 'selected'}
       onClick={onRowClick ? handleRowClick : undefined}
     >
-      {row.getVisibleCells().map((cell: any) => (
+      {row?.getVisibleCells().map((cell: any) => (
         <TableCell key={cell.id} className={cn('transition-colors', cellClassName)}>
           {flexRender(cell.column.columnDef.cell, cell.getContext())}
         </TableCell>
@@ -284,12 +284,12 @@ export function ReDataTable<TData, TValue>({
   const renderLinkRow = (row: any, href: string, handleRowClick: () => void) => {
     return (
       <TableRow
-        key={row.id}
+        key={row?.id}
         className={cn('cursor-pointer hover:bg-muted/50', rowClassName)}
-        data-state={row.getIsSelected() && 'selected'}
+        data-state={row?.getIsSelected() && 'selected'}
         onClick={handleRowClick}
       >
-        {row.getVisibleCells().map((cell: any) => (
+        {row?.getVisibleCells().map((cell: any) => (
           <TableCell key={cell.id} className={cn('p-0', cellClassName)}>
             <Link href={href} className="block size-full p-4">
               {flexRender(cell.column.columnDef.cell, cell.getContext())}
@@ -303,7 +303,7 @@ export function ReDataTable<TData, TValue>({
   const renderDialogRow = (row: any, handleRowClick: () => void) => {
     return (
       <DialogTableRow
-        key={row.id}
+        key={row?.id}
         row={row}
         DialogComponent={TransactionModal}
         dialogProps={{
@@ -475,7 +475,7 @@ export function ReDataTable<TData, TValue>({
                 </TableCell>
               </TableRow>
             ) : table?.getRowCount() ? (
-              table.getRowModel().rows.map(renderTableRow)
+              table?.getRowModel().rows?.map(renderTableRow)
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
