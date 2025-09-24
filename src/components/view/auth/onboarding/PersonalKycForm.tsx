@@ -16,12 +16,17 @@ import { Form } from '@/components/ui/form';
 import { personalKycSchema, TPersonalKyc } from '@/lib/validations/onboarding.validation';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { DialogClose } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import { Label } from '@/components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
 import {
   usernameValidityCheck,
   kycPersonalInfo,
 } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
+import { ChevronDownIcon } from 'lucide-react';
 
 type defaultVal = {
   nin: string;
@@ -60,6 +65,9 @@ export default function PersonalKycForm() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [usernameValidityLoading, setUsernameValidityLoading] = useState(false);
   const { loadUserData } = useGeneral();
+
+  const [open, setOpen] = useState(false);
+  const [date, setDate] = useState<Date | undefined>(undefined);
 
   const checkUsernameValidity = debounce(async (username: string) => {
     setIsUsernameValid(false);
@@ -143,8 +151,8 @@ export default function PersonalKycForm() {
               <ReSelect name="gender" placeholder="Select" options={genderOptions} />
             </div>
             <div>
-              <ReHeading heading="Date" size={'base'} />
-              <ReDatePicker name="dateOfBirth" placeholder="Select" />
+              <ReHeading heading="Date of Birth" size={'base'} />
+              <ReInput type="date" name="dateOfBirth" />
             </div>
           </div>
           <div>

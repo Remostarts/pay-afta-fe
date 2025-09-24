@@ -67,7 +67,9 @@ export const SigninForm = () => {
       <div
         className={`${pathname === '/sign-in/admin' && 'mt-10 flex items-center justify-center'}`}
       >
-        <Image src={Logo} alt="Pay afta" width={176} height={64} />
+        <Link href="/">
+          <Image src={Logo} alt="Pay afta" width={176} height={64} />
+        </Link>
       </div>
       <div className="mt-5">
         {pathname === '/sign-in' ? (

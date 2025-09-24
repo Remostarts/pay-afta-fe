@@ -5,6 +5,7 @@ import ReOtp from '@/components/re-ui/ReOtp';
 import { Button } from '@/components/ui/button';
 // import { useOtp } from '@/context/OtpProvider';
 import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
+import Link from 'next/link';
 
 export default function VerifyEmailAddress() {
   const handleVerifyEmail = useSearchParamsHandler();
@@ -33,13 +34,9 @@ export default function VerifyEmailAddress() {
     <div className="flex  flex-col items-center justify-between px-4 py-8 sm:px-6 md:py-10">
       <div className="w-full max-w-md">
         <div className="mb-8 flex justify-center">
-          <Image
-            src="/Logo.svg"
-            alt="Pocket Lawyers"
-            width={150}
-            height={40}
-            className="h-10 w-auto"
-          />
+          <Link href="/">
+            <Image src="/Logo.svg" alt="PayAfta" width={150} height={40} className="h-10 w-auto" />
+          </Link>
         </div>
 
         <h1 className="mb-2 text-center text-2xl font-bold">Forgot Password</h1>

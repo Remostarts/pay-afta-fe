@@ -11,7 +11,9 @@ export default function BackToLogin() {
   return (
     <section className=" container mx-auto">
       <div className="mb-10">
-        <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        </Link>
       </div>
       <div className="mb-4 flex items-center justify-center">
         <Image

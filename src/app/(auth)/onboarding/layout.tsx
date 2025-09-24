@@ -1,6 +1,7 @@
 import Image from 'next/image';
 
 import { TChildrenProps } from '@/types';
+import Link from 'next/link';
 
 export const metadata = {
   title: 'Onboarding',
@@ -11,7 +12,9 @@ export default function OnboardingLayout({ children }: TChildrenProps) {
     <div className="min-h-screen w-full items-center bg-[#F9F9F9]">
       {/* Logo section */}
       <div className="flex items-center justify-center p-6">
-        <Image src="/Logo.svg" alt="pay-afta-logo" width={110} height={40} priority />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="pay-afta-logo" width={110} height={40} priority />
+        </Link>
       </div>
 
       {/* Main content */}

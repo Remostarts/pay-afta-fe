@@ -12,13 +12,13 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { useGeneral } from '@/context/generalProvider';
-import { sideNavMenu } from '@/constants/logistic-dashboard/shared';
+import { sideNavMenu } from '@/constants/rider-dashboard/shared';
 
 interface SidebarProps {
   onClose?: () => void;
 }
 
-export default function LogisticSidebar({ onClose }: SidebarProps) {
+export default function RiderSidebar({ onClose }: SidebarProps) {
   const pathName = usePathname();
   const currPage = pathName?.split('/')[2];
   const { user } = useGeneral();
@@ -54,7 +54,7 @@ export default function LogisticSidebar({ onClose }: SidebarProps) {
           {sideNavMenu.map((nav) => (
             <li className="my-4" key={nav.id}>
               <Link
-                href={`/logistic-dashboard/${nav.alt}`}
+                href={`/rider-dashboard/${nav.alt}`}
                 className={`flex items-center gap-4 rounded-r-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
                   nav.alt === currPage &&
                   'border-l-4 border-l-[#1F7EAD] bg-[#E9F5FB] text-[#1F7EAD]'
@@ -89,7 +89,7 @@ export default function LogisticSidebar({ onClose }: SidebarProps) {
             <span className="font-inter font-medium tracking-wider">
               {user?.firstName} {user?.lastName}
             </span>
-            <Link href="/admin-dashboard/setting">
+            <Link href="/rider-dashboard/setting">
               <Image
                 src="/assets/admin-dashboard/dashboard/setting-icon.svg"
                 alt="setting icon"

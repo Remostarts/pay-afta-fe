@@ -11,6 +11,8 @@ import AdminSidebar from '@/components/view/adminDashboard/Dashboard/SideNav';
 import AdminProfileHeader from '@/components/view/adminDashboard/shared/AdminProfileHeader';
 import LogisticSidebar from '@/components/view/logisticDashboard/Dashboard/SideNav';
 import LogisticProfileHeader from '@/components/view/logisticDashboard/shared/LogisticProfileHeader';
+import RiderSidebar from '@/components/view/riderDashboard/Dashboard/SideNav';
+import RiderProfileHeader from '@/components/view/riderDashboard/shared/RiderProfileHeader';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -33,6 +35,7 @@ export default function Layout({ children }: TChildrenProps) {
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');
   const isDashboard = pathName.startsWith('/dashboard');
   const isLogisticDashboard = pathName.startsWith('/logistic-dashboard');
+  const isRiderDashboard = pathName.startsWith('/rider-dashboard');
 
   return (
     <div className="flex h-screen flex-col overflow-hidden">
@@ -57,6 +60,7 @@ export default function Layout({ children }: TChildrenProps) {
           {isAdminDashboard && <AdminSidebar onClose={() => setIsSidebarOpen(false)} />}
           {isDashboard && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
           {isLogisticDashboard && <LogisticSidebar onClose={() => setIsSidebarOpen(false)} />}
+          {isRiderDashboard && <RiderSidebar onClose={() => setIsSidebarOpen(false)} />}
         </div>
 
         <main className="flex flex-1 flex-col bg-gray-50 overflow-hidden">
@@ -64,6 +68,7 @@ export default function Layout({ children }: TChildrenProps) {
             {isDashboard && <ProfileHeader />}
             {isAdminDashboard && <AdminProfileHeader />}
             {isLogisticDashboard && <LogisticProfileHeader />}
+            {isRiderDashboard && <RiderProfileHeader />}
           </div>
           <div className="flex-1 overflow-y-auto scroll-smooth p-4">{children}</div>
         </main>

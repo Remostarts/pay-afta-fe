@@ -97,7 +97,9 @@ export default function LogisticSignupForm() {
       ) : (
         <section>
           <div>
-            <Image src={Logo} alt="Pay afta" width={176} height={64} />
+            <Link href="/">
+              <Image src={Logo} alt="Pay afta" width={176} height={64} />
+            </Link>
           </div>
           <div>
             <h1 className="mt-3 font-inter text-2xl font-bold">Register as a Logistics Partner</h1>

@@ -1,20 +1,12 @@
 'use client';
 
 import * as React from 'react';
-import { format } from 'date-fns';
+import { format, addDays } from 'date-fns';
 import { DateRange } from 'react-day-picker';
-import { ChevronDown, ChevronLeft, ChevronRight } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 
 interface DatePickerWithRangeProps extends React.HTMLAttributes<HTMLDivElement> {
   onApply?: (range: DateRange | undefined) => void;
@@ -53,24 +45,6 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
     setCurrentMonth(nextMonth);
   };
 
-  const months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December',
-  ];
-
-  const currentYear = new Date().getFullYear();
-  const years = Array.from({ length: 10 }, (_, i) => currentYear - 5 + i);
-
   const renderDateRangeText = () => {
     if (!date?.from) return '';
 
@@ -90,55 +64,11 @@ export function DatePickerWithRange({ className, onApply, onCancel }: DatePicker
 
   const renderHeader = () => {
     return (
-      <div className="flex items-center justify-between bg-white pb-2">
+      <div className="flex items-center justify-between bg-white pb-2 ">
         <button onClick={goToPreviousMonth} className="p-1">
           <ChevronLeft className="size-5" />
         </button>
-        <div className="flex items-center gap-2">
-          <Select
-            value={String(currentMonth.getMonth())}
-            onValueChange={(value) => {
-              const newDate = new Date(currentMonth);
-              newDate.setMonth(parseInt(value));
-              setCurrentMonth(newDate);
-            }}
-          >
-            <SelectTrigger className="w-[130px]">
-              <SelectValue>{months[currentMonth.getMonth()]}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {months.map((month, index) => (
-                  <SelectItem key={month} value={String(index)}>
-                    {month}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-
-          <Select
-            value={String(currentMonth.getFullYear())}
-            onValueChange={(value) => {
-              const newDate = new Date(currentMonth);
-              newDate.setFullYear(parseInt(value));
-              setCurrentMonth(newDate);
-            }}
-          >
-            <SelectTrigger className="w-[90px]">
-              <SelectValue>{currentMonth.getFullYear()}</SelectValue>
-            </SelectTrigger>
-            <SelectContent>
-              <SelectGroup>
-                {years.map((year) => (
-                  <SelectItem key={year} value={String(year)}>
-                    {year}
-                  </SelectItem>
-                ))}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        <div className="font-medium">{format(currentMonth, 'MMMM yyyy')}</div>
         <button onClick={goToNextMonth} className="p-1">
           <ChevronRight className="size-5" />
         </button>
