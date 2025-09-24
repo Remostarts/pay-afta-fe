@@ -82,7 +82,9 @@ export default function VerificationCode() {
   return (
     <section>
       <div>
-        <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
+        </Link>
       </div>
       <div className="mt-5">
         <h1 className="font-inter text-2xl font-bold">Verification</h1>

@@ -23,7 +23,9 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
     <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
       <div className="flex items-center justify-between border-b p-3 md:p-6 lg:hidden">
         <div>
-          <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
+          <Link href="/">
+            <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
+          </Link>
         </div>
         <button
           onClick={onClose}
@@ -35,7 +37,9 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
       </div>
 
       <div className="mx-auto hidden lg:block">
-        <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
+        </Link>
       </div>
       <nav className="mx-auto flex overflow-y-auto p-4">
         <ul>

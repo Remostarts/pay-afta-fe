@@ -6,6 +6,7 @@ import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { toast } from '@/components/ui/use-toast';
+import Link from 'next/link';
 // import { useOtp } from '@/context/OtpProvider';
 // import { useSearchParamsHandler } from '@/hooks/useSearchParamsHandler';
 // import { sendForgetPasswordOtp } from '@/lib/actions/auth/signup.actions';
@@ -47,7 +48,9 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
   return (
     <section>
       <div className="mb-10 flex items-center justify-center">
-        <Image src="/Logo.svg" alt="logo" width={175.96} height={36} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="logo" width={175.96} height={36} />
+        </Link>
       </div>
       <div className="mb-6">
         <h2 className="mb-1 text-center font-spaceGrotesk text-2xl font-bold lg:text-3xl">

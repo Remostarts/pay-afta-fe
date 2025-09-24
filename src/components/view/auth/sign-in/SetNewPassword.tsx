@@ -12,6 +12,7 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import { Form } from '@/components/ui/form';
 import { resetPassword } from '@/lib/actions/auth/signup.actions';
 import { TResetPassword, resetPasswordSchema } from '@/lib/validations/userAuth.validations';
+import Link from 'next/link';
 
 const defaultValues = {
   newPassword: '',
@@ -63,7 +64,9 @@ export default function SetNewPassword() {
   return (
     <section className=" container mx-auto">
       <div>
-        <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        <Link href="/">
+          <Image src="/Logo.svg" alt="Pay afta" width={176} height={64} />
+        </Link>
       </div>
       <div className="mt-5">
         <h1 className="font-inter text-2xl font-semibold md:text-4xl">Create Password</h1>
