@@ -42,23 +42,37 @@ export default function ChatList() {
   const [isLoading, setIsLoading] = useState(true);
   const { socket } = useSocket();
 
+  // Debug logs
+  console.log('Chats data:', chats);
+  console.log('Chats length:', chats?.length);
+  console.log('Is loading:', isLoading);
+
   useEffect(() => {
     // Set loading to false once chats are loaded
-    if (chats && chats.length >= 0) {
+    // Fixed condition: should check if chats exists and is an array
+    if (chats && Array.isArray(chats)) {
       setIsLoading(false);
     }
   }, [chats]);
 
-  const filteredChats = chats?.filter((chat) =>
-    chat?.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Add safety check for chats array
+  const filteredChats =
+    chats?.filter((chat) => chat?.name?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
 
   const handleBack = () => {
     router.push(`/${pathName}/chats`);
   };
 
+  // Debug filtered chats
+  console.log('Filtered chats:', filteredChats);
+
   return (
-    <div className={cn('border-r w-full lg:w-80', currentChatId ? 'hidden lg:block' : 'block')}>
+    <div
+      className={cn(
+        'border-r w-full bg-white lg:w-80',
+        currentChatId ? 'hidden lg:block' : 'block'
+      )}
+    >
       <div className="border-b p-4">
         <div className="mb-4 flex items-center gap-2">
           {currentChatId && (
@@ -94,49 +108,53 @@ export default function ChatList() {
 
       {isLoading ? (
         <ChatListSkeleton />
-      ) : chats?.length === 0 || filteredChats?.length === 0 ? (
-        <div className=" flex size-full flex-col items-center justify-center gap-2">
+      ) : !chats || chats.length === 0 || filteredChats.length === 0 ? (
+        <div className="flex size-full flex-col items-center justify-center gap-2">
           <Image
-            src="/assets/dashboard/business-dashboard/chats/empty-chat.svg"
+            src="/assets/dashboard/Chats/empty-chat.svg"
             alt="empty-chat"
             width={139}
             height={108.14}
             loading="lazy"
           />
-          <p className="text-gray-300">No chat Found</p>
+          <p className="text-gray-300">
+            {!chats || chats.length === 0 ? 'No chats available' : 'No matching chats found'}
+          </p>
         </div>
       ) : (
         <ScrollArea className="h-[calc(100vh-300px)] overflow-hidden">
-          {filteredChats?.map((chat) => (
+          {filteredChats.map((chat) => (
             <div
               key={chat.id}
               role="button"
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && router.push(`/${pathName}/chats/${chat.id}`)}
               className={cn(
-                'hover:bg-muted/50 cursor-pointer p-4',
-                currentChatId === chat.id && 'bg-primary-100'
+                'hover:bg-muted/50 cursor-pointer border-b p-4',
+                currentChatId === chat?.id && 'bg-[#F2F2F2]'
               )}
               onClick={() => router.push(`/${pathName}/chats/${chat.id}`)}
             >
               <div className="mb-1 flex items-center justify-between">
-                <h3 className="font-medium">{chat.name}</h3>
+                <h3 className="font-medium">{chat?.name || chat?.title}</h3>
                 <Badge
                   variant={chat.status === 'completed' ? 'secondary' : 'default'}
                   className={cn(
                     'rounded-md',
-                    chat.status === 'completed'
-                      ? 'bg-[#EAF8FA] text-[#218698]'
-                      : 'bg-[#FCEEF6] text-[#E455A2]'
+                    chat?.status === 'completed'
+                      ? 'bg-[#D1FADF] text-[#12BA4A]'
+                      : chat?.status === 'active'
+                        ? 'bg-[#E9F5FB] text-[#1F7EAD]'
+                        : 'bg-[#FCEEF6] text-[#E455A2]'
                   )}
                 >
-                  {/* {chat?.status.charAt(0).toUpperCase() + chat?.status.slice(1)} */}
+                  {chat?.status}
                 </Badge>
               </div>
               <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <span>{chat.participants?.find((p) => p.id !== session?.id)?.fullName}</span>
+                <span>{chat?.user}</span>
                 {socket?.connected &&
-                onlineUsers[
+                onlineUsers?.[
                   chat.participants?.find((p) => p.id !== session?.id)?.email as string
                 ] ? (
                   <div className="size-[0.4rem] rounded-full bg-green-400" />

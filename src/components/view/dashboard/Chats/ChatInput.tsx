@@ -110,7 +110,7 @@ export function ChatInput({
       <div className="flex items-center justify-between">
         <Button
           size="icon"
-          className="size-10 rounded-full text-white"
+          className="size-10 rounded-full text-white bg-[#03045B]"
           onClick={onSendMessage}
           disabled={!inputMessage.trim() || isUploading || isRecording}
         >
@@ -118,7 +118,7 @@ export function ChatInput({
         </Button>
       </div>
 
-      <Button
+      {/* <Button
         className={cn(
           'rounded-xl hover:bg-primary-100',
           isRecording && 'bg-red-500 hover:bg-red-600 text-white'
@@ -128,7 +128,7 @@ export function ChatInput({
         disabled={isUploading}
       >
         <Mic className={cn('size-5', isRecording ? 'text-white' : 'text-black')} />
-      </Button>
+      </Button> */}
     </div>
   );
 }

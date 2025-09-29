@@ -1,6 +1,8 @@
-import { Bell, Search, Settings } from 'lucide-react';
+import { Bell, BellDot, Search, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, usePathname } from 'next/navigation';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import NotificationsPanel from './Notification';
 
 export default function LogisticProfileHeader() {
   const pathName = usePathname();
@@ -32,6 +34,21 @@ export default function LogisticProfileHeader() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <div className="relative inline-block cursor-pointer">
+            <Popover>
+              <PopoverTrigger asChild>
+                <BellDot
+                  className="size-6  text-gray-600 transition-colors hover:text-gray-800"
+                  aria-label="Notifications"
+                />
+              </PopoverTrigger>
+              <PopoverContent className="w-80 bg-white">
+                <div className="grid gap-4">
+                  <NotificationsPanel />
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
           <div className="relative inline-block cursor-pointer">
             <Search />
           </div>
