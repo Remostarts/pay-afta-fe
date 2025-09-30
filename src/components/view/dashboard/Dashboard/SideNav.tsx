@@ -23,6 +23,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
   const pathName = usePathname();
   const currPage = pathName?.split('/')[2];
   const { user } = useGeneral();
+  const rootPathName = '/dashboard';
+  console.log(rootPathName);
 
   const handleLogout = () => {
     signOut();
@@ -97,7 +99,8 @@ export default function Sidebar({ onClose }: SidebarProps) {
                     href={`/dashboard/${nav.alt}`}
                     className={`flex items-center gap-4 rounded-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] md:p-4 ${
                       nav.alt === currPage && 'bg-[#E9F5FB] text-[#1F7EAD]'
-                    }`}
+                    } ${nav.root === '/dashboard' && 'bg-[#E9F5FB] text-[#1F7EAD]'}
+                    `}
                     onClick={() => {
                       if (onClose && window.innerWidth < 1024) {
                         onClose();

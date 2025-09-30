@@ -13,6 +13,7 @@ import LogisticSidebar from '@/components/view/logisticDashboard/Dashboard/SideN
 import LogisticProfileHeader from '@/components/view/logisticDashboard/shared/LogisticProfileHeader';
 import RiderSidebar from '@/components/view/riderDashboard/Dashboard/SideNav';
 import RiderProfileHeader from '@/components/view/riderDashboard/shared/RiderProfileHeader';
+import { MessageNotificationManager } from '@/components/view/dashboard/shared/message-notification-manager';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -71,6 +72,7 @@ export default function Layout({ children }: TChildrenProps) {
             {isRiderDashboard && <RiderProfileHeader />}
           </div>
           <div className="flex-1 overflow-y-auto scroll-smooth p-4">{children}</div>
+          <MessageNotificationManager />
         </main>
       </div>
     </div>

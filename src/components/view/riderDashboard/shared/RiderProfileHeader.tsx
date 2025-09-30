@@ -1,6 +1,8 @@
-import { Bell, Search, Settings } from 'lucide-react';
+import { Bell, BellDot, Search, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, usePathname } from 'next/navigation';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import Notifications from '../../dashboard/shared/Notifications';
 
 export default function RiderProfileHeader() {
   const pathName = usePathname();
@@ -22,6 +24,10 @@ export default function RiderProfileHeader() {
     dashboardName = 'Setting';
   }
 
+  const handleNotificationBtn = () => {
+    console.log('Notification button clicked at lawyer dashboard');
+  };
+
   return (
     <section>
       <div className="flex items-center justify-between rounded-lg border-slate-300 bg-white p-4">
@@ -32,6 +38,11 @@ export default function RiderProfileHeader() {
         </div>
 
         <div className="flex items-center space-x-4">
+          <div className="relative inline-block cursor-pointer">
+            <button>
+              <Notifications handleNotificationBtn={handleNotificationBtn} />
+            </button>
+          </div>
           <div className="relative inline-block cursor-pointer">
             <Search />
           </div>
