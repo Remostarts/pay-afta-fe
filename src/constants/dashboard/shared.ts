@@ -5,6 +5,7 @@ export const sideNavMenu = [
     imgColor: '/assets/dashboard/Dashboard/dashboardColorIcon.svg',
     name: 'Dashboard',
     alt: '/',
+    root: 'dashboard'
   },
   {
     id: 2,

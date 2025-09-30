@@ -2,7 +2,7 @@ import { Bell, BellDot, Search, Settings } from 'lucide-react';
 import Image from 'next/image';
 import { useParams, usePathname } from 'next/navigation';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import NotificationsPanel from './Notification';
+import Notifications from '../../dashboard/shared/Notifications';
 
 export default function AdminProfileHeader() {
   const pathName = usePathname();
@@ -24,6 +24,10 @@ export default function AdminProfileHeader() {
     dashboardName = 'Setting';
   }
 
+  const handleNotificationBtn = () => {
+    console.log('Notification button clicked at lawyer dashboard');
+  };
+
   return (
     <section>
       <div className="flex items-center justify-between rounded-lg border-slate-300 bg-white p-4">
@@ -38,19 +42,9 @@ export default function AdminProfileHeader() {
             <Search />
           </div>
           <div className="relative inline-block cursor-pointer">
-            <Popover>
-              <PopoverTrigger asChild>
-                <BellDot
-                  className="size-6  text-gray-600 transition-colors hover:text-gray-800"
-                  aria-label="Notifications"
-                />
-              </PopoverTrigger>
-              <PopoverContent className="w-80 bg-white">
-                <div className="grid gap-4">
-                  <NotificationsPanel />
-                </div>
-              </PopoverContent>
-            </Popover>
+            <button>
+              <Notifications handleNotificationBtn={handleNotificationBtn} />
+            </button>
           </div>
           <Image
             src="/assets/admin-dashboard/users/prof-avatar.svg"

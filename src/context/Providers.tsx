@@ -13,6 +13,8 @@ import { SocketProvider } from './socketProvider';
 
 import { Toaster } from '@/components/ui/toaster';
 import { store } from '@/redux/store';
+import { MessageNotificationProvider } from './MessageNotificationProvider';
+import { DialogProvider } from '@/components/view/dashboard/shared/Dialog';
 
 const Providers = ({ children, session }: { children: ReactNode; session: any }) => {
   const methods = useForm();
@@ -25,17 +27,21 @@ const Providers = ({ children, session }: { children: ReactNode; session: any })
             <ChatListProvider session={session}>
               <ChatProvider>
                 <FormProvider {...methods}>
-                  <OtpProvider>
-                    <NextThemesProvider
-                      attribute="class"
-                      forcedTheme="light"
-                      defaultTheme="light"
-                      disableTransitionOnChange
-                    >
-                      {children}
-                      <Toaster />
-                    </NextThemesProvider>
-                  </OtpProvider>
+                  <DialogProvider>
+                    <OtpProvider>
+                      <MessageNotificationProvider>
+                        <NextThemesProvider
+                          attribute="class"
+                          forcedTheme="light"
+                          defaultTheme="light"
+                          disableTransitionOnChange
+                        >
+                          {children}
+                          <Toaster />
+                        </NextThemesProvider>
+                      </MessageNotificationProvider>
+                    </OtpProvider>
+                  </DialogProvider>
                 </FormProvider>
               </ChatProvider>
             </ChatListProvider>
