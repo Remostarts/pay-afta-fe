@@ -36,8 +36,8 @@ export default function NotificationList({ notifications, onView }: Notification
         return 'bg-green-500';
       case NotificationType.milestone:
         return 'bg-blue-500';
-      case NotificationType.invoiceRejected:
-        return 'bg-red-500';
+      // case NotificationType.invoiceRejected:
+      //   return 'bg-red-500';
       default:
         return 'bg-primary-500';
     }
