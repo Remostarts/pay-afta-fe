@@ -5,9 +5,9 @@ export enum NotificationType {
   system = 'system',
   alert = 'alert',
   payment = 'payment',
-  invoice = 'invoice',
+  // invoice = 'invoice',
   admin = 'admin',
-  invoiceRejected = 'invoiceRejected',
+  // invoiceRejected = 'invoiceRejected',
   milestone = 'milestone',
   withdrawalSuccess = 'withdrawalSuccess',
 }

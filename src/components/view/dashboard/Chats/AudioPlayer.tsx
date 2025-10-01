@@ -90,7 +90,7 @@ export function AudioPlayer({ audioUrl, isPlaying, onPlayPause, className }: Aud
       <Button
         size="icon"
         variant="ghost"
-        className="size-8 rounded-full bg-[#F8F8F8] text-white hover:bg-[#F8F8F8]"
+        className="size-8 rounded-full bg-orange-500 text-white hover:bg-orange-600"
         onClick={onPlayPause}
         disabled={isLoading || hasError}
       >

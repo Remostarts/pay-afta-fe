@@ -2,18 +2,13 @@
 
 import React from 'react';
 
-// eslint-disable-next-line import/order
-import { AudioPlayer } from './AudioPlayer';
-
-// import { InvoiceMessage } from './Invoice/InvoiceMessage';
-
-import { MessageStatus } from './MessageStatus';
+// import { AudioPlayer } from './audio-player';
 
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import { Message } from '@/types/chat.type';
-// import { MessageStatus } from '@/components/view/dashboard/business-dashboard/chats/MessageStatus';
-// import { FileMessage } from '@/components/view/dashboard/business-dashboard/chats/FileMessage';
 import { cn } from '@/lib/utils';
+import { FileMessage } from './FileMessage';
+import { MessageStatus } from './MessageStatus';
 
 interface MessageListProps {
   messages: Message[];
@@ -68,9 +63,8 @@ export function MessageList({
           <Avatar className="size-8 shrink-0">
             <AvatarImage
               src={
-                message.senderId === session?.id
-                  ? '/assets/dashboard/Dashboard/profile-img.png'
-                  : '/assets/admin-dashboard/dashboard/user-profile.png'
+                // message?.sender?.profileImage ||
+                '/assets/dashboard/business-dashboard/dashboard/prof-avatar.svg'
               }
               alt={message.senderId === session?.id ? 'receiver' : 'sender'}
             />
@@ -81,13 +75,17 @@ export function MessageList({
               'items-start': message.senderId !== session?.id,
             })}
           >
-            {/* {(message.type === 'pdf' || message.type === 'image' || message.type === 'video') && (
+            {(message.type === 'pdf' ||
+              message.type === 'image' ||
+              message.type === 'video' ||
+              message.file?.type === 'docx' ||
+              message.file?.name?.toLowerCase().endsWith('.docx')) && (
               <div className="max-w-full overflow-x-hidden">
                 <FileMessage message={message} isLoading={message === uploadingMessage} />
               </div>
-            )} */}
+            )}
 
-            {message?.file?.type === 'audio' && message?.file?.url && (
+            {/* {message?.file?.type === 'audio' && message?.file?.url && (
               <div className="w-full max-w-sm">
                 <AudioPlayer
                   audioUrl={message?.file?.url}
@@ -95,7 +93,7 @@ export function MessageList({
                   onPlayPause={() => onAudioPlayPause(message.id)}
                 />
               </div>
-            )}
+            )} */}
 
             {message.type === 'text' && (
               <div
@@ -111,12 +109,13 @@ export function MessageList({
               </div>
             )}
 
-            {message.type === 'invoice' && (
-              // <InvoiceMessage status={message.status} id={message.invoice?.id as string} />
-              <p>Invoice message</p>
-            )}
-
-            {/* {true && <InvoiceMessage status={message.status} id={message.invoice?.id as string} />} */}
+            {/* {message.type === 'invoice' && (
+              <InvoiceMessage
+                status={message.status}
+                id={message.invoice?.id as string}
+                invoiceStatus={message.invoice?.status ?? 'pending'}
+              />
+            )} */}
 
             <div className="mt-2 flex max-w-full items-center gap-2 overflow-x-hidden text-sm text-gray-500">
               <span className="truncate">
