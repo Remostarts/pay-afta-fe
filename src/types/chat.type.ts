@@ -21,18 +21,18 @@ type User = {
   fullName: string;
 };
 
-export type Invoice = {
-  id: string;
-  amount: number;
-  numOfInstallment: number;
-  numOfInstallmentPaid: number;
-  createdAt: string; // ISO date string
-  updatedAt: string; // ISO date string
-  lawyer: User;
-  client: User;
-  installments: Installment[];
-  status: 'paid' | 'pending' | 'unpaid'; // Enum for status
-};
+// export type Invoice = {
+//   id: string;
+//   amount: number;
+//   numOfInstallment: number;
+//   numOfInstallmentPaid: number;
+//   createdAt: string; // ISO date string
+//   updatedAt: string; // ISO date string
+//   lawyer: User;
+//   client: User;
+//   installments: Installment[];
+//   status: 'paid' | 'pending' | 'unpaid'; // Enum for status
+// };
 
 export interface Message {
   id: string;
@@ -46,13 +46,13 @@ export interface Message {
   duration?: string;
   status: MessageStatusType;
   file?: File; // Adjust if other types exist
-  invoice?: Invoice;
+  // invoice?: Invoice;
   createdAt?: string; // ISO Date String
   senderId: string;
   chatId?: string;
   read?: string;
-  time: string;
-  sender: 'user' | 'receiver';
+  time?: string;
+  sender?: 'user' | 'receiver';
 }
 
 type Lawyer = {
