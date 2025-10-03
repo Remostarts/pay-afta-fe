@@ -14,10 +14,10 @@ interface UploadProgressProps {
 
 export function UploadProgress({ fileName, progress, onCancel }: UploadProgressProps) {
   return (
-    <div className="bg-background border-t p-4">
+    <div className="border-t bg-background p-4">
       <div className="mb-2 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <FileText className="text-muted-foreground size-4" />
+          <FileText className="size-4 text-muted-foreground" />
           <span className="text-sm">{fileName}</span>
         </div>
         <Button variant="ghost" size="sm" className="size-6 p-0" onClick={onCancel}>

@@ -22,19 +22,75 @@ interface ChatListContextType {
 
 const ChatListContext = createContext<ChatListContextType | undefined>(undefined);
 
+// const initialChats = [
+//   { id: '1', title: 'Company Registration', status: 'completed', user: 'Anthony V', online: true },
+//   { id: '2', title: 'Trade Mark Registration', status: 'active', user: 'Anthony V', online: false },
+//   { id: '3', title: 'Founders Agreement', status: 'completed', user: 'Anthony V', online: false },
+//   { id: '4', title: 'Employment Agreement', status: 'active', user: 'Anthony V', online: true },
+//   {
+//     id: '5',
+//     title: 'Non-Disclosure Agreement',
+//     status: 'completed',
+//     user: 'Anthony V',
+//     online: false,
+//   },
+// ] as const;
+
 const initialChats = [
-  { id: '1', title: 'Company Registration', status: 'completed', user: 'Anthony V', online: true },
-  { id: '2', title: 'Trade Mark Registration', status: 'active', user: 'Anthony V', online: false },
-  { id: '3', title: 'Founders Agreement', status: 'completed', user: 'Anthony V', online: false },
-  { id: '4', title: 'Employment Agreement', status: 'active', user: 'Anthony V', online: true },
   {
-    id: '5',
-    title: 'Non-Disclosure Agreement',
+    id: '1',
+    name: 'Company Registration', // Add name (used in rendering)
+    title: 'Company Registration', // Keep title if needed elsewhere
+    status: 'completed',
+    user: 'Anthony V',
+    online: true,
+    participants: [
+      // Add dummy participants to avoid errors
+      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
+      { id: 'receiver1', email: 'receiver@example.com', fullName: 'Receiver' },
+    ],
+    messages: [], // Add empty messages (or populate with dummies below)
+  },
+  {
+    id: '2',
+    name: 'Trade Mark Registration',
+    title: 'Trade Mark Registration',
+    status: 'active',
+    user: 'Anthony V',
+    online: false,
+    participants: [
+      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
+      { id: 'receiver2', email: 'receiver@example.com', fullName: 'Receiver' },
+    ],
+    messages: [],
+  },
+  {
+    id: '3',
+    name: 'Founders Agreement',
+    title: 'Founders Agreement',
     status: 'completed',
     user: 'Anthony V',
     online: false,
+    participants: [
+      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
+      { id: 'receiver3', email: 'receiver@example.com', fullName: 'Receiver' },
+    ],
+    messages: [],
   },
-] as const;
+  {
+    id: '4',
+    name: 'Employment Agreement',
+    title: 'Employment Agreement',
+    status: 'active',
+    user: 'Anthony V',
+    online: true,
+    participants: [
+      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
+      { id: 'receiver4', email: 'receiver@example.com', fullName: 'Receiver' },
+    ],
+    messages: [],
+  },
+];
 
 export function ChatListProvider({ children, session }: { children: ReactNode; session: any }) {
   console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 session🌼', session);
@@ -49,6 +105,8 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
     }
     return initialChats;
   });
+
+  console.log(chats);
 
   useEffect(() => {
     localStorage.setItem('chats', JSON.stringify(chats));
@@ -131,7 +189,7 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
 export function useChats() {
   const context = useContext(ChatListContext);
   if (context === undefined) {
-    throw new Error('useChats must be used within a ChatProvider');
+    throw new Error('useChats must be used within a ChatListProvider');
   }
   return context;
 }

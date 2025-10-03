@@ -21,7 +21,7 @@ export function LoadingMessage({ type }: LoadingMessageProps) {
       >
         <div className="absolute inset-0 animate-pulse bg-white/30 backdrop-blur-sm" />
         <div className="absolute inset-0 flex items-center justify-center">
-          <Loader2 className="text-primary size-8 animate-spin" />
+          <Loader2 className="size-8 animate-spin text-primary" />
         </div>
         <div className="absolute bottom-2 left-2 text-sm text-gray-600">Uploading...</div>
       </div>
