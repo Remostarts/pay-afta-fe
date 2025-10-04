@@ -32,11 +32,11 @@ export function MessageNotificationProvider({ children }: { children: React.Reac
       console.log('🌼 🔥🔥 MessageNotificationProvider 🔥🔥 notification🌼', notification);
 
       const newNotification: MessageNotification = {
-        ...notification,
-        id: Date.now().toString(),
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        isRead: false,
+        ...notification as MessageNotification,
+        // id: Date.now().toString(),
+        // createdAt: new Date(),
+        // updatedAt: new Date(),
+        // isRead: false,
       };
       setNotifications((prevNotification) => [...prevNotification, newNotification]);
     },
