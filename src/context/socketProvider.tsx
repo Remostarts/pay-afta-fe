@@ -1,77 +1,64 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 'use client';
-import { createContext, ReactNode, useContext, useEffect, useState } from 'react';
+import { toast } from '@/components/ui/use-toast';
+import React, { createContext, ReactNode, useContext, useEffect, useRef, useState } from 'react';
 import { io, Socket } from 'socket.io-client';
 
-import { toast } from '@/components/ui/use-toast';
-
-// Define the context type
 interface SocketContextType {
   socket: Socket | null;
 }
 
-// Create the Socket Context
 const SocketContext = createContext<SocketContextType | undefined>(undefined);
 
-// Provider Component
 export function SocketProvider({ children, session }: { children: ReactNode; session: any }) {
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const socketRef = useRef<Socket | null>(null);
+  const [socketReady, setSocketReady] = useState(false);
 
   useEffect(() => {
-    // Initialize the socket connection
-    const socketClient = io(`${process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL}`); // Replace with your backend URL
-    setSocket(socketClient); // Update state with the initialized socket
+    if (!session?.user?.email) return;
 
-    console.log('Socket connected:', socketClient);
+    const socketClient = io(`${process.env.NEXT_PUBLIC_SOCKET_BACKEND_URL}`);
 
-    // Event listener for successful connection
+    socketRef.current = socketClient;
+
     socketClient.on('connect', () => {
-      console.log('Socket connected:', socketClient.id); // Log socket ID when connected
-      toast({
+      console.log('✅ Socket connected:', socketClient.id);
+      socketClient.emit('connect_user', session.user.email);
+      setSocketReady(true); // Notify consumers the socket is ready
+       toast({
         title: 'Connection Status',
         description: 'You are online',
         variant: 'success',
       });
     });
 
-    // Event listener for connection errors
     socketClient.on('connect_error', (err) => {
-      console.error('socket connection error:', err); // Log error if connection fails
+      console.error('❌ Socket connect error:', err);
     });
 
-    // Event listener for connection timeout
-    socketClient.on('connect_timeout', (timeout) => {
-      console.error('socket connection timeout:', timeout); // Log timeout error
-    });
-
-    // Event listener for disconnection
     socketClient.on('disconnect', (reason) => {
-      console.log('Socket disconnected, reason:', reason); // Log disconnect reason
-      toast({
-        title: 'Connection Status',
-        description: 'Connection lost',
-        variant: 'destructive',
-      });
+      console.log('⚠️ Socket disconnected:', reason);
     });
 
-    socketClient.emit('connect_user', session?.user?.email);
-
-    // Cleanup on component unmount
     return () => {
       socketClient.disconnect();
-      console.log('Socket disconnected');
+      socketRef.current = null;
+      setSocketReady(false);
+      console.log('🔌 Socket cleaned up on unmount or email change');
       toast({
         title: 'Connection Status',
         description: 'Connection lost',
         variant: 'destructive',
       });
     };
-  }, [session?.user?.email]); // Re-run if the session email changes
+  }, [session?.user?.email]);
 
-  return <SocketContext.Provider value={{ socket }}>{children}</SocketContext.Provider>;
+  return (
+    <SocketContext.Provider value={{ socket: socketRef.current }}>
+      {children}
+    </SocketContext.Provider>
+  );
 }
 
-// Custom hook for consuming the context
 export const useSocket = () => {
   const context = useContext(SocketContext);
   if (!context) {
