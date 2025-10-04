@@ -316,7 +316,7 @@ export default function NewOrder({ onBack }: any) {
                   {activeTab === 'buyer' ? (
                     <div>
                       <ReHeading
-                        heading="Buyer email or phone number "
+                        heading="Email or phone number "
                         size={'base'}
                         className=" text-gray-700"
                       />

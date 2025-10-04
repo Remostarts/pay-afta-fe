@@ -48,7 +48,7 @@ export default function SettlementKycForm() {
       if (response?.success) {
         loadUserData();
       } else {
-        toast.error(response?.error || 'Failed to update kyc bank information');
+        toast.error(response?.errorMessages[0]?.message || 'Failed to update personal information');
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update kyc bank information');

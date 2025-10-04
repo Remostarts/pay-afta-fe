@@ -46,84 +46,84 @@ export type Payment = {
 //   },
 // ];
 
-const tData = [
-  {
-    id: '1',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '2',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Track Link',
-  },
-  {
-    id: '3',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '4',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Withdrawal',
-  },
-  {
-    id: '6',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Card Funded',
-  },
-  {
-    id: '7',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '8',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '8',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '8',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '8',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
-  {
-    id: '8',
-    date: '21-02-2025, 02:24pm',
-    amount: 500000,
-    status: 'Successful',
-    transactionType: 'Credit',
-  },
+const tData : Payment[] = [
+  // {
+  //   id: '1',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '2',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Track Link',
+  // },
+  // {
+  //   id: '3',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '4',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Withdrawal',
+  // },
+  // {
+  //   id: '6',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Card Funded',
+  // },
+  // {
+  //   id: '7',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '8',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '8',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '8',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '8',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
+  // {
+  //   id: '8',
+  //   date: '21-02-2025, 02:24pm',
+  //   amount: 500000,
+  //   status: 'Successful',
+  //   transactionType: 'Credit',
+  // },
 ];
 
 interface PageChangeParams {
@@ -259,7 +259,7 @@ export default function Transcations() {
           pageSize={pageSize}
           dateFilter={{
             enabled: true,
-            defaultValue: 'Today',
+            defaultValue: 'All',
           }}
           filters={[
             {
