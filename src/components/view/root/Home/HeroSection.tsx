@@ -24,13 +24,13 @@ export default function HeroSection() {
             core of what we do, and your peace of mind is our priority.
           </p>
 
-          <Button
-            size="lg"
-            className="mb-16 rounded-full bg-[#03045B] px-8 py-4 text-lg text-white"
+          <Link
+            href="/sign-up"
+            className="mb-16 inline-flex items-center justify-center rounded-full bg-[#03045B] px-8 py-4 text-lg font-medium text-white no-underline transition-all hover:bg-[#02034A]"
           >
             Get Started
             <ArrowRight className="ml-2 size-5" />
-          </Button>
+          </Link>
 
           {/* Dashboard Mockup */}
           <div className="flex justify-center align-middle">
