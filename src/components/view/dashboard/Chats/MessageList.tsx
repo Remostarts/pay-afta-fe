@@ -64,7 +64,7 @@ export function MessageList({
             <AvatarImage
               src={
                 // message?.sender?.profileImage ||
-                '/assets/dashboard/business-dashboard/dashboard/prof-avatar.svg'
+                '/assets/dashboard/Dashboard/profile-img.svg'
               }
               alt={message.senderId === session?.id ? 'receiver' : 'sender'}
             />

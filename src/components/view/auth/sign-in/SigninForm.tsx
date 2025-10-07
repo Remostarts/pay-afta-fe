@@ -16,6 +16,7 @@ import ReInput from '@/components/re-ui/re-input/ReInput';
 import RePassInput from '@/components/re-ui/re-input/RePassInput';
 import { Form } from '@/components/ui/form';
 import { userLoginSchema } from '@/lib/validations/userAuth.validations';
+import { toast } from 'sonner';
 
 export type TInputs = z.infer<typeof userLoginSchema>;
 
@@ -46,20 +47,34 @@ export const SigninForm = () => {
     event?.preventDefault();
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 data🌼', data);
 
-    // Test logistics user credentials
-    if (data.email === 'logistics@test.com' && data.password === 'logistics123') {
-      router.push('/logistic-dashboard');
-      return;
-    }
-
     const result = await signIn('pay-afta-backend', { ...data, role: 'user', redirect: false });
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 result🌼', result);
 
     if (result?.ok && !result.error) {
+      toast.success('User login successful');
       router.refresh();
+
+      // switch (role) {
+      //   case 'lawyer':
+      //     router.push(`${process.env.FRONTEND_URL}/lawyer`);
+      //     break;
+      //   case 'business':
+      //     router.push(`${process.env.FRONTEND_URL}/business`);
+      //     break;
+      //   case 'law-student':
+      //     router.push(`${process.env.FRONTEND_URL}/law-student`);
+      //     break;
+      //   case 'admin':
+      //     router.push(`${process.env.FRONTEND_URL}/admin`);
+      //     break;
+      //   default:
+      //     router.push(`${process.env.FRONTEND_URL}`);
+      //     break;
+      // }
       // router.push('/');
+    } else {
+      toast.error('Invalid email or password');
     }
-    // console.log('🌼 🔥🔥 constonSubmit:SubmitHandler<TInputs>= 🔥🔥 result🌼', result, data);
   };
 
   return (

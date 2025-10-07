@@ -277,7 +277,7 @@ export default function NewOrder({ onBack }: any) {
                 width={20}
                 height={20}
               />
-              I am the Buyer
+              Buyer
             </TabsTrigger>
             <TabsTrigger
               value="seller"
@@ -293,7 +293,7 @@ export default function NewOrder({ onBack }: any) {
                 width={20}
                 height={20}
               />
-              I am the Seller
+              Seller
             </TabsTrigger>
           </TabsList>
         </Tabs>
@@ -316,7 +316,7 @@ export default function NewOrder({ onBack }: any) {
                   {activeTab === 'buyer' ? (
                     <div>
                       <ReHeading
-                        heading="Buyer email or phone number "
+                        heading="Email or phone number "
                         size={'base'}
                         className=" text-gray-700"
                       />
