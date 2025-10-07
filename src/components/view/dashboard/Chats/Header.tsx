@@ -63,7 +63,7 @@ const Header = ({ chat }: Props) => {
             {/* User Avatar - Added for smaller screens */}
             <Avatar className="size-10 md:hidden">
               <AvatarImage
-                src="/assets/dashboard/business-dashboard/chats/receiver-img.png"
+                src="/assets/dashboard/Dashboard/profile-img.png"
                 alt={otherParticipant?.fullName || 'Chat Participant'}
               />
             </Avatar>

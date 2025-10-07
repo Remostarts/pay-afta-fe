@@ -37,34 +37,28 @@ export default function ChatList() {
   const currentChatId = params.id;
   const pathUrl = usePathname();
   const pathName = pathUrl.split('/')[1];
-  const { chats, session, onlineUsers } = useChats();
+  const { chats, session, onlineUsers, isLoading } = useChats();
   const [searchQuery, setSearchQuery] = useState('');
-  const [isLoading, setIsLoading] = useState(true);
   const { socket } = useSocket();
 
   // Debug logs
-  console.log('Chats data:', chats);
-  console.log('Chats length:', chats?.length);
-  console.log('Is loading:', isLoading);
+  console.log('🔍 Chats data:', chats);
+  console.log('🔍 Chats length:', chats?.length);
+  console.log('🔍 Is loading:', isLoading);
 
-  useEffect(() => {
-    // Set loading to false once chats are loaded
-    // Fixed condition: should check if chats exists and is an array
-    if (chats && Array.isArray(chats)) {
-      setIsLoading(false);
-    }
-  }, [chats]);
-
-  // Add safety check for chats array
+  // Filter chats based on search query
   const filteredChats =
-    chats?.filter((chat) => chat?.name?.toLowerCase().includes(searchQuery.toLowerCase())) || [];
+    chats?.filter(
+      (chat) =>
+        chat?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        chat?.title?.toLowerCase().includes(searchQuery.toLowerCase())
+    ) || [];
 
   const handleBack = () => {
     router.push(`/${pathName}/chats`);
   };
 
-  // Debug filtered chats
-  console.log('Filtered chats:', filteredChats);
+  console.log('🔍 Filtered chats:', filteredChats);
 
   return (
     <div
@@ -81,11 +75,9 @@ export default function ChatList() {
             </Button>
           )}
           {isLoading ? (
-            <div className="mb-4 flex items-center gap-2">
-              <div className="flex items-center gap-2">
-                <div className="h-6 w-24 animate-pulse rounded bg-gray-200"></div>
-                <div className="h-6 w-8 animate-pulse rounded-lg bg-gray-200"></div>
-              </div>
+            <div className="flex items-center gap-2">
+              <div className="h-6 w-24 animate-pulse rounded bg-gray-200"></div>
+              <div className="h-6 w-8 animate-pulse rounded-lg bg-gray-200"></div>
             </div>
           ) : (
             <h2 className="flex items-center gap-2 text-xl font-semibold">
@@ -108,8 +100,8 @@ export default function ChatList() {
 
       {isLoading ? (
         <ChatListSkeleton />
-      ) : !chats || chats.length === 0 || filteredChats.length === 0 ? (
-        <div className="flex size-full flex-col items-center justify-center gap-2">
+      ) : !chats || chats.length === 0 ? (
+        <div className="flex size-full flex-col items-center justify-center gap-2 py-8">
           <Image
             src="/assets/dashboard/Chats/empty-chat.svg"
             alt="empty-chat"
@@ -117,9 +109,20 @@ export default function ChatList() {
             height={108.14}
             loading="lazy"
           />
-          <p className="text-gray-300">
-            {!chats || chats.length === 0 ? 'No chats available' : 'No matching chats found'}
-          </p>
+          <p className="text-gray-300">No chats available</p>
+          <p className="text-xs text-gray-400">Start by creating a new conversation</p>
+        </div>
+      ) : filteredChats.length === 0 ? (
+        <div className="flex size-full flex-col items-center justify-center gap-2 py-8">
+          <Image
+            src="/assets/dashboard/Chats/empty-chat.svg"
+            alt="empty-chat"
+            width={139}
+            height={108.14}
+            loading="lazy"
+          />
+          <p className="text-gray-300">No matching chats found</p>
+          <p className="text-xs text-gray-400">Try a different search term</p>
         </div>
       ) : (
         <ScrollArea className="h-[calc(100vh-300px)] overflow-hidden">
@@ -130,17 +133,17 @@ export default function ChatList() {
               tabIndex={0}
               onKeyDown={(e) => e.key === 'Enter' && router.push(`/${pathName}/chats/${chat.id}`)}
               className={cn(
-                'hover:bg-muted/50 cursor-pointer border-b p-4',
+                'hover:bg-muted/50 cursor-pointer border-b p-4 transition-colors',
                 currentChatId === chat?.id && 'bg-[#F2F2F2]'
               )}
               onClick={() => router.push(`/${pathName}/chats/${chat.id}`)}
             >
               <div className="mb-1 flex items-center justify-between">
-                <h3 className="font-medium">{chat?.name || chat?.title}</h3>
+                <h3 className="font-medium truncate">{chat?.name || chat?.title}</h3>
                 <Badge
                   variant={chat.status === 'completed' ? 'secondary' : 'default'}
                   className={cn(
-                    'rounded-md',
+                    'rounded-md shrink-0 ml-2',
                     chat?.status === 'completed'
                       ? 'bg-[#D1FADF] text-[#12BA4A]'
                       : chat?.status === 'active'
@@ -152,14 +155,14 @@ export default function ChatList() {
                 </Badge>
               </div>
               <div className="text-muted-foreground flex items-center gap-2 text-sm">
-                <span>{chat?.user}</span>
+                <span className="truncate">{chat?.user || chat?.participants?.[0]?.fullName}</span>
                 {socket?.connected &&
                 onlineUsers?.[
                   chat.participants?.find((p) => p.id !== session?.id)?.email as string
                 ] ? (
-                  <div className="size-[0.4rem] rounded-full bg-green-400" />
+                  <div className="size-[0.4rem] rounded-full bg-green-400 shrink-0" />
                 ) : (
-                  <div className="size-[0.4rem] rounded-full bg-gray-400" />
+                  <div className="size-[0.4rem] rounded-full bg-gray-400 shrink-0" />
                 )}
               </div>
             </div>

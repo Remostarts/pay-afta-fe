@@ -56,14 +56,14 @@ export default function PayAftaLanding() {
       {/* Hero Section */}
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
-          <div className="mb-8 text-center">
+          <div className="mb-8">
             <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">
               Flexible Delivery by Trusted Logistics Partners
             </Badge>
-            <h1 className="mb-6 font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
+            <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
               DELIVER WITH PAYAFTA
             </h1>
-            <p className="mx-auto mb-8 max-w-3xl font-inter text-xl leading-relaxed text-[#333333]">
+            <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
               PayAfta makes it easy to handle product deliveries after a secure transaction. Whether
               you&apos;re buying or selling, our system works seamlessly with third-party delivery
               providers, giving both parties the flexibility to choose the most convenient option.

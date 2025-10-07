@@ -2,7 +2,8 @@
 
 import { useParams } from 'next/navigation';
 import React, { useState, useRef, useEffect, useCallback } from 'react';
-import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
+// COMMENTED OUT: API Query imports
+// import { QueryFunctionContext, useQuery } from '@tanstack/react-query';
 import Image from 'next/image';
 
 import { useChat } from '@/context/ChatProvider';
@@ -11,18 +12,17 @@ import { toast } from '@/components/ui/use-toast';
 import { useChats } from '@/context/ChatListProvider';
 import { useSocket } from '@/context/socketProvider';
 import { useGeneral } from '@/context/generalProvider';
-import { TChatMessage } from '@/types/chats.validation';
-import SkeletonMessageLoader from './SkeletonMessageLoader';
+// import { TChatMessage } from '@/types/chats.validation';
+// import SkeletonMessageLoader from './SkeletonMessageLoader';
 import Header from './Header';
 import { MessageList } from './MessageList';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatInput } from './ChatInput';
-import { mockChats, mockMessages } from '@/lib/data/chat-mock-data';
+// import { mockChats, mockMessages } from '@/lib/data/chat-mock-data';
 
-// Define the data type returned by your API
-type ChatData = Chat; // Replace with your actual data type if known
-
-// Define the query key type
+// COMMENTED OUT: API fetch function
+/*
+type ChatData = Chat;
 type QueryKey = [string, string | undefined, string | undefined];
 
 const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Promise<ChatData> => {
@@ -46,20 +46,21 @@ const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Prom
   }
 
   const data = await response.json();
-  return data?.data; // Ensure you return the correct data type
+  return data?.data;
 };
+*/
 
 export default function ChatUI() {
   const params = useParams();
   const chatId = params.id as string;
   const { session } = useChats();
-  const { setCurrentChat, updateMessage, addMessage } = useChat();
+
+  // USE CHAT PROVIDER INSTEAD OF API
+  const { chats, setCurrentChat, updateMessage, addMessage } = useChat();
+  const chat = chats.find((c) => c.id === chatId);
+
   const { socket } = useSocket();
   const { setChatId, setLawyerId, setClientId, setAmount } = useGeneral();
-  // console.log('🌼 🔥🔥 ChatUI 🔥🔥 socket🌼', socket);
-
-  // const chat = chats.find((c) => c.id === chatId);
-  // const [chat, setChat] = useState<Chat | null>(null);
 
   const [inputMessage, setInputMessage] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -78,68 +79,49 @@ export default function ChatUI() {
   const [uploadingMessage, setUploadingMessage] = useState<Message | null>(null);
 
   const [shouldAutoScroll, setShouldAutoScroll] = useState(true);
-
   const lastScrollHeightRef = useRef<number>(0);
-
   const [remoteTyping, setRemoteTyping] = useState(false);
   const [isRead, setIsRead] = useState(true);
   const [isChatDisabled, setIsChatDisabled] = useState(false);
 
-  // Use mock data instead of API call
-  // const chat = mockChats.find((c) => c.id === chatId) || mockChats[0];
-
+  // COMMENTED OUT: API Query
+  /*
   const {
     data: chat = {} as ChatData,
-    /* error,
-
-    isFetching, */
     isLoading,
     refetch,
   } = useQuery({ queryKey: ['chat', chatId, session?.accessToken], queryFn: fetchChatById });
+  */
+
+  // No loading state needed with mock data
+  const isLoading = false;
+
   console.log('🌼 🔥🔥 ChatUI 🔥🔥 chat🌼', chat);
 
-  // useEffect(() => {
-  //   if (chat?.id) {
-  //     setChatId(chat?.id);
-  //     setLawyerId(chat.participants.find((p) => p?.lawyer?.id)?.id as string);
-  //     setClientId(chat.participants.find((p) => !p?.lawyer?.id)?.id as string);
-  //     setAmount(chat?.service?.minimumPrice as number);
-  //     setLawService(chat?.service?.title);
-  //     setClientEmail(chat.participants.find((p) => !p?.lawyer?.id)?.email as string);
-  //     const invoice = chat?.messages?.find((m) => m.type === 'invoice');
-  //     if (invoice) setInvoiceId(invoice.id);
-  //     else setInvoiceId('');
-  //   }
+  // COMMENTED OUT: Chat metadata setup
+  /*
+  useEffect(() => {
+    if (chat?.id) {
+      setChatId(chat?.id);
+      setLawyerId(chat.participants.find((p) => p?.lawyer?.id)?.id as string);
+      setClientId(chat.participants.find((p) => !p?.lawyer?.id)?.id as string);
+      setAmount(chat?.service?.minimumPrice as number);
+      setLawService(chat?.service?.title);
+      setClientEmail(chat.participants.find((p) => !p?.lawyer?.id)?.email as string);
+      const invoice = chat?.messages?.find((m) => m.type === 'invoice');
+      if (invoice) setInvoiceId(invoice.id);
+      else setInvoiceId('');
+    }
 
-  //   if (chat?.status === 'active') {
-  //     setChatIsDisabled(false);
-  //   } else if (chat?.status === 'completed' || chat?.status === 'canceled') {
-  //     setChatIsDisabled(true);
-  //   }
-  // }, [chat]);
+    if (chat?.status === 'active') {
+      setChatIsDisabled(false);
+    } else if (chat?.status === 'completed' || chat?.status === 'canceled') {
+      setChatIsDisabled(true);
+    }
+  }, [chat]);
+  */
 
-  // for downloading the chat by the admin
-
-  // const isAdmin = session?.role === 'lawyer'; // Adjust based on your user role structure
-
-  // const handleDownloadChat = () => {
-  //   if (!chat) {
-  //     Toast.error('Chat data not available.');
-  //     return;
-  //   }
-
-  //   const blob = new Blob([JSON.stringify(chat, null, 2)], { type: 'application/json' });
-  //   const url = URL.createObjectURL(blob);
-  //   const link = document.createElement('a');
-  //   link.href = url;
-  //   link.download = `chat_${chatId}.json`;
-  //   document.body.appendChild(link);
-  //   link.click();
-  //   document.body.removeChild(link);
-  //   Toast.success('Chat downloaded successfully.');
-  // };
-
-  // function to scroll to bottom
+  // Scroll to bottom function
   const scrollToBottom = useCallback(
     (force: boolean = false) => {
       if (!scrollAreaRef.current) return;
@@ -160,7 +142,7 @@ export default function ChatUI() {
     [shouldAutoScroll]
   );
 
-  // Handle scroll events to determine auto-scroll behavior
+  // Handle scroll events
   const handleScroll = useCallback((e: React.UIEvent<HTMLDivElement>) => {
     const element = e.currentTarget;
     const maxScroll = element.scrollHeight - element.clientHeight;
@@ -168,7 +150,7 @@ export default function ChatUI() {
     setShouldAutoScroll(isNearBottom);
   }, []);
 
-  // Monitor content changes and scroll accordingly
+  // Monitor content changes and scroll
   useEffect(() => {
     if (!scrollAreaRef.current) return;
 
@@ -179,12 +161,12 @@ export default function ChatUI() {
       scrollToBottom(true);
       lastScrollHeightRef.current = currentScrollHeight;
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chat?.messages, uploadingMessage]);
+  }, [chat?.messages, uploadingMessage, scrollToBottom]);
 
+  // COMMENTED OUT: Socket listener for receive_response
+  /*
   useEffect(() => {
     if (socket) {
-      // Add event listeners
       const handleReceiveResponse = (message: unknown) => {
         console.log('🌼 🔥🔥 receive_response 🔥🔥 message🌼', message);
         refetch();
@@ -192,14 +174,15 @@ export default function ChatUI() {
 
       socket.on('receive_response', handleReceiveResponse);
 
-      // Cleanup event listeners when component unmounts or socket changes
       return () => {
         socket.off('receive_response');
       };
     }
   }, [socket, refetch]);
+  */
 
-  // Depend on socket so it re-runs only when socket is updated
+  // COMMENTED OUT: Socket listener for messageSent
+  /*
   useEffect(() => {
     if (socket) {
       const handleMessageSent = (message: unknown) => {
@@ -208,14 +191,15 @@ export default function ChatUI() {
       };
       socket.on('messageSent', handleMessageSent);
 
-      // Cleanup event listeners when component unmounts or socket changes
       return () => {
         socket.off('messageSent');
       };
     }
   }, [socket, refetch]);
+  */
 
-  // // receive typing status
+  // COMMENTED OUT: Socket listener for typing status
+  /*
   useEffect(() => {
     if (socket) {
       const handleTyping = ({
@@ -233,14 +217,15 @@ export default function ChatUI() {
       };
       socket.on('receive_start_typing', handleTyping);
 
-      // Cleanup event listeners when component unmounts or socket changes
       return () => {
         socket.off('receive_start_typing');
       };
     }
   }, [socket, refetch]);
+  */
 
-  // // receive typing stop status
+  // COMMENTED OUT: Socket listener for stop typing
+  /*
   useEffect(() => {
     if (socket) {
       const handleTyping = ({
@@ -258,14 +243,15 @@ export default function ChatUI() {
       };
       socket.on('receive_stop_typing', handleTyping);
 
-      // Cleanup event listeners when component unmounts or socket changes
       return () => {
         socket.off('receive_stop_typing');
       };
     }
   }, [socket, refetch]);
+  */
 
-  // // receive message read status
+  // COMMENTED OUT: Socket listener for message read
+  /*
   useEffect(() => {
     if (socket) {
       const handleTyping = ({
@@ -283,14 +269,14 @@ export default function ChatUI() {
       };
       socket.on('receive_message_read', handleTyping);
 
-      // Cleanup event listeners when component unmounts or socket changes
       return () => {
         socket.off('receive_message_read');
       };
     }
   }, [socket, refetch, chatId]);
+  */
 
-  // getting the current chat through there id
+  // Set current chat
   useEffect(() => {
     if (chatId) {
       setCurrentChat(chatId);
@@ -298,31 +284,27 @@ export default function ChatUI() {
     }
 
     return () => {
-      // clearing the upload interval after successfully uploading the file
       if (uploadIntervalRef.current) {
-        // eslint-disable-next-line react-hooks/exhaustive-deps
         clearInterval(uploadIntervalRef.current);
       }
       if (mediaRecorder) {
         mediaRecorder.stop();
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chatId, setCurrentChat, mediaRecorder]);
+  }, [chatId, setCurrentChat, mediaRecorder, scrollToBottom]);
 
-  // set message status to read
+  // Set message status
   useEffect(() => {
     if (chat?.messages?.length) {
       const lastMessage = chat?.messages[chat?.messages?.length - 1];
       if (lastMessage.status !== 'read') setIsRead(false);
     }
-  }, [chat?.messages, chat?.messages?.length]);
+  }, [chat?.messages]);
 
-  // function to handle the send messages
+  // Handle send message - USES CHAT PROVIDER CONTEXT
   const handleSendMessage = useCallback(() => {
-    if (!inputMessage.trim()) return;
+    if (!inputMessage.trim() || !chatId) return;
 
-    // Use mock message instead of API call
     const newMessage: Message = {
       id: Date.now().toString(),
       type: 'text',
@@ -330,24 +312,37 @@ export default function ChatUI() {
       time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
       sender: 'user',
       status: 'sent',
-      senderId: session?.id,
+      senderId: session?.id || '1',
     };
 
-    // Add to mock messages
-    const updatedMessages = [...(mockMessages[chatId] || []), newMessage];
-    mockMessages[chatId] = updatedMessages;
+    // Add message to context - THIS UPDATES THE UI
+    addMessage(chatId, newMessage);
 
-    // Update chat with new messages
-    const updatedChat = { ...chat, messages: updatedMessages };
-    // In a real app, you would update the context/state here
-    // setCurrentChat(updatedChat);
+    // COMMENTED OUT: Socket emit for sending message
+    /*
+    socket?.emit('send_message', {
+      chatId,
+      message: newMessage,
+    });
+    */
 
     setInputMessage('');
     setIsTyping(false);
     scrollToBottom();
-  }, [inputMessage, chatId, chat, session?.id, scrollToBottom]);
 
-  // function to log out the files in the console log
+    // Simulate status updates
+    setTimeout(() => {
+      const updatedMessage = { ...newMessage, status: 'delivered' as const };
+      updateMessage(chatId, updatedMessage);
+    }, 1000);
+
+    setTimeout(() => {
+      const readMessage = { ...newMessage, status: 'read' as const };
+      updateMessage(chatId, readMessage);
+    }, 2000);
+  }, [inputMessage, chatId, session?.id, addMessage, updateMessage, scrollToBottom]);
+
+  // Log file details
   const logFileDetails = useCallback((file: File) => {
     console.log('File Upload Details:', {
       name: file.name,
@@ -357,9 +352,11 @@ export default function ChatUI() {
     });
   }, []);
 
-  // function for adding or uploading file messages
+  // Add file message - USES CHAT PROVIDER CONTEXT
   const addFileMessage = useCallback(
     (file: File, fileUrl: string) => {
+      if (!chatId) return;
+
       logFileDetails(file);
 
       const fileSize = (file.size / (1024 * 1024)).toFixed(1) + ' MB';
@@ -379,7 +376,7 @@ export default function ChatUI() {
         fileName: file.name,
         fileSize,
         fileUrl,
-        senderId: session?.id,
+        senderId: session?.id || '1',
         pages: fileType === 'pdf' ? 1 : undefined,
         duration: fileType === 'audio' ? '0:30' : undefined,
         audioUrl: fileType === 'audio' ? fileUrl : undefined,
@@ -388,130 +385,48 @@ export default function ChatUI() {
         sender: 'user',
       };
 
-      // Add to mock messages
-      const updatedMessages = [...(mockMessages[chatId] || []), newMessage];
-      mockMessages[chatId] = updatedMessages;
+      // Add message to context - THIS UPDATES THE UI
+      addMessage(chatId, newMessage);
 
-      // Update chat with new messages
-      const updatedChat = { ...chat, messages: updatedMessages };
-      // In a real app, you would update the context/state here
-      // setCurrentChat(updatedChat);
+      // COMMENTED OUT: API call to upload file
+      /*
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('chatId', chatId);
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/upload`, {
+        method: 'POST',
+        headers: {
+          Authorization: session?.accessToken,
+        },
+        body: formData,
+      })
+        .then(response => response.json())
+        .then(data => {
+          console.log('File uploaded:', data);
+        })
+        .catch(error => {
+          console.error('Error uploading file:', error);
+        });
+      */
 
       scrollToBottom();
 
       // Simulate status updates
       setTimeout(() => {
         const deliveredMessage = { ...newMessage, status: 'delivered' as const };
-        const updatedMessagesDelivered = updatedMessages.map((m) =>
-          m.id === newMessage.id ? deliveredMessage : m
-        );
-        mockMessages[chatId] = updatedMessagesDelivered;
-        // Update chat with new messages
-        // setCurrentChat({ ...chat, messages: updatedMessagesDelivered });
+        updateMessage(chatId, deliveredMessage);
       }, 1000);
 
       setTimeout(() => {
         const readMessage = { ...newMessage, status: 'read' as const };
-        const updatedMessagesRead = updatedMessages.map((m) =>
-          m.id === newMessage.id ? readMessage : m
-        );
-        mockMessages[chatId] = updatedMessagesRead;
-        // Update chat with new messages
-        // setCurrentChat({ ...chat, messages: updatedMessagesRead });
+        updateMessage(chatId, readMessage);
       }, 2000);
     },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chatId, logFileDetails, session.id, chat]
+    [chatId, logFileDetails, session?.id, addMessage, updateMessage, scrollToBottom]
   );
 
-  // function for simulating file uploads
-  // const simulateFileUpload = useCallback(
-  //   (file: File) => {
-  //     setIsUploading(true);
-  //     setUploadProgress(0);
-
-  //     uploadIntervalRef.current = setInterval(() => {
-  //       setUploadProgress((prev) => {
-  //         if (prev >= 100) {
-  //           if (uploadIntervalRef.current) {
-  //             clearInterval(uploadIntervalRef.current);
-  //           }
-  //           setIsUploading(false);
-  //           const fileUrl = URL.createObjectURL(file);
-  //           addFileMessage(file, fileUrl);
-  //           setSelectedFile(null);
-  //           uploadingRef.current = false;
-  //           return 0;
-  //         }
-  //         return prev + 10;
-  //       });
-  //     }, 300);
-  //   },
-  //   [addFileMessage]
-  // );
-
-  // function to handle file selection
-  // const handleFileSelect = useCallback(
-  //   (event: React.ChangeEvent<HTMLInputElement>) => {
-  //     const file = event.target.files?.[0];
-  //     console.log('🌼 🔥🔥 ChatUI 🔥🔥 file🌼', file);
-
-  //     if (!file || uploadingRef.current) return;
-
-  //     const MAX_FILE_SIZE = 50 * 1024 * 1024;
-  //     if (file.size > MAX_FILE_SIZE) {
-  //       toast({
-  //         title: 'File too large',
-  //         description: 'Please select a file smaller than 50MB',
-  //         variant: 'destructive',
-  //       });
-  //       return;
-  //     }
-
-  //     uploadingRef.current = true;
-  //     setSelectedFile(file);
-  //     simulateFileUpload(file);
-
-  //     // Prepare FormData
-  //     const formData = new FormData();
-  //     formData.append('file', file);
-  //     formData.append('metadata', JSON.stringify({ key1: 'value1', key2: 'value2' }));
-
-  //     try {
-  //       const response = await fetch('/api/upload', {
-  //         method: 'POST',
-  //         body: formData,
-  //       });
-
-  //       if (response.ok) {
-  //         const result = await response.json();
-  //         toast({
-  //           title: 'Upload Successful',
-  //           description: `File uploaded successfully: ${result.fileName}`,
-  //           variant: 'success',
-  //         });
-  //       } else {
-  //         toast({
-  //           title: 'Upload Failed',
-  //           description: 'There was an issue uploading your file. Please try again.',
-  //           variant: 'destructive',
-  //         });
-  //       }
-  //     } catch (error) {
-  //       console.error('Error uploading file:', error);
-  //       toast({
-  //         title: 'Error',
-  //         description: 'An unexpected error occurred while uploading the file.',
-  //         variant: 'destructive',
-  //       });
-  //     } finally {
-  //       uploadingRef.current = false;
-  //     }
-  //   },
-  //   [simulateFileUpload]
-  // );
-
-  // function to handle file select
+  // Handle file select
   const handleFileSelect = useCallback(
     (event: React.ChangeEvent<HTMLInputElement>) => {
       const file = event.target.files?.[0];
@@ -542,7 +457,7 @@ export default function ChatUI() {
               : 'pdf',
         fileName: file.name,
         fileSize: `${(file.size / (1024 * 1024)).toFixed(1)} MB`,
-        senderId: session.id,
+        senderId: session?.id || '1',
         status: 'sending',
       };
 
@@ -563,23 +478,32 @@ export default function ChatUI() {
     [session?.id, addFileMessage]
   );
 
-  // function for handling chat input filed messages
+  // Handle input change
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
-    // const data: { chatId: string; receiverEmail: string } = {
-    //   chatId,
-    //   receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-    // };
-    // socket?.emit('start_typing', data);
+
+    // COMMENTED OUT: Socket emit for typing
+    /*
+    const data: { chatId: string; receiverEmail: string } = {
+      chatId,
+      receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+    };
+    socket?.emit('start_typing', data);
+    */
+
     if (typingTimeoutRef.current !== undefined) {
       clearTimeout(typingTimeoutRef.current);
     }
-    // typingTimeoutRef.current = setTimeout(() => {
-    //   socket?.emit('stop_typing', data);
-    // }, 1000);
+
+    // COMMENTED OUT: Socket emit for stop typing
+    /*
+    typingTimeoutRef.current = setTimeout(() => {
+      socket?.emit('stop_typing', data);
+    }, 1000);
+    */
   };
 
-  // function for speech recognition to start recording
+  // Start recording
   const startRecording = useCallback(async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
@@ -596,7 +520,6 @@ export default function ChatUI() {
         const file = new File([audioBlob], 'voice-message.wav', { type: 'audio/wav' });
         console.log('🌼 🔥🔥 startRecording 🔥🔥 file🌼', file);
 
-        // Simulate upload
         const fileUrl = URL.createObjectURL(audioBlob);
         addFileMessage(file, fileUrl);
 
@@ -606,22 +529,17 @@ export default function ChatUI() {
       recorder.start();
       setMediaRecorder(recorder);
       setIsRecording(true);
-
-      // toast({
-      //   title: 'Recording started',
-      //   description: 'Click the microphone again to stop recording',
-      // });
     } catch (error) {
       console.error('Error accessing microphone:', error);
-      // toast({
-      //   title: 'Error',
-      //   description: 'Could not access microphone',
-      //   variant: 'destructive',
-      // });
+      toast({
+        title: 'Error',
+        description: 'Could not access microphone',
+        variant: 'destructive',
+      });
     }
   }, [addFileMessage]);
 
-  // function for speech recognition to stop recoding
+  // Stop recording
   const stopRecording = useCallback(() => {
     if (mediaRecorder) {
       mediaRecorder.stop();
@@ -632,7 +550,7 @@ export default function ChatUI() {
     }
   }, [mediaRecorder]);
 
-  // function for speech recognition for toggling the mic
+  // Toggle recording
   const toggleRecording = useCallback(() => {
     if (isRecording) {
       stopRecording();
@@ -641,42 +559,45 @@ export default function ChatUI() {
     }
   }, [isRecording, stopRecording, startRecording]);
 
-  // function for handling the play/pause button in the audio
+  // Handle audio play/pause
   const handleAudioPlayPause = useCallback((messageId: string) => {
     setCurrentlyPlayingAudio((current) => (current === messageId ? null : messageId));
   }, []);
 
-  // const handleUpdateMessageStatus = async () => {
-  //   if (isRead) return;
-  //   const response = await fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/update-status/${chatId}`,
-  //     {
-  //       method: 'PATCH',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: session?.accessToken,
-  //       },
-  //       cache: 'no-store',
-  //     }
-  //   );
+  // COMMENTED OUT: Update message status API
+  /*
+  const handleUpdateMessageStatus = async () => {
+    if (isRead) return;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/update-status/${chatId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: session?.accessToken,
+        },
+        cache: 'no-store',
+      }
+    );
 
-  //   if (!response.ok) {
-  //     throw new Error(`Error updating message status for chat ${chatId}`);
-  //   }
-  //   setIsRead(true);
-  //   const data: { chatId: string; receiverEmail: string } = {
-  //     chatId,
-  //     receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-  //   };
-  //   socket?.emit('message_read', data);
-  // };
+    if (!response.ok) {
+      throw new Error(`Error updating message status for chat ${chatId}`);
+    }
+    setIsRead(true);
+    const data: { chatId: string; receiverEmail: string } = {
+      chatId,
+      receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
+    };
+    socket?.emit('message_read', data);
+  };
+  */
 
-  // if no chats are there this will be rendered
+  // If no chat selected
   if (!chatId) {
     return (
       <div className="flex size-full flex-col items-center justify-center">
         <Image
-          src="/assets/dashboard/business-dashboard/chats/empty-chat.svg"
+          src="/assets/dashboard/Chats/empty-chat.svg"
           alt="no-chats"
           width={139}
           height={108.14}
@@ -687,93 +608,63 @@ export default function ChatUI() {
   }
 
   return (
-    <>
+    <div className="flex h-full max-h-screen flex-1 flex-col overflow-hidden bg-white">
+      {/* Header */}
+      {chat && (
+        <div className="shrink-0">
+          <Header chat={chat} />
+        </div>
+      )}
+
+      {/* Messages area */}
       <div
-        // role="button"
-        // tabIndex={0}
-        // onClick={handleUpdateMessageStatus}
-        // onKeyDown={(e) => {
-        //   if (e.key === 'Enter' || e.key === ' ') {
-        //     handleUpdateMessageStatus();
-        //   }
-        // }}
-        className="flex h-full max-h-screen flex-1 flex-col overflow-hidden bg-white"
+        className="relative grow overflow-y-auto p-2 md:px-4"
+        ref={scrollAreaRef}
+        style={{
+          maxHeight: 'calc(100vh - 200px)',
+        }}
+        onScroll={handleScroll}
       >
-        {/* {isLoading ? (
-          <SkeletonMessageLoader />
-        ) : ( */}
-        <>
-          {/* Fixed height header */}
-          {chat && (
-            <div className="shrink-0">
-              <Header chat={chat} />
-              {/* Download Chat Button for Admin */}
-              {/* {isAdmin && (
-                  <button
-                    className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                    onClick={handleDownloadChat}
-                  >
-                    Download Chat
-                  </button>
-                )} */}
+        <div className="min-h-full">
+          {!chat || chat?.messages?.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center py-8">
+              <p className="text-center text-sm text-gray-500">
+                Send a message to start the conversation
+              </p>
             </div>
+          ) : (
+            <MessageList
+              messages={chat?.messages ?? []}
+              currentlyPlayingAudio={currentlyPlayingAudio}
+              onAudioPlayPause={handleAudioPlayPause}
+              session={session}
+              uploadingMessage={uploadingMessage}
+            />
           )}
 
-          {/* Scrollable messages area with flex-grow */}
-          <div
-            className="relative grow overflow-y-auto p-2 md:px-4"
-            ref={scrollAreaRef}
-            style={{
-              maxHeight: 'calc(100vh - 200px)',
-            }}
-            onScroll={handleScroll}
-          >
-            {/* <OrStrike text="Today" /> */}
-
-            <div className="min-h-full">
-              {!chat || chat?.messages?.length === 0 ? (
-                <div className="flex h-full flex-col items-center justify-center py-8">
-                  <p className="text-center text-sm text-gray-500">
-                    Send a message to start the conversation
-                  </p>
-                </div>
-              ) : (
-                <MessageList
-                  messages={chat?.messages ?? []}
-                  currentlyPlayingAudio={currentlyPlayingAudio}
-                  onAudioPlayPause={handleAudioPlayPause}
-                  session={session}
-                  uploadingMessage={uploadingMessage}
-                />
-              )}
-
-              {/* Typing indicators */}
-              <div className="space-y-2">
-                {remoteTyping && <TypingIndicator position="left" />}
-                {isTyping && <TypingIndicator position="left" />}
-              </div>
-
-              {/* Scroll target */}
-              <div ref={messagesEndRef} />
-            </div>
+          {/* Typing indicators */}
+          <div className="space-y-2">
+            {remoteTyping && <TypingIndicator position="left" />}
+            {isTyping && <TypingIndicator position="left" />}
           </div>
 
-          {/* Fixed height input */}
-          <div className="relative shrink-0">
-            <ChatInput
-              inputMessage={inputMessage}
-              isDisabled={isChatDisabled}
-              isUploading={isUploading}
-              isRecording={isRecording}
-              onMessageChange={handleInputChange}
-              onSendMessage={handleSendMessage}
-              onFileSelect={handleFileSelect}
-              onToggleRecording={toggleRecording}
-            />
-          </div>
-        </>
-        {/* )} */}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
-    </>
+
+      {/* Input */}
+      <div className="relative shrink-0">
+        <ChatInput
+          inputMessage={inputMessage}
+          isDisabled={isChatDisabled}
+          isUploading={isUploading}
+          isRecording={isRecording}
+          onMessageChange={handleInputChange}
+          onSendMessage={handleSendMessage}
+          onFileSelect={handleFileSelect}
+          onToggleRecording={toggleRecording}
+        />
+      </div>
+    </div>
   );
 }
