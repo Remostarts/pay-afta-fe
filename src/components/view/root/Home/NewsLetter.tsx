@@ -31,7 +31,7 @@ export default function NewsLetter() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               required
-              className="h-12 flex-1 rounded-md border-2 px-6"
+              className="h-12 flex-1 rounded-md border-2 px-6 border-gray-400"
             />
             <Button
               type="submit"
