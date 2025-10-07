@@ -25,37 +25,37 @@ type ChatData = Chat; // Replace with your actual data type if known
 // Define the query key type
 type QueryKey = [string, string | undefined, string | undefined];
 
-// const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Promise<ChatData> => {
-//   const [, chatId, accessToken] = queryKey;
+const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Promise<ChatData> => {
+  const [, chatId, accessToken] = queryKey;
 
-//   if (!chatId || !accessToken) {
-//     throw new Error('Missing chatId or accessToken');
-//   }
+  if (!chatId || !accessToken) {
+    throw new Error('Missing chatId or accessToken');
+  }
 
-//   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-id/${chatId}`, {
-//     method: 'GET',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: accessToken,
-//     },
-//     cache: 'no-store',
-//   });
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-id/${chatId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: accessToken,
+    },
+    cache: 'no-store',
+  });
 
-//   if (!response.ok) {
-//     throw new Error(`Error fetching chat with ID ${chatId}`);
-//   }
+  if (!response.ok) {
+    throw new Error(`Error fetching chat with ID ${chatId}`);
+  }
 
-//   const data = await response.json();
-//   return data?.data; // Ensure you return the correct data type
-// };
+  const data = await response.json();
+  return data?.data; // Ensure you return the correct data type
+};
 
 export default function ChatUI() {
   const params = useParams();
   const chatId = params.id as string;
   const { session } = useChats();
   const { setCurrentChat, updateMessage, addMessage } = useChat();
-  // const { socket } = useSocket();
-  // const { setChatId, setLawyerId, setClientId, setAmount } = useGeneral();
+  const { socket } = useSocket();
+  const { setChatId, setLawyerId, setClientId, setAmount } = useGeneral();
   // console.log('🌼 🔥🔥 ChatUI 🔥🔥 socket🌼', socket);
 
   // const chat = chats.find((c) => c.id === chatId);
@@ -86,17 +86,17 @@ export default function ChatUI() {
   const [isChatDisabled, setIsChatDisabled] = useState(false);
 
   // Use mock data instead of API call
-  const chat = mockChats.find((c) => c.id === chatId) || mockChats[0];
+  // const chat = mockChats.find((c) => c.id === chatId) || mockChats[0];
 
-  // const {
-  //   data: chat = {} as ChatData,
-  //   /* error,
+  const {
+    data: chat = {} as ChatData,
+    /* error,
 
-  //   isFetching, */
-  //   isLoading,
-  //   refetch,
-  // } = useQuery({ queryKey: ['chat', chatId, session?.accessToken], queryFn: fetchChatById });
-  // console.log('🌼 🔥🔥 ChatUI 🔥🔥 chat🌼', chat);
+    isFetching, */
+    isLoading,
+    refetch,
+  } = useQuery({ queryKey: ['chat', chatId, session?.accessToken], queryFn: fetchChatById });
+  console.log('🌼 🔥🔥 ChatUI 🔥🔥 chat🌼', chat);
 
   // useEffect(() => {
   //   if (chat?.id) {
@@ -182,113 +182,113 @@ export default function ChatUI() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat?.messages, uploadingMessage]);
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     // Add event listeners
-  //     const handleReceiveResponse = (message: unknown) => {
-  //       console.log('🌼 🔥🔥 receive_response 🔥🔥 message🌼', message);
-  //       refetch();
-  //     };
+  useEffect(() => {
+    if (socket) {
+      // Add event listeners
+      const handleReceiveResponse = (message: unknown) => {
+        console.log('🌼 🔥🔥 receive_response 🔥🔥 message🌼', message);
+        refetch();
+      };
 
-  //     socket.on('receive_response', handleReceiveResponse);
+      socket.on('receive_response', handleReceiveResponse);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_response');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_response');
+      };
+    }
+  }, [socket, refetch]);
 
-  // // Depend on socket so it re-runs only when socket is updated
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleMessageSent = (message: unknown) => {
-  //       console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
-  //       refetch();
-  //     };
-  //     socket.on('messageSent', handleMessageSent);
+  // Depend on socket so it re-runs only when socket is updated
+  useEffect(() => {
+    if (socket) {
+      const handleMessageSent = (message: unknown) => {
+        console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
+        refetch();
+      };
+      socket.on('messageSent', handleMessageSent);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('messageSent');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('messageSent');
+      };
+    }
+  }, [socket, refetch]);
 
   // // receive typing status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) setIsTyping(true);
-  //     };
-  //     socket.on('receive_start_typing', handleTyping);
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) setIsTyping(true);
+      };
+      socket.on('receive_start_typing', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_start_typing');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_start_typing');
+      };
+    }
+  }, [socket, refetch]);
 
   // // receive typing stop status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) setIsTyping(false);
-  //     };
-  //     socket.on('receive_stop_typing', handleTyping);
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) setIsTyping(false);
+      };
+      socket.on('receive_stop_typing', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_stop_typing');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_stop_typing');
+      };
+    }
+  }, [socket, refetch]);
 
   // // receive message read status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) refetch();
-  //     };
-  //     socket.on('receive_message_read', handleTyping);
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) refetch();
+      };
+      socket.on('receive_message_read', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_message_read');
-  //     };
-  //   }
-  // }, [socket, refetch, chatId]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_message_read');
+      };
+    }
+  }, [socket, refetch, chatId]);
 
   // getting the current chat through there id
   useEffect(() => {
