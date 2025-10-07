@@ -7,6 +7,7 @@ import { ArrowRight, ChevronRight, Menu } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import NewsLetter from '@/components/view/root/Home/NewsLetter';
+import Link from 'next/link';
 
 const deliverySteps = [
   {
@@ -226,13 +227,13 @@ export default function PayAftaLanding() {
             Ready to experience these features in action? Start optimizing your team&apos;s
             collaboration today.
           </p>
-          <Button
-            size="lg"
-            className=" rounded-full bg-white px-8 py-4 text-lg text-[#03045B] opacity-90"
+          <Link
+            href="/sign-up"
+            className="mb-16 inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-medium text-[#02034A] no-underline transition-all opacity-80"
           >
-            Get Started For Free
+            Get Started
             <ArrowRight className="ml-2 size-5" />
-          </Button>
+          </Link>
         </div>
       </section>
 
