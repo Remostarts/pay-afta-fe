@@ -47,9 +47,9 @@ const config = {
           DEFAULT: 'hsl(var(--destructive))',
           foreground: 'hsl(var(--destructive-foreground))',
         },
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
+        // border: 'hsl(var(--border))',
+        // input: 'hsl(var(--input))',
+        // ring: 'hsl(var(--ring))',
         chart: {
           '1': 'hsl(var(--chart-1))',
           '2': 'hsl(var(--chart-2))',
@@ -68,10 +68,10 @@ const config = {
           ring: 'hsl(var(--sidebar-ring))',
         },
       },
-      maxWidth: {
-        '8xl': '88rem',
-        '9xl': '95rem',
-      },
+      // maxWidth: {
+      //   '8xl': '88rem',
+      //   '9xl': '95rem',
+      // },
       fontFamily: {
         inter: ['var(--font-inter)'],
         playfair: ['var(--font-playfair)'],
@@ -204,11 +204,11 @@ const config = {
         marquee: 'marquee var(--duration) infinite linear',
         'marquee-vertical': 'marquee-vertical var(--duration) linear infinite',
       },
-      borderRadius: {
-        lg: 'var(--radius)',
-        md: 'calc(var(--radius) - 2px)',
-        sm: 'calc(var(--radius) - 4px)',
-      },
+      // borderRadius: {
+      //   lg: 'var(--radius)',
+      //   md: 'calc(var(--radius) - 2px)',
+      //   sm: 'calc(var(--radius) - 4px)',
+      // },
     },
   },
   plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
