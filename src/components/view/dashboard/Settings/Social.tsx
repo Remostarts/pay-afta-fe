@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { useGeneral } from '@/context/generalProvider';
 import { userProfileUpdate } from '@/lib/actions/root/user.action';
+import { ReButton } from '@/components/re-ui/ReButton';
 
 // 🛠️ Validation schema
 const socialSchema = z.object({
@@ -115,13 +116,13 @@ export default function Social() {
             </div>
 
             <div className="mt-6 flex justify-end">
-              <Button
-                type="submit"
+              <ReButton
                 disabled={isSubmitting || !user}
-                className="hover:bg-primary/90 hover:border"
+                className="w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
+                type="submit"
               >
                 {isSubmitting ? 'Saving...' : 'Save Changes'}
-              </Button>
+              </ReButton>
             </div>
           </form>
         </FormProvider>

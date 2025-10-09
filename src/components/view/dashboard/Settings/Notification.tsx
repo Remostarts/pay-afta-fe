@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { ReToggle } from '@/components/re-ui/re-toggle/ReToggle';
 import { useChats } from '@/context/ChatListProvider';
 import { useGeneral } from '@/context/generalProvider';
+import { ReButton } from '@/components/re-ui/ReButton';
 
 export default function Notification() {
   const { session } = useChats();
@@ -84,14 +85,14 @@ export default function Notification() {
       </div>
 
       <div className="mt-6 flex justify-end">
-        <Button
-          type="button"
+        <ReButton
           onClick={handleSave}
           disabled={saving || !user}
-          className="hover:bg-primary/90 hover:border"
+          className="w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
+          type="submit"
         >
           {saving ? 'Saving...' : 'Save Changes'}
-        </Button>
+        </ReButton>
       </div>
     </div>
   );

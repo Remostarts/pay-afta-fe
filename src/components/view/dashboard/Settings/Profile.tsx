@@ -259,7 +259,7 @@ export default function Profile() {
               </Avatar>
 
               <Image
-                src="/assets/dashboard/edit.svg"
+                src="/Logo.svg"
                 alt="edit"
                 width={34}
                 height={34}
