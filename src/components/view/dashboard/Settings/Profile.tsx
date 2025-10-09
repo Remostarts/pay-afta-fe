@@ -133,10 +133,10 @@ export default function Profile() {
       toast.info('Wait for username availability check to finish');
       return;
     }
-    if (!isUsernameValid) {
-      toast.error('Please choose a valid username');
-      return;
-    }
+    // if (!isUsernameValid) {
+    //   toast.error('Please choose a valid username');
+    //   return;
+    // }
     const modifiedData: TProfileUpdate = {
       firstName: data?.firstName,
       lastName: data?.lastName,
