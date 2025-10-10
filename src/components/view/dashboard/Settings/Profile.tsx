@@ -1,5 +1,5 @@
 'use client';
-
+import debounce from 'lodash/debounce';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { FormProvider, SubmitHandler, useForm } from 'react-hook-form';
 import { z } from 'zod';
@@ -32,6 +32,10 @@ import {
 } from '@/lib/validations/setting.validation';
 import { useGeneral } from '@/context/generalProvider';
 import { userProfileUpdate } from '@/lib/actions/root/user.action';
+import { useEffect, useState } from 'react';
+import { usernameValidityCheck } from '@/lib/actions/onboarding/onboarding.actions';
+import { Loader } from 'lucide-react';
+import { useChats } from '@/context/ChatListProvider';
 
 const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{6,100}$/;
 
@@ -43,6 +47,12 @@ const defaultValues = {
 
 export default function Profile() {
   const { user, loadUserData } = useGeneral();
+
+  const { session } = useChats();
+  const [isUsernameValid, setIsUsernameValid] = useState(false);
+  const [usernameValidityLoading, setUsernameValidityLoading] = useState(false);
+  const [isImageUploading, setIsImageUploading] = useState(false);
+
   const changePasswordForm = useForm<TChangePassInputs>({
     resolver: zodResolver(changePasswordSchema),
     defaultValues,
@@ -52,17 +62,59 @@ export default function Profile() {
   const defaultValuesOfprofileInformation = {
     firstName: user?.firstName || '',
     lastName: user?.lastName || '',
+    username: user?.username || '',
     phone: user?.phone || '',
     email: user?.email || '',
-    dateOfBirth: user?.profile?.dateOfBirth || '',
+    dateOfBirth: user?.profile?.dateOfBirth
+      ? new Date(user.profile.dateOfBirth).toISOString().split('T')[0] // <-- format to YYYY-MM-DD
+      : '',
     gender: user?.profile?.gender || '',
   };
 
   const profileInformationForm = useForm<TProfileInformation>({
     resolver: zodResolver(profileInformationSchema),
-    defaultValues: defaultValuesOfprofileInformation,
+    values: defaultValuesOfprofileInformation,
     mode: 'onChange',
   });
+
+  // checking username validity
+  const checkUsernameValidity = debounce(async (username: string) => {
+    setIsUsernameValid(false);
+    if (!username || username.length < 3) return;
+    setUsernameValidityLoading(true);
+    try {
+      const response = await usernameValidityCheck(username);
+      if (response?.statusCode === 200) {
+        if (!response?.data?.available) {
+          profileInformationForm.setError('username', {
+            type: 'server',
+            message: 'Username is not available',
+          });
+        } else {
+          setIsUsernameValid(true);
+          profileInformationForm.clearErrors('username');
+        }
+      }
+    } catch (error) {
+      profileInformationForm.setError('username', {
+        type: 'server',
+        message: 'Failed to check username availability',
+      });
+    } finally {
+      setUsernameValidityLoading(false);
+    }
+  }, 500);
+
+  const { watch } = profileInformationForm;
+
+  useEffect(() => {
+    const subscription = watch((value, { name }) => {
+      if (name === 'username') {
+        checkUsernameValidity(value.username as string);
+      }
+    });
+    return () => subscription.unsubscribe();
+  }, [watch]);
 
   const { handleSubmit, register, formState } = changePasswordForm;
 
@@ -77,19 +129,23 @@ export default function Profile() {
 
   // profile info submitHandler
   const handleProfileSubmitForm = async (data: TProfileInformation) => {
-    console.log(data);
+    if (usernameValidityLoading) {
+      toast.info('Wait for username availability check to finish');
+      return;
+    }
+    // if (!isUsernameValid) {
+    //   toast.error('Please choose a valid username');
+    //   return;
+    // }
     const modifiedData: TProfileUpdate = {
-      dateOfBirth: data?.dateOfBirth,
       firstName: data?.firstName,
       lastName: data?.lastName,
+      username: data?.username,
+      dateOfBirth: data?.dateOfBirth,
       gender: data?.gender,
     };
     try {
       const response = await userProfileUpdate(modifiedData);
-      console.log(
-        '🌼 🔥🔥 constonSubmit:SubmitHandler<TChangePassInputs>= 🔥🔥 response🌼',
-        response
-      );
 
       if (response.success) {
         toast.success('profile updated successfully');
@@ -115,6 +171,49 @@ export default function Profile() {
     }
   };
 
+  // user image updated
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsImageUploading(true);
+    const file = e.target.files?.[0];
+
+    if (!file) return;
+
+    // ✅ check file size (5MB limit)
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('File size should be less than 5MB');
+      setIsImageUploading(false);
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append('image', file);
+    formData.append('data', JSON.stringify({ imgType: 'profile' }));
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/update-user-profile-image`,
+        {
+          method: 'PATCH',
+          headers: {
+            Authorization: session?.accessToken,
+          },
+          body: formData,
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error('Failed to upload image');
+      }
+
+      toast.success('Profile image updated successfully 🎉');
+      loadUserData(); // refresh user info
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'Upload failed');
+    } finally {
+      setIsImageUploading(false);
+    }
+  };
+
   return (
     <div className="rounded-lg bg-white p-6">
       {/* profile information  */}
@@ -125,7 +224,7 @@ export default function Profile() {
             heading="Profile Information"
             className="mb-6 text-xl font-semibold text-gray-900"
           />
-          <div className="relative mx-auto">
+          {/* <div className="relative mx-auto">
             <Avatar className="size-28 border-4 border-white shadow-lg">
               <Image alt="avatar" src="/Logo.svg" width={112} height={112} />
               <AvatarFallback className="bg-gray-100 text-lg font-medium text-gray-600">
@@ -143,6 +242,42 @@ export default function Profile() {
                 />
               </svg>
             </button>
+          </div> */}
+          <div className="relative mx-auto">
+            <label htmlFor="profileImage" className="relative inline-block cursor-pointer">
+              <Avatar className="size-28 border-4 border-white shadow-lg">
+                {isImageUploading ? (
+                  <div className="flex size-full items-center justify-center bg-gray-100">
+                    <Loader className="size-5 animate-spin text-gray-600" />
+                  </div>
+                ) : (
+                  <AvatarImage src={user?.profileImage || '/Logo.svg'} alt="Profile" />
+                )}
+                <AvatarFallback className="bg-gray-100 text-lg font-medium text-gray-600">
+                  {user?.firstName?.[0] || ''}
+                </AvatarFallback>
+              </Avatar>
+
+              <Image
+                src="/Logo.svg"
+                alt="edit"
+                width={34}
+                height={34}
+                priority
+                className="absolute right-0 top-20 rounded-full border-4 border-white bg-white p-1 shadow-md"
+              />
+
+              <input
+                id="profileImage"
+                type="file"
+                accept="image/*"
+                className="hidden"
+                onChange={handleImageUpload}
+                disabled={isImageUploading}
+              />
+            </label>
+
+            <p className="mt-2 text-xs text-gray-500">Max file size: 5MB</p>
           </div>
         </div>
 
@@ -173,11 +308,17 @@ export default function Profile() {
 
                     <div>
                       <ReInput
+                        {...profileFormRegister('username')}
                         name="username"
                         label="Username"
                         placeholder="@fullname.pfta"
-                        readonly={true}
                       />
+                      {usernameValidityLoading && (
+                        <p className="text-sm text-blue-500">Checking username availability...</p>
+                      )}
+                      {!usernameValidityLoading && isUsernameValid && (
+                        <p className="text-sm text-green-500">Username is available ✅</p>
+                      )}
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
@@ -203,6 +344,7 @@ export default function Profile() {
                     <div>
                       <ReInput
                         {...profileFormRegister('email')}
+                        // isDisabled={true}
                         name="email"
                         label="Email Address"
                         type="email"
@@ -214,6 +356,7 @@ export default function Profile() {
                     <div>
                       <ReInput
                         {...profileFormRegister('phone')}
+                        // isDisabled={true}
                         type="text"
                         name="phone"
                         label="Phone Number"
