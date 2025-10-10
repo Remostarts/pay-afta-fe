@@ -17,11 +17,11 @@ export const profileInformationSchema = z.object({
 // ✅ Profile update schema with optional fields
 export const profileUpdateSchema = z
   .object({
-    firstName: z.string().min(1, 'First name is required.'),
-    lastName: z.string().min(1, 'Last name is required.'),
-    username: z.string().min(1, 'UserName is required.'),
-    dateOfBirth: z.union([z.date(), z.string().min(1, 'DOB is required.')]),
-    gender: z.string().min(1, 'Gender is required.'),
+    firstName: z.string().min(1, 'First name is required.').optional(),
+    lastName: z.string().min(1, 'Last name is required.').optional(),
+    username: z.string().min(1, 'UserName is required.').optional(),
+    dateOfBirth: z.union([z.date(), z.string().min(1, 'DOB is required.')]).optional(),
+    gender: z.string().nullable().optional(),
     instagram: z.string().nullable().optional(),
     facebook: z.string().nullable().optional(),
     twitter: z.string().nullable().optional(),

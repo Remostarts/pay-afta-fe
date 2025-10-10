@@ -20,8 +20,9 @@ export type TPersonalKyc = z.infer<typeof personalKycSchema>;
 export const settlementKycSchema = z.object({
   bankName: z.string().min(1, 'Bank name is required'),
   accountNumber: z.string().length(10, 'account number must be 10 digit account number'),
-  bvn: z.string().length(11, 'BVN must be 11 digits'),
-  isDefaultPayout: z.boolean().default(false),
+  bvn: z.string().length(11, 'BVN must be 11 digits').optional(),
+  accountHolder: z.string().optional(),
+  isDefaultPayout: z.boolean().default(false).optional(),
 });
 
 export type TSettlementKyc = z.infer<typeof settlementKycSchema>;
