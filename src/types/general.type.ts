@@ -25,6 +25,13 @@ type WalletItem = {
   walletId: string;
   balance: number;
 };
+type BankItem = {
+  id: string;
+  accountHolder: string;
+  accountNumber: string;
+  bankName: string;
+  setAsDefault: boolean;
+};
 
 export type TUser = {
   id: string;
@@ -40,4 +47,5 @@ export type TUser = {
   profile: Profile | null;
   escrowBalance: number;
   Wallet: WalletItem[];
+  Bank: BankItem[];
 };
