@@ -4,6 +4,7 @@ import * as z from 'zod';
 export const profileInformationSchema = z.object({
   firstName: z.string().min(1, 'First name is required.'),
   lastName: z.string().min(1, 'Last name is required.'),
+  username: z.string().min(1, 'Username is required.'),
   phone: z.string().min(1, 'Phone number is required.'),
   email: z.string().min(1, 'Email is required.'),
   dateOfBirth: z.union([
@@ -13,18 +14,22 @@ export const profileInformationSchema = z.object({
   gender: z.string().min(1, 'Gender is required.'),
 });
 
-export const profileUpdateSchema = z.object({
-  firstName: z.string().min(1, 'First name is required.'),
-  lastName: z.string().min(1, 'Last name is required.'),
-  dateOfBirth: z.union([
-    z.date(), // Accepts a Date object
-    z.string().min(1, 'DOB is required.'), // Accepts a non-empty string
-  ]),
-  gender: z.string().min(1, 'Gender is required.'),
-});
+// ✅ Profile update schema with optional fields
+export const profileUpdateSchema = z
+  .object({
+    firstName: z.string().min(1, 'First name is required.'),
+    lastName: z.string().min(1, 'Last name is required.'),
+    username: z.string().min(1, 'UserName is required.'),
+    dateOfBirth: z.union([z.date(), z.string().min(1, 'DOB is required.')]),
+    gender: z.string().min(1, 'Gender is required.'),
+    instagram: z.string().nullable().optional(),
+    facebook: z.string().nullable().optional(),
+    twitter: z.string().nullable().optional(),
+    tiktok: z.string().nullable().optional(),
+  })
+  .partial(); // <-- makes all fields optional
 
 export type TProfileUpdate = z.infer<typeof profileUpdateSchema>;
-
 export type TProfileInformation = z.infer<typeof profileInformationSchema>;
 
 // Change password schema
@@ -49,7 +54,7 @@ export const changePasswordSchema = z
 
 export type TChangePassInputs = z.infer<typeof changePasswordSchema>;
 
-// Change Transcation Pin schema
+// Change Transaction Pin schema
 export const pinSchema = z
   .object({
     oldPin: z.string().length(4, 'PIN must be 4 digits'),

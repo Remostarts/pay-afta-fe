@@ -6,31 +6,31 @@ import { Card, CardContent } from '@/components/ui/card';
 const testimonials = [
   {
     testimonial:
-      'I doubled my income without working nights. The platform sends me clients who actually value my expertise.',
+      'Integrating PayAfta into my online store was a breeze. Their API is well-documented and easy to use.',
     name: 'David R.',
-    avatar: '/assets/root/home/testimonials/david.jpg',
-    role: 'SBusiness Attorney',
+    avatar: '/assets/root/home/testimonials/James D.png',
+    role: 'e-commerce developer',
   },
   {
     testimonial:
-      'I avoided a $10K lawsuit thanks to PocketLawyers’ contract review. The Lawyer spotted risks I missed, explained everything in plain English and help me re-draft a more suitable contract.',
-    name: 'Sarah J',
-    avatar: '/assets/root/home/testimonials/sarah.jpg',
-    role: 'Freelance Full stack Developer',
+      "Since starting to use PayAfta, I've seen a noticeable increase in sales. Their payment platform is trusted by my customers.",
+    name: 'Lisa N.',
+    avatar: '/assets/root/home/testimonials/Lisa N.png',
+    role: 'Business Analyst',
   },
   {
     testimonial:
-      'The Lawyer i found on PocketLawyers not only secured my brand’s IP rights in record time but also broke down complex regulations into actionable steps.',
-    name: 'Tunde O.',
-    avatar: '/assets/root/home/testimonials/tunde.jpg',
-    role: 'Tech Startup Founder',
+      "PayAfta is a reliable and trustworthy payment platform. I've never had any issues with my transactions or security.",
+    name: 'Chris H.',
+    avatar: '/assets/root/home/testimonials/james D.png',
+    role: 'Software Developer',
   },
   {
     testimonial:
-      'Before PocketLawyers, I struggled with finding and managing clients. Now, the platform’s smart system let me take on meaningful cases aligned with my expertise– it’s transformed how I practice law.',
-    name: 'Amina K',
-    avatar: '/assets/root/home/testimonials/amina.jpg',
-    role: 'Intellectual Property Attorney',
+      "PayAfta's interface is user-friendly and easy to navigate. I've had a seamless experience with their platform. satisfied user",
+    name: 'Karen W.',
+    avatar: '/assets/root/home/testimonials/Lisa N.png',
+    role: 'Business Intelligent Manager',
   },
 ];
 

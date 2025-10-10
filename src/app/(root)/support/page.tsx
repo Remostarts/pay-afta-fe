@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ArrowRight, ChevronDown } from 'lucide-react';
+import { ArrowRight, ChevronDown, Mail, MessageCircle, Phone } from 'lucide-react';
 import type React from 'react';
 import { useState } from 'react';
 
@@ -15,9 +15,19 @@ import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { ReHeading } from '@/components/re-ui/ReHeading';
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import Link from 'next/link';
 
 export default function Page() {
-  const [activeTab, setActiveTab] = useState<'contact' | 'faqs'>('contact');
+  const [activeTab, setActiveTab] = useState<'contact' | 'faqs' | 'Book a Call'>('contact');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -41,16 +51,18 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="container mx-auto mt-10 max-w-8xl md:mx-16">
-        <div className="mb-8 px-4 md:mb-20">
-          <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">24/7 Powered Response</Badge>
-          <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
-            We are here to help
-          </h1>
-          <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
-            We&apos;re eager to hear from you and assist with any inquiries or concerns you may
-            have. Please don&apos;t hesitate to reach out to us – our team is here to help!
-          </p>
+      <section className="py-16 lg:py-20">
+        <div className="container mx-auto px-4">
+          <div className="mb-8 md:mb-20">
+            <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">24/7 Powered Response</Badge>
+            <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
+              We are here to help
+            </h1>
+            <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
+              We&apos;re eager to hear from you and assist with any inquiries or concerns you may
+              have. Please don&apos;t hesitate to reach out to us – our team is here to help!
+            </p>
+          </div>
         </div>
       </section>
 
@@ -68,6 +80,15 @@ export default function Page() {
                 onClick={() => setActiveTab('contact')}
               >
                 Contact
+              </Button>
+              <Button
+                variant={activeTab === 'Book a Call' ? 'default' : 'ghost'}
+                className={`rounded-full px-8 py-2 transition-all ${
+                  activeTab === 'Book a Call' ? 'bg-[#03045B] text-white' : ' text-[#9C9EFC]'
+                }`}
+                onClick={() => setActiveTab('Book a Call')}
+              >
+                Book a Call
               </Button>
               <Button
                 variant={activeTab === 'faqs' ? 'default' : 'ghost'}
@@ -89,6 +110,49 @@ export default function Page() {
                 <div className="">
                   <Faqs />
                 </div>
+              ) : activeTab === 'Book a Call' ? (
+                <>
+                  <div className="">
+                    <div className="max-w-4xl mx-auto bg-[#03045B] rounded-2xl p-6 sm:p-8 shadow-lg">
+                      {/* Logo */}
+                      <Link href="/" className="flex items-center space-x-2">
+                        <Image
+                          src="/Logo.svg"
+                          alt="Payafta Logo"
+                          width={110.17}
+                          height={40}
+                          priority
+                        />
+                      </Link>
+
+                      {/* Heading */}
+                      <h2 className="text-white text-3xl sm:text-4xl font-bold font-playfair mb-6 leading-tight">
+                        Arrange A Call With One Of Our Representatives
+                      </h2>
+
+                      {/* Image */}
+                      <div className="mb-6 overflow-hidden rounded-lg">
+                        <Image
+                          src="/assets/root/contact-us/BookACall.png"
+                          alt="Representative on call"
+                          className="w-full h-auto object-cover"
+                          width={300}
+                          height={24}
+                        />
+                      </div>
+
+                      {/* Buttons */}
+                      <div className="flex flex-col sm:flex-row gap-4">
+                        <button className="px-6 py-3 bg-white text-[#03045B] font-medium rounded-md hover:bg-gray-100 transition-colors">
+                          Book a 15 Min Consultation
+                        </button>
+                        <button className="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors">
+                          Schedule Now
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </>
               ) : (
                 /* Contact Form */
                 <form onSubmit={handleSubmit} className="space-y-6">
@@ -122,6 +186,22 @@ export default function Page() {
                       onChange={(e) => handleInputChange('email', e.target.value)}
                       className="border-gray-200 bg-gray-50"
                     />
+                  </div>
+
+                  <div>
+                    <ReHeading heading="Purpose" size={'base'} />
+                    <Select>
+                      <SelectTrigger className="w-full border-gray-200 bg-gray-50">
+                        <SelectValue placeholder="Select a purpose" />
+                      </SelectTrigger>
+                      <SelectContent className="border-gray-200 bg-gray-50">
+                        <SelectGroup>
+                          <SelectItem value="Contact Support">Contact Support</SelectItem>
+                          <SelectItem value="Contact Sales">Contact Sales</SelectItem>
+                          <SelectItem value="Raise a Dispute">Raise a Dispute</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
 
                   <div>
@@ -161,6 +241,44 @@ export default function Page() {
               )}
             </CardContent>
           </Card>
+        </div>
+      </div>
+
+      <div className="flex flex-col mx-auto container md:flex-row justify-evenly items-center gap-8 py-10 px-6 bg-white">
+        {/* Email */}
+        <div className="text-center space-y-4">
+          <Mail className="mx-auto w-8 h-8 text-indigo-700" />
+          <h3 className="text-lg font-semibold text-gray-900">Email</h3>
+          <p className="text-sm text-gray-500">Our friendly team is here to help.</p>
+          <a
+            href="mailto:hi@payafta.com"
+            className="block text-indigo-800 hover:text-indigo-600 font-medium"
+          >
+            hi@payafta.com
+          </a>
+        </div>
+
+        {/* Live Chat */}
+        <div className="text-center space-y-4">
+          <MessageCircle className="mx-auto w-8 h-8 text-indigo-700" />
+          <h3 className="text-lg font-semibold text-gray-900">Live chat</h3>
+          <p className="text-sm text-gray-500">Our friendly team is here to help.</p>
+          <button className="text-indigo-800 hover:text-indigo-600 font-medium">
+            Start new chat
+          </button>
+        </div>
+
+        {/* Phone */}
+        <div className="text-center space-y-4">
+          <Phone className="mx-auto w-8 h-8 text-indigo-700" />
+          <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
+          <p className="text-sm text-gray-500">Mon-Fri from 8am to 5pm.</p>
+          <a
+            href="tel:+234555000000"
+            className="block text-indigo-800 hover:text-indigo-600 font-medium"
+          >
+            +234 (555) 000-000
+          </a>
         </div>
       </div>
 
