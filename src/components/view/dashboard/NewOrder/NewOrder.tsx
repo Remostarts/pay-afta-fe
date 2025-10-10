@@ -257,10 +257,10 @@ export default function NewOrder({ onBack }: any) {
           // onClick={onBack}
           className="mb-6 flex items-center gap-1 font-medium text-gray-700 hover:text-gray-900"
         >
-          <Link href="/dashboard">
+          <Link href="/dashboard" className="flex items-center justify-center">
             <ChevronLeft className="size-5" />
+            <span className="text-lg">Create Escrow Order</span>
           </Link>
-          <span className="text-lg">Create Escrow Order</span>
         </button>
         <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
           <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
@@ -285,7 +285,7 @@ export default function NewOrder({ onBack }: any) {
                 gap-2 rounded-full px-6 py-3 text-base font-medium transition-all
                 ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
               `}
-              disabled={!isBuyerEmailValid}
+              // disabled={!isBuyerEmailValid}
             >
               <Image
                 alt="buyer"
@@ -300,9 +300,14 @@ export default function NewOrder({ onBack }: any) {
         <div>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
-              <div className="grid gap-5 lg:grid-cols-2">
-                <div>
-                  <ReHeading heading="Transaction Type" size={'base'} className=" text-gray-700" />
+              <div className="flex flex-col sm:flex-row sm:justify-center sm:gap-6">
+                {/* Transaction Type */}
+                <div className="w-full">
+                  <ReHeading
+                    heading="Transaction Type"
+                    size={'base'}
+                    className="text-gray-700 mb-2"
+                  />
                   <ReSelect
                     name="transactionType"
                     options={[
@@ -312,13 +317,15 @@ export default function NewOrder({ onBack }: any) {
                     placeholder="Select"
                   />
                 </div>
-                <div>
+
+                {/* Email/Phone Field */}
+                <div className="w-full">
                   {activeTab === 'buyer' ? (
-                    <div>
+                    <>
                       <ReHeading
-                        heading="Email or phone number "
+                        heading="Email or phone number"
                         size={'base'}
-                        className=" text-gray-700"
+                        className="text-gray-700 mb-2"
                       />
                       <input
                         {...register('buyerEmailPhoneNo')}
@@ -339,13 +346,13 @@ export default function NewOrder({ onBack }: any) {
                           {errors.buyerEmailPhoneNo.message}
                         </p>
                       ) : null}
-                    </div>
+                    </>
                   ) : (
-                    <div>
+                    <>
                       <ReHeading
-                        heading="Seller email or phone number "
+                        heading="Seller email or phone number"
                         size={'base'}
-                        className=" text-gray-700"
+                        className="text-gray-700 mb-2"
                       />
                       <input
                         {...register('sellerEmailPhoneNo')}
@@ -364,7 +371,7 @@ export default function NewOrder({ onBack }: any) {
                           {errors.sellerEmailPhoneNo.message}
                         </p>
                       ) : null}
-                    </div>
+                    </>
                   )}
                 </div>
               </div>

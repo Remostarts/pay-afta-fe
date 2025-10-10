@@ -4,9 +4,9 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
 
 import { useSocket } from './socketProvider';
-
-// import { getErrorMessage } from '@/lib/responseError';
 import { Chat } from '@/types/chat.type';
+// import { getErrorMessage } from '@/lib/responseError';
+import { mockChats } from '@/lib/data/chat-mock-data';
 
 type OnlineUsers = {
   [email: string]: string;
@@ -16,171 +16,132 @@ interface ChatListContextType {
   chats: Chat[];
   addChat: (chat: Omit<Chat, 'id'>) => string;
   session: any;
-  // loadChats: () => Promise<void>;
+  loadChats: () => Promise<void>;
   onlineUsers: OnlineUsers;
+  isLoading: boolean;
 }
 
 const ChatListContext = createContext<ChatListContextType | undefined>(undefined);
 
-// const initialChats = [
-//   { id: '1', title: 'Company Registration', status: 'completed', user: 'Anthony V', online: true },
-//   { id: '2', title: 'Trade Mark Registration', status: 'active', user: 'Anthony V', online: false },
-//   { id: '3', title: 'Founders Agreement', status: 'completed', user: 'Anthony V', online: false },
-//   { id: '4', title: 'Employment Agreement', status: 'active', user: 'Anthony V', online: true },
-//   {
-//     id: '5',
-//     title: 'Non-Disclosure Agreement',
-//     status: 'completed',
-//     user: 'Anthony V',
-//     online: false,
-//   },
-// ] as const;
-
-const initialChats = [
-  {
-    id: '1',
-    name: 'Company Registration', // Add name (used in rendering)
-    title: 'Company Registration', // Keep title if needed elsewhere
-    status: 'completed',
-    user: 'Anthony V',
-    online: true,
-    participants: [
-      // Add dummy participants to avoid errors
-      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
-      { id: 'receiver1', email: 'receiver@example.com', fullName: 'Receiver' },
-    ],
-    messages: [], // Add empty messages (or populate with dummies below)
-  },
-  {
-    id: '2',
-    name: 'Trade Mark Registration',
-    title: 'Trade Mark Registration',
-    status: 'active',
-    user: 'Anthony V',
-    online: false,
-    participants: [
-      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
-      { id: 'receiver2', email: 'receiver@example.com', fullName: 'Receiver' },
-    ],
-    messages: [],
-  },
-  {
-    id: '3',
-    name: 'Founders Agreement',
-    title: 'Founders Agreement',
-    status: 'completed',
-    user: 'Anthony V',
-    online: false,
-    participants: [
-      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
-      { id: 'receiver3', email: 'receiver@example.com', fullName: 'Receiver' },
-    ],
-    messages: [],
-  },
-  {
-    id: '4',
-    name: 'Employment Agreement',
-    title: 'Employment Agreement',
-    status: 'active',
-    user: 'Anthony V',
-    online: true,
-    participants: [
-      { id: 'user1', email: 'user@example.com', fullName: 'Anthony V' },
-      { id: 'receiver4', email: 'receiver@example.com', fullName: 'Receiver' },
-    ],
-    messages: [],
-  },
-];
-
 export function ChatListProvider({ children, session }: { children: ReactNode; session: any }) {
   console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 session🌼', session);
 
-  // const [chats, setChats] = useState<Chat[]>([]);
+  // Use mock data instead of empty array
+  const [chats, setChats] = useState<Chat[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUsers>({});
+  const [isLoading, setIsLoading] = useState(false); // Set to false since we're using mock data
   const { socket } = useSocket();
-  const [chats, setChats] = useState<Chat[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedChats = localStorage.getItem('chats');
-      return savedChats ? JSON.parse(savedChats) : initialChats;
+
+  console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 chats🌼', chats);
+
+  // COMMENTED OUT: Load chats from API
+  const loadChats = useCallback(async () => {
+    console.log('🌼 🔥🔥 loadChats (MOCK DATA) 🔥🔥 🌼');
+
+    setIsLoading(true);
+
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-participant`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: session?.accessToken || 'mock-token-123',
+          },
+          cache: 'no-store',
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log('🌼 🔥🔥 loadChats 🔥🔥 data🌼', data?.data);
+
+      setChats(data?.data || []);
+    } catch (error) {
+      console.log('🌼 🔥🔥 loadChats 🔥🔥 error🌼', error);
+      // getErrorMessage(error);
+
+      // Set empty array on error so UI doesn't break
+      setChats([]);
+    } finally {
+      setIsLoading(false);
     }
-    return initialChats;
-  });
+   }, [session?.accessToken]);
 
-  console.log(chats);
-
+  // Load chats on mount and when session/socket changes
   useEffect(() => {
-    localStorage.setItem('chats', JSON.stringify(chats));
-  }, [chats]);
+    if (session) {
+      loadChats();
+    }
+  }, [session, loadChats]);
 
-  // const loadChats = useCallback(async () => {
-  //   try {
-  //     const response = await fetch(`${process.env.BACKEND_URL}/chat/get-by-participant`, {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: session?.accessToken,
-  //       },
-  //       cache: 'no-store',
-  //     });
+  // Listen for online users updates
+  useEffect(() => {
+    if (socket) {
+      const handleReceiveOnlineUser = (data: OnlineUsers) => {
+        console.log('🌼 🔥🔥 handleReceiveOnlineUser 🔥🔥 data🌼', data);
+        setOnlineUsers(data);
+      };
 
-  //     const data = await response.json();
-  //     console.log('🌼 🔥🔥 loadChats 🔥🔥 data🌼', data?.data);
-  //     setChats(data?.data);
-  //   } catch (error) {
-  //     console.log('🌼 🔥🔥 partialSignup 🔥🔥 error🌼', error);
+      // Socket listener
+      socket.on('update_online_users', handleReceiveOnlineUser);
 
-  //     getErrorMessage(error);
-  //   }
-  // }, [session?.accessToken]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('update_online_users', handleReceiveOnlineUser);
+      };
+    }
+  }, [socket]);
 
-  // useEffect(() => {
-  //   loadChats();
-  // }, [session, socket, loadChats]);
+  // COMMENTED OUT: Listen for new chat created events
+  useEffect(() => {
+    if (socket) {
+      const handleReceiveChatCreated = () => {
+        console.log('🌼 🔥🔥 receive_chat_created (MOCK) 🔥🔥 🌼');
+        loadChats(); // Commented out
+      };
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleReceiveOnlineUser = (data: OnlineUsers) => {
-  //       console.log('🌼 🔥🔥 handleReceiveOnlineUser 🔥🔥 data🌼', data);
-  //       setOnlineUsers(data);
-  //     };
+      // Socket listener
+      socket.on('receive_chat_created', handleReceiveChatCreated);
 
-  //     socket.on('update_online_users', handleReceiveOnlineUser);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_chat_created');
+      };
+    }
+  }, [socket, loadChats]);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('update_online_users');
-  //     };
-  //   }
-  // }, [socket]);
+  // Add a new chat locally (no backend sync)
+  const addChat = useCallback((chat: Omit<Chat, 'id'>) => {
+    const newId = Date.now().toString();
+    const newChat = { ...chat, id: newId, messages: [] };
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleReceiveChatCreated = () => {
-  //       // console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
-  //       loadChats();
-  //     };
-  //     socket.on('receive_chat_created', handleReceiveChatCreated);
-
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_chat_created');
-  //     };
-  //   }
-  // }, [socket, loadChats]);
-
-  // useEffect(() => {
-  //   localStorage.setItem('chats', JSON.stringify(chats));
-  // }, [chats]);
-
-  const addChat = (chat: Omit<Chat, 'id'>) => {
-    const newId = Date.now().toString(); // Using timestamp for unique IDs
-    const newChat = { ...chat, id: newId };
     setChats((prevChats) => [...prevChats, newChat]);
+
+    fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chats`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: session?.accessToken,
+      },
+      body: JSON.stringify(chat),
+    }).then(() => {
+      loadChats(); // Reload to get server-generated ID
+    }).catch(error => {
+      console.error('Error creating chat:', error);
+    });
+
     return newId;
-  };
+  }, []);
 
   return (
-    <ChatListContext.Provider value={{ chats, addChat, session, onlineUsers }}>
+    <ChatListContext.Provider
+      value={{ chats, addChat, session, onlineUsers, loadChats, isLoading }}
+    >
       {children}
     </ChatListContext.Provider>
   );

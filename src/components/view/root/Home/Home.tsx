@@ -13,12 +13,26 @@ import NewsLetter from './NewsLetter';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Marquee } from '@/components/custom-ui/marquee';
+import { InfiniteLogoCarousel } from './InfiniteLogoCarousel';
+import { Testimonials } from './Testimonials';
+import Link from 'next/link';
+
+const brands = [
+  { alt: 'remostart', img: '/assets/root/home/remostart.png' },
+  { alt: 'datamellon', img: '/assets/root/home/datamellon.png' },
+  { alt: 'pila', img: '/assets/root/home/pila.png' },
+  { alt: 'firstfounders', img: '/assets/root/home/firstfounders.png' },
+];
 
 export default function Home() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <HeroSection />
+
+      {/* Brands Section  */}
+      <InfiniteLogoCarousel />
 
       {/* Worried Section */}
       <section className="bg-white py-20">
@@ -33,21 +47,31 @@ export default function Home() {
             <div className="relative">
               <p className="font-inter">
                 That’s where{' '}
-                <span className="font-inter font-semibold text-[#03045B]">
+                <span className="font-inter font-semibold text-[#03045B] text-lg">
                   PayAfta’s secure escrow payment
                 </span>{' '}
                 system steps in. Your funds are held safely until you confirm receipt and
                 satisfaction. If anything goes wrong, our team is right here to help so you shop and
                 sell online with complete confidence.
               </p>
-              <div className="mt-2 flex items-center gap-5 font-inter">
+              <div className="mt-4 flex items-center gap-5 font-inter">
                 <p className="flex items-center font-inter font-semibold text-[#1A1A1A]">
-                  {' '}
-                  <ShieldCheck /> Buyer Protection
+                  <Image
+                    alt="protection"
+                    src="assets/root/home/shildGIF.svg"
+                    width={32}
+                    height={32}
+                  />{' '}
+                  Buyer Protection
                 </p>
                 <p className="flex items-center font-inter font-semibold text-[#1A1A1A]">
-                  {' '}
-                  <ShieldCheck /> Seller Protection
+                  <Image
+                    alt="protection"
+                    src="assets/root/home/shildGIF.svg"
+                    width={32}
+                    height={32}
+                  />{' '}
+                  Seller Protection
                 </p>
               </div>
             </div>
@@ -112,6 +136,9 @@ export default function Home() {
         </div>
       </section>
 
+      {/* Testimonials sections */}
+      <Testimonials />
+
       {/* How It Works Section */}
       {/* <WorksSection /> */}
 
@@ -141,13 +168,13 @@ export default function Home() {
             Ready to experience these features in action? Start optimizing your team&apos;s
             collaboration today.
           </p>
-          <Button
-            size="lg"
-            className=" rounded-full bg-white px-8 py-4 text-lg text-[#03045B] opacity-90"
+          <Link
+            href="/sign-up"
+            className="mb-16 inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-medium text-[#02034A] no-underline transition-all opacity-80"
           >
-            Get Started For Free
+            Get Started
             <ArrowRight className="ml-2 size-5" />
-          </Button>
+          </Link>
         </div>
       </section>
 

@@ -69,6 +69,7 @@ export async function kycBankInfo(formData: TSettlementKyc) {
     getErrorMessage(error);
   }
 }
+
 export async function kycPin(formData: PinFormData) {
   const validation = pinSchema.safeParse(formData);
   const session = (await getServerSession(authOptions)) as any;
@@ -94,6 +95,65 @@ export async function kycPin(formData: PinFormData) {
     console.log('🌼 🔥🔥 kycPin 🔥🔥 error🌼', error);
 
     getErrorMessage(error);
+  }
+}
+
+export async function addSettlementBankAccount(formData: TSettlementKyc) {
+  const validation = settlementKycSchema.safeParse(formData);
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!validation.success) {
+    const errors = validation.error.issues
+      .map((issue) => `${issue.path[0]}: ${issue.message}`)
+      .join('. ');
+    throw new Error(errors);
+  }
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/settlement-bank-info`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+    return await response.json();
+  } catch (error) {
+    console.log(error);
+    getErrorMessage(error);
+  }
+}
+
+export async function setDefaultBankAccount(accountId: string) {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!accountId) {
+    throw new Error('Account ID is required');
+  }
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/bank-set-default/${accountId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to update default bank account');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('🔥 Error setting default bank account:', error);
+    throw error;
   }
 }
 

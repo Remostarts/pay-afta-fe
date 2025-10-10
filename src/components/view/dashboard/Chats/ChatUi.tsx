@@ -17,46 +17,51 @@ import Header from './Header';
 import { MessageList } from './MessageList';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatInput } from './ChatInput';
-import { mockChats, mockMessages } from '@/lib/data/chat-mock-data';
+// import { mockChats, mockMessages } from '@/lib/data/chat-mock-data';
 
-// Define the data type returned by your API
-type ChatData = Chat; // Replace with your actual data type if known
-
-// Define the query key type
+type ChatData = Chat;
 type QueryKey = [string, string | undefined, string | undefined];
 
-// const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Promise<ChatData> => {
-//   const [, chatId, accessToken] = queryKey;
+const fetchChatById = async ({ queryKey }: QueryFunctionContext<QueryKey>): Promise<ChatData> => {
+  const [, chatId, accessToken] = queryKey;
 
-//   if (!chatId || !accessToken) {
-//     throw new Error('Missing chatId or accessToken');
-//   }
+  if (!chatId || !accessToken) {
+    throw new Error('Missing chatId or accessToken');
+  }
 
-//   const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-id/${chatId}`, {
-//     method: 'GET',
-//     headers: {
-//       'Content-Type': 'application/json',
-//       Authorization: accessToken,
-//     },
-//     cache: 'no-store',
-//   });
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-id/${chatId}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: accessToken,
+    },
+    cache: 'no-store',
+  });
 
-//   if (!response.ok) {
-//     throw new Error(`Error fetching chat with ID ${chatId}`);
-//   }
+  if (!response.ok) {
+    throw new Error(`Error fetching chat with ID ${chatId}`);
+  }
 
-//   const data = await response.json();
-//   return data?.data; // Ensure you return the correct data type
-// };
+  const data = await response.json();
+  return data?.data;
+};
 
 export default function ChatUI() {
   const params = useParams();
   const chatId = params.id as string;
   const { session } = useChats();
   const { setCurrentChat, updateMessage, addMessage } = useChat();
-  // const { socket } = useSocket();
-  // const { setChatId, setLawyerId, setClientId, setAmount } = useGeneral();
-  // console.log('🌼 🔥🔥 ChatUI 🔥🔥 socket🌼', socket);
+  const { socket } = useSocket();
+  const {
+    setChatId,
+    setLawyerId,
+    setClientId,
+    setAmount,
+    setInvoiceId,
+    isChatDisabled,
+    setChatIsDisabled,
+  } = useGeneral();
+  console.log('🌼 🔥🔥 ChatUI 🔥🔥 socket🌼', socket);
 
   // const chat = chats.find((c) => c.id === chatId);
   // const [chat, setChat] = useState<Chat | null>(null);
@@ -83,40 +88,16 @@ export default function ChatUI() {
 
   const [remoteTyping, setRemoteTyping] = useState(false);
   const [isRead, setIsRead] = useState(true);
-  const [isChatDisabled, setIsChatDisabled] = useState(false);
 
-  // Use mock data instead of API call
-  const chat = mockChats.find((c) => c.id === chatId) || mockChats[0];
-
-  // const {
-  //   data: chat = {} as ChatData,
-  //   /* error,
-
-  //   isFetching, */
-  //   isLoading,
-  //   refetch,
-  // } = useQuery({ queryKey: ['chat', chatId, session?.accessToken], queryFn: fetchChatById });
-  // console.log('🌼 🔥🔥 ChatUI 🔥🔥 chat🌼', chat);
-
-  // useEffect(() => {
-  //   if (chat?.id) {
-  //     setChatId(chat?.id);
-  //     setLawyerId(chat.participants.find((p) => p?.lawyer?.id)?.id as string);
-  //     setClientId(chat.participants.find((p) => !p?.lawyer?.id)?.id as string);
-  //     setAmount(chat?.service?.minimumPrice as number);
-  //     setLawService(chat?.service?.title);
-  //     setClientEmail(chat.participants.find((p) => !p?.lawyer?.id)?.email as string);
-  //     const invoice = chat?.messages?.find((m) => m.type === 'invoice');
-  //     if (invoice) setInvoiceId(invoice.id);
-  //     else setInvoiceId('');
-  //   }
-
-  //   if (chat?.status === 'active') {
-  //     setChatIsDisabled(false);
-  //   } else if (chat?.status === 'completed' || chat?.status === 'canceled') {
-  //     setChatIsDisabled(true);
-  //   }
-  // }, [chat]);
+  const {
+    data: chat = {} as ChatData,
+    /* error,
+    
+    isFetching, */
+    isLoading,
+    refetch,
+  } = useQuery({ queryKey: ['chat', chatId, session?.accessToken], queryFn: fetchChatById });
+  console.log('🌼 🔥🔥 ChatUI 🔥🔥 chat🌼', chat);
 
   // for downloading the chat by the admin
 
@@ -182,113 +163,113 @@ export default function ChatUI() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [chat?.messages, uploadingMessage]);
 
-  // useEffect(() => {
-  //   if (socket) {
-  //     // Add event listeners
-  //     const handleReceiveResponse = (message: unknown) => {
-  //       console.log('🌼 🔥🔥 receive_response 🔥🔥 message🌼', message);
-  //       refetch();
-  //     };
+  useEffect(() => {
+    if (socket) {
+      // Add event listeners
+      const handleReceiveResponse = (message: unknown) => {
+        console.log('🌼 🔥🔥 receive_response 🔥🔥 message🌼', message);
+        refetch();
+      };
 
-  //     socket.on('receive_response', handleReceiveResponse);
+      socket.on('receive_response', handleReceiveResponse);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_response');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_response');
+      };
+    }
+  }, [socket, refetch]);
 
-  // // Depend on socket so it re-runs only when socket is updated
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleMessageSent = (message: unknown) => {
-  //       console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
-  //       refetch();
-  //     };
-  //     socket.on('messageSent', handleMessageSent);
+  // Depend on socket so it re-runs only when socket is updated
+  useEffect(() => {
+    if (socket) {
+      const handleMessageSent = (message: unknown) => {
+        console.log('🌼 🔥🔥 messageSend 🔥🔥 message🌼', message);
+        refetch();
+      };
+      socket.on('messageSent', handleMessageSent);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('messageSent');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('messageSent');
+      };
+    }
+  }, [socket, refetch]);
 
-  // // receive typing status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) setIsTyping(true);
-  //     };
-  //     socket.on('receive_start_typing', handleTyping);
+  // receive typing status
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) setIsTyping(true);
+      };
+      socket.on('receive_start_typing', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_start_typing');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_start_typing');
+      };
+    }
+  }, [socket, refetch]);
 
-  // // receive typing stop status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) setIsTyping(false);
-  //     };
-  //     socket.on('receive_stop_typing', handleTyping);
+  // receive typing stop status
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) setIsTyping(false);
+      };
+      socket.on('receive_stop_typing', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_stop_typing');
-  //     };
-  //   }
-  // }, [socket, refetch]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_stop_typing');
+      };
+    }
+  }, [socket, refetch]);
 
-  // // receive message read status
-  // useEffect(() => {
-  //   if (socket) {
-  //     const handleTyping = ({
-  //       chatId: id,
-  //       receiverEmail,
-  //     }: {
-  //       chatId: string;
-  //       receiverEmail: string;
-  //     }) => {
-  //       console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
-  //         id,
-  //         receiverEmail,
-  //       });
-  //       if (id === chatId) refetch();
-  //     };
-  //     socket.on('receive_message_read', handleTyping);
+  // receive message read status
+  useEffect(() => {
+    if (socket) {
+      const handleTyping = ({
+        chatId: id,
+        receiverEmail,
+      }: {
+        chatId: string;
+        receiverEmail: string;
+      }) => {
+        console.log('🌼 🔥🔥 typing message 🔥🔥 message🌼', {
+          id,
+          receiverEmail,
+        });
+        if (id === chatId) refetch();
+      };
+      socket.on('receive_message_read', handleTyping);
 
-  //     // Cleanup event listeners when component unmounts or socket changes
-  //     return () => {
-  //       socket.off('receive_message_read');
-  //     };
-  //   }
-  // }, [socket, refetch, chatId]);
+      // Cleanup event listeners when component unmounts or socket changes
+      return () => {
+        socket.off('receive_message_read');
+      };
+    }
+  }, [socket, refetch, chatId]);
 
   // getting the current chat through there id
   useEffect(() => {
@@ -322,30 +303,28 @@ export default function ChatUI() {
   const handleSendMessage = useCallback(() => {
     if (!inputMessage.trim()) return;
 
-    // Use mock message instead of API call
-    const newMessage: Message = {
-      id: Date.now().toString(),
-      type: 'text',
-      content: inputMessage,
-      time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-      sender: 'user',
-      status: 'sent',
+    const newMessage: TChatMessage = {
+      chatId,
+      receiverId: chat?.participants?.find((p) => p?.id !== session?.id)?.id as string,
       senderId: session?.id,
+      content: inputMessage,
+      type: 'text',
+      receiverEmail: chat?.participants?.find((p) => p?.id !== session?.id)?.email as string,
     };
+    console.log('🌼 🔥🔥 handleSendMessage 🔥🔥 newMessage🌼', newMessage);
 
-    // Add to mock messages
-    const updatedMessages = [...(mockMessages[chatId] || []), newMessage];
-    mockMessages[chatId] = updatedMessages;
+    console.log('Socket instance:', socket);
 
-    // Update chat with new messages
-    const updatedChat = { ...chat, messages: updatedMessages };
-    // In a real app, you would update the context/state here
-    // setCurrentChat(updatedChat);
+    socket?.emit('sendMessage', newMessage);
 
+    // addMessage(chatId, newMessage);
     setInputMessage('');
     setIsTyping(false);
     scrollToBottom();
-  }, [inputMessage, chatId, chat, session?.id, scrollToBottom]);
+
+    // setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'delivered' }), 1000);
+    // setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'read' }), 2000);
+  }, [inputMessage, chatId, chat?.participants, session?.id, socket, scrollToBottom]);
 
   // function to log out the files in the console log
   const logFileDetails = useCallback((file: File) => {
@@ -384,44 +363,16 @@ export default function ChatUI() {
         duration: fileType === 'audio' ? '0:30' : undefined,
         audioUrl: fileType === 'audio' ? fileUrl : undefined,
         status: 'sent',
-        time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        sender: 'user',
       };
 
-      // Add to mock messages
-      const updatedMessages = [...(mockMessages[chatId] || []), newMessage];
-      mockMessages[chatId] = updatedMessages;
-
-      // Update chat with new messages
-      const updatedChat = { ...chat, messages: updatedMessages };
-      // In a real app, you would update the context/state here
-      // setCurrentChat(updatedChat);
-
+      addMessage(chatId, newMessage);
       scrollToBottom();
 
-      // Simulate status updates
-      setTimeout(() => {
-        const deliveredMessage = { ...newMessage, status: 'delivered' as const };
-        const updatedMessagesDelivered = updatedMessages.map((m) =>
-          m.id === newMessage.id ? deliveredMessage : m
-        );
-        mockMessages[chatId] = updatedMessagesDelivered;
-        // Update chat with new messages
-        // setCurrentChat({ ...chat, messages: updatedMessagesDelivered });
-      }, 1000);
-
-      setTimeout(() => {
-        const readMessage = { ...newMessage, status: 'read' as const };
-        const updatedMessagesRead = updatedMessages.map((m) =>
-          m.id === newMessage.id ? readMessage : m
-        );
-        mockMessages[chatId] = updatedMessagesRead;
-        // Update chat with new messages
-        // setCurrentChat({ ...chat, messages: updatedMessagesRead });
-      }, 2000);
+      setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'delivered' }), 1000);
+      setTimeout(() => updateMessage(chatId, { ...newMessage, status: 'read' }), 2000);
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [chatId, logFileDetails, session.id, chat]
+    [chatId, addMessage, updateMessage, logFileDetails, session.id]
   );
 
   // function for simulating file uploads
@@ -549,34 +500,84 @@ export default function ChatUI() {
       setUploadingMessage(tempMessage);
       setSelectedFile(file);
 
-      // Simulate upload delay
-      setTimeout(() => {
-        const fileUrl = URL.createObjectURL(file);
-        addFileMessage(file, fileUrl);
+      const data = {
+        chatId,
+        receiverId: chat?.participants?.find((p) => p.id !== session?.id)?.id as string,
+        senderId: session?.id,
+        type: file.type.includes('image')
+          ? 'image'
+          : file.type.includes('video')
+            ? 'video'
+            : file.type.includes('audio')
+              ? 'audio'
+              : 'pdf',
+      };
 
-        uploadingRef.current = false;
-        setIsUploading(false);
-        setUploadingMessage(null);
-        setSelectedFile(null);
-      }, 1500);
+      const formData = new FormData();
+      formData.append('media', file);
+      formData.append('data', JSON.stringify(data));
+
+      fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/upload-file`, {
+        method: 'POST',
+        headers: {
+          Authorization: session?.accessToken,
+        },
+        body: formData,
+        cache: 'no-store',
+      })
+        .then(async (response) => {
+          if (response.ok) {
+            await response.json();
+            // toast({
+            //   title: 'Upload Successful',
+            //   description: `File uploaded successfully: ${result.fileName}`,
+            //   variant: 'success',
+            // });
+            socket?.emit('file_uploaded', {
+              receiverEmail: chat?.participants?.find((p) => p.id !== session.id)?.email as string,
+              chatId,
+            });
+            refetch();
+          } else {
+            // toast({
+            //   title: 'Upload Failed',
+            //   description: 'There was an issue uploading your file. Please try again.',
+            //   variant: 'destructive',
+            // });
+          }
+        })
+        .catch((error) => {
+          console.error('Error uploading file:', error);
+          // toast({
+          //   title: 'Error',
+          //   description: 'An unexpected error occurred while uploading the file.',
+          //   variant: 'destructive',
+          // });
+        })
+        .finally(() => {
+          uploadingRef.current = false;
+          setIsUploading(false);
+          setUploadingMessage(null);
+          setSelectedFile(null);
+        });
     },
-    [session?.id, addFileMessage]
+    [chat, chatId, session?.id, refetch, session?.accessToken, socket]
   );
 
   // function for handling chat input filed messages
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInputMessage(e.target.value);
-    // const data: { chatId: string; receiverEmail: string } = {
-    //   chatId,
-    //   receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-    // };
-    // socket?.emit('start_typing', data);
+    const data: { chatId: string; receiverEmail: string } = {
+      chatId,
+      receiverEmail: chat?.participants?.find((p) => p.id !== session.id)?.email as string,
+    };
+    socket?.emit('start_typing', data);
     if (typingTimeoutRef.current !== undefined) {
       clearTimeout(typingTimeoutRef.current);
     }
-    // typingTimeoutRef.current = setTimeout(() => {
-    //   socket?.emit('stop_typing', data);
-    // }, 1000);
+    typingTimeoutRef.current = setTimeout(() => {
+      socket?.emit('stop_typing', data);
+    }, 1000);
   };
 
   // function for speech recognition to start recording
@@ -596,10 +597,64 @@ export default function ChatUI() {
         const file = new File([audioBlob], 'voice-message.wav', { type: 'audio/wav' });
         console.log('🌼 🔥🔥 startRecording 🔥🔥 file🌼', file);
 
-        // Simulate upload
-        const fileUrl = URL.createObjectURL(audioBlob);
-        addFileMessage(file, fileUrl);
+        const data = {
+          chatId,
+          receiverId: chat?.participants?.find((p) => p.id !== session?.id)?.id as string,
+          senderId: session?.id,
+          type: 'audio',
+        };
+        console.log('🌼 🔥🔥 startRecording 🔥🔥 data🌼', data);
 
+        // Prepare FormData
+        const formData = new FormData();
+        formData.append('media', file);
+        formData.append('data', JSON.stringify(data));
+
+        fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/upload-file`, {
+          method: 'POST',
+          headers: {
+            Authorization: session?.accessToken,
+          },
+          body: formData,
+          cache: 'no-store',
+        })
+          .then(async (response) => {
+            console.log('🌼 🔥🔥 .then 🔥🔥 response🌼', response);
+
+            if (response.ok) {
+              await response.json();
+              // toast({
+              //   title: 'Upload Successful',
+              //   description: `File uploaded successfully: ${result.fileName}`,
+              //   variant: 'success',
+              // });
+              socket?.emit('file_uploaded', {
+                receiverEmail: chat?.participants?.find((p) => p.id !== session.id)?.email as string,
+              });
+              refetch();
+            } else {
+              // toast({
+              //   title: 'Upload Failed',
+              //   description: 'There was an issue uploading your file. Please try again.',
+              //   variant: 'destructive',
+              // });
+            }
+          })
+          .catch((error) => {
+            console.log('🌼 🔥🔥 handleFileSelect 🔥🔥 error🌼', error);
+
+            console.error('Error uploading file:', error);
+            // toast({
+            //   title: 'Error',
+            //   description: 'An unexpected error occurred while uploading the file.',
+            //   variant: 'destructive',
+            // });
+          })
+          .finally(() => {
+            uploadingRef.current = false;
+          });
+
+        addFileMessage(file, URL.createObjectURL(audioBlob));
         audioChunksRef.current = [];
       };
 
@@ -619,7 +674,15 @@ export default function ChatUI() {
       //   variant: 'destructive',
       // });
     }
-  }, [addFileMessage]);
+  }, [
+    addFileMessage,
+    chat?.participants,
+    chatId,
+    refetch,
+    session?.accessToken,
+    session.id,
+    socket,
+  ]);
 
   // function for speech recognition to stop recoding
   const stopRecording = useCallback(() => {
@@ -646,37 +709,36 @@ export default function ChatUI() {
     setCurrentlyPlayingAudio((current) => (current === messageId ? null : messageId));
   }, []);
 
-  // const handleUpdateMessageStatus = async () => {
-  //   if (isRead) return;
-  //   const response = await fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/update-status/${chatId}`,
-  //     {
-  //       method: 'PATCH',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         Authorization: session?.accessToken,
-  //       },
-  //       cache: 'no-store',
-  //     }
-  //   );
+  const handleUpdateMessageStatus = async () => {
+    if (isRead) return;
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/update-status/${chatId}`,
+      {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: session?.accessToken,
+        },
+        cache: 'no-store',
+      }
+    );
 
-  //   if (!response.ok) {
-  //     throw new Error(`Error updating message status for chat ${chatId}`);
-  //   }
-  //   setIsRead(true);
-  //   const data: { chatId: string; receiverEmail: string } = {
-  //     chatId,
-  //     receiverEmail: chat?.participants.find((p) => p.id !== session.id)?.email as string,
-  //   };
-  //   socket?.emit('message_read', data);
-  // };
-
-  // if no chats are there this will be rendered
+    if (!response.ok) {
+      throw new Error(`Error updating message status for chat ${chatId}`);
+    }
+    setIsRead(true);
+    const data: { chatId: string; receiverEmail: string } = {
+      chatId,
+      receiverEmail: chat?.participants?.find((p) => p.id !== session.id)?.email as string,
+    };
+    socket?.emit('message_read', data);
+  };
+  // If no chat selected
   if (!chatId) {
     return (
       <div className="flex size-full flex-col items-center justify-center">
         <Image
-          src="/assets/dashboard/business-dashboard/chats/empty-chat.svg"
+          src="/assets/dashboard/Chats/empty-chat.svg"
           alt="no-chats"
           width={139}
           height={108.14}
@@ -687,93 +749,63 @@ export default function ChatUI() {
   }
 
   return (
-    <>
+    <div className="flex h-full max-h-screen flex-1 flex-col overflow-hidden bg-white">
+      {/* Header */}
+      {chat && (
+        <div className="shrink-0">
+          <Header chat={chat} />
+        </div>
+      )}
+
+      {/* Messages area */}
       <div
-        // role="button"
-        // tabIndex={0}
-        // onClick={handleUpdateMessageStatus}
-        // onKeyDown={(e) => {
-        //   if (e.key === 'Enter' || e.key === ' ') {
-        //     handleUpdateMessageStatus();
-        //   }
-        // }}
-        className="flex h-full max-h-screen flex-1 flex-col overflow-hidden bg-white"
+        className="relative grow overflow-y-auto p-2 md:px-4"
+        ref={scrollAreaRef}
+        style={{
+          maxHeight: 'calc(100vh - 200px)',
+        }}
+        onScroll={handleScroll}
       >
-        {/* {isLoading ? (
-          <SkeletonMessageLoader />
-        ) : ( */}
-        <>
-          {/* Fixed height header */}
-          {chat && (
-            <div className="shrink-0">
-              <Header chat={chat} />
-              {/* Download Chat Button for Admin */}
-              {/* {isAdmin && (
-                  <button
-                    className="mt-4 rounded bg-blue-500 px-4 py-2 text-white hover:bg-blue-600"
-                    onClick={handleDownloadChat}
-                  >
-                    Download Chat
-                  </button>
-                )} */}
+        <div className="min-h-full">
+          {!chat || chat?.messages?.length === 0 ? (
+            <div className="flex h-full flex-col items-center justify-center py-8">
+              <p className="text-center text-sm text-gray-500">
+                Send a message to start the conversation
+              </p>
             </div>
+          ) : (
+            <MessageList
+              messages={chat?.messages ?? []}
+              currentlyPlayingAudio={currentlyPlayingAudio}
+              onAudioPlayPause={handleAudioPlayPause}
+              session={session}
+              uploadingMessage={uploadingMessage}
+            />
           )}
 
-          {/* Scrollable messages area with flex-grow */}
-          <div
-            className="relative grow overflow-y-auto p-2 md:px-4"
-            ref={scrollAreaRef}
-            style={{
-              maxHeight: 'calc(100vh - 200px)',
-            }}
-            onScroll={handleScroll}
-          >
-            {/* <OrStrike text="Today" /> */}
-
-            <div className="min-h-full">
-              {!chat || chat?.messages?.length === 0 ? (
-                <div className="flex h-full flex-col items-center justify-center py-8">
-                  <p className="text-center text-sm text-gray-500">
-                    Send a message to start the conversation
-                  </p>
-                </div>
-              ) : (
-                <MessageList
-                  messages={chat?.messages ?? []}
-                  currentlyPlayingAudio={currentlyPlayingAudio}
-                  onAudioPlayPause={handleAudioPlayPause}
-                  session={session}
-                  uploadingMessage={uploadingMessage}
-                />
-              )}
-
-              {/* Typing indicators */}
-              <div className="space-y-2">
-                {remoteTyping && <TypingIndicator position="left" />}
-                {isTyping && <TypingIndicator position="left" />}
-              </div>
-
-              {/* Scroll target */}
-              <div ref={messagesEndRef} />
-            </div>
+          {/* Typing indicators */}
+          <div className="space-y-2">
+            {remoteTyping && <TypingIndicator position="left" />}
+            {isTyping && <TypingIndicator position="left" />}
           </div>
 
-          {/* Fixed height input */}
-          <div className="relative shrink-0">
-            <ChatInput
-              inputMessage={inputMessage}
-              isDisabled={isChatDisabled}
-              isUploading={isUploading}
-              isRecording={isRecording}
-              onMessageChange={handleInputChange}
-              onSendMessage={handleSendMessage}
-              onFileSelect={handleFileSelect}
-              onToggleRecording={toggleRecording}
-            />
-          </div>
-        </>
-        {/* )} */}
+          <div ref={messagesEndRef} />
+        </div>
       </div>
-    </>
+
+      {/* Input */}
+      <div className="relative shrink-0">
+        <ChatInput
+          inputMessage={inputMessage}
+          isDisabled={isChatDisabled}
+          isUploading={isUploading}
+          isRecording={isRecording}
+          onMessageChange={handleInputChange}
+          onSendMessage={handleSendMessage}
+          onFileSelect={handleFileSelect}
+          onToggleRecording={toggleRecording}
+        />
+      </div>
+    </div>
   );
 }
