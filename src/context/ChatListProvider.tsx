@@ -27,7 +27,7 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
   console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 session🌼', session);
 
   // Use mock data instead of empty array
-  const [chats, setChats] = useState<Chat[]>(mockChats);
+  const [chats, setChats] = useState<Chat[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUsers>({});
   const [isLoading, setIsLoading] = useState(false); // Set to false since we're using mock data
   const { socket } = useSocket();
@@ -40,8 +40,6 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
 
     setIsLoading(true);
 
-    // COMMENTED OUT: API call
-    /*
     try {
       const response = await fetch(
         `${process.env.NEXT_PUBLIC_BACKEND_URL}/chat/get-by-participant`,
@@ -65,22 +63,14 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
       setChats(data?.data || []);
     } catch (error) {
       console.log('🌼 🔥🔥 loadChats 🔥🔥 error🌼', error);
-      getErrorMessage(error);
+      // getErrorMessage(error);
 
       // Set empty array on error so UI doesn't break
       setChats([]);
     } finally {
       setIsLoading(false);
     }
-    */
-
-    // Using mock data instead
-    setTimeout(() => {
-      setChats(mockChats);
-      setIsLoading(false);
-      console.log('🌼 🔥🔥 loadChats 🔥🔥 Mock data loaded🌼', mockChats);
-    }, 500); // Simulate network delay
-  }, [session?.accessToken]);
+   }, [session?.accessToken]);
 
   // Load chats on mount and when session/socket changes
   useEffect(() => {
@@ -89,7 +79,7 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
     }
   }, [session, loadChats]);
 
-  // COMMENTED OUT: Listen for online users updates
+  // Listen for online users updates
   useEffect(() => {
     if (socket) {
       const handleReceiveOnlineUser = (data: OnlineUsers) => {
@@ -97,18 +87,12 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
         setOnlineUsers(data);
       };
 
-      // COMMENTED OUT: Socket listener
-      // socket.on('update_online_users', handleReceiveOnlineUser);
-
-      // Mock online users
-      setOnlineUsers({
-        'user1@example.com': 'online',
-        'user2@example.com': 'online',
-      });
+      // Socket listener
+      socket.on('update_online_users', handleReceiveOnlineUser);
 
       // Cleanup event listeners when component unmounts or socket changes
       return () => {
-        // socket.off('update_online_users');
+        socket.off('update_online_users', handleReceiveOnlineUser);
       };
     }
   }, [socket]);
@@ -118,15 +102,15 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
     if (socket) {
       const handleReceiveChatCreated = () => {
         console.log('🌼 🔥🔥 receive_chat_created (MOCK) 🔥🔥 🌼');
-        // loadChats(); // Commented out
+        loadChats(); // Commented out
       };
 
-      // COMMENTED OUT: Socket listener
-      // socket.on('receive_chat_created', handleReceiveChatCreated);
+      // Socket listener
+      socket.on('receive_chat_created', handleReceiveChatCreated);
 
       // Cleanup event listeners when component unmounts or socket changes
       return () => {
-        // socket.off('receive_chat_created');
+        socket.off('receive_chat_created');
       };
     }
   }, [socket, loadChats]);
@@ -138,8 +122,6 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
 
     setChats((prevChats) => [...prevChats, newChat]);
 
-    // COMMENTED OUT: Send to backend
-    /*
     fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/api/chats`, {
       method: 'POST',
       headers: {
@@ -152,7 +134,6 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
     }).catch(error => {
       console.error('Error creating chat:', error);
     });
-    */
 
     return newId;
   }, []);
