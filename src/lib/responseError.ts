@@ -10,5 +10,6 @@ export const getErrorMessage = (error: unknown): string => {
   } else {
     message = 'something went wrong';
   }
-  throw new Error(message);
+
+  return message;  
 };

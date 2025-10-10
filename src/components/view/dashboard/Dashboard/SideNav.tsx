@@ -125,7 +125,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
           <li className="mt-8 flex items-center gap-4">
             <Image
               src={user?.profileImage || '/assets/admin-dashboard/users/prof-avatar.svg'}
-              alt="profile-img"
+              alt={user?.firstName || 'profile'}
               width={40}
               height={40}
               className=" rounded-full"

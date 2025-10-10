@@ -49,9 +49,9 @@ const ReInput = ({
               {label} {required && <span style={{ color: 'red' }}>*</span>}
             </FormLabel>
             <FormControl>
-              <div className="flex-center rounded border border-gray-300">
+              <div className="flex-center rounded border border-gray-300 ">
                 <Input
-                  className="border-none font-spaceGrotesk"
+                  className="border-none font-spaceGrotesk placeholder:text-gray-400"
                   placeholder={placeholder}
                   type={type}
                   autoComplete={autoComplete}

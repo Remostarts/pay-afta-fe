@@ -99,7 +99,7 @@ const RePassInput = ({
             <FormControl>
               <div className="flex-center rounded border border-gray-300 pr-2 focus-visible:ring-2 focus-visible:ring-offset-2">
                 <Input
-                  className="border-none focus-visible:ring-0 focus-visible:ring-offset-0"
+                  className="border-none focus-visible:ring-0 focus-visible:ring-offset-0 placeholder:text-gray-400"
                   placeholder={label}
                   autoComplete="off"
                   disabled={disabled}
