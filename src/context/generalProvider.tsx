@@ -26,6 +26,8 @@ interface GeneralContextType {
   loadUserData: () => void;
   onboardingStatus: boolean | null;
   session: any;
+  isChatDisabled: boolean;
+  setChatIsDisabled: (isChatDisabled: boolean) => void;
 }
 
 const GeneralContext = createContext<GeneralContextType | undefined>(undefined);
@@ -48,6 +50,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 user🌼', user);
 
   const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
+  const [isChatDisabled, setChatIsDisabled] = useState(false);
 
   const loadUserData = useCallback(async () => {
     try {
@@ -92,6 +95,8 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         loadUserData,
         onboardingStatus,
         session,
+        isChatDisabled,
+        setChatIsDisabled,
       }}
     >
       {children}

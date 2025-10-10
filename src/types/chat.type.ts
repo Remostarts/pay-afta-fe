@@ -63,6 +63,9 @@ type Lawyer = {
 type Participant = {
   id: string;
   fullName: string;
+  firstName: string;
+  lastName: string;
+  profileImage: string | null;
   email: string;
   lawyer: Lawyer;
 };

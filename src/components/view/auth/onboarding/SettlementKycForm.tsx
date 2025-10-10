@@ -7,11 +7,24 @@ import { toast } from 'sonner';
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { ReHeading } from '@/components/re-ui/ReHeading';
-import ReSelect from '@/components/re-ui/ReSelect';
-import { Form } from '@/components/ui/form';
+import {
+  Form,
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from '@/components/ui/form';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { nigeriaBanks } from '@/lib/data/nigeriaBanks';
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
-import { kycBankInfo, kycPersonalInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
 
 type defaultVal = {
@@ -35,7 +48,7 @@ export default function SettlementKycForm() {
     mode: 'onChange',
   });
 
-  const { handleSubmit, formState } = form;
+  const { handleSubmit, formState, control } = form;
   const { isSubmitting } = formState;
   const { loadUserData } = useGeneral();
 
@@ -62,7 +75,43 @@ export default function SettlementKycForm() {
         <form onSubmit={handleSubmit(onSubmit)}>
           <div>
             <ReHeading heading="Select your bank name" size={'base'} />
-            <ReSelect placeholder="select" name="bankName" options={nigeriaBanks} />
+            <FormField
+              control={control}
+              name="bankName"
+              render={({ field }) => (
+                <FormItem>
+                  <Select
+                    onValueChange={field.onChange}
+                    value={field.value}
+                    defaultValue={field.value}
+                  >
+                    <FormControl>
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent
+                      className="max-h-[300px] bg-white"
+                      position="popper"
+                      sideOffset={5}
+                    >
+                      <div className="overflow-y-auto max-h-[280px]">
+                        {nigeriaBanks.map((bank) => (
+                          <SelectItem
+                            key={bank.value}
+                            value={bank.value}
+                            className="cursor-pointer"
+                          >
+                            {bank.label}
+                          </SelectItem>
+                        ))}
+                      </div>
+                    </SelectContent>
+                  </Select>
+                  <FormMessage className="text-base font-normal text-red-500" />
+                </FormItem>
+              )}
+            />
           </div>
           <div className="mt-5">
             <ReHeading heading="Enter 10 digit account number" size={'base'} />
