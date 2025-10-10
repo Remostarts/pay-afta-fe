@@ -8,7 +8,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from '@tanstack/react-table';
-import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
+import { ChevronLeft, ChevronLeftIcon, ChevronRightIcon } from 'lucide-react';
 import Link from 'next/link';
 import Skeleton from 'react-loading-skeleton';
 import Image from 'next/image';
@@ -440,7 +440,11 @@ export function ReDataTable<TData, TValue>({
       <div className="mb-4 flex items-center justify-between">
         {label ? (
           <>
-            <h2 className="text-2xl font-medium">{label}</h2>
+            <Link href="/dashboard" className="flex items-center justify-center">
+              <ChevronLeft className="size-5" />
+              <span className="text-lg font-inter font-medium">{label}</span>
+            </Link>
+            {/* <h2 className="text-2xl font-medium">{label}</h2> */}
             <div>{renderFilters()}</div>
           </>
         ) : (

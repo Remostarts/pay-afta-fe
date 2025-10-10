@@ -1,3 +1,5 @@
+'use client';
+
 import { useFormContext } from 'react-hook-form';
 
 import {
@@ -11,7 +13,9 @@ import {
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
@@ -24,6 +28,7 @@ interface TReSelectProps {
   options: { value: string; label: string }[];
   required?: boolean;
   onChange?: (value: string) => void;
+  groupLabel?: string;
 }
 
 const ReSelect = ({
@@ -34,6 +39,7 @@ const ReSelect = ({
   options,
   required,
   onChange,
+  groupLabel,
 }: TReSelectProps) => {
   const { control } = useFormContext();
 
@@ -43,31 +49,45 @@ const ReSelect = ({
       name={name}
       render={({ field }) => (
         <FormItem className="font-spaceGrotesk">
-          <FormLabel className="text-sm text-gray-800">
-            {label} {required && <span style={{ color: 'red' }}>*</span>}
-          </FormLabel>
-          <FormControl>
-            <div className={`rounded border border-gray-300 bg-white max-h-[40vh] overflow-y-auto`}>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
-                <SelectTrigger className="w-full border-none ">
-                  <SelectValue placeholder={placeholder} className="text-gray-400" />
-                </SelectTrigger>
-                <SelectContent className="max-h-[40vh] overflow-y-auto bg-white">
+          {label && (
+            <FormLabel className="text-sm text-gray-800">
+              {label} {required && <span className="text-red-500">*</span>}
+            </FormLabel>
+          )}
+          <Select
+            onValueChange={(value) => {
+              field.onChange(value);
+              onChange?.(value);
+            }}
+            value={field.value}
+            defaultValue={field.value}
+          >
+            <FormControl>
+              <SelectTrigger className="w-full">
+                <SelectValue placeholder={placeholder} />
+              </SelectTrigger>
+            </FormControl>
+            <SelectContent className="max-h-[300px] overflow-y-auto">
+              {groupLabel ? (
+                <SelectGroup>
+                  <SelectLabel>{groupLabel}</SelectLabel>
                   {options.map((option) => (
-                    <SelectItem
-                      key={option.value}
-                      value={option.value}
-                      className="cursor-pointer font-spaceGrotesk hover:bg-primary-100"
-                    >
+                    <SelectItem key={option.value} value={option.value} className="cursor-pointer">
                       {option.label}
                     </SelectItem>
                   ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </FormControl>
-          <FormDescription className="ml-1">{description}</FormDescription>
-          <FormMessage className="text-base font-normal text-primary-800" />
+                </SelectGroup>
+              ) : (
+                options.map((option) => (
+                  <SelectItem key={option.value} value={option.value} className="cursor-pointer">
+                    {option.label}
+                  </SelectItem>
+                ))
+              )}
+            </SelectContent>
+          </Select>
+          {description && <FormDescription className="ml-1">{description}</FormDescription>}
+          <FormMessage className="text-base font-normal text-red-500" />
         </FormItem>
       )}
     />
