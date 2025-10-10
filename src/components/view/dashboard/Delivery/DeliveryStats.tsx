@@ -3,9 +3,9 @@
 import React from 'react';
 
 const stats = [
-  { label: 'Pending Order', value: 3 },
-  { label: 'In Progress', value: 5 },
-  { label: 'Completed', value: 25 },
+  { label: 'Pending Order', value: 0 },
+  { label: 'In Progress', value: 0 },
+  { label: 'Completed', value: 0 },
 ];
 
 const DeliveryStats = () => (

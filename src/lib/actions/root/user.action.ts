@@ -6,8 +6,6 @@ import { getErrorMessage } from '@/lib/responseError';
 import { TProfileUpdate } from '@/lib/validations/setting.validation';
 
 export async function userProfileUpdate(formData: TProfileUpdate) {
-  console.log('🌼 🔥🔥 businessProfileUpdate 🔥🔥 formData🌼', formData);
-
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;
