@@ -12,7 +12,7 @@ interface StepperForProductProps {
   currentStep: number;
   isReturn?: boolean;
   isDisputed?: boolean;
-  isRefunded?: boolean; // Added to track refunded state
+  isRefunded?: boolean;
 }
 
 export default function StepperForProduct({
@@ -82,65 +82,158 @@ export default function StepperForProduct({
   const steps = getSteps();
 
   return (
-    <div className="w-full">
+    <div className="w-full px-4 py-8">
+      <style>{`
+        @keyframes slideIn {
+          from {
+            width: 0%;
+          }
+          to {
+            width: 100%;
+          }
+        }
+        
+        @keyframes pulse {
+          0%, 100% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          50% {
+            transform: scale(1.05);
+            opacity: 0.8;
+          }
+        }
+        
+        @keyframes checkmark {
+          0% {
+            transform: scale(0) rotate(-45deg);
+            opacity: 0;
+          }
+          50% {
+            transform: scale(1.2) rotate(-45deg);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(1) rotate(0deg);
+            opacity: 1;
+          }
+        }
+
+        @keyframes ripple {
+          0% {
+            transform: scale(0.8);
+            opacity: 0.6;
+          }
+          100% {
+            transform: scale(2);
+            opacity: 0;
+          }
+        }
+        
+        .line-progress {
+          animation: slideIn 0.6s ease-out forwards;
+        }
+        
+        .step-pulse {
+          animation: pulse 2s ease-in-out infinite;
+        }
+        
+        .checkmark-animate {
+          animation: checkmark 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+        }
+
+        .ripple-effect::before {
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 50%;
+          width: 100%;
+          height: 100%;
+          border-radius: 50%;
+          transform: translate(-50%, -50%);
+          animation: ripple 2s ease-out infinite;
+        }
+
+        // .ripple-effect.green::before {
+        //   background: rgba(34, 197, 94, 0.3);
+        // }
+
+        // .ripple-effect.red::before {
+        //   background: rgba(239, 68, 68, 0.3);
+        // }
+      `}</style>
+
       <div className="flex items-center justify-between">
         {steps.map((step, index) => (
-          <div key={step.number} className="relative flex flex-col items-center">
-            {/* Connector Line */}
+          <div key={step.number} className="relative flex flex-col items-center flex-1">
+            {/* Connector Line Container */}
             {index < steps.length - 1 && (
-              <div
-                className={`absolute left-[50%] top-[15px] h-[2px] w-[100px] 
-                  ${
-                    step.status === 'completed'
-                      ? 'bg-green-500'
-                      : step.status === 'disputed'
-                        ? 'bg-red-500'
-                        : step.status === 'refunded'
-                          ? 'bg-[#666666]'
-                          : 'bg-gray-200'
-                  }`}
-              />
+              <div className="absolute left-[50%] top-[18px] h-[3px] w-full bg-gray-200 rounded-full overflow-hidden">
+                {/* Animated Progress Line */}
+                {step.status === 'completed' && (
+                  <div
+                    className="h-full bg-gradient-to-r from-green-400 to-green-600 line-progress rounded-full shadow-sm"
+                    style={{
+                      animationDelay: `${index * 0.2}s`,
+                    }}
+                  />
+                )}
+                {step.status === 'disputed' && (
+                  <div className="h-full bg-gradient-to-r from-red-400 to-red-600 line-progress rounded-full shadow-sm" />
+                )}
+                {step.status === 'refunded' && (
+                  <div className="h-full bg-gradient-to-r from-gray-500 to-gray-600 line-progress rounded-full shadow-sm" />
+                )}
+              </div>
             )}
 
             {/* Step Circle */}
             <div
-              className={`z-10 flex size-8 items-center justify-center rounded-full border-2 
+              className={`relative z-10 flex size-10 items-center justify-center rounded-full border-[3px] transition-all duration-300 ease-in-out
                 ${
                   step.status === 'completed'
-                    ? 'border-green-500 bg-green-500 text-white'
+                    ? 'border-green-500 bg-gradient-to-br from-green-400 to-green-600 text-white shadow-lg shadow-green-200 hover:shadow-xl hover:shadow-green-300 hover:scale-110'
                     : step.status === 'current'
-                      ? 'border-green-500 bg-white text-green-500'
+                      ? 'border-green-500 bg-white text-green-600 shadow-lg shadow-green-200 step-pulse ripple-effect green'
                       : step.status === 'disputed'
-                        ? 'border-red-500 bg-red-500 text-white'
+                        ? 'border-red-500 bg-gradient-to-br from-red-400 to-red-600 text-white shadow-lg shadow-red-200 hover:shadow-xl hover:shadow-red-300 hover:scale-110 ripple-effect red'
                         : step.status === 'refunded'
-                          ? 'border-[#666666] bg-[#666666] text-white'
-                          : 'border-gray-200 bg-white text-gray-400'
-                }`}
+                          ? 'border-gray-600 bg-gradient-to-br from-gray-500 to-gray-700 text-white shadow-lg shadow-gray-300 hover:shadow-xl hover:shadow-gray-400 hover:scale-110'
+                          : 'border-gray-300 bg-white text-gray-400 hover:border-gray-400 hover:scale-105'
+                }
+                transform cursor-pointer`}
             >
               {step.status === 'completed' || step.status === 'refunded' ? (
-                <Check className="size-5" />
+                <Check className="size-5 checkmark-animate" strokeWidth={3} />
               ) : (
-                <span className="text-sm">{step.number}</span>
+                <span className="text-sm font-bold transition-transform duration-200">
+                  {step.number}
+                </span>
               )}
             </div>
 
             {/* Step Label */}
             <span
-              className={`mt-2 text-sm font-medium
+              className={`mt-3 text-sm font-semibold transition-all duration-300 text-center px-2
                 ${
                   step.status === 'completed'
-                    ? 'text-green-500'
+                    ? 'text-green-600'
                     : step.status === 'current'
-                      ? 'text-green-500'
+                      ? 'text-green-600 scale-105'
                       : step.status === 'disputed'
-                        ? 'text-red-500'
+                        ? 'text-red-600'
                         : step.status === 'refunded'
-                          ? 'text-[#666666]'
+                          ? 'text-gray-700'
                           : 'text-gray-400'
                 }`}
             >
               {step.label}
             </span>
+
+            {/* Status Indicator Dot for Current Step */}
+            {/* {step.status === 'current' && (
+              <div className="mt-1 w-1.5 h-1.5 bg-green-500 rounded-full step-pulse" />
+            )} */}
           </div>
         ))}
       </div>
