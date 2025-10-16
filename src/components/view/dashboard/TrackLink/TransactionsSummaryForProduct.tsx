@@ -75,7 +75,7 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
     setProgressLoading(true);
     try {
       const response = await getOrder(id);
-      console.log('🌼 🔥🔥 loadOrder 🔥🔥 response🌼', response);
+      console.log('🌼 🔥🔥 loadOrder 🔥🔥 response🌼', response.data);
       if (response?.success) {
         setUserRole((prev) =>
           user?.id === response?.data?.buyerId
@@ -120,8 +120,19 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
             </h4>
             <div className="mb-5 flex items-center justify-between">
               <p className="font-inter text-gray-500">Transactions ID: {id}</p>
-              <p className="font-inter text-gray-500">November 3, 2024, 18:25</p>
+              <p className="font-inter text-gray-500">
+                {order?.deliveryDate
+                  ? new Date(order.deliveryDate).toLocaleString('en-US', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                      hour: '2-digit',
+                      minute: '2-digit',
+                    })
+                  : '--'}
+              </p>
             </div>
+
             <StepperForProduct
               currentStep={currentStep}
               isDisputed={showRiseDispute}
@@ -136,8 +147,6 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 showActions={userRole === 'buyer'}
                 order={order ?? null}
                 loadOrder={loadOrder}
-                setProgressLoading={setProgressLoading}
-                progressLoading={progressLoading}
               />
             ) : currentStep === 2 ? (
               <MakePayment
@@ -148,8 +157,6 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 showActions={userRole === 'buyer'}
                 order={order ?? null}
                 loadOrder={loadOrder}
-                setProgressLoading={setProgressLoading}
-                progressLoading={progressLoading}
               />
             ) : currentStep === 3 ? (
               <ConfirmShipping
@@ -208,18 +215,27 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
           </div>
           <div className="rounded-md max-w-xl bg-white p-4">
             {currentStep === 1 ? (
-              <Summary
-                userRole={userRole}
-                showActions={true}
-                name="Paul Simeon"
-                paymentMethod="One Time Payment"
-                deliveryDate="November 24, 2023"
-                item="Lorem ipsum dolor sit amet consectetur. Id scelerisque condimentum sagittis accumsan viverra est scelerisque volutpat eleifend. Non placerat viverra hac mi in lorem."
-                quantity={70}
-                price={300000}
-              />
+              <>
+                {' '}
+                {order && (
+                  <Summary
+                    userRole={userRole}
+                    showActions={true}
+                    name={
+                      userRole === 'buyer'
+                        ? `${order?.seller?.firstName} ${order?.seller?.lastName}`
+                        : `${order?.buyer?.firstName} ${order?.buyer?.lastName}`
+                    }
+                    paymentMethod={order?.paymentType}
+                    deliveryDate={new Date(order?.deliveryDate).toLocaleDateString()}
+                    item={order?.detailAboutItem}
+                    quantity={order?.milestones?.length || 1}
+                    price={order?.amount}
+                  />
+                )}
+              </>
             ) : (
-              <TransactionSummary />
+              <TransactionSummary order={order ?? null} />
             )}
           </div>
         </section>

@@ -7,8 +7,14 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { OrderDetails } from '@/types/order';
+interface TransactionSummaryProps {
+  order?: OrderDetails | null;
+}
 
-export default function TransactionSummary() {
+export default function TransactionSummary({ order }: TransactionSummaryProps) {
+  console.log('🌼 🔥🔥 TransactionSummary 🔥🔥 order🌼', order);
+
   return (
     <div className="max-w-5xl mx-auto rounded-xl border border-gray-100 bg-white shadow-sm">
       <Accordion type="single" collapsible className="w-full">
@@ -34,22 +40,45 @@ export default function TransactionSummary() {
 
             {/* Info Grid */}
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
-              <SummaryCard label="Buyer" value="Paul Simeon" />
-              <SummaryCard label="Seller" value="Adaeze Nwosu" />
-              <SummaryCard label="Payment Method" value="One Time" />
-              <SummaryCard label="Expected Delivery" value="November 24, 2023" />
+              <SummaryCard
+                label="Buyer"
+                value={`${order?.buyer?.firstName} ${order?.buyer?.lastName}`}
+              />
+              <SummaryCard
+                label="Seller"
+                value={`${order?.seller?.firstName} ${order?.seller?.lastName}`}
+              />
+              <SummaryCard label="Payment Method" value={`${order?.paymentType}  `} />
+              <SummaryCard
+                label="Expected Delivery"
+                value={
+                  order?.deliveryDate
+                    ? new Date(order.deliveryDate).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : '--'
+                }
+              />
             </div>
 
             {/* Details Section */}
             <div className="mt-8">
               <h4 className="mb-4 text-base font-semibold text-gray-900">Details</h4>
               <div className="divide-y divide-gray-100 rounded-lg border border-gray-100">
-                <DetailRow label="Escrow ID" value="#0000749268" />
-                <DetailRow label="Buyer" value="Paul Simeon (@paul.pfta)" />
-                <DetailRow label="Seller" value="Adaeze Nwosu (@adaeze.pfta)" />
-                <DetailRow label="Item" value="HP EliteBook 840 G5 - 8GB RAM" />
-                <DetailRow label="Quantity" value="1 Unit" />
-                <DetailRow label="Amount" value="₦300,000" />
+                {/* <DetailRow label="Escrow ID" value="#0000749268" /> */}
+                <DetailRow
+                  label="Buyer"
+                  value={`${order?.buyer?.firstName} ${order?.buyer?.lastName} (@${order?.buyer?.username})`}
+                />
+                <DetailRow
+                  label="Seller"
+                  value={`${order?.seller?.firstName} ${order?.seller?.lastName} (@${order?.seller?.username})`}
+                />
+                <DetailRow label="Item" value={`${order?.detailAboutItem}`} />
+                <DetailRow label="Quantity" value={`${order?.milestones?.length}`} />
+                <DetailRow label="Amount" value={`₦${order?.amount}`} />
               </div>
             </div>
 
