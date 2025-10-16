@@ -25,8 +25,6 @@ interface OrderAgreementProps {
   userRole: UserRole;
   order?: OrderDetails | null;
   loadOrder?: () => Promise<void>;
-  setProgressLoading: (loading: boolean) => void;
-  progressLoading: boolean;
 }
 
 export default function MakePayment({
@@ -37,13 +35,12 @@ export default function MakePayment({
   userRole,
   order,
   loadOrder,
-  setProgressLoading,
-  progressLoading,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<
     'summary' | 'milestone' | 'successful' | 'bankTransfer'
   >('summary');
+  const [localLoading, setLocalLoading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('wallet');
   const totalAmount = 335050.0;
   const router = useRouter();
@@ -55,7 +52,7 @@ export default function MakePayment({
   };
 
   const handleWalletPayment = async () => {
-    setProgressLoading(true);
+    setLocalLoading(true);
     const data = {
       buyerId: order?.buyerId,
       amount: Number(order?.milestones[0]?.amount),
@@ -75,12 +72,12 @@ export default function MakePayment({
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'failed to make payment');
     } finally {
-      setProgressLoading(false);
+      setLocalLoading(false);
     }
   };
 
   const handleBankTransferSelect = async () => {
-    setProgressLoading(true);
+    setLocalLoading(true);
     const data = {
       amount: Number(order?.milestones[0]?.amount),
       orderId: order?.id,
@@ -98,7 +95,7 @@ export default function MakePayment({
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'failed to make payment');
     } finally {
-      setProgressLoading(false);
+      setLocalLoading(false);
     }
   };
 
@@ -137,14 +134,6 @@ export default function MakePayment({
     setCurrentComponent('milestone');
   };
 
-  if (progressLoading) {
-    return (
-      <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
-        <h2 className="mb-2 text-lg font-medium font-inter">Loading...</h2>
-      </div>
-    );
-  }
-
   if (!showActions) {
     return (
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
@@ -180,7 +169,7 @@ export default function MakePayment({
                   onWalletPayment={handleWalletPayment}
                   onBankTransferSelect={handleBankTransferSelect}
                   onClose={handleCloseDialog}
-                  progressLoading={progressLoading}
+                  progressLoading={localLoading}
                   amount={order?.milestones ? Number(order.milestones[0]?.amount) : 0}
                 />
               )}

@@ -1,110 +1,112 @@
-import { ChevronUp, Download } from 'lucide-react';
+'use client';
 
+import { Download } from 'lucide-react';
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from '@/components/ui/accordion';
+import { OrderDetails } from '@/types/order';
+interface TransactionSummaryProps {
+  order?: OrderDetails | null;
+}
 
-export default function TransactionSummary() {
+export default function TransactionSummary({ order }: TransactionSummaryProps) {
+  console.log('🌼 🔥🔥 TransactionSummary 🔥🔥 order🌼', order);
+
   return (
-    <div className="max-w-7xl mx-auto rounded-lg bg-white p-6 shadow-sm">
-      <Accordion type="single" collapsible className="max-w-6xl">
-        <AccordionItem value="item-1">
-          <AccordionTrigger className="flex items-center rounded-lg bg-gray-100 p-3">
-            {/* Header Section */}
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-inter text-lg font-medium text-gray-900">View Order Details</h2>
+    <div className="max-w-5xl mx-auto rounded-xl border border-gray-100 bg-white shadow-sm">
+      <Accordion type="single" collapsible className="w-full">
+        <AccordionItem value="item-1" className="border-none">
+          <AccordionTrigger className="px-6 py-4 hover:no-underline">
+            <div className="flex w-full items-center justify-between">
+              <h2 className="text-lg font-semibold text-gray-900">View Order Details</h2>
             </div>
           </AccordionTrigger>
-          <AccordionContent className="mt-2 flex flex-col gap-4 text-balance rounded-lg bg-gray-100 p-3">
-            {/* Header Section */}
-            <div className="mb-6 flex items-center justify-between">
-              <h2 className="font-inter text-lg font-medium text-gray-900">Transaction Summary</h2>
+
+          <AccordionContent className="px-6 pb-6">
+            {/* Header */}
+            <div className="mt-2 mb-6 flex items-center justify-between border-b border-gray-100 pb-3">
+              <h3 className="text-xl font-semibold text-gray-900">Transaction Summary</h3>
+              {/* <button
+                type="button"
+                className="flex items-center gap-2 rounded-md border border-gray-200 bg-gray-50 px-3 py-2 text-sm font-medium text-gray-700 transition hover:bg-gray-100"
+              >
+                <Download className="h-4 w-4" />
+                Download PDF
+              </button> */}
             </div>
 
-            {/* Top Summary Row */}
-            <div className="mb-8 grid grid-cols-4 gap-6 border-b border-gray-100 pb-6">
-              <div>
-                <p className="mb-1 font-inter text-sm text-gray-500">Buyer</p>
-                <p className="font-inter text-sm font-medium text-gray-900">Paul Simeon</p>
-              </div>
-              <div>
-                <p className="mb-1 font-inter text-sm text-gray-500">Seller</p>
-                <p className="font-inter text-sm font-medium text-gray-900">Adaeze Nwosu</p>
-              </div>
-              <div>
-                <p className="mb-1 font-inter text-sm text-gray-500">Payment Method</p>
-                <p className="font-inter text-sm font-medium text-gray-900">One Time</p>
-              </div>
-              <div>
-                <p className="mb-1 font-inter text-sm text-gray-500">Expected Delivery</p>
-                <p className="font-inter text-sm font-medium text-gray-900">November 24, 2023</p>
+            {/* Info Grid */}
+            <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
+              <SummaryCard
+                label="Buyer"
+                value={`${order?.buyer?.firstName} ${order?.buyer?.lastName}`}
+              />
+              <SummaryCard
+                label="Seller"
+                value={`${order?.seller?.firstName} ${order?.seller?.lastName}`}
+              />
+              <SummaryCard label="Payment Method" value={`${order?.paymentType}  `} />
+              <SummaryCard
+                label="Expected Delivery"
+                value={
+                  order?.deliveryDate
+                    ? new Date(order.deliveryDate).toLocaleString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
+                    : '--'
+                }
+              />
+            </div>
+
+            {/* Details Section */}
+            <div className="mt-8">
+              <h4 className="mb-4 text-base font-semibold text-gray-900">Details</h4>
+              <div className="divide-y divide-gray-100 rounded-lg border border-gray-100">
+                {/* <DetailRow label="Escrow ID" value="#0000749268" /> */}
+                <DetailRow
+                  label="Buyer"
+                  value={`${order?.buyer?.firstName} ${order?.buyer?.lastName} (@${order?.buyer?.username})`}
+                />
+                <DetailRow
+                  label="Seller"
+                  value={`${order?.seller?.firstName} ${order?.seller?.lastName} (@${order?.seller?.username})`}
+                />
+                <DetailRow label="Item" value={`${order?.detailAboutItem}`} />
+                <DetailRow label="Quantity" value={`${order?.milestones?.length}`} />
+                <DetailRow label="Amount" value={`₦${order?.amount}`} />
               </div>
             </div>
 
-            {/* Detailed Transaction Summary */}
-            <div className="space-y-6">
-              <h3 className="font-inter text-base font-medium text-gray-900">
-                Transaction Summary
-              </h3>
-
-              <div className="space-y-4">
-                {/* Escrow ID */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Escrow ID:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">#0000749268</span>
-                </div>
-
-                {/* Buyer */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Buyer:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">
-                    Paul Simeon (@paul.pfta)
-                  </span>
-                </div>
-
-                {/* Seller */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Seller:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">
-                    Adaeze Nwosu (@adaeze.pfta)
-                  </span>
-                </div>
-
-                {/* Item */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Item:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">
-                    HP EliteBook 840 G5 - 8GB RAM
-                  </span>
-                </div>
-
-                {/* Quantity */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Quantity:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">1 Unit</span>
-                </div>
-
-                {/* Amount */}
-                <div className="flex items-center justify-between">
-                  <span className="font-inter text-sm text-gray-500">Amount:</span>
-                  <span className="font-inter text-sm font-medium text-gray-900">₦300,000</span>
-                </div>
-              </div>
-
-              {/* Download Button */}
-              <button className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#E6E7FE] px-4 py-3 text-[#03045B]">
-                <span className="font-inter text-sm font-medium">
-                  View/Download Escrow Agreement (PDF)
-                </span>
-                <Download className="size-4" />
-              </button>
-            </div>
+            {/* CTA Button */}
+            <button
+              type="button"
+              className="mt-6 w-full rounded-lg bg-[#03045B] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#02033d] focus:outline-none focus:ring-2 focus:ring-[#03045B]/30"
+            >
+              View / Download Escrow Agreement (PDF)
+            </button>
           </AccordionContent>
         </AccordionItem>
       </Accordion>
     </div>
   );
 }
+
+/* Helper Components */
+const SummaryCard = ({ label, value }: { label: string; value: string }) => (
+  <div className="rounded-lg border border-gray-100 bg-gray-50 p-4">
+    <p className="text-xs font-medium uppercase tracking-wide text-gray-500">{label}</p>
+    <p className="mt-1 text-sm font-medium text-gray-900">{value}</p>
+  </div>
+);
+
+const DetailRow = ({ label, value }: { label: string; value: string }) => (
+  <div className="flex items-center justify-between px-4 py-3 text-sm">
+    <span className="text-gray-500">{label}</span>
+    <span className="font-medium text-gray-900">{value}</span>
+  </div>
+);

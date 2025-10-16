@@ -54,6 +54,7 @@ type Transaction = unknown; // Define when structure is known
 type UserProfile = {
   firstName: string;
   lastName: string;
+  username: string | null;
   id: string;
   profileImage: string | null;
   email: string;
