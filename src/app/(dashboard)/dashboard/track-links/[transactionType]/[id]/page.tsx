@@ -8,8 +8,6 @@ import TransactionsSummaryForService from '@/components/view/dashboard/TrackLink
 export default function TransactionPage() {
   const router = useRouter();
   const { transactionType, id } = useParams();
-  console.log('🌼 🔥🔥 TransactionPage 🔥🔥 transactionType🌼', transactionType);
-  console.log('🌼 🔥🔥 TransactionPage 🔥🔥 id🌼', id);
 
   function handleBackToTable() {
     router.push('/dashboard/track-links');
