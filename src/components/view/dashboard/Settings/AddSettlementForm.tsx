@@ -14,6 +14,7 @@ interface AddSettlementFormProps {
 
 type SettlementFormValues = {
   bankName: string;
+  bankCode: string;
   accountNumber: string;
   accountHolder?: string;
   isDefaultPayout?: boolean;
@@ -23,6 +24,7 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
   const methods = useForm<SettlementFormValues>({
     defaultValues: {
       bankName: '',
+      bankCode: '',
       accountNumber: '',
       accountHolder: '',
     },
@@ -61,6 +63,7 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <ReInput label="Bank Name" name="bankName" placeholder="Enter bank name" required />
+          <ReInput label="Bank Code" name="bankCode" placeholder="Enter bank Code" required />
           <ReInput
             label="Account Number"
             name="accountNumber"

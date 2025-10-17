@@ -60,6 +60,10 @@ type UserProfile = {
   email: string;
 };
 
+type Item = {
+  quantity: number;
+};
+
 export type OrderDetails = {
   id: string;
   buyerId: string;
@@ -76,6 +80,7 @@ export type OrderDetails = {
   updatedAt: string;
   progressHistory: ProgressStep[];
   milestones: Milestone[];
+  items: Item[];
   Payment: PaymentDetails;
   Transaction: Transaction[]; // Empty array in this case
   buyer: UserProfile;

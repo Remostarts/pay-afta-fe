@@ -2,7 +2,7 @@
 
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import { ArrowLeft, Search } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState,   } from 'react';
 import Image from 'next/image';
 
 import { Input } from '@/components/ui/input';

@@ -30,6 +30,7 @@ type BankItem = {
   accountHolder: string;
   accountNumber: string;
   bankName: string;
+  bankCode: string;
   setAsDefault: boolean;
 };
 

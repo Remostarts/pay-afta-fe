@@ -1,7 +1,6 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-import { set } from 'date-fns';
 
 import { Chat } from '@/types/chat.type';
 import { TUser } from '@/types/general.type';
@@ -23,11 +22,12 @@ interface GeneralContextType {
   amount: number;
   setAmount: (amount: number) => void;
   user: TUser | null;
-  loadUserData: () => void;
+  loadUserData: () => Promise<void>;
   onboardingStatus: boolean | null;
   session: any;
   isChatDisabled: boolean;
   setChatIsDisabled: (isChatDisabled: boolean) => void;
+  loadingUser: boolean;
 }
 
 const GeneralContext = createContext<GeneralContextType | undefined>(undefined);
@@ -36,45 +36,52 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   const [invoiceId, setInvoiceId] = useState<string>('');
   const [chatData, setChatData] = useState<ChatData>({} as ChatData);
   const [chatId, setChatId] = useState<string>('');
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 chatId🌼', chatId);
-
   const [lawyerId, setLawyerId] = useState<string>('');
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 lawyerId🌼', lawyerId);
-
   const [clientId, setClientId] = useState<string>('');
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 clientId🌼', clientId);
-
   const [amount, setAmount] = useState<number>(0);
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 amount🌼', amount);
-  const [user, setUser] = useState<TUser | null>(null);
-  console.log('🌼 🔥🔥 GeneralProvider 🔥🔥 user🌼', user);
 
+  const [user, setUser] = useState<TUser | null>(null);
   const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
   const [isChatDisabled, setChatIsDisabled] = useState(false);
+  const [loadingUser, setLoadingUser] = useState(true);
 
   const loadUserData = useCallback(async () => {
+    if (!session?.accessToken) return;
+
     try {
+      setLoadingUser(true);
       const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/get-user-profile`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: session?.accessToken,
+          Authorization: session.accessToken,
         },
         cache: 'no-store',
+        next: { revalidate: 0 },
       });
 
       const data = await response.json();
-      setUser(data?.data);
 
-      setOnboardingStatus(data?.data?.profile?.onBoardingStatus);
+      if (data?.data) {
+        // Create new reference to trigger rerender
+        setUser({ ...data.data });
+        setOnboardingStatus(data.data?.profile?.onBoardingStatus ?? null);
+      } else {
+        setUser(null);
+      }
     } catch (error) {
-      getErrorMessage(error);
+      console.error('❌ loadUserData error:', getErrorMessage(error));
+    } finally {
+      setLoadingUser(false);
     }
   }, [session?.accessToken]);
 
+  // Load user data when valid token available
   useEffect(() => {
-    loadUserData();
-  }, [session, loadUserData]);
+    if (session?.accessToken) {
+      loadUserData();
+    }
+  }, [session?.accessToken, loadUserData]);
 
   return (
     <GeneralContext.Provider
@@ -97,6 +104,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         session,
         isChatDisabled,
         setChatIsDisabled,
+        loadingUser,
       }}
     >
       {children}
