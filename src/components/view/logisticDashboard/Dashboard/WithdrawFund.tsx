@@ -19,10 +19,12 @@ import {
 } from '@/lib/validations/withdrawfund.validation';
 import { Form } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
+import { useGeneral } from '@/context/generalProvider';
 
 // Define the AccountProps type
 type AccountProps = {
   bankName: string;
+  bankCode: string;
   accountNumber: string;
   accountName: string;
 };
@@ -30,37 +32,31 @@ type AccountProps = {
 const defaultValues = {
   bankName: '',
   accountNumber: '',
-  amountWithdraw: '',
+  amountWithdraw: 0,
 };
 
 const defaultValuesForTransferFund = {
-  amountWithdraw: '',
+  amountWithdraw: 0,
 };
 
 export default function WithdrawFund() {
-  const [isShowPaymentConfirmation, setIsShowPaymentConfirmation] = useState<boolean>(false);
-  const [isShowSwitchAccount, setIsShowSwitchAccount] = useState<boolean>(false);
+  const { user } = useGeneral();
+  const [isShowPaymentConfirmation, setIsShowPaymentConfirmation] = useState(false);
+  const [isShowSwitchAccount, setIsShowSwitchAccount] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<AccountProps | null>(null);
   const [withdrawalData, setWithdrawalData] = useState<TWithdrawfund | TTransferfundSchema | null>(
     null
   );
   const [transferType, setTransferType] = useState<'bank' | 'settlement' | null>(null);
 
-  console.log(selectedAccount);
-
-  // Sample accounts data - replace with actual data from your backend
-  const accounts = [
-    {
-      bankName: 'Sterling Bank',
-      accountNumber: '0011223344',
-      accountName: 'John Doe',
-    },
-    {
-      bankName: 'First Bank',
-      accountNumber: '5566778899',
-      accountName: 'John Doe',
-    },
-  ];
+  // Map BankItem[] → AccountProps[]
+  const accounts: AccountProps[] =
+    user?.Bank?.map((bank) => ({
+      bankName: bank.bankName,
+      bankCode: bank.bankCode,
+      accountNumber: bank.accountNumber,
+      accountName: bank.accountHolder,
+    })) || [];
 
   const form = useForm<TWithdrawfund>({
     resolver: zodResolver(withdrawfundSchema),
@@ -81,31 +77,28 @@ export default function WithdrawFund() {
   const { isSubmitting: isSubmittingForTransfer } = formStateForTransfer;
 
   const onSubmit = async (data: TWithdrawfund) => {
-    console.log(data);
-    setWithdrawalData(data);
+    setWithdrawalData({
+      ...data,
+      amountWithdraw: Number(data.amountWithdraw),
+    });
     setIsShowPaymentConfirmation(true);
   };
 
   const onSubmitForTransfer = async (data: TTransferfundSchema) => {
-    console.log(data);
-    setWithdrawalData(data);
+    setWithdrawalData({
+      ...data,
+      amountWithdraw: Number(data.amountWithdraw),
+    });
     setIsShowPaymentConfirmation(true);
   };
 
   const handleAccountSelect = (account: AccountProps) => {
     setSelectedAccount(account);
     setIsShowSwitchAccount(false);
-    // Don't show payment confirmation here, just close the switch account dialog
   };
 
-  const handleSwitchAccountOpen = () => {
-    setIsShowSwitchAccount(true);
-  };
-
-  const handleSwitchAccountClose = () => {
-    setIsShowSwitchAccount(false);
-    // Don't show payment confirmation when closing switch account
-  };
+  const handleSwitchAccountOpen = () => setIsShowSwitchAccount(true);
+  const handleSwitchAccountClose = () => setIsShowSwitchAccount(false);
 
   return (
     <section>
@@ -117,14 +110,12 @@ export default function WithdrawFund() {
               className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('bank')}
             >
-              <span className="text-xl">
-                <Image
-                  alt="to bank"
-                  src="/assets/dashboard/Dashboard/toBank.svg"
-                  width={40}
-                  height={40}
-                />
-              </span>
+              <Image
+                alt="to bank"
+                src="/assets/dashboard/Dashboard/toBank.svg"
+                width={40}
+                height={40}
+              />
               <div className="flex flex-col items-start">
                 <span className="font-semibold">To Bank</span>
                 <span className="text-xs text-gray-500">Send money to external bank accounts</span>
@@ -134,15 +125,12 @@ export default function WithdrawFund() {
               className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('settlement')}
             >
-              <span className="text-xl">
-                {' '}
-                <Image
-                  alt="to bank"
-                  src="/assets/dashboard/Dashboard/toSettlementBank.svg"
-                  width={40}
-                  height={40}
-                />
-              </span>
+              <Image
+                alt="to settlement bank"
+                src="/assets/dashboard/Dashboard/toSettlementBank.svg"
+                width={40}
+                height={40}
+              />
               <div className="flex flex-col items-start">
                 <span className="font-semibold">To Settlement Bank</span>
                 <span className="text-xs text-gray-500">Send money to saved bank account</span>
@@ -151,18 +139,16 @@ export default function WithdrawFund() {
           </div>
         </div>
       )}
+
       {transferType === 'settlement' && !isShowPaymentConfirmation && (
         <div className="w-full max-w-md rounded-md bg-white">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold">Withdrawal</h2>
-          </div>
           <Form {...tranferForm}>
             <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
               <div className="mb-4">
-                <ReHeading heading="Amount to withdraw" size={'base'} />
+                <ReHeading heading="Amount to withdraw" size="base" />
                 <ReInput type="number" name="amountWithdraw" placeholder="₦" inputMode="numeric" />
-                <p className="mt-2 font-inter text-sm text-gray-600">Available Balance: ₦10,000</p>
               </div>
+
               <div className="mb-4">
                 <div className="mb-1 flex items-center justify-between">
                   <span className="font-semibold">Settlement Account</span>
@@ -175,15 +161,11 @@ export default function WithdrawFund() {
                   </button>
                 </div>
                 <div className="space-y-1 rounded-md border border-dashed border-black bg-[#F8F8F8] p-4">
-                  <p className="font-inter text-sm text-gray-600">
-                    Bank Name: {selectedAccount?.bankName || accounts[0].bankName}
+                  <p>Bank Name: {selectedAccount?.bankName || accounts[0]?.bankName}</p>
+                  <p>
+                    Account Number: {selectedAccount?.accountNumber || accounts[0]?.accountNumber}
                   </p>
-                  <p className="font-inter text-sm text-gray-600">
-                    Account Number: {selectedAccount?.accountNumber || accounts[0].accountNumber}
-                  </p>
-                  <p className="font-inter text-sm text-gray-600">
-                    Account Name: {selectedAccount?.accountName || accounts[0].accountName}
-                  </p>
+                  <p>Account Name: {selectedAccount?.accountName || accounts[0]?.accountName}</p>
                 </div>
               </div>
               <ReButton
@@ -197,39 +179,15 @@ export default function WithdrawFund() {
           </Form>
         </div>
       )}
+
       {transferType === 'bank' && !isShowPaymentConfirmation && (
         <div className="w-full max-w-md rounded-md">
-          <div className="mb-4 flex items-center justify-between">
-            <h2 className="text-lg font-bold">Transfer to Bank</h2>
-          </div>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="space-y-4">
-                <div>
-                  <ReHeading heading="Bank Name" size={'base'} />
-                  <ReInput type="text" name="bankName" placeholder="Enter bank name" />
-                </div>
-                <div>
-                  <ReHeading heading="Account Number" size={'base'} />
-                  <ReInput
-                    type="number"
-                    name="accountNumber"
-                    placeholder="Enter account number"
-                    inputMode="numeric"
-                  />
-                </div>
-                <div>
-                  <ReHeading heading="Amount to withdraw" size={'base'} />
-                  <ReInput
-                    type="number"
-                    name="amountWithdraw"
-                    placeholder="₦"
-                    inputMode="numeric"
-                  />
-                </div>
-                <div>
-                  <p className="font-inter text-sm text-gray-600">Available Balance: ₦10,000</p>
-                </div>
+                <ReInput type="text" name="bankName" placeholder="Enter bank name" />
+                <ReInput type="number" name="accountNumber" placeholder="Enter account number" />
+                <ReInput type="number" name="amountWithdraw" placeholder="₦" />
               </div>
               <ReButton
                 className="mt-6 w-full rounded-full p-5 font-inter"
@@ -242,14 +200,16 @@ export default function WithdrawFund() {
           </Form>
         </div>
       )}
-      {isShowPaymentConfirmation && (
+
+      {isShowPaymentConfirmation && withdrawalData && (
         <PaymentConfirmation
-          amount={parseFloat(withdrawalData?.amountWithdraw ?? '0')}
-          bankName="Sterling Bank Plc."
-          accountNumber="21xxxxx37"
-          accountName="CHUKWUKA BASSEY MICHELLE"
+          amount={withdrawalData.amountWithdraw as number}
+          bankName={selectedAccount?.bankName || accounts[0]?.bankName}
+          accountNumber={selectedAccount?.accountNumber || accounts[0]?.accountNumber}
+          accountName={selectedAccount?.accountName || accounts[0]?.accountName}
         />
       )}
+
       <Dialog open={isShowSwitchAccount} onOpenChange={handleSwitchAccountClose}>
         <DialogContent>
           <SwitchAccount

@@ -5,7 +5,7 @@ import FundWallet from './FundWallet';
 import WithdrawFund from './WithdrawFund';
 
 import { useGeneral } from '@/context/generalProvider';
-import { ReButton } from '@/components/re-ui/ReButton';
+
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
 export default function StatsSection() {
@@ -41,7 +41,15 @@ export default function StatsSection() {
           <div className="mt-4 flex items-center gap-3 sm:mt-0">
             <Dialog>
               <DialogTrigger asChild>
-                <button className="flex items-center justify-center gap-2 rounded-full bg-white px-6 py-2 text-center font-inter font-semibold text-[#03045B]">
+                <button
+                  disabled={!(user?.Wallet?.[0]?.balance && user.Wallet[0].balance > 0)}
+                  className={`flex items-center justify-center gap-2 rounded-full px-6 py-2 text-center font-inter font-semibold
+    ${
+      user?.Wallet?.[0]?.balance && user.Wallet[0].balance > 0
+        ? 'bg-white text-[#03045B] hover:bg-gray-100'
+        : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+    }`}
+                >
                   Transfer
                   {/* <Image
                     alt="transfer"

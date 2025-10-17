@@ -42,7 +42,7 @@ export default function MakePayment({
   >('summary');
   const [localLoading, setLocalLoading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('wallet');
-  const totalAmount = 335050.0;
+  const totalAmount = Number(order?.amount);
   const router = useRouter();
   const [oneTimeUseWallet, setOneTimeUseWallet] = useState<TWalletData | null>(null);
 
@@ -55,7 +55,7 @@ export default function MakePayment({
     setLocalLoading(true);
     const data = {
       buyerId: order?.buyerId,
-      amount: Number(order?.milestones[0]?.amount),
+      amount: Number(order?.amount),
       sellerId: order?.sellerId,
       orderId: order?.id,
       milestoneId: order?.milestones[0]?.id,
@@ -79,12 +79,11 @@ export default function MakePayment({
   const handleBankTransferSelect = async () => {
     setLocalLoading(true);
     const data = {
-      amount: Number(order?.milestones[0]?.amount),
+      amount: Number(order?.amount),
       orderId: order?.id,
     } as TOneTimeUseWallet;
     try {
       const response = await createOneTimeUseWallet(data);
-      console.log('🌼 🔥🔥 handleBankTransferSelect 🔥🔥 response🌼', response);
 
       if (response?.success) {
         setOneTimeUseWallet(response?.data);
@@ -170,7 +169,7 @@ export default function MakePayment({
                   onBankTransferSelect={handleBankTransferSelect}
                   onClose={handleCloseDialog}
                   progressLoading={localLoading}
-                  amount={order?.milestones ? Number(order.milestones[0]?.amount) : 0}
+                  amount={order ? Number(order?.amount) : 0}
                 />
               )}
 

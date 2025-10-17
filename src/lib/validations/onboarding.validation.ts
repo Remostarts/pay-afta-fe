@@ -19,6 +19,7 @@ export type TPersonalKyc = z.infer<typeof personalKycSchema>;
 // settlement kyc schema
 export const settlementKycSchema = z.object({
   bankName: z.string().min(1, 'Bank name is required'),
+  bankCode: z.string().min(1, 'Bank code is required'),
   accountNumber: z.string().length(10, 'account number must be 10 digit account number'),
   bvn: z.string().length(11, 'BVN must be 11 digits').optional(),
   accountHolder: z.string().optional(),
