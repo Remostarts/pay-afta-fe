@@ -111,16 +111,16 @@ export default function TrackLink() {
     {
       accessorKey: 'createdAt',
       header: 'Date',
-      cell: ({ row }) => <div>{formatISODateToReadable(row.original.createdAt)}</div>,
+      cell: ({ row }) => <div>{formatISODateToReadable(row?.original?.createdAt)}</div>,
     },
     {
       accessorKey: 'sssd',
       header: 'Your Role',
       cell: ({ row }) => (
         <div>
-          {row.original.buyer.id === user?.id
+          {row?.original?.buyer?.id === user?.id
             ? 'Buyer'
-            : row.original.seller.id === user?.id
+            : row?.original?.seller?.id === user?.id
               ? 'Seller'
               : 'Unknown'}
         </div>
@@ -129,15 +129,15 @@ export default function TrackLink() {
     {
       accessorKey: 'transactionType',
       header: 'Transaction Type',
-      cell: ({ row }) => <div>{row.original.transactionType}</div>,
+      cell: ({ row }) => <div>{row?.original?.transactionType}</div>,
     },
     {
       accessorKey: 'transactionType2',
       header: 'Milestone Payment',
       cell: ({ row }) =>
-        row.original.transactionType === 'Product' ? (
+        row?.original?.transactionType === 'Product' ? (
           <span className="rounded-md bg-red-400 px-4 py-1 text-white">No</span>
-        ) : row.original.transactionType === 'Services' ? (
+        ) : row?.original?.transactionType === 'Services' ? (
           <Dialog>
             <DialogTrigger asChild>
               <button className="cursor-pointer text-blue-600" onClick={handleMilestoneDialog}>
@@ -153,24 +153,26 @@ export default function TrackLink() {
     {
       accessorKey: 'payment',
       header: 'Payment',
-      cell: ({ row }) => <div>{row.original.payment}</div>,
+      cell: ({ row }) => <div>{row?.original?.payment}</div>,
     },
     {
       accessorKey: 'amount',
       header: 'Amount (₦)',
-      cell: ({ row }) => <div>{row.original.amount}</div>,
+      cell: ({ row }) => <div>{row?.original?.amount}</div>,
     },
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => <div>{row.original.status}</div>,
+      cell: ({ row }) => <div>{row?.original?.status}</div>,
     },
     {
       accessorKey: 'view',
       header: 'Action',
       cell: ({ row }) => (
         <button
-          onClick={() => handleViewTransaction(true, row.original.transactionType, row.original.id)}
+          onClick={() =>
+            handleViewTransaction(true, row?.original?.transactionType, row?.original?.id)
+          }
           className="cursor-pointer text-[#333333]"
         >
           Track
