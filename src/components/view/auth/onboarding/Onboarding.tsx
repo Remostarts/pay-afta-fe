@@ -48,19 +48,11 @@ const steps = [
 
 export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState<number>(0);
-  console.log('🌼 🔥🔥 Onboarding 🔥🔥 currentStep🌼', currentStep);
 
   const [completedSteps, setCompletedSteps] = useState<number[]>([]);
-  console.log('🌼 🔥🔥 Onboarding 🔥🔥 completedSteps🌼', completedSteps);
 
   const route = useRouter();
   const { user } = useGeneral();
-  console.log(
-    '🌼 🔥🔥 Onboarding 🔥🔥 user🌼',
-    user?.profile?.personalKycStatus,
-    user?.profile?.settlementKycStatus,
-    user?.profile?.pinSet
-  );
 
   // console.log(currentStep);
 

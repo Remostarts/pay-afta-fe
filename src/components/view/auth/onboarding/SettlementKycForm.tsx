@@ -31,6 +31,7 @@ type defaultVal = {
   bankName: string;
   accountNumber: string;
   bvn: string;
+  bankCode: string;
   isDefaultPayout: boolean;
 };
 
@@ -38,6 +39,7 @@ const defaultValues: defaultVal = {
   bankName: '',
   accountNumber: '',
   bvn: '',
+  bankCode: '',
   isDefaultPayout: false,
 };
 
@@ -114,12 +116,25 @@ export default function SettlementKycForm() {
             />
           </div>
           <div className="mt-5">
-            <ReHeading heading="Enter 10 digit account number" size={'base'} />
-            <ReInput name="accountNumber" type="number" />
+            <ReInput
+              label="Enter 10 digit account number"
+              required
+              name="accountNumber"
+              type="number"
+              placeholder='4234.....'
+            />
           </div>
           <div className="mt-5">
-            <ReHeading heading="BVN (Bank Verification Number)" size={'base'} />
-            <ReInput name="bvn" type="number" placeholder="00000000000" />
+            <ReInput label="Enter bank code number" required name="bankCode" type="number" placeholder='example: 123' />
+          </div>
+          <div className="mt-5">
+            <ReInput
+              label="BVN (Bank Verification Number)"
+              name="bvn"
+              type="number"
+              placeholder="00000000000"
+              required
+            />
           </div>
           <div className="mt-5 flex items-center font-inter">
             <input
