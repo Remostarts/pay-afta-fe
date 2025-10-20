@@ -157,7 +157,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 handleCurrentStepChange={setCurrentStep}
                 currentStepChange={currentStep}
                 userRole={userRole}
-                showActions={true}
+                showActions={userRole === 'seller'}
+                // showActions={true}
               />
             ) : currentStep === 4 ? (
               isReturn ? (
@@ -180,7 +181,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                   handleRefundRequested={handleRefundRequested}
                   currentStepChange={currentStep}
                   userRole={userRole}
-                  showActions={true}
+                  showActions={userRole === 'buyer'}
+                  // showActions={true}
                 />
               )
             ) : currentStep === 5 ? (

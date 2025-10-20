@@ -28,13 +28,18 @@ export default function PaymentSummary({
 
   useEffect(() => {
     setWalletBalance((prev) => Number(user?.Wallet[0]?.balance) || prev);
-    
+
     setHasInsufficientBalance((prev) => Number(user?.Wallet[0]?.balance) < amount);
     console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 amount🌼', amount);
-    
+
     console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 walletBalance🌼', walletBalance);
-    
-    console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 user🌼', typeof user?.Wallet[0]?.balance, typeof walletBalance, Number(user?.Wallet[0]?.balance));
+
+    console.log(
+      '🌼 🔥🔥 PaymentSummary 🔥🔥 user🌼',
+      typeof user?.Wallet[0]?.balance,
+      typeof walletBalance,
+      Number(user?.Wallet[0]?.balance)
+    );
   }, [user, amount]);
 
   useEffect(() => {

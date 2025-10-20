@@ -4,24 +4,24 @@ import { useRouter } from 'next/navigation';
 
 // Mock data for pending services
 const pendingServices: any[] = [
-  // {
-  //   transactionsType: 'Link Payment',
-  //   paymentAmount: '1,000,000',
-  //   date: '25th Sep,2023',
-  //   payment: 'successful',
-  // },
-  // {
-  //   transactionsType: 'Withdrawal',
-  //   paymentAmount: '1,000,000',
-  //   date: '25th Sep,2023',
-  //   payment: 'successful',
-  // },
-  // {
-  //   transactionsType: 'Credit',
-  //   paymentAmount: '1,000',
-  //   date: '25th Sep,2023',
-  //   payment: 'successful',
-  // },
+  {
+    transactionsType: 'Link Payment',
+    paymentAmount: '1,000,000',
+    date: '25th Sep,2023',
+    payment: 'successful',
+  },
+  {
+    transactionsType: 'Withdrawal',
+    paymentAmount: '1,000,000',
+    date: '25th Sep,2023',
+    payment: 'successful',
+  },
+  {
+    transactionsType: 'Credit',
+    paymentAmount: '1,000',
+    date: '25th Sep,2023',
+    payment: 'successful',
+  },
 ];
 
 export default function RecentTransactions() {
