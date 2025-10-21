@@ -1,28 +1,17 @@
 'use client';
 
-import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 
-import NewOrder from './NewOrder';
 import RecentTrackLink from './RecentTrackLink';
 import RecentTransactions from './RecentTransactions';
 import StatsSection from './StatsSection';
-import WalletServices from './WalletServices';
 
 import { ReHeading } from '@/components/re-ui/ReHeading';
+import { useGeneral } from '@/context/generalProvider';
 
 export default function Dashboard() {
-  // const [showNewOrder, setShowNewOrder] = useState<boolean>(false);
-
-  // if (showNewOrder) {
-  //   return (
-  //     <div className="min-h-full w-full">
-  //       <NewOrder onBack={() => setShowNewOrder(false)} />
-  //     </div>
-  //   );
-  // }
-
+  const { user } = useGeneral();
   return (
     <div className="min-h-full w-full">
       <div className="flex items-center justify-between lg:mx-4">
@@ -40,15 +29,14 @@ export default function Dashboard() {
           New Order
         </Link>
       </div>
+
       <div className="lg:m-4">
         <StatsSection />
       </div>
-      {/* <div className="lg:m-6">
-        <WalletServices setShowNewOrder={setShowNewOrder} />
-      </div> */}
+
       <div className="grid lg:m-6 lg:grid-cols-2 lg:gap-2">
         <RecentTrackLink />
-        <RecentTransactions />
+        <RecentTransactions transactions={user?.Wallet[0]?.transactions} />
       </div>
     </div>
   );

@@ -1,10 +1,10 @@
 'use client';
 
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
-
 import { Chat } from '@/types/chat.type';
 import { TUser } from '@/types/general.type';
 import { getErrorMessage } from '@/lib/responseError';
+import { useSocket } from './socketProvider';
 
 type ChatData = Chat;
 
@@ -33,6 +33,8 @@ interface GeneralContextType {
 const GeneralContext = createContext<GeneralContextType | undefined>(undefined);
 
 export function GeneralProvider({ children, session }: { children: ReactNode; session: any }) {
+  const { socket } = useSocket();
+
   const [invoiceId, setInvoiceId] = useState<string>('');
   const [chatData, setChatData] = useState<ChatData>({} as ChatData);
   const [chatId, setChatId] = useState<string>('');
@@ -45,6 +47,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   const [isChatDisabled, setChatIsDisabled] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);
 
+  // Load full user profile
   const loadUserData = useCallback(async () => {
     if (!session?.accessToken) return;
 
@@ -63,7 +66,6 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
       const data = await response.json();
 
       if (data?.data) {
-        // Create new reference to trigger rerender
         setUser({ ...data.data });
         setOnboardingStatus(data.data?.profile?.onBoardingStatus ?? null);
       } else {
@@ -76,12 +78,25 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
     }
   }, [session?.accessToken]);
 
-  // Load user data when valid token available
+  // Initial load
   useEffect(() => {
-    if (session?.accessToken) {
-      loadUserData();
-    }
+    if (session?.accessToken) loadUserData();
   }, [session?.accessToken, loadUserData]);
+
+  // Listen to generic user updates
+  useEffect(() => {
+    if (!socket) return;
+
+    const handleUserUpdate = (updatedFields: Partial<TUser>) => {
+      setUser((prev) => (prev ? { ...prev, ...updatedFields } : prev));
+    };
+
+    socket.on('user:update', handleUserUpdate);
+
+    return () => {
+      socket.off('user:update', handleUserUpdate);
+    };
+  }, [socket]);
 
   return (
     <GeneralContext.Provider
@@ -114,7 +129,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
 
 export function useGeneral() {
   const context = useContext(GeneralContext);
-  if (context === undefined) {
+  if (!context) {
     throw new Error('useGeneral must be used within a GeneralProvider');
   }
   return context;

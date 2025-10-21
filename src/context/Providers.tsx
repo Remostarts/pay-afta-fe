@@ -26,8 +26,8 @@ const Providers = ({ children, session }: { children: ReactNode; session: any })
     <div>
       <Provider store={store}>
         <QueryClientProvider client={queryClient}>
-          <GeneralProvider session={session}>
-            <SocketProvider session={session}>
+          <SocketProvider session={session}>
+            <GeneralProvider session={session}>
               <ChatListProvider session={session}>
                 <ChatProvider>
                   <FormProvider {...methods}>
@@ -49,8 +49,8 @@ const Providers = ({ children, session }: { children: ReactNode; session: any })
                   </FormProvider>
                 </ChatProvider>
               </ChatListProvider>
-            </SocketProvider>
-          </GeneralProvider>
+            </GeneralProvider>
+          </SocketProvider>
         </QueryClientProvider>
       </Provider>
     </div>

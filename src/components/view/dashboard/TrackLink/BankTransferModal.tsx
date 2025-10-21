@@ -112,7 +112,11 @@ export default function BankTransferModal({
               <div className="flex items-center justify-between bg-gray-50 p-3 rounded-lg">
                 <span className="text-gray-900 font-medium">{oneTimeUseWallet?.accountNumber}</span>
                 <button
-                  onClick={() => copyToClipboard('001223344', 'account')}
+                  onClick={() => {
+                    if (oneTimeUseWallet?.accountNumber) {
+                      copyToClipboard(oneTimeUseWallet.accountNumber, 'account');
+                    }
+                  }}
                   className="text-gray-400 hover:text-gray-600 p-1"
                 >
                   {copiedField === 'account' ? (

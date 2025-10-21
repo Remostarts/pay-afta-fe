@@ -44,69 +44,6 @@ export default function TrackLink() {
 
   const { session, user } = useGeneral();
 
-  // const dummyOrders: Order[] = [
-  //   {
-  //     id: 'ORD-1001',
-  //     createdAt: '2025-10-10T12:45:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 45000,
-  //     payment: 'Paid',
-  //     buyer: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     seller: { id: 'USR-002', firstName: 'Kriti', lastName: 'Verma' },
-  //     name: 'Wireless Headphones',
-  //     status: 'Delivered',
-  //   },
-  //   {
-  //     id: 'ORD-1002',
-  //     createdAt: '2025-10-08T09:30:00Z',
-  //     type: 'Escrow',
-  //     transactionType: 'Services',
-  //     amount: 120000,
-  //     payment: 'In Escrow',
-  //     buyer: { id: 'USR-003', firstName: 'Rahul', lastName: 'Mehta' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Web Design Project',
-  //     status: 'In Progress',
-  //   },
-  //   {
-  //     id: 'ORD-1003',
-  //     createdAt: '2025-09-25T15:20:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 22000,
-  //     payment: 'Paid',
-  //     buyer: { id: 'USR-004', firstName: 'Sonia', lastName: 'Patel' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Bluetooth Speaker',
-  //     status: 'Delivered',
-  //   },
-  //   {
-  //     id: 'ORD-1004',
-  //     createdAt: '2025-09-18T11:15:00Z',
-  //     type: 'Escrow',
-  //     transactionType: 'Services',
-  //     amount: 85000,
-  //     payment: 'Pending Release',
-  //     buyer: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     seller: { id: 'USR-005', firstName: 'Ravi', lastName: 'Kumar' },
-  //     name: 'Mobile App Development',
-  //     status: 'Awaiting Approval',
-  //   },
-  //   {
-  //     id: 'ORD-1005',
-  //     createdAt: '2025-09-10T17:00:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 9999,
-  //     payment: 'Refunded',
-  //     buyer: { id: 'USR-006', firstName: 'Sneha', lastName: 'Reddy' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Smart Watch',
-  //     status: 'Refunded',
-  //   },
-  // ];
-
   const columns: ColumnDef<Order>[] = [
     {
       accessorKey: 'createdAt',
@@ -163,7 +100,34 @@ export default function TrackLink() {
     {
       accessorKey: 'status',
       header: 'Status',
-      cell: ({ row }) => <div>{row?.original?.status}</div>,
+      cell: ({ row }) => {
+        const status = row?.original?.status;
+
+        // status dynamic label + color map
+        const statusMap: Record<string, { label: string; bg: string; text: string }> = {
+          AGREEMENT: { label: 'Awaiting Agreement', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
+          PAYMENT: { label: 'Awaiting Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#D42620]' },
+          SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
+          DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
+          CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },
+          DISPUTED: { label: 'Dispute', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
+          CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
+        };
+
+        const { label, bg, text } = statusMap[status] || {
+          label: 'Not Started',
+          bg: 'bg-gray-300',
+          text: 'text-gray-800',
+        };
+
+        return (
+          <div>
+            <span className={`rounded-full p-1 px-4 font-inter text-sm ${bg} ${text}`}>
+              {label}
+            </span>
+          </div>
+        );
+      },
     },
     {
       accessorKey: 'view',
@@ -207,7 +171,7 @@ export default function TrackLink() {
       }
 
       const data = await response.json();
-      console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
+      // console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
 
       setOrders(data?.data?.data);
       setIsLoading(false);
@@ -229,42 +193,6 @@ export default function TrackLink() {
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);
   };
-
-  // useEffect(() => {
-  //   handleLoadInvoiceHistory();
-  // }, []);
-
-  // const handleLoadInvoiceHistory = async (filter: string = 'All', page: number = 1) => {
-  //   console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 filter🌼', filter, page);
-  //   // Optional: Handle filter change
-  //   setIsLoading(true);
-
-  //   // setInvoiceHPage(page);
-
-  //   console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 page🌼', page);
-
-  //   const response = await fetch(
-  //     `${process.env.NEXT_PUBLIC_BACKEND_URL}/order/get-by-user?page=${page}&limit=8`,
-  //     {
-  //       method: 'GET',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //         authorization: session?.accessToken as string,
-  //       },
-  //       cache: 'no-store',
-  //     }
-  //   );
-
-  //   if (!response.ok) {
-  //     throw new Error(`Error fetching invoice history request: ${response.statusText}`);
-  //   }
-
-  //   const data = await response.json();
-  //   console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
-
-  //   // setOrders(data?.data);
-  //   setIsLoading(false);
-  // };
 
   return (
     <section className="rounded-md bg-white p-5">
