@@ -62,6 +62,7 @@ export default function SettlementKycForm() {
 
       if (response?.success) {
         loadUserData();
+        toast.success('Settlement KYC Completed');
       } else {
         toast.error(response?.errorMessages[0]?.message || 'Failed to update personal information');
       }
@@ -121,11 +122,17 @@ export default function SettlementKycForm() {
               required
               name="accountNumber"
               type="number"
-              placeholder='4234.....'
+              placeholder="4234....."
             />
           </div>
           <div className="mt-5">
-            <ReInput label="Enter bank code number" required name="bankCode" type="number" placeholder='example: 123' />
+            <ReInput
+              label="Enter bank code number"
+              required
+              name="bankCode"
+              type="number"
+              placeholder="example: 123"
+            />
           </div>
           <div className="mt-5">
             <ReInput

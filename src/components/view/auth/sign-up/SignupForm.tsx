@@ -19,6 +19,7 @@ import { Form } from '@/components/ui/form';
 import { useOtp } from '@/context/OtpProvider';
 import { partialSignup } from '@/lib/actions/auth/signup.actions';
 import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.validations';
+import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 type defaultVal = {
   firstName: string;
@@ -116,6 +117,7 @@ export default function SignupForm() {
             <div>
               <ReHeading heading="Password" size={'base'} />
               <RePassInput name="password" />
+              <PasswordStrengthIndicator />
             </div>
             <div>
               <ReHeading heading="Confirm Password" size={'base'} />

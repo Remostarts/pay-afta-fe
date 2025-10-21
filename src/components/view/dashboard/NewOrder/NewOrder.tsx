@@ -475,7 +475,7 @@ export default function NewOrder({ onBack }: any) {
                     size={'base'}
                     className="text-gray-700"
                   />
-                  <ReDatePicker name="deliveryDate" className="lg:w-2/5" />
+                  <ReDatePicker name="deliveryDate" className="lg:w-2/5" disablePast={true} />
                 </div>
               ) : (
                 <>

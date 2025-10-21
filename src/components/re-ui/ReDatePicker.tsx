@@ -23,6 +23,10 @@ type TReDatePickerProps = {
   placeholder?: string;
   className?: string;
   required?: boolean;
+  disablePast?: boolean; // Disable past dates (allow future)
+  disableFuture?: boolean; // Disable future dates (allow past)
+  minDate?: Date; // Custom minimum date
+  maxDate?: Date; // Custom maximum date
 };
 
 const ReDatePicker = ({
@@ -32,8 +36,16 @@ const ReDatePicker = ({
   placeholder = 'Pick a date',
   className,
   required = false,
+  disablePast = false,
+  disableFuture = false,
+  minDate,
+  maxDate,
 }: TReDatePickerProps) => {
   const { control } = useFormContext();
+
+  // Get today's date at midnight for accurate comparison
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
 
   return (
     <FormField
@@ -69,7 +81,29 @@ const ReDatePicker = ({
                     field.onChange(date);
                     field.onBlur();
                   }}
-                  disabled={(date) => date > new Date() || date < new Date('1900-01-01')}
+                  disabled={(date) => {
+                    // Disable past dates if disablePast is true
+                    if (disablePast && date < today) {
+                      return true;
+                    }
+
+                    // Disable future dates if disableFuture is true
+                    if (disableFuture && date > today) {
+                      return true;
+                    }
+
+                    // Disable dates before minDate if provided
+                    if (minDate && date < minDate) {
+                      return true;
+                    }
+
+                    // Disable dates after maxDate if provided
+                    if (maxDate && date > maxDate) {
+                      return true;
+                    }
+
+                    return false;
+                  }}
                   initialFocus
                 />
               </PopoverContent>

@@ -305,7 +305,7 @@ export default function WithdrawFund() {
               />
               {errors.bankCode && <p className="text-sm text-red-500">{errors.bankCode.message}</p>}
 
-              <ReHeading heading="Amount to withdraw" size="base" />
+              <ReHeading heading="Amount to Transfer" size="base" />
               <input
                 type="number"
                 placeholder="₦"
