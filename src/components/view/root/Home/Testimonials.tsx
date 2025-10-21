@@ -39,7 +39,7 @@ export function Testimonials() {
     <section className="py-10 mx-auto max-w-9xl">
       <div className="mx-4 px-4 sm:mx-6 sm:px-6 lg:mx-8 lg:px-8 xl:mx-16">
         <div className="mb-12 text-center">
-          <h2 className="mb-4 text-4xl font-bold lg:text-7xl text-[#03045B] font-playfair">
+          <h2 className="mb-4 text-4xl font-extrabold lg:text-7xl text-[#03045B] font-playfair">
             Why our customers loves us
           </h2>
         </div>

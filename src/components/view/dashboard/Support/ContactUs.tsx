@@ -28,11 +28,11 @@ export default function ContactUs() {
         </p>
         <div>
           <ReHeading heading="Email" size={'base'} />
-          <p className=" p-2 font-inter text-gray-600">Support@PayAfta.com</p>
+          <p className=" p-2 font-inter text-gray-600">contact@getpayafta.com</p>
         </div>
         <div>
           <ReHeading heading="Phone" size={'base'} />
-          <p className=" p-2 font-inter text-gray-600">07066995653</p>
+          <p className=" p-2 font-inter text-gray-600">+2348055121522</p>
         </div>
         <div className="grid place-items-center pt-2">
           <Dialog>

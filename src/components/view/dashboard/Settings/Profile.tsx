@@ -251,7 +251,10 @@ export default function Profile() {
                     <Loader className="size-5 animate-spin text-gray-600" />
                   </div>
                 ) : (
-                  <AvatarImage src={user?.profileImage || '/Logo.svg'} alt="Profile" />
+                  <AvatarImage
+                    src={user?.profileImage || '/assets/dashboard/Support/prof-avatar.svg'}
+                    alt="Profile"
+                  />
                 )}
                 <AvatarFallback className="bg-gray-100 text-lg font-medium text-gray-600">
                   {user?.firstName?.[0] || ''}

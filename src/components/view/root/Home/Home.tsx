@@ -39,8 +39,8 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2">
             <div>
-              <h2 className="mb-6 font-playfair text-4xl font-bold text-[#03045B] md:text-5xl">
-                Worried You Might Get Scammed On Your Next Online Purchase ?
+              <h2 className="mb-6 font-playfair text-4xl font-extrabold text-[#03045B] md:text-5xl">
+                Worried You Might Get Scammed On Your Next Online Purchase?
               </h2>
             </div>
 
@@ -84,7 +84,7 @@ export default function Home() {
         <div className="container mx-auto px-4">
           <div className="grid grid-cols-1 items-center gap-12 lg:grid-cols-2 lg:gap-40">
             <div>
-              <h2 className="mb-6 font-playfair text-4xl font-bold text-[#03045B] md:text-6xl">
+              <h2 className="mb-6 font-playfair text-4xl font-extrabold text-[#03045B] md:text-6xl">
                 Buyer Protection With PayAfta
               </h2>
               <p className="mb-8 text-lg text-gray-600">
@@ -122,7 +122,7 @@ export default function Home() {
             </div>
 
             <div className="order-1 lg:order-2">
-              <h2 className="mb-6 font-playfair text-4xl font-bold text-[#03045B] md:text-6xl">
+              <h2 className="mb-6 font-playfair text-4xl font-extrabold text-[#03045B] md:text-6xl">
                 Seller Protection With PayAfta
               </h2>
               <p className="mb-8 text-lg text-gray-600">
@@ -161,7 +161,7 @@ export default function Home() {
         </div>
 
         <div className="container mx-auto px-4 text-center">
-          <h2 className="mb-6 font-playfair text-4xl font-bold text-white opacity-90 md:text-5xl">
+          <h2 className="mb-6 font-playfair text-4xl font-extrabold text-white opacity-90 md:text-5xl">
             Get Started Today
           </h2>
           <p className="mx-auto mb-8 max-w-2xl font-inter text-xl text-white opacity-90">

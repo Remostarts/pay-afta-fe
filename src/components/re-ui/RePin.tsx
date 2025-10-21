@@ -1,5 +1,5 @@
 'use client';
-import React, { KeyboardEvent, useRef, useState, useCallback, useEffect } from 'react';
+import React, { KeyboardEvent, useRef, useState, useCallback, ChangeEvent } from 'react';
 
 interface RePinProps {
   count?: number;
@@ -58,6 +58,14 @@ export default function RePin({
 
       if (value && index < count - 1) {
         moveFocus(index, 1);
+      } else if (value && index === count - 1) {
+        // When the last input is filled, blur to prevent focus shifts
+        setTimeout(() => {
+          const currentElement = inputRefs.current[index];
+          if (currentElement) {
+            currentElement.blur();
+          }
+        }, 0);
       }
     },
     [pin, masking, count, moveFocus, handlePinUpdate]
@@ -99,6 +107,16 @@ export default function RePin({
         setPin(newPin);
         setMasking(newMasking);
         handlePinUpdate(newPin);
+
+        // If paste fills all inputs, blur the last one
+        if (pastedNumbers.length === count) {
+          setTimeout(() => {
+            const lastElement = inputRefs.current[count - 1];
+            if (lastElement) {
+              lastElement.blur();
+            }
+          }, 0);
+        }
       }
     },
     [count, pin, masking, handlePinUpdate]
