@@ -120,23 +120,45 @@ export default function RecentTrackLink() {
                   {service?.seller?.id === user?.id ? 'Seller' : 'Buyer'}
                 </p>
                 <span
-                  className={`rounded-full p-1 px-4 font-inter text-sm ${
-                    service?.status === 'AGREEMENT'
-                      ? 'bg-[#E8FDEF] text-[#0F973C]'
-                      : service?.status === 'PAYMENT'
-                        ? 'bg-[#FCE9E9] text-[#D42620]'
-                        : service?.status === 'SHIPPING'
-                          ? 'bg-[#FFF8E1] text-[#FFA000]'
-                          : service?.status === 'DELIVERY'
-                            ? 'bg-[#E6E7FE] text-[#070AC5]'
-                            : service?.status === 'CLOSED'
-                              ? 'bg-gray-200 text-gray-600'
-                              : service?.status === 'DISPUTED'
-                                ? 'bg-[#FFE5EC] text-[#C21807]'
-                                : 'bg-gray-300 text-gray-800'
-                  }`}
+                  className={`rounded-full p-1 px-4 font-inter text-sm ${(() => {
+                    const statusMap: Record<string, { label: string; bg: string; text: string }> = {
+                      AGREEMENT: {
+                        label: 'Awaiting Agreement',
+                        bg: 'bg-[#E8FDEF]',
+                        text: 'text-[#0F973C]',
+                      },
+                      PAYMENT: {
+                        label: 'Awaiting Payment',
+                        bg: 'bg-[#FCE9E9]',
+                        text: 'text-[#D42620]',
+                      },
+                      SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
+                      DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
+                      CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },
+                      DISPUTED: { label: 'Dispute', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
+                      CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
+                    };
+
+                    const { bg, text } = statusMap[service?.status ?? ''] || {
+                      bg: 'bg-gray-300',
+                      text: 'text-gray-800',
+                    };
+
+                    return `${bg} ${text}`;
+                  })()}`}
                 >
-                  {service?.status}
+                  {(() => {
+                    const statusMap: Record<string, { label: string }> = {
+                      AGREEMENT: { label: 'Awaiting Agreement' },
+                      PAYMENT: { label: 'Awaiting Payment' },
+                      SHIPPING: { label: 'In-transit' },
+                      DELIVERY: { label: 'Delivered' },
+                      CLOSED: { label: 'Settled' },
+                      DISPUTED: { label: 'Dispute' },
+                      CANCELED: { label: 'Canceled' },
+                    };
+                    return statusMap[service?.status ?? '']?.label || 'Not Started';
+                  })()}
                 </span>
               </div>
             </div>
