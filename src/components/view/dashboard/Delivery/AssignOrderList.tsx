@@ -91,9 +91,7 @@ const AssignOrderList = () => {
           </div>
         ))} */}
       </div>
-        <p className='mx-auto mt-4 text-center text-sm text-gray-500'>
-          No orders available for delivery assignment.
-        </p>
+      <p className="mx-auto mt-4 text-center text-sm text-gray-500">No Ongoing Deliveries</p>
     </div>
   );
 };

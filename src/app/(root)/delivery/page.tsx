@@ -58,10 +58,10 @@ export default function PayAftaLanding() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="mb-8">
-            <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">
+            <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016] hover:bg-[#E6E7FE]">
               Flexible Delivery by Trusted Logistics Partners
             </Badge>
-            <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
+            <h1 className=" mb-6 font-playfair text-5xl font-extrabold uppercase leading-tight text-[#03045B] md:text-8xl">
               DELIVER WITH PAYAFTA
             </h1>
             <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
@@ -86,7 +86,7 @@ export default function PayAftaLanding() {
       {/* How Delivery Works */}
       <section className=" py-16">
         <div className="container mx-auto px-4">
-          <h2 className="mb-12 font-playfair text-3xl font-bold text-[#03045B] lg:text-7xl">
+          <h2 className="mb-12 font-playfair text-3xl font-extrabold text-[#03045B] lg:text-7xl">
             How Delivery Works
           </h2>
 
@@ -132,7 +132,7 @@ export default function PayAftaLanding() {
         <div className="container mx-auto px-4 ">
           <div className="grid items-center rounded-lg bg-[#D4EBF7] p-3 md:gap-12 md:p-10 lg:grid-cols-2">
             <div className="rounded-lg p-8">
-              <h2 className="mb-6 font-playfair text-3xl font-bold text-[#03045B] md:text-6xl">
+              <h2 className="mb-6 font-playfair text-3xl font-extrabold text-[#03045B] md:text-6xl">
                 Split Payments, Unified Checkout
               </h2>
               <p className="mb-6 text-gray-700">
@@ -161,7 +161,7 @@ export default function PayAftaLanding() {
       <section className="">
         <div className="container mx-auto px-4">
           <div className="mb-12 text-center">
-            <h1 className="mb-6 font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-7xl">
+            <h1 className="mb-6 font-playfair text-5xl font-extrabold leading-tight text-[#03045B] md:text-7xl">
               Nationwide Delivery Coverage
             </h1>
             <p className="mx-auto mb-8 max-w-3xl font-inter text-xl leading-relaxed text-[#333333]">
@@ -170,8 +170,9 @@ export default function PayAftaLanding() {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 md:gap-80">
-            <div className="mb-4 rounded-md bg-[#F8F8F8] p-3">
+          <div className="flex flex-col md:flex-row items-center justify-evenly w-full gap-6">
+            {/* Card 1 */}
+            <div className="rounded-md bg-[#F8F8F8] p-6 w-full md:w-2/5 text-center">
               <Image
                 src="/assets/root/delivery/transparentDelivery.png"
                 alt="Transparent, Trackable Shipments"
@@ -179,7 +180,7 @@ export default function PayAftaLanding() {
                 height={341}
                 className="mx-auto mb-6"
               />
-              <h3 className="mb-4 font-playfair text-2xl font-bold">
+              <h3 className="mb-4 font-playfair text-2xl font-extrabold">
                 Transparent, Trackable Shipments
               </h3>
               <p className="text-gray-700">
@@ -188,7 +189,8 @@ export default function PayAftaLanding() {
               </p>
             </div>
 
-            <div className=" rounded-md bg-[#F8F8F8] p-3">
+            {/* Card 2 */}
+            <div className="rounded-md bg-[#F8F8F8] p-6 w-full md:w-2/5 text-center">
               <Image
                 src="/assets/root/delivery/flexiableDelivery.png"
                 alt="Flexible for the Future"
@@ -196,7 +198,9 @@ export default function PayAftaLanding() {
                 height={341}
                 className="mx-auto mb-6"
               />
-              <h3 className="mb-4 font-playfair text-2xl font-bold">Flexible for the Future</h3>
+              <h3 className="mb-4 font-playfair text-2xl font-extrabold">
+                Flexible for the Future
+              </h3>
               <p className="text-gray-700">
                 As PayAfta evolves, users will enjoy access to more delivery options, empowering
                 sellers to choose logistics partners that match their product type, delivery speed,
@@ -220,7 +224,7 @@ export default function PayAftaLanding() {
         </div>
 
         <div className="container mx-auto px-4 text-center">
-          <h2 className="mb-6 font-playfair text-4xl font-bold text-white opacity-90 md:text-5xl">
+          <h2 className="mb-6 font-playfair text-4xl font-extrabold text-white opacity-90 md:text-5xl">
             Get Started Today
           </h2>
           <p className="mx-auto mb-8 max-w-2xl font-inter text-xl text-white opacity-90">
@@ -229,9 +233,9 @@ export default function PayAftaLanding() {
           </p>
           <Link
             href="/sign-up"
-            className="mb-16 inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-medium text-[#02034A] no-underline transition-all opacity-80"
+            className="mb-16 inline-flex items-center justify-center rounded-full bg-white px-8 py-4 text-lg font-medium text-[#02034A] no-underline transition-all opacity-90"
           >
-            Get Started
+            Get Started for free
             <ArrowRight className="ml-2 size-5" />
           </Link>
         </div>

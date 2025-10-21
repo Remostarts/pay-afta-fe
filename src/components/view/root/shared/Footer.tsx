@@ -25,10 +25,10 @@ const Footer = () => {
   ];
 
   const socialLinks = [
-    { icon: Facebook, href: '#', label: 'Facebook' },
-    { icon: Twitter, href: '#', label: 'Twitter' },
-    { icon: Instagram, href: '#', label: 'Instagram' },
-    { icon: Linkedin, href: '#', label: 'LinkedIn' },
+    { icon: Facebook, href: 'https://www.facebook.com/PayAftaHQ', label: 'Facebook' },
+    { icon: Twitter, href: 'https://x.com/PayAftaHQ', label: 'Twitter' },
+    { icon: Instagram, href: 'https://www.instagram.com/payaftahq', label: 'Instagram' },
+    { icon: Linkedin, href: 'https://www.linkedin.com/company/payaftahq/', label: 'LinkedIn' },
   ];
 
   return (
@@ -121,6 +121,7 @@ const Footer = () => {
                   href={social.href}
                   className="text-gray-400 hover:text-gray-500"
                   aria-label={social.label}
+                  target={'_blank'}
                 >
                   <social.icon className="size-5" />
                 </Link>

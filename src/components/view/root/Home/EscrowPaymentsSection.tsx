@@ -6,7 +6,7 @@ export default function EscrowPaymentsSection() {
       <div className="flex flex-col items-center justify-between gap-12 md:flex-row">
         {/* Left Section */}
         <div className="w-full md:w-1/2">
-          <h2 className="mb-8 font-playfair text-3xl font-bold leading-tight text-[#03045B] md:text-4xl lg:text-5xl">
+          <h2 className="mb-8 font-playfair text-3xl font-extrabold leading-tight text-[#03045B] md:text-4xl lg:text-5xl">
             Set Up Escrow Payments with PayAfta
           </h2>
 

@@ -25,20 +25,20 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
     },
   });
 
-  const { handleSubmit, formState } = form;
+  const { handleSubmit, formState, setValue } = form;
   const { isSubmitting } = formState;
   const { loadUserData } = useGeneral();
 
   const onSubmit = async (data: PinFormData) => {
     try {
-      // setIsSubmitting(true);
-      // onComplete(data.pin);
       console.log(data);
       const response = await kycPin(data);
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
         loadUserData();
+        onComplete(data.pin); // Call completion callback
+        toast.success('Transaction PIN Created');
       } else {
         toast.error(response?.error || 'Failed to update kyc pin');
       }
@@ -49,14 +49,18 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
       });
 
       toast.error(error instanceof Error ? error.message : 'Failed to update kyc pin');
-    } finally {
-      // setIsSubmitting(false);
     }
   };
 
   return (
     <Form {...form}>
-      <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          handleSubmit(onSubmit)(e);
+        }}
+        className="space-y-6"
+      >
         <div className="">
           <h1 className="font-inter text-2xl font-semibold text-gray-800">Transaction PIN</h1>
 
@@ -65,7 +69,7 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
             <RePin
               count={4}
               name="pin"
-              onChange={(value) => form.setValue('pin', value)}
+              onChange={(value) => setValue('pin', value, { shouldValidate: true })}
               error={!!form.formState.errors.pin}
               className="my-2"
             />
@@ -79,7 +83,7 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
             <RePin
               count={4}
               name="confirmPin"
-              onChange={(value) => form.setValue('confirmPin', value)}
+              onChange={(value) => setValue('confirmPin', value, { shouldValidate: true })}
               error={!!form.formState.errors.confirmPin}
               className="my-2"
             />

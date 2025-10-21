@@ -46,7 +46,7 @@ export default function WorksSection() {
         <section className="py-16 lg:py-24">
           <div className="container mx-auto px-4">
             <div className="mb-8">
-              <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
+              <h1 className=" mb-6 font-playfair text-5xl font-extrabold uppercase leading-tight text-[#03045B] md:text-8xl">
                 How it works
               </h1>
               <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
@@ -79,7 +79,7 @@ export default function WorksSection() {
             >
               {/* Text Section */}
               <div className="flex-1 space-y-4 text-center md:text-left">
-                <h2 className="text-4xl md:text-5xl font-bold text-[#03045B] leading-snug font-playfair">
+                <h2 className="text-4xl md:text-5xl font-extrabold text-[#03045B] leading-snug font-playfair">
                   {step.title}
                 </h2>
                 <p className="text-gray-700 text-sm md:text-base max-w-md mx-auto md:mx-0">

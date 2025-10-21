@@ -10,11 +10,11 @@ export default function HeroSection() {
     <>
       <section className="py-20">
         <div className="container mx-auto px-4 text-center">
-          <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">
-            BEST ESCROW PAYMENT IN NIGERIA
+          <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016] hover:bg-[#E6E7FE]">
+            Trusted Escrow for Global Commerce
           </Badge>
 
-          <h1 className="mb-6 font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
+          <h1 className="mb-6 font-playfair text-5xl font-extrabold leading-tight text-[#03045B] md:text-8xl">
             THE SAFEST WAY TO PAY
           </h1>
 
