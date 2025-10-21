@@ -1,30 +1,13 @@
 'use client';
+import { Transaction } from '@/types/general.type';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 
-// Mock data for pending services
-const pendingServices: any[] = [
-  {
-    transactionsType: 'Link Payment',
-    paymentAmount: '1,000,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
-  {
-    transactionsType: 'Withdrawal',
-    paymentAmount: '1,000,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
-  {
-    transactionsType: 'Credit',
-    paymentAmount: '1,000',
-    date: '25th Sep,2023',
-    payment: 'successful',
-  },
-];
+interface RecentTransactionsProps {
+  transactions?: Transaction[];
+}
 
-export default function RecentTransactions() {
+export default function RecentTransactions({ transactions }: RecentTransactionsProps) {
   const route = useRouter();
 
   return (
@@ -32,7 +15,6 @@ export default function RecentTransactions() {
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center font-inter text-lg font-semibold text-[#333333]">
           Recent Transactions
-          {/* <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-sm">2</span> */}
         </h2>
         <button
           className="font-inter text-sm font-bold text-[#6B6DFA]"
@@ -41,33 +23,46 @@ export default function RecentTransactions() {
           VIEW ALL
         </button>
       </div>
+
       <div className="">
-        {pendingServices?.length > 0 ? (
-          pendingServices?.map((service, index) => (
-            <div key={index} className="flex gap-4 border-b pb-4 last:border-b-0">
+        {transactions && transactions.length > 0 ? (
+          transactions.map((tx) => (
+            <div key={tx.id} className="flex gap-4 border-b pb-4 last:border-b-0">
               <div className="shrink-0">
-                <span className="inline-block">
-                  <Image
-                    src={`${service.transactionsType === 'Link Payment' ? '/assets/dashboard/Dashboard/credit.svg' : service.transactionsType === 'Withdrawal' ? '/assets/dashboard/Dashboard/withdrawal.svg' : '/assets/dashboard/Dashboard/credit.svg'}`}
-                    alt="Logo"
-                    width={48}
-                    height={48}
-                  />
-                </span>
+                <Image
+                  src={
+                    tx.type === 'DEPOSIT'
+                      ? '/assets/dashboard/Dashboard/credit.svg'
+                      : tx.type === 'WITHDRAWAL'
+                        ? '/assets/dashboard/Dashboard/withdrawal.svg'
+                        : '/assets/dashboard/Dashboard/credit.svg'
+                  }
+                  alt={tx.type}
+                  width={48}
+                  height={48}
+                />
               </div>
               <div className="flex-1 space-y-1">
                 <div className="mb-2 flex items-center justify-between">
-                  <h3 className="font-inter font-semibold">{service.transactionsType}</h3>
-                  <span className="font-inter text-2xl font-semibold">{service.paymentAmount}</span>
+                  <h3 className="font-inter font-semibold">{tx.type}</h3>
+                  <span className="font-inter text-2xl font-semibold">
+                    {tx.amount.toLocaleString()} {tx.currency}
+                  </span>
                 </div>
                 <div className="mb-2 flex items-center justify-between">
                   <p className="mb-2 font-inter text-sm font-medium text-gray-600">
-                    {service.date}
+                    {new Date(tx.createdAt).toLocaleString()}
                   </p>
                   <span
-                    className={`rounded-full bg-green-100 p-1 px-4 font-inter text-sm text-green-800`}
+                    className={`rounded-full p-1 px-4 font-inter text-sm ${
+                      tx.status === 'SUCCESS'
+                        ? 'bg-green-100 text-green-800'
+                        : tx.status === 'PENDING'
+                          ? 'bg-yellow-100 text-yellow-800'
+                          : 'bg-red-100 text-red-800'
+                    }`}
                   >
-                    {service.payment}
+                    {tx.status}
                   </span>
                 </div>
               </div>

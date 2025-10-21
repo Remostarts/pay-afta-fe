@@ -29,7 +29,7 @@ export function MessageNotificationProvider({ children }: { children: React.Reac
   // function to add notification message
   const addNotification = useCallback(
     (notification: Omit<MessageNotification, 'id' | 'createdAt' | 'updatedAt' | 'isRead'>) => {
-      console.log('🌼 🔥🔥 MessageNotificationProvider 🔥🔥 notification🌼', notification);
+      // console.log('🌼 🔥🔥 MessageNotificationProvider 🔥🔥 notification🌼', notification);
 
       const newNotification: MessageNotification = {
         ...notification as MessageNotification,

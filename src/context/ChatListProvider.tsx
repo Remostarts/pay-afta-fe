@@ -24,20 +24,14 @@ interface ChatListContextType {
 const ChatListContext = createContext<ChatListContextType | undefined>(undefined);
 
 export function ChatListProvider({ children, session }: { children: ReactNode; session: any }) {
-  console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 session🌼', session);
-
   // Use mock data instead of empty array
   const [chats, setChats] = useState<Chat[]>([]);
   const [onlineUsers, setOnlineUsers] = useState<OnlineUsers>({});
   const [isLoading, setIsLoading] = useState(false); // Set to false since we're using mock data
   const { socket } = useSocket();
 
-  console.log('🌼 🔥🔥 ChatListProvider 🔥🔥 chats🌼', chats);
-
   // COMMENTED OUT: Load chats from API
   const loadChats = useCallback(async () => {
-    console.log('🌼 🔥🔥 loadChats (MOCK DATA) 🔥🔥 🌼');
-
     setIsLoading(true);
 
     try {
@@ -70,7 +64,7 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
     } finally {
       setIsLoading(false);
     }
-   }, [session?.accessToken]);
+  }, [session?.accessToken]);
 
   // Load chats on mount and when session/socket changes
   useEffect(() => {
@@ -129,11 +123,13 @@ export function ChatListProvider({ children, session }: { children: ReactNode; s
         Authorization: session?.accessToken,
       },
       body: JSON.stringify(chat),
-    }).then(() => {
-      loadChats(); // Reload to get server-generated ID
-    }).catch(error => {
-      console.error('Error creating chat:', error);
-    });
+    })
+      .then(() => {
+        loadChats(); // Reload to get server-generated ID
+      })
+      .catch((error) => {
+        console.error('Error creating chat:', error);
+      });
 
     return newId;
   }, []);

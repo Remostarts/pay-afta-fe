@@ -20,9 +20,9 @@ export default function Layout({ children }: TChildrenProps) {
   const pathName = usePathname();
   const router = useRouter();
   const { onboardingStatus, user } = useGeneral();
-  console.log('🌼 🔥🔥 Layout 🔥🔥 user🌼', user);
+  // console.log('🌼 🔥🔥 Layout 🔥🔥 user🌼', user);
 
-  console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
+  // console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
 
   useEffect(() => {
     console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
