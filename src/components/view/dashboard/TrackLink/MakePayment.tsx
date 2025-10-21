@@ -16,6 +16,7 @@ import { OrderDetails, TWalletData } from '@/types/order';
 import { toast } from 'sonner';
 import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/order.actions';
 import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
+import { useGeneral } from '@/context/generalProvider';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
@@ -36,6 +37,7 @@ export default function MakePayment({
   order,
   loadOrder,
 }: OrderAgreementProps) {
+  const { loadUserData } = useGeneral();
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [currentComponent, setCurrentComponent] = useState<
     'summary' | 'milestone' | 'successful' | 'bankTransfer'
@@ -65,6 +67,7 @@ export default function MakePayment({
       console.log('🌼 🔥🔥 handleWalletPayment 🔥🔥 response🌼', response);
 
       if (response?.success) {
+        loadUserData();
         setCurrentComponent('successful');
       } else {
         toast.error(response?.error || 'failed to make payment');

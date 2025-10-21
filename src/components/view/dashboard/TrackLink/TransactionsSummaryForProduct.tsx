@@ -14,11 +14,12 @@ import OrderAgreement from './OrderAgreement';
 import StepperForProduct from './StepperForProduct';
 
 import { toast } from 'sonner';
-import { getOrder } from '@/lib/actions/order/order.actions';
+import { getOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
 import { useGeneral } from '@/context/generalProvider';
 import { useSocket } from '@/context/socketProvider';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
 import { OrderDetails } from '@/types/order';
+import { UpdateOrderProgressDTO } from '@/lib/validations/order';
 
 interface TransactionsSummaryProps {
   onBack: () => void;
@@ -33,6 +34,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   const [isReturn, setIsReturn] = useState<boolean>(false);
   const [isRefunded, setIsRefunded] = useState<boolean>(false);
   const [order, setOrder] = useState<OrderDetails | null>(null);
+  console.log('🌼 🔥🔥 TransactionsSummaryForProduct 🔥🔥 order🌼', order);
+
   const { user } = useGeneral();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [progressLoading, setProgressLoading] = useState<boolean>(false);
@@ -88,9 +91,30 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   }, [id]);
 
   // Delivery handlers
-  const handleAcceptDelivery = () => setCurrentStep(5);
-  const handleRejectDelivery = () => setIsReturn(true);
+  const handleAcceptDelivery = async () => {
+    try {
+      const res = await updateOrderProgress(
+        {
+          status: 'DELIVERY',
+          step: 4,
+          notes: 'Buyer confirmed delivery,',
+        } as UpdateOrderProgressDTO,
+        order?.id as string
+      );
+
+      setOrder(res);
+      setCurrentStep(5);
+      toast.success('Delivery accepted!');
+    } catch (err) {
+      toast.error(err instanceof Error ? err.message : 'Failed to accept delivery');
+    }
+  };
+  const handleRejectDelivery = () => {
+    setIsReturn(true);
+    setShowRiseDispute(true);
+  };
   const handleRefundRequested = () => setIsReturn(true);
+
   const handleReturnCompleted = () => {
     setIsRefunded(true);
     setCurrentStep(5);
@@ -158,6 +182,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 currentStepChange={currentStep}
                 userRole={userRole}
                 showActions={userRole === 'seller'}
+                order={order ?? null}
+                loadOrder={loadOrder}
                 // showActions={true}
               />
             ) : currentStep === 4 ? (
@@ -200,8 +226,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
                   <h2 className="mb-2 text-lg font-semibold">Transaction Completed</h2>
                   <p className="text-sm font-medium text-gray-700">
-                    Congratulations! Transaction complete, product/service delivered & accepted.
-                    Payment released, marking a successful and seamless process.
+                    Congratulations! Transaction complete, {order?.transactionType} delivered &
+                    accepted. Payment released, marking a successful and seamless process.
                   </p>
                 </div>
               )

@@ -36,12 +36,14 @@ export default function Delivery({
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const route = useRouter();
 
-  const handleAcceptOrder = () => {
+  const handleAccept = () => {
+    if (userRole !== 'buyer') return;
     handleAcceptDelivery();
     handleCurrentStepChange(currentStepChange + 1);
   };
 
-  const handleRejectOrder = () => {
+  const handleReject = () => {
+    if (userRole !== 'buyer') return;
     setIsOpen(true);
   };
 
@@ -70,7 +72,7 @@ export default function Delivery({
               <DialogTrigger asChild>
                 <ReButton
                   className="w-2/5 rounded-full border-2 border-[#03045B] bg-white text-[#03045B] hover:bg-white"
-                  onClick={handleRejectOrder}
+                  onClick={handleReject}
                 >
                   Dispute
                 </ReButton>
@@ -85,7 +87,7 @@ export default function Delivery({
                 />
               </DialogContent>
             </Dialog>
-            <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+            <ReButton className="w-2/5 rounded-full" onClick={handleAccept}>
               Confirm Delivery
             </ReButton>
           </div>
@@ -115,7 +117,7 @@ export default function Delivery({
           <DialogTrigger asChild>
             <ReButton
               className="w-2/5 rounded-full border-2 border-[#03045B] bg-white text-[#03045B] hover:bg-white"
-              onClick={handleRejectOrder}
+              onClick={handleReject}
             >
               Reject
             </ReButton>
@@ -132,7 +134,7 @@ export default function Delivery({
             />
           </DialogContent>
         </Dialog>
-        <ReButton className="w-2/5 rounded-full" onClick={handleAcceptOrder}>
+        <ReButton className="w-2/5 rounded-full" onClick={handleAccept}>
           Accept
         </ReButton>
       </div>

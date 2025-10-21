@@ -49,6 +49,7 @@ export default function OrderAgreement({
   };
 
   const handleConfirmTransaction = async () => {
+    if (userRole !== 'buyer') toast.error('Only buyer can accept agreement!');
     setLocalLoading(true);
     try {
       const response = await updateOrderProgress(
@@ -62,7 +63,6 @@ export default function OrderAgreement({
       console.log('🌼 🔥🔥 loadOrder 🔥🔥 response🌼', response);
       if (response?.success) {
         if (loadOrder) {
-          loadOrder();
         }
         setIsOpen(false);
       } else {

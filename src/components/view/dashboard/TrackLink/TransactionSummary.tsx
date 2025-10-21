@@ -77,7 +77,7 @@ export default function TransactionSummary({ order }: TransactionSummaryProps) {
                   value={`${order?.seller?.firstName} ${order?.seller?.lastName} (@${order?.seller?.username})`}
                 />
                 <DetailRow label="Item" value={`${order?.detailAboutItem}`} />
-                <DetailRow label="Quantity" value={`${order?.items[0]?.quantity}`} />
+                <DetailRow label="Quantity" value={`${order?.items?.[0]?.quantity ?? 0}`} />
                 <DetailRow label="Amount" value={`₦${order?.amount}`} />
               </div>
             </div>
