@@ -42,7 +42,6 @@ const fetchChatById = async ({
   }
 
   const data = await response.json();
-  console.log('🤔🤔🤔🤔 notification data🌼', data);
 
   return data?.data; // Ensure you return the correct data type
 };
@@ -71,10 +70,10 @@ export function MessageNotificationManager() {
     queryFn: fetchChatById,
     refetchOnWindowFocus: false,
   });
-  console.log(
-    '🌼 🙄🙄🙄🙄🙄🙄🙄 MessageNotificationManager 🔥🔥 notificationsData🌼',
-    notificationsData
-  );
+  // console.log(
+  //   '🌼 🙄🙄🙄🙄🙄🙄🙄 MessageNotificationManager 🔥🔥 notificationsData🌼',
+  //   notificationsData
+  // );
 
   useEffect(() => {
     if (notificationsData) {
@@ -235,10 +234,9 @@ export function MessageNotificationManager() {
           ))}
       </div>
 
-      {activeNotification &&
-        activeNotification.type !== NotificationType.message && (
-          <NotificationDialog notification={activeNotification} />
-        )}
+      {activeNotification && activeNotification.type !== NotificationType.message && (
+        <NotificationDialog notification={activeNotification} />
+      )}
     </>
   );
 }

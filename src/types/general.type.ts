@@ -18,13 +18,25 @@ type Profile = {
   pinSet: boolean;
 };
 
+export type Transaction = {
+  id: string;
+  type: 'WITHDRAWAL' | 'DEPOSIT' | 'CREDIT' | string;
+  amount: number;
+  currency: string;
+  status: 'PENDING' | 'SUCCESS' | 'FAILED' | string;
+  reference: string;
+  createdAt: string;
+};
+
 type WalletItem = {
   accountName: string;
   accountNumber: string;
   bankName: string;
   walletId: string;
   balance: number;
+  transactions: Transaction[];
 };
+
 type BankItem = {
   id: string;
   accountHolder: string;

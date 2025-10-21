@@ -44,69 +44,6 @@ export default function TrackLink() {
 
   const { session, user } = useGeneral();
 
-  // const dummyOrders: Order[] = [
-  //   {
-  //     id: 'ORD-1001',
-  //     createdAt: '2025-10-10T12:45:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 45000,
-  //     payment: 'Paid',
-  //     buyer: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     seller: { id: 'USR-002', firstName: 'Kriti', lastName: 'Verma' },
-  //     name: 'Wireless Headphones',
-  //     status: 'Delivered',
-  //   },
-  //   {
-  //     id: 'ORD-1002',
-  //     createdAt: '2025-10-08T09:30:00Z',
-  //     type: 'Escrow',
-  //     transactionType: 'Services',
-  //     amount: 120000,
-  //     payment: 'In Escrow',
-  //     buyer: { id: 'USR-003', firstName: 'Rahul', lastName: 'Mehta' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Web Design Project',
-  //     status: 'In Progress',
-  //   },
-  //   {
-  //     id: 'ORD-1003',
-  //     createdAt: '2025-09-25T15:20:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 22000,
-  //     payment: 'Paid',
-  //     buyer: { id: 'USR-004', firstName: 'Sonia', lastName: 'Patel' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Bluetooth Speaker',
-  //     status: 'Delivered',
-  //   },
-  //   {
-  //     id: 'ORD-1004',
-  //     createdAt: '2025-09-18T11:15:00Z',
-  //     type: 'Escrow',
-  //     transactionType: 'Services',
-  //     amount: 85000,
-  //     payment: 'Pending Release',
-  //     buyer: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     seller: { id: 'USR-005', firstName: 'Ravi', lastName: 'Kumar' },
-  //     name: 'Mobile App Development',
-  //     status: 'Awaiting Approval',
-  //   },
-  //   {
-  //     id: 'ORD-1005',
-  //     createdAt: '2025-09-10T17:00:00Z',
-  //     type: 'Online',
-  //     transactionType: 'Product',
-  //     amount: 9999,
-  //     payment: 'Refunded',
-  //     buyer: { id: 'USR-006', firstName: 'Sneha', lastName: 'Reddy' },
-  //     seller: { id: 'USR-001', firstName: 'Anurag', lastName: 'Samarth' },
-  //     name: 'Smart Watch',
-  //     status: 'Refunded',
-  //   },
-  // ];
-
   const columns: ColumnDef<Order>[] = [
     {
       accessorKey: 'createdAt',
@@ -207,7 +144,7 @@ export default function TrackLink() {
       }
 
       const data = await response.json();
-      console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
+      // console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
 
       setOrders(data?.data?.data);
       setIsLoading(false);
