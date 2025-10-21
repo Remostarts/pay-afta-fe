@@ -16,7 +16,7 @@ const DeliveryStats = () => (
           {stat.label}
           <span className="text-xs">ⓘ</span>
         </div>
-        <div className="text-3xl font-semibold">{stat.value.toString().padStart(2, '0')}</div>
+        <div className="text-3xl font-semibold">{stat.value.toString().padStart(2)}</div>
       </div>
     ))}
   </div>

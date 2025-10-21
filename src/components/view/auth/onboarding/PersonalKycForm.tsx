@@ -124,6 +124,7 @@ export default function PersonalKycForm() {
 
       if (response?.success) {
         loadUserData();
+        toast.success('Personal KYC Completed');
       } else {
         toast.error(response?.errorMessages[0]?.message || 'Failed to update personal information');
       }

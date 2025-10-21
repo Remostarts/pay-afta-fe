@@ -34,7 +34,7 @@ export default function PricingFaq() {
                 href="/support"
                 className="bg-[#03045B] mt-3 text-white font-semibold font-inter px-6 py-3 rounded-full inline-flex items-center gap-2 transition hover:bg-[#020345]"
               >
-                Email Sales or call +234 XXX XXXX.
+                Email Sales or call +2348055121522.
               </Link>
             </div>
           </div>

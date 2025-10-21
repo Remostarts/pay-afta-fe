@@ -11,7 +11,7 @@ export default function BuyAndSellSection() {
     <section>
       <div className="mx-auto max-w-6xl px-4 py-16 text-center md:py-24">
         {/* Heading */}
-        <h2 className="mb-16 font-playfair text-4xl font-bold text-[#03045B] md:text-5xl lg:text-6xl">
+        <h2 className="mb-16 font-playfair text-4xl font-extrabold text-[#03045B] md:text-5xl lg:text-6xl">
           What Can You Buy And <br className="hidden md:block" /> Sell Using PayAfta?
         </h2>
 

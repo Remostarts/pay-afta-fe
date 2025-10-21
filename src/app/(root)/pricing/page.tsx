@@ -16,7 +16,7 @@ export default function Page() {
   const feeStructure = [
     {
       range: '₦1,000 – ₦99,999',
-      fee: '₦500',
+      fee: '₦150',
     },
     {
       range: '₦1,000 – ₦24,999',
@@ -50,8 +50,10 @@ export default function Page() {
       <section className="py-16 lg:py-24">
         <div className="container mx-auto px-4">
           <div className="mb-8 md:mb-20">
-            <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">Flexible Pricing</Badge>
-            <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
+            <Badge className="mb-6 bg-[#E6E7FE] hover:bg-[#E6E7FE] p-2 text-[#041016]">
+              Flexible Pricing
+            </Badge>
+            <h1 className=" mb-6 font-playfair text-5xl font-extrabold uppercase leading-tight text-[#03045B] md:text-8xl">
               Flexible pricing plan
             </h1>
             <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
@@ -91,7 +93,7 @@ export default function Page() {
 
       {/* Fees Works  */}
       <section>
-        <h1 className=" mb-6 text-center font-playfair text-5xl font-bold leading-tight text-[#03045B] md:text-8xl">
+        <h1 className=" mb-6 text-center font-playfair text-5xl font-extrabold leading-tight text-[#03045B] md:text-8xl">
           How Our Fees Work
         </h1>
         <Card className="mx-auto w-full max-w-6xl">
@@ -159,7 +161,7 @@ export default function Page() {
           <div className="flex flex-col lg:flex-row items-center gap-8 bg-[#F6F4FF] rounded-2xl p-8">
             {/* Left Text Content */}
             <div className="flex-1 text-center lg:text-left">
-              <h2 className="text-4xl md:text-5xl font-playfair font-bold text-[#03045B] mb-4 leading-tight">
+              <h2 className="text-4xl md:text-5xl font-playfair font-extrabold text-[#03045B] mb-4 leading-tight">
                 High-Volume Or <br className="hidden md:block" /> Custom Needs?
               </h2>
               <p className="text-[#333333] font-inter text-base md:text-lg mb-6 max-w-md">

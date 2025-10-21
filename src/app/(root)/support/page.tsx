@@ -25,6 +25,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import Link from 'next/link';
+import { CalendarDialog } from './calendar-dialog';
 
 export default function Page() {
   const [activeTab, setActiveTab] = useState<'contact' | 'faqs' | 'Book a Call'>('contact');
@@ -35,6 +36,8 @@ export default function Page() {
     message: '',
     agreeToPolicy: false,
   });
+
+  const [isCalendarDialogOpen, setIsCalendarDialogOpen] = useState(false);
 
   const handleInputChange = (field: string, value: string | boolean) => {
     setFormData((prev) => ({
@@ -48,14 +51,27 @@ export default function Page() {
     console.log('Form submitted:', formData);
   };
 
+  const handleScheduleConfirm = (date: Date, time: string) => {
+    const dateTime = new Date(date);
+    const [timeStr, period] = time.split(' ');
+    let [hours, minutes] = timeStr.split(':').map(Number);
+    if (period === 'PM' && hours < 12) hours += 12;
+    if (period === 'AM' && hours === 12) hours = 0;
+    dateTime.setHours(hours, minutes);
+    console.log('Scheduled call for:', dateTime);
+    // TODO: Send to your booking API
+  };
+
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
       <section className="py-16 lg:py-20">
         <div className="container mx-auto px-4">
           <div className="mb-8 md:mb-20">
-            <Badge className="mb-6 bg-[#E6E7FE] p-2 text-[#041016]">24/7 Powered Response</Badge>
-            <h1 className=" mb-6 font-playfair text-5xl font-bold uppercase leading-tight text-[#03045B] md:text-8xl">
+            <Badge className="mb-6 bg-[#E6E7FE] hover:bg-[#E6E7FE] p-2 text-[#041016]">
+              24/7 Powered Response
+            </Badge>
+            <h1 className=" mb-6 font-playfair text-5xl font-extrabold uppercase leading-tight text-[#03045B] md:text-8xl">
               We are here to help
             </h1>
             <p className="mx-auto mb-8 font-inter text-xl leading-relaxed text-[#333333]">
@@ -146,7 +162,10 @@ export default function Page() {
                         <button className="px-6 py-3 bg-white text-[#03045B] font-medium rounded-md hover:bg-gray-100 transition-colors">
                           Book a 15 Min Consultation
                         </button>
-                        <button className="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors">
+                        <button
+                          className="px-6 py-3 bg-black text-white font-medium rounded-lg hover:bg-gray-800 transition-colors"
+                          onClick={() => setIsCalendarDialogOpen(true)}
+                        >
                           Schedule Now
                         </button>
                       </div>
@@ -243,6 +262,12 @@ export default function Page() {
           </Card>
         </div>
       </div>
+
+      <CalendarDialog
+        isOpen={isCalendarDialogOpen}
+        onClose={() => setIsCalendarDialogOpen(false)}
+        onConfirm={handleScheduleConfirm}
+      />
 
       <div className="flex flex-col mx-auto container md:flex-row justify-evenly items-center gap-8 py-10 px-6 bg-white">
         {/* Email */}
