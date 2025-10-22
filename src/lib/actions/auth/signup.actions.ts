@@ -21,7 +21,7 @@ export async function partialSignup(formData: TInitialSignUp) {
   if (!validation.success) {
     let zodErrors = '';
     validation.error.issues.forEach((issue) => {
-      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+      zodErrors += issue.path[0] + ':' + issue.message + '.';
     });
     throw new Error(zodErrors);
   }
@@ -34,18 +34,21 @@ export async function partialSignup(formData: TInitialSignUp) {
       cache: 'no-store',
     });
 
-    return response.json();
-  } catch (error) {
-    console.log('🌼 🔥🔥 partialSignup 🔥🔥 error🌼', error);
+    const data = await response.json();
 
-    getErrorMessage(error);
+    if (!response.ok) {
+      throw new Error(data.message || 'Something went wrong!');
+    }
+
+    return data;
+  } catch (error: any) {
+    getErrorMessage(error.message || 'Unknown error');
+    throw error;
   }
 }
 
 export async function verifyEmail(formData: EmailVerificationParams) {
   const validation = emailVerification.safeParse(formData);
-  // console.log(formData);
-  // console.log(validation);
 
   if (!validation.success) {
     let zodErrors = '';
