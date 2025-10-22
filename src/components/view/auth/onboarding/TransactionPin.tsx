@@ -11,6 +11,7 @@ import { kycPin } from '@/lib/actions/onboarding/onboarding.actions';
 import { PinFormData, pinSchema } from '@/lib/validations/onboarding.validation';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { useGeneral } from '@/context/generalProvider';
+import { useRouter } from 'next/navigation';
 
 interface TransactionPinProps {
   onComplete: (pin: string) => void;
@@ -28,6 +29,7 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
   const { handleSubmit, formState, setValue } = form;
   const { isSubmitting } = formState;
   const { loadUserData } = useGeneral();
+  const router = useRouter();
 
   const onSubmit = async (data: PinFormData) => {
     try {
@@ -37,7 +39,8 @@ export default function TransactionPin({ onComplete }: TransactionPinProps) {
 
       if (response?.success) {
         loadUserData();
-        onComplete(data.pin); // Call completion callback
+        onComplete(data.pin);
+        router.push('/dashboard');
         toast.success('Transaction PIN Created');
       } else {
         toast.error(response?.error || 'Failed to update kyc pin');

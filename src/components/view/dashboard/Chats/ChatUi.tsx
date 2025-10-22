@@ -17,7 +17,6 @@ import Header from './Header';
 import { MessageList } from './MessageList';
 import { TypingIndicator } from './TypingIndicator';
 import { ChatInput } from './ChatInput';
-// import { mockChats, mockMessages } from '@/lib/data/chat-mock-data';
 
 type ChatData = Chat;
 type QueryKey = [string, string | undefined, string | undefined];

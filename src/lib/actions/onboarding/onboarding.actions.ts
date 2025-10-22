@@ -42,6 +42,28 @@ export async function kycPersonalInfo(formData: TPersonalKyc) {
     getErrorMessage(error);
   }
 }
+
+export async function getPillaBanks() {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!token) throw new Error('No access token found');
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/pilla/banks`, {
+      method: 'GET',
+      headers: { 'Content-Type': 'application/json', Authorization: token },
+    });
+
+    if (!response.ok) throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+
+    return await response.json();
+  } catch (error) {
+    console.error('🌼 🔥🔥 banks 🔥🔥 error🌼', error);
+    throw error;
+  }
+}
+
 export async function kycBankInfo(formData: TSettlementKyc) {
   const validation = settlementKycSchema.safeParse(formData);
   const session = (await getServerSession(authOptions)) as any;
