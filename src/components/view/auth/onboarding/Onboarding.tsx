@@ -128,8 +128,17 @@ export default function Onboarding() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[425px]">
                       <StepForm
-                        onComplete={function (pin: string): void {
-                          throw new Error('Function not implemented.');
+                        onComplete={(result) => {
+                          // Mark this step as completed
+                          setCompletedSteps((prev) => [...prev, step.id]);
+
+                          // Move to the next step
+                          setCurrentStep((prev) => prev + 1);
+
+                          // Optional: show a success message
+                          toast.success(`${step.title} completed!`);
+
+                          console.log('Step result:', result);
                         }}
                       />
                     </DialogContent>

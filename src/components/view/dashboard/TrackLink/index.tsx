@@ -105,8 +105,8 @@ export default function TrackLink() {
 
         // status dynamic label + color map
         const statusMap: Record<string, { label: string; bg: string; text: string }> = {
-          AGREEMENT: { label: 'Awaiting Agreement', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
-          PAYMENT: { label: 'Awaiting Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#D42620]' },
+          AGREEMENT: { label: 'Agreement', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
+          PAYMENT: { label: 'Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#D42620]' },
           SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
           DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
           CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },

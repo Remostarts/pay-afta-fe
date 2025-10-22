@@ -174,8 +174,8 @@ export function DataTable<
                 <SelectGroup>
                   <SelectLabel>Status</SelectLabel>
                   <SelectItem value="All">All</SelectItem>
-                  <SelectItem value="Awaiting Agreement">Awaiting Agreement</SelectItem>
-                  <SelectItem value="Awaiting Payment">Awaiting Payment</SelectItem>
+                  <SelectItem value="Awaiting Agreement">Agreement</SelectItem>
+                  <SelectItem value="Awaiting Payment">Payment</SelectItem>
                   <SelectItem value="In-transit">In-transit</SelectItem>
                   <SelectItem value="Canceled">Canceled</SelectItem>
                   <SelectItem value="Dispute">Dispute</SelectItem>
