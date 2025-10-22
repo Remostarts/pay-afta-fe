@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
 import { toast } from 'sonner';
 
@@ -16,10 +16,24 @@ import {
   TTransferfundSchema,
   transferfundSchema,
 } from '@/lib/validations/withdrawfund.validation';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { useGeneral } from '@/context/generalProvider';
 import { withdrawFund } from '@/lib/actions/root/withdrawFund';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
+
+type Bank = {
+  name: string;
+  code: string;
+};
 
 type AccountProps = {
   bankName: string;
@@ -29,12 +43,11 @@ type AccountProps = {
   id?: string;
 };
 
-// ✅ FIX: amountWithdraw must be a number (not string)
 const defaultValues: TWithdrawfund = {
   bankName: '',
   accountNumber: '',
   bankCode: '',
-  amountWithdraw: 0, // number
+  amountWithdraw: 0,
 };
 
 const defaultValuesForTransferFund: TTransferfundSchema = {
@@ -51,6 +64,27 @@ export default function WithdrawFund() {
     null
   );
   const [transferType, setTransferType] = useState<'bank' | 'settlement' | null>(null);
+
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loadingBanks, setLoadingBanks] = useState(false);
+
+  useEffect(() => {
+    async function fetchBanks() {
+      setLoadingBanks(true);
+      try {
+        const res: any = await getPillaBanks();
+        setBanks(res?.data || []);
+      } catch (error) {
+        toast.error('Failed to load bank list');
+      } finally {
+        setLoadingBanks(false);
+      }
+    }
+    if (transferType === 'bank' && banks.length === 0) {
+      fetchBanks();
+    }
+  }, [transferType, banks.length]);
+  // -----------------------------------------------------------
 
   const accounts: AccountProps[] =
     user?.Bank?.map((bank) => ({
@@ -69,7 +103,6 @@ export default function WithdrawFund() {
     id: '',
   };
 
-  // ✅ FIX: defaultValues must match TWithdrawfund (number type)
   const form = useForm<TWithdrawfund>({
     resolver: zodResolver(withdrawfundSchema),
     defaultValues,
@@ -82,7 +115,7 @@ export default function WithdrawFund() {
     mode: 'onChange',
   });
 
-  const { handleSubmit, register, formState } = form;
+  const { handleSubmit, register, formState, control, watch, setValue } = form; // Added control, watch, setValue
   const { isSubmitting, errors } = formState;
 
   const {
@@ -93,7 +126,19 @@ export default function WithdrawFund() {
   const { isSubmitting: isSubmittingForTransfer, errors: transferErrors } = formStateForTransfer;
 
   const bankAmount = form.watch('amountWithdraw');
+  const selectedBankName = watch('bankName');  
   const settlementAmount = transferForm.watch('amountWithdraw');
+
+  useEffect(() => {
+    if (selectedBankName && banks.length > 0) {
+      const selected = banks.find((b) => b.name === selectedBankName);
+      if (selected) {
+        setValue('bankCode', selected.code, { shouldValidate: true });
+      }
+    } else {
+      setValue('bankCode', '');
+    }
+  }, [selectedBankName, banks, setValue]);
 
   const onSubmit = (data: TWithdrawfund) => {
     setWithdrawalData(data);
@@ -199,7 +244,7 @@ export default function WithdrawFund() {
         </div>
       )}
 
-      {/* Step 2A: Settlement Form */}
+      {/* Step 2A: Settlement Form (Remains the same) */}
       {transferType === 'settlement' && !isShowPaymentConfirmation && (
         <Form {...transferForm}>
           <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
@@ -271,19 +316,57 @@ export default function WithdrawFund() {
         </Form>
       )}
 
-      {/* Step 2B: New Bank Form */}
+      {/* Step 2B: New Bank Form (Updated for Select) */}
       {transferType === 'bank' && !isShowPaymentConfirmation && (
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
-              <ReHeading heading="Bank Name" size="base" />
-              <input
-                type="text"
-                placeholder="Enter bank name"
-                {...register('bankName')}
-                className="w-full rounded-md border p-3"
-              />
-              {errors.bankName && <p className="text-sm text-red-500">{errors.bankName.message}</p>}
+              <div>
+                <ReHeading heading="Select Bank Name" size="base" />
+                <FormField
+                  control={control}
+                  name="bankName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <Select
+                        onValueChange={field.onChange}
+                        value={field.value}
+                        disabled={loadingBanks}
+                      >
+                        <FormControl>
+                          <SelectTrigger className="w-full">
+                            <SelectValue
+                              placeholder={loadingBanks ? 'Loading banks...' : 'Select bank'}
+                            />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent className="max-h-[300px] bg-white p-0">
+                          <div className="overflow-y-auto max-h-[280px]">
+                            {banks?.length === 0 && !loadingBanks ? (
+                              <div className="p-2 text-center text-sm text-gray-500">
+                                No banks found.
+                              </div>
+                            ) : (
+                              banks?.map((bank, i) => (
+                                <SelectItem
+                                  key={bank.code || `${bank.name}-${i}`}  
+                                  value={bank.name}
+                                  className="cursor-pointer"
+                                >
+                                  {bank.name}
+                                </SelectItem>
+                              ))
+                            )}
+                          </div>
+                        </SelectContent>
+                      </Select>
+                      {errors.bankName && (
+                        <p className="text-sm text-red-500">{errors.bankName.message}</p>
+                      )}
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               <ReHeading heading="Account Number" size="base" />
               <input
@@ -296,14 +379,10 @@ export default function WithdrawFund() {
                 <p className="text-sm text-red-500">{errors.accountNumber.message}</p>
               )}
 
-              <ReHeading heading="Bank Code" size="base" />
-              <input
-                type="text"
-                placeholder="Enter bank code"
-                {...register('bankCode')}
-                className="w-full rounded-md border p-3"
-              />
-              {errors.bankCode && <p className="text-sm text-red-500">{errors.bankCode.message}</p>}
+              <input type="hidden" {...register('bankCode')} />
+              <div className="text-sm text-gray-500">
+                Bank Code: {watch('bankCode') || 'Auto-filled upon bank selection'}
+              </div>
 
               <ReHeading heading="Amount to Transfer" size="base" />
               <input
@@ -342,7 +421,7 @@ export default function WithdrawFund() {
         </Form>
       )}
 
-      {/* Step 3: Payment Confirmation + PIN */}
+      {/* Step 3: Payment Confirmation + PIN (Remains the same) */}
       {isShowPaymentConfirmation && withdrawalData && (
         <PaymentConfirmation
           amount={withdrawalData.amountWithdraw || 0}

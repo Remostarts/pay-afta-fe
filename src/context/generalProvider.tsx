@@ -5,6 +5,7 @@ import { Chat } from '@/types/chat.type';
 import { TUser } from '@/types/general.type';
 import { getErrorMessage } from '@/lib/responseError';
 import { useSocket } from './socketProvider';
+import { signOut } from 'next-auth/react';
 
 type ChatData = Chat;
 
@@ -70,6 +71,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         setOnboardingStatus(data.data?.profile?.onBoardingStatus ?? null);
       } else {
         setUser(null);
+        signOut();
       }
     } catch (error) {
       console.error('❌ loadUserData error:', getErrorMessage(error));

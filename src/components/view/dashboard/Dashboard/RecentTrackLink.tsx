@@ -123,12 +123,12 @@ export default function RecentTrackLink() {
                   className={`rounded-full p-1 px-4 font-inter text-sm ${(() => {
                     const statusMap: Record<string, { label: string; bg: string; text: string }> = {
                       AGREEMENT: {
-                        label: 'Awaiting Agreement',
+                        label: 'Agreement',
                         bg: 'bg-[#E8FDEF]',
                         text: 'text-[#0F973C]',
                       },
                       PAYMENT: {
-                        label: 'Awaiting Payment',
+                        label: 'Payment',
                         bg: 'bg-[#FCE9E9]',
                         text: 'text-[#D42620]',
                       },
@@ -149,8 +149,8 @@ export default function RecentTrackLink() {
                 >
                   {(() => {
                     const statusMap: Record<string, { label: string }> = {
-                      AGREEMENT: { label: 'Awaiting Agreement' },
-                      PAYMENT: { label: 'Awaiting Payment' },
+                      AGREEMENT: { label: 'Agreement' },
+                      PAYMENT: { label: 'Payment' },
                       SHIPPING: { label: 'In-transit' },
                       DELIVERY: { label: 'Delivered' },
                       CLOSED: { label: 'Settled' },

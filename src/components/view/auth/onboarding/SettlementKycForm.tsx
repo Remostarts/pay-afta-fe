@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
@@ -7,14 +8,7 @@ import { toast } from 'sonner';
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { ReHeading } from '@/components/re-ui/ReHeading';
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import {
   Select,
   SelectContent,
@@ -22,12 +16,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { nigeriaBanks } from '@/lib/data/nigeriaBanks';
+
+// Assuming you have these components/utilities
+import { Skeleton } from '@/components/ui/skeleton'; // 👈 IMPORT SKELETON
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
-import { kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { getPillaBanks, kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
 
-type defaultVal = {
+// Define the Bank type outside the component for clarity
+type Bank = {
+  name: string;
+  code: string;
+};
+
+// Define the type for default values
+type SettlementKycDefaults = {
   bankName: string;
   accountNumber: string;
   bvn: string;
@@ -35,7 +38,7 @@ type defaultVal = {
   isDefaultPayout: boolean;
 };
 
-const defaultValues: defaultVal = {
+const defaultValues: SettlementKycDefaults = {
   bankName: '',
   accountNumber: '',
   bvn: '',
@@ -44,38 +47,108 @@ const defaultValues: defaultVal = {
 };
 
 export default function SettlementKycForm() {
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loadingBanks, setLoadingBanks] = useState(true);
+
   const form = useForm<TSettlementKyc>({
     resolver: zodResolver(settlementKycSchema),
     defaultValues,
     mode: 'onChange',
   });
 
-  const { handleSubmit, formState, control } = form;
+  const { handleSubmit, control, watch, setValue, formState } = form;
   const { isSubmitting } = formState;
   const { loadUserData } = useGeneral();
 
+  const selectedBankName = watch('bankName');
+
+  useEffect(() => {
+    async function fetchBanks() {
+      try {
+        setLoadingBanks(true);
+        const res = await getPillaBanks();
+        setBanks(res?.data || []);
+      } catch (error) {
+        toast.error('Failed to load bank list');
+        setBanks([]);
+      } finally {
+        setLoadingBanks(false);
+      }
+    }
+    fetchBanks();
+  }, []);
+
+  // Auto-fill bank code based on selected bank name
+  useEffect(() => {
+    if (selectedBankName && banks.length > 0) {
+      const selected = banks.find((b) => b.name === selectedBankName);
+      if (selected) {
+        // Set the bankCode when a bank is selected
+        setValue('bankCode', selected.code, { shouldValidate: true });
+      }
+    } else {
+      // Clear bankCode if no bank is selected or bank list is empty
+      setValue('bankCode', '');
+    }
+  }, [selectedBankName, banks, setValue]);
+
+  // Handle Form Submission
   async function onSubmit(data: TSettlementKyc) {
-    console.log(data);
     try {
       const response = await kycBankInfo(data);
-      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
         loadUserData();
         toast.success('Settlement KYC Completed');
       } else {
-        toast.error(response?.errorMessages[0]?.message || 'Failed to update personal information');
+        toast.error(response?.errorMessages?.[0]?.message || 'Failed to update KYC info');
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update kyc bank information');
     }
   }
 
+  // --- Rendering Bank List Content ---
+  const BankListContent = () => {
+    if (loadingBanks) {
+      // 💡 Display skeleton loading state when banks are fetching
+      return (
+        <div className="p-1 space-y-2">
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+          <Skeleton className="h-8 w-full" />
+        </div>
+      );
+    }
+
+    if (banks.length === 0) {
+      return <div className="p-2 text-center text-sm text-gray-500">No banks found.</div>;
+    }
+
+    return (
+      <div className="overflow-y-auto max-h-[280px]">
+        {banks.map((bank, i) => (
+          <SelectItem
+            key={bank.code || `${bank.name}-${i}`}
+            value={bank.name}
+            className="cursor-pointer"
+          >
+            {bank.name}
+          </SelectItem>
+        ))}
+      </div>
+    );
+  };
+  // ------------------------------------
+
   return (
     <section>
       <h1 className="mb-7 font-inter text-2xl font-bold text-zinc-800">Settlement KYC</h1>
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
+          {/* Bank Name Field */}
           <div>
             <ReHeading heading="Select your bank name" size={'base'} />
             <FormField
@@ -86,74 +159,87 @@ export default function SettlementKycForm() {
                   <Select
                     onValueChange={field.onChange}
                     value={field.value}
-                    defaultValue={field.value}
+                    // The trigger is disabled only *before* banks have loaded
+                    disabled={loadingBanks && banks.length === 0}
                   >
                     <FormControl>
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select" />
+                        <SelectValue
+                          placeholder={loadingBanks ? 'Loading banks...' : 'Select bank'}
+                        />
                       </SelectTrigger>
                     </FormControl>
                     <SelectContent
-                      className="max-h-[300px] bg-white"
+                      // Added the necessary styles for the dropdown content
+                      className="max-h-[300px] bg-white p-0" // Removed the p-0 to let Skeleton/List handle padding
                       position="popper"
                       sideOffset={5}
                     >
-                      <div className="overflow-y-auto max-h-[280px]">
-                        {nigeriaBanks.map((bank) => (
-                          <SelectItem
-                            key={bank.value}
-                            value={bank.value}
-                            className="cursor-pointer"
-                          >
-                            {bank.label}
-                          </SelectItem>
-                        ))}
-                      </div>
+                      {/* RENDER THE DYNAMIC CONTENT HERE */}
+                      <BankListContent />
                     </SelectContent>
                   </Select>
-                  <FormMessage className="text-base font-normal text-red-500" />
                 </FormItem>
               )}
             />
           </div>
-          <div className="mt-5">
-            <ReInput
-              label="Enter 10 digit account number"
-              required
-              name="accountNumber"
-              type="number"
-              placeholder="4234....."
-            />
-          </div>
-          <div className="mt-5">
-            <ReInput
-              label="Enter bank code number"
-              required
-              name="bankCode"
-              type="number"
-              placeholder="example: 123"
-            />
-          </div>
-          <div className="mt-5">
-            <ReInput
-              label="BVN (Bank Verification Number)"
-              name="bvn"
-              type="number"
-              placeholder="00000000000"
-              required
-            />
-          </div>
-          <div className="mt-5 flex items-center font-inter">
-            <input
-              type="checkbox"
+
+          {/* Account Number Field */}
+          <FormField
+            control={control}
+            name="accountNumber"
+            render={({ field }) => (
+              <FormItem>
+                <ReInput
+                  label="Enter 10 digit account number"
+                  placeholder="4234....."
+                  type="number"
+                  {...field}
+                />
+              </FormItem>
+            )}
+          />
+
+          {/* BVN Field */}
+          <FormField
+            control={control}
+            name="bvn"
+            render={({ field }) => (
+              <FormItem>
+                <ReInput
+                  label="BVN (Bank Verification Number)"
+                  placeholder="00000000000"
+                  type="number"
+                  {...field}
+                />
+              </FormItem>
+            )}
+          />
+
+          {/* Default payout checkbox */}
+          <div className="flex items-center font-inter">
+            <FormField
+              control={control}
               name="isDefaultPayout"
-              onChange={(e) => form.setValue('isDefaultPayout', e.target.checked)}
-              className="mr-2"
+              render={({ field }) => (
+                <FormItem className="flex items-center space-y-0">
+                  <FormControl>
+                    <input
+                      type="checkbox"
+                      checked={field.value}
+                      onChange={field.onChange}
+                      className="mr-2"
+                    />
+                  </FormControl>
+                  <span className="text-sm text-gray-600">
+                    Set this account as my default payout method
+                  </span>
+                </FormItem>
+              )}
             />
-            <span className="text-sm text-gray-600">
-              Set this account as my default payout method
-            </span>
           </div>
+
+          {/* Submit Button */}
           <div className="mt-3 flex justify-end">
             <ReButton
               className="w-2/5 rounded-full bg-[#03045B] py-6 font-inter text-white sm:py-4"
