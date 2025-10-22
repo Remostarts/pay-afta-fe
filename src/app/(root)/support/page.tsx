@@ -276,10 +276,10 @@ export default function Page() {
           <h3 className="text-lg font-semibold text-gray-900">Email</h3>
           <p className="text-sm text-gray-500">Our friendly team is here to help.</p>
           <a
-            href="mailto:hi@payafta.com"
+            href="contact@getpayafta.com"
             className="block text-indigo-800 hover:text-indigo-600 font-medium"
           >
-            hi@payafta.com
+            contact@getpayafta.com
           </a>
         </div>
 
@@ -299,10 +299,10 @@ export default function Page() {
           <h3 className="text-lg font-semibold text-gray-900">Phone</h3>
           <p className="text-sm text-gray-500">Mon-Fri from 8am to 5pm.</p>
           <a
-            href="tel:+234555000000"
+            href="tel:+2348055121522"
             className="block text-indigo-800 hover:text-indigo-600 font-medium"
           >
-            +234 (555) 000-000
+            +2348055121522
           </a>
         </div>
       </div>
