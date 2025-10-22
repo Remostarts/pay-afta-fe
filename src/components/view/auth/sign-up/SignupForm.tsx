@@ -41,10 +41,7 @@ const defaultValues: defaultVal = {
 
 export default function SignupForm() {
   const pathname = usePathname();
-  const role = pathname?.split('/')[2];
-  const date = new Date().toDateString();
   const [isChecked, setIsChecked] = useState<boolean>(false);
-  //   console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
 
   const router = useRouter();
   const { setEmail, email } = useOtp();
@@ -62,7 +59,6 @@ export default function SignupForm() {
     try {
       setEmail(data.email);
       const response = await partialSignup(data);
-      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
         router.push('/sign-up/verification');
@@ -72,8 +68,6 @@ export default function SignupForm() {
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Sign up Failed');
     }
-
-    console.log(data);
 
     // if (isValid) {
     //   router.push('/sign-up/verification');
