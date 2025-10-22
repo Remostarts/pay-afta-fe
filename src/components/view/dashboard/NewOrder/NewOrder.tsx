@@ -277,7 +277,7 @@ export default function NewOrder({ onBack }: any) {
                 width={20}
                 height={20}
               />
-              Buyer
+              I am the Buyer
             </TabsTrigger>
             <TabsTrigger
               value="seller"
@@ -293,7 +293,7 @@ export default function NewOrder({ onBack }: any) {
                 width={20}
                 height={20}
               />
-              Seller
+              I am the Seller
             </TabsTrigger>
           </TabsList>
         </Tabs>

@@ -17,13 +17,14 @@ export default function SignUp() {
 
   return (
     <section>
-      {selectedCategory === '' ? (
+      {/* {selectedCategory === '' ? (
         <SelectCategory handleCategory={handleSelectedCategory} />
       ) : selectedCategory === 'individual' ? (
         <SignupForm />
       ) : (
         <LogisticSignupForm />
-      )}
+      )} */}
+      <SignupForm />
     </section>
   );
 }
