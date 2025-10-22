@@ -14,10 +14,10 @@ export const metadata = {
 
 export default function Page() {
   const feeStructure = [
-    {
-      range: '₦1,000 – ₦99,999',
-      fee: '₦150',
-    },
+    // {
+    //   range: '₦1,000 – ₦99,999',
+    //   fee: '₦150',
+    // },
     {
       range: '₦1,000 – ₦24,999',
       fee: '₦250',
