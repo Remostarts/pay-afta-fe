@@ -15,7 +15,6 @@ import {
 } from '@/lib/validations/order';
 // import { authOptions } from '@/lib/AuthOptions';
 
-console.log(process.env.BACKEND_URL);
 
 export async function createOrder(formData: TCreateOrderInput) {
   const validation = createOrderZodSchema.safeParse(formData);
@@ -50,7 +49,7 @@ export async function createOrder(formData: TCreateOrderInput) {
   }
 }
 
-export async function getOrder(id: string) {
+export async function getSingleOrder(id: string) {
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;
 
@@ -63,6 +62,31 @@ export async function getOrder(id: string) {
       },
       cache: 'no-store',
     });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 getSingleOrder 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+export async function getAllOrdersByUser(page: number) {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/order/get-by-user?page=${page}&limit=8`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        cache: 'no-store',
+      }
+    );
 
     return response.json();
   } catch (error) {

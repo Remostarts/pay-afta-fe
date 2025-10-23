@@ -44,6 +44,7 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
   const [amount, setAmount] = useState<number>(0);
 
   const [user, setUser] = useState<TUser | null>(null);
+
   const [onboardingStatus, setOnboardingStatus] = useState<boolean | null>(null);
   const [isChatDisabled, setChatIsDisabled] = useState(false);
   const [loadingUser, setLoadingUser] = useState(true);

@@ -9,9 +9,10 @@ import PaymentModal from './PaymentModal';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-const orders = Array.from({ length: 0 }, (_, i) => ({
+const orders = Array.from({ length: 5 }, (_, i) => ({
   id: i + 1,
-  orderId: 'ORD12345',
+  orderId: '12855098',
+  trackingId: 'SMS20250770STD986E',
   name: 'Paul Simeon',
   product: 'HP EliteBook 840 G5 - 8GB RAM',
 }));
@@ -77,21 +78,38 @@ const AssignOrderList = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {/* {visibleOrders.map((order) => (
-          <div key={order.id} className="flex flex-col gap-2 rounded-xl border bg-white p-4">
-            <div className="mb-1 text-xs text-gray-400">Order ID: {order.orderId}</div>
-            <div className="font-bold">{order.name}</div>
-            <div className="mb-4 text-sm">{order.product}</div>
+        {visibleOrders.map((order) => (
+          <div
+            key={order.id}
+            className="flex flex-col justify-between rounded-2xl border border-gray-100 bg-[#F8F8F8] p-5 shadow-sm transition-all hover:shadow-md"
+          >
+            {/* Order details */}
+            <div>
+              <div className="text-sm text-gray-500">
+                Order ID: <span className="font-medium text-gray-400">{order.orderId}</span>
+              </div>
+              <div className="text-sm text-gray-500 mb-1">
+                Tracking Link: <span className="font-medium text-gray-400">{order.trackingId}</span>
+              </div>
+
+              <div className="mt-1 font-inter text-[15px] font-bold text-gray-900">
+                {order.name}
+              </div>
+
+              <div className="mt-1 text-[15px] text-gray-800">{order.product}</div>
+            </div>
+
+            {/* Button */}
             <button
-              className="mt-auto w-full rounded-full bg-[#03045B] py-2 font-semibold text-white"
+              className="mt-4 w-full rounded-full bg-[#03045B] py-2.5 font-inter text-[15px] font-semibold text-white transition-all hover:bg-[#03045B]/90 active:scale-[0.98]"
               onClick={handleAssignClick}
             >
               Assign Delivery
             </button>
           </div>
-        ))} */}
+        ))}
       </div>
-      <p className="mx-auto mt-4 text-center text-sm text-gray-500">No Ongoing Deliveries</p>
+      {/* <p className="mx-auto mt-4 text-center text-sm text-gray-500">No Ongoing Deliveries</p> */}
     </div>
   );
 };

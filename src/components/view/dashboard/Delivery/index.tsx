@@ -125,10 +125,10 @@ export default function Delivery() {
     try {
       console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
-        // setTotalCount(tData.length);
-        // setData(tData);
-        // setPage(pageNumber);
-        // setIsLoading(false);
+        setTotalCount(tData.length);
+        setData(tData);
+        setPage(pageNumber);
+        setIsLoading(false);
       }, 500);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -146,7 +146,7 @@ export default function Delivery() {
   return (
     <section className="min-h-screen rounded-md bg-white p-4 md:p-8">
       <DeliveryStats />
-      <AssignOrderList />
+      {/* <AssignOrderList /> */}
       <ReDataTable
         label="Deliveries"
         columns={columns}

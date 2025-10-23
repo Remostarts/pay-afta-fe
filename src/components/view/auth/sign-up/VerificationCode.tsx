@@ -17,6 +17,7 @@ import {
 import { useOtp } from '@/context/OtpProvider';
 import { verifyEmail } from '@/lib/actions/auth/signup.actions';
 import { toast } from '@/components/ui/use-toast';
+import { Loader } from 'lucide-react';
 
 export default function VerificationCode() {
   const [otp, setOtp] = useState<string>('');
@@ -28,6 +29,7 @@ export default function VerificationCode() {
   // eslint-disable-next-line no-undef
   const intervalRef = useRef<NodeJS.Timeout | null>(null);
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     // Start the timer
@@ -64,6 +66,7 @@ export default function VerificationCode() {
 
     try {
       const response = await verifyEmail({ email, emailVerificationCode: otp });
+      setIsLoading(true);
       if (response?.success) {
         setIsError(false);
         setIsDialogOpen(true); // Open the dialog if OTP is valid
@@ -76,6 +79,8 @@ export default function VerificationCode() {
         title: 'Error',
         description: 'OTP is not valid',
       });
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -106,26 +111,43 @@ export default function VerificationCode() {
       </div>
       <Button
         onClick={handleSubmit}
-        className="w-4/5 rounded-full bg-[#03045B] py-5 text-lg font-semibold text-white hover:bg-[#03045B]"
-        disabled={otp.length !== 4}
+        className="w-4/5 rounded-full bg-[#03045B] py-5 text-lg font-semibold text-white hover:bg-[#03045B]/90 transition-all"
+        disabled={isLoading || otp.length !== 4}
       >
-        Verify
+        {isLoading ? (
+          <span className="flex items-center justify-center space-x-2">
+            <Loader className="size-5 animate-spin" />
+            <span className="animate-pulse">Verifying...</span>
+          </span>
+        ) : (
+          'Verify'
+        )}
       </Button>
       {/* Dialog for success */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="flex flex-col items-center justify-center text-center sm:max-w-[425px]">
+          {/* Logo */}
           <DialogHeader className="mb-4">
             <DialogTitle className="flex justify-center">
               <Image src="/Logo.svg" alt="Payafta Logo" width={176} height={64} />
             </DialogTitle>
           </DialogHeader>
-          <h1 className="mb-8 font-inter text-4xl font-bold text-gray-800">Account Created</h1>
+
+          {/* Headline */}
+          <h1 className="mb-2 font-inter text-3xl font-bold text-gray-800">Welcome to PayAfta!</h1>
+
+          {/* Subtext */}
+          <p className="mb-8 font-inter text-base text-gray-600">
+            Your gateway to secure, worry-free transactions.
+          </p>
+
+          {/* CTA Button */}
           <DialogFooter className="w-full">
             <Link
               href="/dashboard"
-              className="w-full rounded-full bg-[#03045B] py-2 font-inter text-lg font-semibold text-white hover:bg-[#03045B]/90"
+              className="w-full rounded-full bg-[#03045B] py-2 font-inter text-lg font-semibold text-white transition-colors hover:bg-[#03045B]/90"
             >
-              Proceed to dashboard
+              Start Exploring
             </Link>
           </DialogFooter>
         </DialogContent>

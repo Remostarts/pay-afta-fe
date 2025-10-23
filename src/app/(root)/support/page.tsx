@@ -138,18 +138,19 @@ export default function Page() {
                           width={110.17}
                           height={40}
                           priority
+                          className="bg-white"
                         />
                       </Link>
 
                       {/* Heading */}
-                      <h2 className="text-white text-3xl sm:text-4xl font-bold font-playfair mb-6 leading-tight">
-                        Arrange A Call With One Of Our Representatives
+                      <h2 className="text-white text-3xl sm:text-4xl font-extrabold font-playfair mb-6 leading-tight">
+                        Arrange A Call With Our Representatives
                       </h2>
 
                       {/* Image */}
                       <div className="mb-6 overflow-hidden rounded-lg">
                         <Image
-                          src="/assets/root/contact-us/BookACall.png"
+                          src="/assets/root/Representatives.jpg"
                           alt="Representative on call"
                           className="w-full h-auto object-cover"
                           width={300}
