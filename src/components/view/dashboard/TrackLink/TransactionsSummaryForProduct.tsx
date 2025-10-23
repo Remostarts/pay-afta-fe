@@ -14,7 +14,7 @@ import OrderAgreement from './OrderAgreement';
 import StepperForProduct from './StepperForProduct';
 
 import { toast } from 'sonner';
-import { getOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
+import { getSingleOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
 import { useGeneral } from '@/context/generalProvider';
 import { useSocket } from '@/context/socketProvider';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
@@ -47,7 +47,7 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
     if (!id) return;
     setProgressLoading(true);
     try {
-      const response = await getOrder(id);
+      const response = await getSingleOrder(id);
       if (response?.success) {
         setUserRole(
           user?.id === response.data.buyerId

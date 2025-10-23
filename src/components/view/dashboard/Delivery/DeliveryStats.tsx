@@ -3,7 +3,7 @@
 import React from 'react';
 
 const stats = [
-  { label: 'Pending Order', value: 0 },
+  { label: 'Pending', value: 0 },
   { label: 'In Progress', value: 0 },
   { label: 'Completed', value: 0 },
 ];
