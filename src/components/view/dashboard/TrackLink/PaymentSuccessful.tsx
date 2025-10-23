@@ -43,9 +43,9 @@ export default function PaymentSuccessful({
           <p className="mb-4 text-center font-inter text-gray-600">
             You sent ₦{amount?.toLocaleString()} to {bankName}.
           </p>
-        ) : label === 'Transaction confirmed!' ? (
+        ) : label === 'Order Created!' ? (
           <p className="mb-4 text-center font-inter text-gray-600">
-            Proceeding to make the payment for the transaction.
+            Proceed to the next stage of the transaction.
           </p>
         ) : label === 'Payment Successful' ? (
           <p className="mb-4 text-center font-inter text-gray-600">
