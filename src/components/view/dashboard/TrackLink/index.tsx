@@ -12,6 +12,7 @@ import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { useGeneral } from '@/context/generalProvider';
 import page from '@/app/(auth)/forget-pass/page';
 import { formatISODateToReadable } from '@/helpers/utils/makeTimeReadable';
+import { getAllOrdersByUser } from '@/lib/actions/order/order.actions';
 
 type User = {
   id: string;
@@ -90,7 +91,7 @@ export default function TrackLink() {
     {
       accessorKey: 'payment',
       header: 'Payment',
-      cell: ({ row }) => <div>{row?.original?.payment}</div>,
+      cell: ({ row }) => <div>{row?.original?.payment || 'Pending'}</div>,
     },
     {
       accessorKey: 'amount',
@@ -106,7 +107,7 @@ export default function TrackLink() {
         // status dynamic label + color map
         const statusMap: Record<string, { label: string; bg: string; text: string }> = {
           AGREEMENT: { label: 'Agreement', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
-          PAYMENT: { label: 'Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#D42620]' },
+          PAYMENT: { label: 'Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#0F973C]' },
           SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
           DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
           CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },
@@ -152,26 +153,11 @@ export default function TrackLink() {
 
       // setInvoiceHPage(page);
 
-      console.log('🌼 🔥🔥 handleFilterChange 🔥🔥 page🌼', page);
+      const data = await getAllOrdersByUser(page);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_BACKEND_URL}/order/get-by-user?page=${page}&limit=8`,
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            authorization: session?.accessToken as string,
-          },
-          cache: 'no-store',
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Error fetching invoice history request: ${response.statusText}`);
+      if (!data.success) {
+        throw new Error(`Error fetching invoice history request: ${data.statusText}`);
       }
-
-      const data = await response.json();
-      // console.log('🌼 🔥🔥 handleLoadInvoiceHistory 🔥🔥 data🌼', data);
 
       setOrders(data?.data?.data);
       setIsLoading(false);

@@ -130,7 +130,7 @@ export default function RecentTrackLink() {
                       PAYMENT: {
                         label: 'Payment',
                         bg: 'bg-[#FCE9E9]',
-                        text: 'text-[#D42620]',
+                        text: 'text-[#0F973C]',
                       },
                       SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
                       DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },

@@ -9,7 +9,7 @@ import PaymentModal from './PaymentModal';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-const orders = Array.from({ length: 0 }, (_, i) => ({
+const orders = Array.from({ length: 10 }, (_, i) => ({
   id: i + 1,
   orderId: 'ORD12345',
   name: 'Paul Simeon',
@@ -77,7 +77,7 @@ const AssignOrderList = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {/* {visibleOrders.map((order) => (
+        {visibleOrders.map((order) => (
           <div key={order.id} className="flex flex-col gap-2 rounded-xl border bg-white p-4">
             <div className="mb-1 text-xs text-gray-400">Order ID: {order.orderId}</div>
             <div className="font-bold">{order.name}</div>
@@ -89,7 +89,7 @@ const AssignOrderList = () => {
               Assign Delivery
             </button>
           </div>
-        ))} */}
+        ))}
       </div>
       <p className="mx-auto mt-4 text-center text-sm text-gray-500">No Ongoing Deliveries</p>
     </div>
