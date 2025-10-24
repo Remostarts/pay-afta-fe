@@ -5,7 +5,7 @@ export const sideNavMenu = [
     imgColor: '/assets/dashboard/Dashboard/dashboardColorIcon.svg',
     name: 'Dashboard',
     alt: '/',
-    root: 'dashboard'
+    root: 'dashboard',
   },
   {
     id: 2,
@@ -18,7 +18,7 @@ export const sideNavMenu = [
     id: 3,
     imgBlack: '/assets/dashboard/Dashboard/payment-order.svg',
     imgColor: '/assets/dashboard/Dashboard/payment-order.svg',
-    name: 'My Order',
+    name: 'Orders',
     isChildrean: true,
     newOrder: {
       id: 1,
@@ -27,7 +27,7 @@ export const sideNavMenu = [
     },
     viewOrder: {
       id: 2,
-      name: 'View Order',
+      name: 'View Orders',
       alt: 'track-links',
     },
   },

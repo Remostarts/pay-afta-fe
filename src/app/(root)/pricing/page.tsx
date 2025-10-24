@@ -14,12 +14,12 @@ export const metadata = {
 
 export default function Page() {
   const feeStructure = [
-    // {
-    //   range: '₦1,000 – ₦99,999',
-    //   fee: '₦150',
-    // },
     {
-      range: '₦1,000 – ₦24,999',
+      range: '₦1,000 – ₦9,999',
+      fee: '₦150',
+    },
+    {
+      range: '₦10,000 – ₦24,999',
       fee: '₦250',
     },
     {
@@ -47,9 +47,9 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="py-16 lg:py-24">
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="mb-8 md:mb-20">
+          <div className="mb-8">
             <Badge className="mb-6 bg-[#E6E7FE] hover:bg-[#E6E7FE] p-2 text-[#041016]">
               Flexible Pricing
             </Badge>
@@ -195,7 +195,7 @@ export default function Page() {
       <PricingFaq />
 
       {/* CTA Section */}
-      <section className="relative ml-2 mt-14 overflow-hidden rounded-xl bg-[#03045B] p-8 shadow-lg md:mt-32">
+      <section className="relative ml-2 mt-14 overflow-hidden rounded-xl bg-[#03045B] p-8 shadow-lg">
         {/* Background Pattern Overlay */}
         <div className="absolute inset-0">
           <div

@@ -65,9 +65,9 @@ export default function Page() {
   return (
     <div className="min-h-screen bg-white">
       {/* Hero Section */}
-      <section className="py-16 lg:py-20">
+      <section className="py-16">
         <div className="container mx-auto px-4">
-          <div className="mb-8 md:mb-20">
+          <div className="mb-8">
             <Badge className="mb-6 bg-[#E6E7FE] hover:bg-[#E6E7FE] p-2 text-[#041016]">
               24/7 Powered Response
             </Badge>
@@ -138,7 +138,7 @@ export default function Page() {
                           width={110.17}
                           height={40}
                           priority
-                          className="bg-white"
+                          className=" text-white"
                         />
                       </Link>
 

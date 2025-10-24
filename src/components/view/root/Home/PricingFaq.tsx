@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown } from 'lucide-react';
+import { ChevronDown, Headset } from 'lucide-react';
 import { PricingFaq as PricingFaqData } from '@/constants/root/pricingfaq';
 import Link from 'next/link';
 
@@ -15,7 +15,7 @@ export default function PricingFaq() {
   };
 
   return (
-    <div className="container relative mx-auto mt-8 box-border w-full max-w-[1440px] text-left font-inter md:mt-20">
+    <div className="container relative mx-auto mt-8 box-border w-full max-w-[1440px] text-left font-inter">
       <div className="flex flex-col gap-8 px-4 sm:px-6 md:flex-row md:justify-between lg:px-8 xl:px-20">
         {/* Header */}
         <div className="flex flex-col items-start justify-start gap-4 md:max-w-[480px] md:gap-6 lg:max-w-[580px]">
@@ -27,14 +27,14 @@ export default function PricingFaq() {
           <div className="text-black-700 mb-6 w-full font-inter text-sm leading-[140%] tracking-[-0.01em] md:mb-0 md:text-base">
             <span className="font-inter">Got questions about PayAfta? We've got answers.</span>
 
-            <div className="bg-[#F8F8F8] rounded-xl mt-3 flex-col items-center justify-evenly p-10">
+            <div className="bg-[#F8F8F8] rounded-xl mt-3 flex-col items-center justify-center p-10">
               <p className="font-inter font-bold text-center">Still have questions?</p>
               <p className="font-inter text-center">Need custom pricing for your business?</p>
               <Link
                 href="/support"
-                className="bg-[#03045B] mt-3 text-white font-semibold font-inter px-6 py-3 rounded-full inline-flex items-center gap-2 transition hover:bg-[#020345]"
+                className="bg-[#03045B] text-white mt-3 font-semibold font-inter px-6 py-3 rounded-full inline-flex items-center gap-2 transition hover:bg-[#020345]"
               >
-                Email Sales or call +2348055121522.
+                Talk to Our Sales Team <Headset />
               </Link>
             </div>
           </div>
