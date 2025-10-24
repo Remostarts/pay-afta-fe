@@ -65,9 +65,9 @@ export default function PaymentSummary({
     <div className="bg-white">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-medium text-gray-900">Payment Summary</h2>
-        <button className="text-gray-400 hover:text-gray-600 p-1" onClick={onClose}>
+        {/* <button className="text-gray-400 hover:text-gray-600 p-1" onClick={onClose}>
           <X size={20} />
-        </button>
+        </button> */}
       </div>
 
       <div className="space-y-4 mb-6">

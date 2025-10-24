@@ -29,6 +29,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
+import ReInput from '@/components/re-ui/re-input/ReInput';
 
 type Bank = {
   name: string;
@@ -126,7 +127,7 @@ export default function WithdrawFund() {
   const { isSubmitting: isSubmittingForTransfer, errors: transferErrors } = formStateForTransfer;
 
   const bankAmount = form.watch('amountWithdraw');
-  const selectedBankName = watch('bankName');  
+  const selectedBankName = watch('bankName');
   const settlementAmount = transferForm.watch('amountWithdraw');
 
   useEffect(() => {
@@ -206,7 +207,7 @@ export default function WithdrawFund() {
     <section>
       {/* Step 1: Select transfer type */}
       {!transferType && (
-        <div className="w-full max-w-md rounded-md bg-white p-4">
+        <div className="w-full max-w-md rounded-md bg-white">
           <h2 className="mb-4 text-lg font-bold">Transfer To</h2>
           <div className="flex flex-col gap-4">
             <button
@@ -250,7 +251,8 @@ export default function WithdrawFund() {
           <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
             <div className="mb-4">
               <ReHeading heading="Amount to withdraw" size="base" />
-              <input
+              <ReInput name="amountWithdraw" type="number" />
+              {/* <input
                 type="number"
                 placeholder="₦"
                 {...registerTransfer('amountWithdraw', { valueAsNumber: true })}
@@ -258,7 +260,7 @@ export default function WithdrawFund() {
               />
               {transferErrors.amountWithdraw && (
                 <p className="text-sm text-red-500">{transferErrors.amountWithdraw.message}</p>
-              )}
+              )} */}
               <p className="mt-2 text-sm text-gray-600">
                 Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
               </p>
@@ -349,7 +351,7 @@ export default function WithdrawFund() {
                             ) : (
                               banks?.map((bank, i) => (
                                 <SelectItem
-                                  key={bank.code || `${bank.name}-${i}`}  
+                                  key={bank.code || `${bank.name}-${i}`}
                                   value={bank.name}
                                   className="cursor-pointer"
                                 >
@@ -369,7 +371,8 @@ export default function WithdrawFund() {
               </div>
 
               <ReHeading heading="Account Number" size="base" />
-              <input
+              <ReInput name="accountNumber" type="number" />
+              {/* <input
                 type="text"
                 placeholder="Enter account number"
                 {...register('accountNumber')}
@@ -377,7 +380,7 @@ export default function WithdrawFund() {
               />
               {errors.accountNumber && (
                 <p className="text-sm text-red-500">{errors.accountNumber.message}</p>
-              )}
+              )} */}
 
               <input type="hidden" {...register('bankCode')} />
               <div className="text-sm text-gray-500">
@@ -385,7 +388,8 @@ export default function WithdrawFund() {
               </div>
 
               <ReHeading heading="Amount to Transfer" size="base" />
-              <input
+              <ReInput name="amountWithdraw" type="number" />
+              {/* <input
                 type="number"
                 placeholder="₦"
                 {...register('amountWithdraw', { valueAsNumber: true })}
@@ -393,7 +397,7 @@ export default function WithdrawFund() {
               />
               {errors.amountWithdraw && (
                 <p className="text-sm text-red-500">{errors.amountWithdraw.message}</p>
-              )}
+              )} */}
 
               <p className="text-sm text-gray-600">
                 Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}

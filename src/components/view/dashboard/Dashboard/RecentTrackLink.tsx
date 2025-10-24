@@ -93,7 +93,7 @@ export default function RecentTrackLink() {
     <div className="mt-5 rounded-lg bg-white p-6 shadow-sm">
       <div className="mb-6 flex items-center justify-between">
         <h2 className="flex items-center font-inter text-lg font-semibold text-[#333333]">
-          Recent Track Link
+          Recent Orders
           {/* <span className="ml-2 rounded-full bg-gray-100 px-2 py-0.5 text-sm">2</span> */}
         </h2>
         <button
