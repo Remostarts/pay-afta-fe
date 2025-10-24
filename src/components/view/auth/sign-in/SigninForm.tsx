@@ -73,7 +73,7 @@ export const SigninForm = () => {
       // }
       // router.push('/');
     } else {
-      toast.error('Invalid email or password');
+      toast.error(result?.error || 'Something went wrong');
     }
   };
 

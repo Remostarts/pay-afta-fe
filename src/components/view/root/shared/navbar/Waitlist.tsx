@@ -80,9 +80,8 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
       </DialogTrigger>
       <DialogContent
         className="
-          max-w-[95vw] sm:max-w-full max-h-[95vh]
-          p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto
-          lg:max-w-none lg:w-screen lg:h-screen lg:max-h-none lg:rounded-3xl
+          max-w-[90vw] sm:max-w-[80vw] md:max-w-[80vw] lg:max-w-[80vw] max-h-[90vh]
+          p-3 sm:p-5 border-0 bg-[#03045B] overflow-y-auto rounded-2xl
         "
       >
         <DialogClose asChild>
@@ -99,10 +98,10 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
         <div className="relative flex flex-col lg:flex-row items-center justify-center gap-4 lg:gap-8">
           {/* Left side - Form */}
           <div className="flex-1 order-2 lg:order-1 w-full">
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-7xl font-bold text-white font-playfair mb-2 text-center lg:text-left">
+            <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-white font-playfair mb-2 text-center lg:text-left">
               Join Our Waitlist
             </h1>
-            <p className="text-white mb-6 sm:mb-8 text-base sm:text-lg md:text-xl lg:text-2xl font-inter text-center lg:text-left">
+            <p className="text-white mb-6 sm:mb-8 text-sm sm:text-base md:text-lg font-inter text-center lg:text-left">
               Be among the first to use PayAfta, get Early access with instant updates.
             </p>
             <div className="w-full max-w-2xl mx-auto lg:mx-0">
@@ -167,7 +166,7 @@ export function Waitlist({ open, onOpenChange }: WaitlistProps = {}) {
           {/* Right side - Hero image and content */}
           <div className="flex-1 order-1 lg:order-2 mb-4 lg:mb-0 w-full flex relative">
             <div className="relative w-full flex items-center justify-center">
-              <div className="relative w-full max-w-sm sm:max-w-md lg:max-w-lg xl:max-w-xl">
+              <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md">
                 <Image
                   alt="waitlist"
                   src="/assets/root/home/waitlist.png"

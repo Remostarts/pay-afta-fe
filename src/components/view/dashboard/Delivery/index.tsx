@@ -61,12 +61,6 @@ const tData = [
     date: 'US-123456789',
     deliveryCompany: 'John Doe',
     amount: '₦200,000.00',
-    status: 'Scheduled',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
     status: 'InTransit',
   },
   {
@@ -77,31 +71,20 @@ const tData = [
   },
   {
     date: 'US-123456789',
-    deliveryCompany: 'John Doe',
+    deliveryCompany: 'John 4',
     amount: '₦200,000.00',
     status: 'Scheduled',
   },
   {
     date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
-    status: 'Scheduled',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
+    deliveryCompany: 'John 3',
     amount: '₦200,000.00',
     status: 'InTransit',
   },
+
   {
     date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
-    status: 'Scheduled',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
+    deliveryCompany: 'John 2',
     amount: '₦200,000.00',
     status: 'Scheduled',
   },
@@ -146,7 +129,7 @@ export default function Delivery() {
   return (
     <section className="min-h-screen rounded-md bg-white p-4 md:p-8">
       <DeliveryStats />
-      {/* <AssignOrderList /> */}
+      <AssignOrderList />
       <ReDataTable
         label="Deliveries"
         columns={columns}

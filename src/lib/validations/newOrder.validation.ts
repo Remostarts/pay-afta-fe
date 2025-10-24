@@ -9,6 +9,9 @@ const emailsData = [
   'liseg18768@bitflirt.com',
 ];
 
+// Cache to store verified emails
+const verifiedEmailsCache = new Map<string, boolean>();
+
 // // payment seller schema
 // export const paymentSellerSchema = z.object({
 //   transactionType: z.string().min(1, 'Select an option.'),
@@ -34,13 +37,17 @@ const emailsData = [
 
 // Function to check if email exists
 const checkEmailExists = async (email: string) => {
+  // Check cache first
+  if (verifiedEmailsCache.has(email)) {
+    return verifiedEmailsCache.get(email);
+  }
+
   const response = await fetch(
     `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/validate-user?emailPhoneNo=${email}`,
     {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        // Authorization: accessToken,
       },
       cache: 'no-store',
     }
@@ -51,7 +58,17 @@ const checkEmailExists = async (email: string) => {
   }
 
   const data = await response.json();
-  return data?.data?.exists;
+  const exists = data?.data?.exists;
+
+  // Store in cache
+  verifiedEmailsCache.set(email, exists);
+
+  return exists;
+};
+
+// Function to clear cache (useful when you want to revalidate)
+export const clearEmailCache = () => {
+  verifiedEmailsCache.clear();
 };
 
 // // payment buyer schema
@@ -149,16 +166,31 @@ export const newOrderSchema = (
     .superRefine(async (email, ctx) => {
       try {
         if (activeTab === 'buyer') {
+          // Check if email is already verified in cache
+          if (verifiedEmailsCache.has(email)) {
+            const exists = verifiedEmailsCache.get(email);
+            if (exists) {
+              setBuyerEmailValid(true);
+              return true;
+            } else {
+              setBuyerEmailValid(false);
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Email or Phone Number is not registered',
+              });
+              return false;
+            }
+          }
+
+          // If not in cache, make API call
           setLoading(true);
           const exists = await checkEmailExists(email);
           setLoading(false);
 
           if (exists) {
-            // Email exists - we'll treat this as success
             setBuyerEmailValid(true);
             return true;
           } else {
-            // Email doesn't exist - add an issue (error)
             setBuyerEmailValid(false);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
@@ -186,16 +218,31 @@ export const newOrderSchema = (
     .superRefine(async (email, ctx) => {
       try {
         if (activeTab === 'seller') {
+          // Check if email is already verified in cache
+          if (verifiedEmailsCache.has(email)) {
+            const exists = verifiedEmailsCache.get(email);
+            if (exists) {
+              setSellerEmailValid(true);
+              return true;
+            } else {
+              setSellerEmailValid(false);
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'Email or Phone Number is not registered',
+              });
+              return false;
+            }
+          }
+
+          // If not in cache, make API call
           setLoading(true);
           const exists = await checkEmailExists(email);
           setLoading(false);
 
           if (exists) {
-            // Email exists - we'll treat this as success
             setSellerEmailValid(true);
             return true;
           } else {
-            // Email doesn't exist - add an issue (error)
             setSellerEmailValid(false);
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
@@ -237,14 +284,14 @@ export const createOrderZodSchema = z.object({
   items: z.array(
     z.object({
       name: z.string().min(1, 'Item name is required'),
-      price: z.string(), // you can add refinements if needed
+      price: z.string(),
       quantity: z.string(),
     })
   ),
   milestones: z.array(
     z.object({
       title: z.string().min(1, 'Milestone title is required'),
-      amount: z.string(), // if needed, you can add default or numeric checks
+      amount: z.string(),
       deliveryDate: z.coerce.date(),
     })
   ),

@@ -1,5 +1,7 @@
-import Image from 'next/image';
+'use client';
+
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 interface PaymentSuccessfulProps {
   label?: string;
@@ -9,50 +11,57 @@ interface PaymentSuccessfulProps {
 }
 
 export default function PaymentSuccessful({
-  label,
+  label = 'Transfer Successful',
   amount,
   bankName,
   onComplete,
 }: PaymentSuccessfulProps) {
-  // Auto-trigger completion after showing success for a moment
   useEffect(() => {
-    if (onComplete) {
-      const timer = setTimeout(() => {
-        onComplete();
-      }, 2000); // Show success for 2 seconds
-
-      return () => clearTimeout(timer);
-    }
+    if (!onComplete) return;
+    const timer = setTimeout(onComplete, 2000);
+    return () => clearTimeout(timer);
   }, [onComplete]);
 
+  const getMessage = () => {
+    switch (label) {
+      case 'Withdrawal Successful':
+      case 'Transfer Successful':
+        return `You sent ₦${amount?.toLocaleString() ?? 0} to ${bankName || 'recipient'}.`;
+      case 'Order Created!':
+        return 'Proceed to the next stage of the transaction.';
+      case 'Payment Successful':
+        return `Your payment of ₦${amount?.toLocaleString() ?? 0} has been successfully secured in escrow, ensuring a safe and smooth transaction process.`;
+      default:
+        return 'Transaction completed successfully.';
+    }
+  };
+
   return (
-    <section>
-      <div className="mx-auto max-w-md rounded-lg bg-white p-6">
-        <div className="flex items-center justify-center">
-          <Image
-            src="/assets/dashboard/Dashboard/payment-checked.svg"
-            alt="payment-checked"
-            width={120}
-            height={120}
-          />
+    <section className="flex items-center justify-center">
+      <div className="mx-auto w-full max-w-md rounded-2xl bg-white p-8 transition-transform duration-500 hover:scale-[1.02]">
+        {/* Animated Icon */}
+        <div className="flex items-center justify-center mb-5">
+          <div className="relative">
+            <div className="absolute inset-0 animate-ping rounded-full bg-green-100 opacity-75"></div>
+            <Image
+              src="/assets/dashboard/Dashboard/payment-checked.svg"
+              alt="Payment successful icon"
+              width={110}
+              height={110}
+              className="relative z-10 drop-shadow-md"
+            />
+          </div>
         </div>
-        <h2 className="mb-2 text-center font-inter text-2xl font-bold">
-          {label || 'Transfer Successful'}
+
+        {/* Title */}
+        <h2 className="mb-3 text-center font-inter text-2xl font-bold text-gray-800 animate-fade-in">
+          {label}
         </h2>
-        {label === 'Withdrawal Successful' || label === 'Transfer Successful' ? (
-          <p className="mb-4 text-center font-inter text-gray-600">
-            You sent ₦{amount?.toLocaleString()} to {bankName}.
-          </p>
-        ) : label === 'Order Created!' ? (
-          <p className="mb-4 text-center font-inter text-gray-600">
-            Proceed to the next stage of the transaction.
-          </p>
-        ) : label === 'Payment Successful' ? (
-          <p className="mb-4 text-center font-inter text-gray-600">
-            Your payment of ₦{amount?.toLocaleString()} has been successfully secured in escrow,
-            ensuring a safe and smooth transaction process.
-          </p>
-        ) : null}
+
+        {/* Message */}
+        <p className="text-center text-gray-600 leading-relaxed animate-fade-in delay-100">
+          {getMessage()}
+        </p>
       </div>
     </section>
   );

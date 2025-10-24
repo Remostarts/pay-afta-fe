@@ -26,6 +26,7 @@ import {
   TInitialSignUp,
   TInitialSignUpForLogistic,
 } from '@/lib/validations/userAuth.validations';
+import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 type defaultVal = {
   companyName: string;
@@ -92,85 +93,81 @@ export default function LogisticSignupForm() {
 
   return (
     <>
-      {isRegistrationCompleted ? (
-        <RegistrationCompleted handleRegistrationComplete={setIsRegistrationCompleted} />
-      ) : (
-        <section>
-          <div>
-            <Link href="/">
-              <Image src={Logo} alt="Pay afta" width={176} height={64} />
-            </Link>
-          </div>
-          <div>
-            <h1 className="mt-3 font-inter text-2xl font-bold">Register as a Logistics Partner</h1>
-            <p className="font-inter">
-              Submit your details to register your logistics company. Our team will reach out
-              shortly
-            </p>
-          </div>
-          <Form {...form}>
-            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-              <div className="mt-3 space-y-4">
-                <div>
-                  <ReHeading heading="Company Name" size={'base'} />
-                  <ReInput name="companyName" />
-                </div>
-                <div>
-                  <ReHeading heading="First Name" size={'base'} />
-                  <ReInput name="firstName" />
-                </div>
-                <div>
-                  <ReHeading heading="Last Name" size={'base'} />
-                  <ReInput name="lastName" />
-                </div>
-                <div>
-                  <ReHeading heading="Email Address" size={'base'} />
-                  <ReInput name="email" />
-                </div>
-                <div>
-                  {/* <ReHeading heading="Phone Number" size="lg" /> */}
-                  <RePhoneNumberInput name="phoneNumber" />
-                </div>
-                <div>
-                  <ReHeading heading="Password" size={'base'} />
-                  <RePassInput name="password" />
-                </div>
-                <div>
-                  <ReHeading heading="Confirm Password" size={'base'} />
-                  <RePassInput name="confirmPassword" />
-                </div>
-                <div>
-                  <input type="checkbox" name="" onChange={() => setIsChecked(!isChecked)} />
-                  <span className="ml-2">
-                    You agree to the{' '}
-                    <Link href="terms-and-condition" className="text-blue-700">
-                      terms and conditions
-                    </Link>{' '}
-                    and acknowledge the{' '}
-                    <Link href="privacy-policy" className="text-blue-700">
-                      privacy policy
-                    </Link>{' '}
-                    and{' '}
-                    <Link href="refund-policy" className="text-blue-700">
-                      refund policy
-                    </Link>
-                  </span>
-                </div>
+      <section>
+        <div>
+          <Link href="/">
+            <Image src={Logo} alt="Pay afta" width={176} height={64} />
+          </Link>
+        </div>
+        <div>
+          <h1 className="mt-3 font-inter text-2xl font-bold">Register as a Logistics Partner</h1>
+          <p className="font-inter">
+            Submit your details to register your logistics company. Our team will reach out shortly
+          </p>
+        </div>
+        <Form {...form}>
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="mt-3 space-y-4">
+              <div>
+                <ReHeading heading="Company Name" size={'base'} />
+                <ReInput name="companyName" />
               </div>
-              <div className="grid pt-2">
-                <ReButton
-                  className="w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
-                  type="submit"
-                  isSubmitting={isSubmitting}
-                  disabled={!isChecked}
-                >
-                  Create Account
-                </ReButton>
+              <div>
+                <ReHeading heading="First Name" size={'base'} />
+                <ReInput name="firstName" />
               </div>
-            </form>
-          </Form>
-        </section>
-      )}
+              <div>
+                <ReHeading heading="Last Name" size={'base'} />
+                <ReInput name="lastName" />
+              </div>
+              <div>
+                <ReHeading heading="Email Address" size={'base'} />
+                <ReInput name="email" />
+              </div>
+              <div>
+                {/* <ReHeading heading="Phone Number" size="lg" /> */}
+                <RePhoneNumberInput name="phoneNumber" />
+              </div>
+              <div>
+                <ReHeading heading="Password" size={'base'} />
+                <RePassInput name="password" />
+                <PasswordStrengthIndicator />
+              </div>
+              <div>
+                <ReHeading heading="Confirm Password" size={'base'} />
+                <RePassInput name="confirmPassword" />
+              </div>
+              <div>
+                <input type="checkbox" name="" onChange={() => setIsChecked(!isChecked)} />
+                <span className="ml-2">
+                  You agree to the{' '}
+                  <Link href="terms-and-condition" className="text-blue-700">
+                    terms and conditions
+                  </Link>{' '}
+                  and acknowledge the{' '}
+                  <Link href="privacy-policy" className="text-blue-700">
+                    privacy policy
+                  </Link>{' '}
+                  and{' '}
+                  <Link href="refund-policy" className="text-blue-700">
+                    refund policy
+                  </Link>
+                </span>
+              </div>
+            </div>
+            <div className="grid pt-2">
+              <ReButton
+                className="w-full rounded-full bg-[#03045B] py-6 font-inter font-semibold text-white sm:py-7 sm:text-lg"
+                type="submit"
+                isSubmitting={isSubmitting}
+                disabled={!isChecked}
+              >
+                Create Account
+              </ReButton>
+            </div>
+          </form>
+        </Form>
+      </section>
     </>
   );
 }
