@@ -85,6 +85,8 @@ export default function NewOrder({ onBack }: any) {
   const [isMilestone3Show, setIsMilestone3Show] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
+  console.log(paymentType);
+
   const form = useForm<TNewOrder>({
     resolver: zodResolver(
       newOrderSchema(setIsLoadingEmail, setIsBuyerEmailValid, setIsSellerEmailValid, activeTab)
@@ -431,7 +433,7 @@ export default function NewOrder({ onBack }: any) {
               </div>
               <div>
                 <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
-                {transactionType === 'Product' ? (
+                {/* {transactionType === 'Product' ? (
                   <ReRadioGroup
                     name="paymentType"
                     options={[
@@ -446,27 +448,26 @@ export default function NewOrder({ onBack }: any) {
                     onChange={handleChangePaymentType}
                     // defaultValue="One time Payment"
                   />
-                ) : (
-                  <ReRadioGroup
-                    name="paymentType"
-                    options={[
-                      {
-                        label: 'One time Payment',
-                        value: 'One time Payment',
-                        radioDescription:
-                          'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
-                      },
-                      {
-                        label: 'Milestone Payment',
-                        value: 'Milestone Payment',
-                        radioDescription:
-                          'Pay gradually to the seller after reaching an agreement.',
-                      },
-                    ]}
-                    className="flex flex-col lg:grid lg:grid-cols-2"
-                    onChange={handleChangePaymentType}
-                  />
-                )}
+                ) : ( */}
+                <ReRadioGroup
+                  name="paymentType"
+                  options={[
+                    {
+                      label: 'One time Payment',
+                      value: 'One time Payment',
+                      radioDescription:
+                        'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
+                    },
+                    {
+                      label: 'Milestone Payment',
+                      value: 'Milestone Payment',
+                      radioDescription: 'Pay gradually to the seller after reaching an agreement.',
+                    },
+                  ]}
+                  className="flex flex-col lg:grid lg:grid-cols-2"
+                  onChange={handleChangePaymentType}
+                />
+                {/* )} */}
               </div>
               {paymentType === 'One time Payment' ? (
                 <div className="mt-5">
@@ -479,15 +480,16 @@ export default function NewOrder({ onBack }: any) {
                 </div>
               ) : (
                 <>
-                  {transactionType === 'Services' && paymentType === 'Milestone Payment' && (
+                  {paymentType === 'Milestone Payment' && (
                     <div className="mt-5">
                       <div>
                         <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
                         <ReInput name="milestone1" placeholder="Describe deliverable" />
-                        <div className="grid lg:grid-cols-2 lg:gap-5">
+                        <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
                           <ReDatePicker
                             name="milestone1DeliveryDate"
                             placeholder="Select delivery date"
+                            disablePast={true}
                           />
                           <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
                         </div>
@@ -504,10 +506,11 @@ export default function NewOrder({ onBack }: any) {
                             className="text-gray-700"
                           />
                           <ReInput name="milestone2" placeholder="Describe deliverable" />
-                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                          <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
                             <ReDatePicker
                               name="milestone2DeliveryDate"
                               placeholder="Select delivery date"
+                              disablePast={true}
                             />
                             <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
                           </div>
@@ -531,10 +534,11 @@ export default function NewOrder({ onBack }: any) {
                             className="text-gray-700"
                           />
                           <ReInput name="milestone3" placeholder="Describe deliverable" />
-                          <div className="grid lg:grid-cols-2 lg:gap-5">
+                          <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
                             <ReDatePicker
                               name="milestone3DeliveryDate"
                               placeholder="Select delivery date"
+                              disablePast={true}
                             />
                             <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
                           </div>

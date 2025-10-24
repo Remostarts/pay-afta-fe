@@ -196,7 +196,7 @@ export default function MakePayment({
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful
-                  label={isProduct ? 'Payment Successful' : 'Order Created!'}
+                  label={'Payment Successful'}
                   amount={totalAmount}
                   onComplete={handleSuccessComplete}
                 />

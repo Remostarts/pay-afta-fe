@@ -147,7 +147,7 @@ export default function MakePaymentInService({
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful
-                  label={'Order Created!'}
+                  label={'Payment Successful'}
                   amount={totalAmount}
                   onComplete={handleSuccessComplete}
                 />
