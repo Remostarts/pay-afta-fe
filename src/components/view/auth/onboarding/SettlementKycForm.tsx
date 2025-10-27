@@ -22,6 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'; // 👈 IMPORT SKELETON
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
 import { getPillaBanks, kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
+import { SearchableSelect } from '../../dashboard/shared/SearchableSelect';
 
 // Define the Bank type outside the component for clarity
 type Bank = {
@@ -57,7 +58,7 @@ export default function SettlementKycForm() {
   });
 
   const { handleSubmit, control, watch, setValue, formState } = form;
-  const { isSubmitting } = formState;
+  const { isSubmitting, errors } = formState;
   const { loadUserData } = useGeneral();
 
   const selectedBankName = watch('bankName');
@@ -150,35 +151,22 @@ export default function SettlementKycForm() {
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
           {/* Bank Name Field */}
           <div>
-            <ReHeading heading="Select your bank name" size={'base'} />
+            <ReHeading heading="Select your bank name" size={'base'} className="mb-3" />
             <FormField
               control={control}
               name="bankName"
               render={({ field }) => (
                 <FormItem>
-                  <Select
-                    onValueChange={field.onChange}
-                    value={field.value}
-                    // The trigger is disabled only *before* banks have loaded
-                    disabled={loadingBanks && banks.length === 0}
-                  >
-                    <FormControl>
-                      <SelectTrigger className="w-full">
-                        <SelectValue
-                          placeholder={loadingBanks ? 'Loading banks...' : 'Select bank'}
-                        />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent
-                      // Added the necessary styles for the dropdown content
-                      className="max-h-[300px] bg-white p-0" // Removed the p-0 to let Skeleton/List handle padding
-                      position="popper"
-                      sideOffset={5}
-                    >
-                      {/* RENDER THE DYNAMIC CONTENT HERE */}
-                      <BankListContent />
-                    </SelectContent>
-                  </Select>
+                  <SearchableSelect
+                    options={banks}
+                    defaultValue="Select bank"
+                    onChange={field.onChange}
+                    loading={loadingBanks}
+                    placeholder="Select bank"
+                  />
+                  {errors.bankName && (
+                    <p className="text-sm text-red-500">{errors.bankName.message}</p>
+                  )}
                 </FormItem>
               )}
             />
