@@ -15,7 +15,7 @@ const orders = Array.from({ length: 5 }, (_, i) => ({
   trackingId: 'SMS20250770STD986E',
   name: 'Paul Simeon',
   product: 'HP EliteBook 840 G5 - 8GB RAM',
-}));
+}))
 
 const AssignOrderList = () => {
   const [showAll, setShowAll] = useState(false);
