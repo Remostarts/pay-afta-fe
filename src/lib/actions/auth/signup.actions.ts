@@ -37,7 +37,7 @@ export async function partialSignup(formData: TInitialSignUp) {
     const data = await response.json();
 
     if (!response.ok) {
-      throw new Error(data.message || 'Something went wrong!');
+      return { success: false, message: data.message || 'Something went wrong!' };
     }
 
     return data;

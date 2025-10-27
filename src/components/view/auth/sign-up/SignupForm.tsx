@@ -59,11 +59,12 @@ export default function SignupForm() {
     try {
       setEmail(data.email);
       const response = await partialSignup(data);
+      console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
 
       if (response?.success) {
         router.push('/sign-up/verification');
       } else {
-        toast.error(response?.error || 'Sign up Failed');
+        toast.error(response?.error || response?.message || 'Sign up failed');
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Sign up Failed');
@@ -73,6 +74,7 @@ export default function SignupForm() {
     //   router.push('/sign-up/verification');
     // }
   };
+
   return (
     <section>
       <div>
