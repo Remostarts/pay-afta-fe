@@ -8,7 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 
 type SearchableSelectTypes = {
@@ -17,6 +17,7 @@ type SearchableSelectTypes = {
   onChange: (value: string) => void;
   loading: boolean;
   placeholder?: string;
+  limit?: number; // Optional: number of banks to show initially (default: 25)
 };
 
 export const SearchableSelect = ({
@@ -25,60 +26,36 @@ export const SearchableSelect = ({
   onChange,
   loading,
   placeholder = 'Select bank',
+  limit = 25,
 }: SearchableSelectTypes) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
-  const [filteredOptions, setFilteredOptions] =
-    useState<{ name: string; code?: string }[]>(options);
   const [selectedValue, setSelectedValue] = useState<string | undefined>(defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  //   console.log(selectedValue);
+  // ✅ Efficient filtering with memoization
+  const filteredOptions = useMemo(() => {
+    if (!searchTerm) return options.slice(0, limit); // show only first N banks initially
+    return options.filter((option) => option.name.toLowerCase().includes(searchTerm.toLowerCase()));
+  }, [options, searchTerm, limit]);
 
-  useEffect(() => {
-    if (searchTerm) {
-      const filtered = options.filter((option) =>
-        option.name?.toLowerCase().includes(searchTerm.toLowerCase())
-      );
-      setFilteredOptions(filtered);
-    } else {
-      setFilteredOptions(options);
-    }
-  }, [searchTerm, options]);
-
-  // Focus the input when dropdown opens
+  // Focus search input when dropdown opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
-      setTimeout(() => {
-        inputRef.current?.focus();
-      }, 100);
+      setTimeout(() => inputRef.current?.focus(), 100);
     }
   }, [isOpen]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSearchTerm(e.target.value);
-  };
-
   const handleSelectChange = (value: string) => {
     setSelectedValue(value);
-    setSearchTerm(''); // Clear search term when an option is selected
-    setIsOpen(false); // Close dropdown after selection
+    setSearchTerm(''); // reset search
+    setIsOpen(false);
     onChange(value);
   };
 
-  const handleTriggerClick = () => {
-    setIsOpen(true);
-  };
-
-  // Prevent dropdown from closing when clicking on search input
-  const handleInputClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-
-  // Handle key down to prevent select from closing
+  const handleInputClick = (e: React.MouseEvent) => e.stopPropagation();
   const handleKeyDown = (e: React.KeyboardEvent) => {
     e.stopPropagation();
-    // Prevent Escape key from closing dropdown if we're searching
     if (e.key === 'Escape' && searchTerm) {
       e.preventDefault();
       setSearchTerm('');
@@ -95,18 +72,20 @@ export const SearchableSelect = ({
       onOpenChange={setIsOpen}
     >
       <FormControl>
-        <SelectTrigger className="w-full" onClick={handleTriggerClick}>
-          <SelectValue placeholder={loading ? 'Loading banks...' : placeholder} />
+        <SelectTrigger className="w-full" onClick={() => setIsOpen(true)}>
+          {/* ✅ Fix: placeholder now shows properly */}
+          <SelectValue placeholder={loading ? 'Loading banks...' : selectedValue || placeholder} />
         </SelectTrigger>
       </FormControl>
+
       <SelectContent className="max-h-[300px] bg-white p-0" position="popper">
-        {/* Search Input inside dropdown */}
+        {/* Search input */}
         <div className="p-2 border-b sticky top-0 bg-white z-10">
           <Input
             ref={inputRef}
             type="text"
             value={searchTerm}
-            onChange={handleInputChange}
+            onChange={(e) => setSearchTerm(e.target.value)}
             onClick={handleInputClick}
             onPointerDown={(e) => e.stopPropagation()}
             onMouseDown={(e) => e.stopPropagation()}
@@ -117,7 +96,7 @@ export const SearchableSelect = ({
           />
         </div>
 
-        {/* Options list */}
+        {/* Filtered list */}
         <div className="overflow-y-auto max-h-[280px]">
           {filteredOptions.length === 0 && !loading ? (
             <div className="p-2 text-center text-sm text-gray-500">
