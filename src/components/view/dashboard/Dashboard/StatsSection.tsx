@@ -42,7 +42,7 @@ export default function StatsSection() {
             <Dialog>
               <DialogTrigger asChild>
                 <button
-                  disabled={!(user?.Wallet?.[0]?.balance && user.Wallet[0].balance > 0)}
+                  // disabled={!(user?.Wallet?.[0]?.balance && user.Wallet[0].balance > 0)}
                   className={`flex items-center justify-center gap-2 rounded-full px-6 py-2 text-center font-inter font-semibold
     ${
       user?.Wallet?.[0]?.balance && user.Wallet[0].balance > 0
