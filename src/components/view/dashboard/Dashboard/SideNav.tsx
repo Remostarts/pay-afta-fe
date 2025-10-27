@@ -174,9 +174,9 @@ export default function Sidebar({ onClose }: SidebarProps) {
             })}
 
             {/* User Profile Section */}
-            <li className="mt-8 pt-4 border-t border-gray-200">
-              <div className="flex items-center justify-between px-3">
-                <div className="flex items-center gap-4">
+            <li className="mt-8 pt-4 border-t border-gray-200 mb-8">
+              <div className="flex items-center justify-between px-3 gap-6">
+                <div className="flex items-center gap-4 mb-8">
                   <Image
                     src={user?.profileImage || '/assets/admin-dashboard/users/prof-avatar.svg'}
                     alt="profile-img"
@@ -190,7 +190,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                 </div>
                 <button
                   onClick={handleLogoutClick}
-                  className="p-1 hover:bg-gray-100 rounded-full"
+                  className="p-1 hover:bg-gray-100 rounded-full mb-8"
                   aria-label="Logout"
                 >
                   <Image

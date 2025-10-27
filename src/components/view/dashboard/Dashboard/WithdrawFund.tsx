@@ -30,6 +30,7 @@ import {
 } from '@/components/ui/select';
 import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
 import ReInput from '@/components/re-ui/re-input/ReInput';
+import { SearchableSelect } from '../shared/SearchableSelect';
 
 type Bank = {
   name: string;
@@ -116,7 +117,7 @@ export default function WithdrawFund() {
     mode: 'onChange',
   });
 
-  const { handleSubmit, register, formState, control, watch, setValue } = form; // Added control, watch, setValue
+  const { handleSubmit, register, formState, control, watch, setValue } = form;  
   const { isSubmitting, errors } = formState;
 
   const {
@@ -324,44 +325,19 @@ export default function WithdrawFund() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-4">
               <div>
-                <ReHeading heading="Select Bank Name" size="base" />
+                <ReHeading heading="Select Bank Name" size="base" className="mb-3" />
                 <FormField
                   control={control}
                   name="bankName"
                   render={({ field }) => (
                     <FormItem>
-                      <Select
-                        onValueChange={field.onChange}
-                        value={field.value}
-                        disabled={loadingBanks}
-                      >
-                        <FormControl>
-                          <SelectTrigger className="w-full">
-                            <SelectValue
-                              placeholder={loadingBanks ? 'Loading banks...' : 'Select bank'}
-                            />
-                          </SelectTrigger>
-                        </FormControl>
-                        <SelectContent className="max-h-[300px] bg-white p-0">
-                          <div className="overflow-y-auto max-h-[280px]">
-                            {banks?.length === 0 && !loadingBanks ? (
-                              <div className="p-2 text-center text-sm text-gray-500">
-                                No banks found.
-                              </div>
-                            ) : (
-                              banks?.map((bank, i) => (
-                                <SelectItem
-                                  key={bank.code || `${bank.name}-${i}`}
-                                  value={bank.name}
-                                  className="cursor-pointer"
-                                >
-                                  {bank.name}
-                                </SelectItem>
-                              ))
-                            )}
-                          </div>
-                        </SelectContent>
-                      </Select>
+                      <SearchableSelect
+                        options={banks}
+                        onChange={field.onChange}
+                        loading={loadingBanks}
+                        placeholder="Select bank"
+                        limit={25}
+                      />
                       {errors.bankName && (
                         <p className="text-sm text-red-500">{errors.bankName.message}</p>
                       )}
