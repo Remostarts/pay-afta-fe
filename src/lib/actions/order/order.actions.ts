@@ -15,7 +15,6 @@ import {
 } from '@/lib/validations/order';
 // import { authOptions } from '@/lib/AuthOptions';
 
-
 export async function createOrder(formData: TCreateOrderInput) {
   const validation = createOrderZodSchema.safeParse(formData);
 
@@ -190,6 +189,31 @@ export async function createOneTimeUseWallet(formData: TOneTimeUseWallet) {
     return response.json();
   } catch (error) {
     console.log('🌼 🔥🔥 makeWalletPayment 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+export async function getUnassignOrdersAndStatsByUser(page: number) {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/order/get-seller-service?page=${page}&limit=8`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        cache: 'no-store',
+      }
+    );
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 seller unassigned service order 🔥🔥 error🌼', error);
 
     getErrorMessage(error);
   }

@@ -73,7 +73,7 @@ export const SearchableSelect = ({
     >
       <FormControl>
         <SelectTrigger className="w-full" onClick={() => setIsOpen(true)}>
-          {/* ✅ Fix: placeholder now shows properly */}
+          {/*  Fix: placeholder now shows properly */}
           <SelectValue placeholder={loading ? 'Loading banks...' : selectedValue || placeholder} />
         </SelectTrigger>
       </FormControl>

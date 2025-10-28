@@ -7,6 +7,7 @@ import { ReDataTable } from '../../adminDashboard/shared/ReDateTable';
 
 import AssignOrderList from './AssignOrderList';
 import DeliveryStats from './DeliveryStats';
+import { getUnassignOrdersAndStatsByUser } from '@/lib/actions/order/order.actions';
 
 export type Payment = {
   date: string;
@@ -97,43 +98,50 @@ interface PageChangeParams {
 }
 
 export default function Delivery() {
-  const [data, setData] = useState<Payment[]>([]);
+  const [deliveriesData, setDeliveriesData] = useState<Payment[]>([]);
+  const [stats, setStats] = useState({});
+  const [unassignOrder, setUnassignOrders] = useState([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const pageSize = 8;
 
-  function handlePageChange(params: PageChangeParams = {}) {
+  async function handlePageChange(params: PageChangeParams = {}) {
     const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
     try {
+      const { data } = await getUnassignOrdersAndStatsByUser(page);
+      console.log('🌼 🔥🔥 handlePageChange 🔥🔥 data🌼', data);
+
       console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
         // setTotalCount(tData.length);
-        // setData(tData);
+        setStats(data?.stats);
+        setUnassignOrders(data?.orders);
+        setDeliveriesData(data?.deliveries);
         // setPage(pageNumber);
         // setIsLoading(false);
       }, 500);
     } catch (error) {
       console.error('Error loading data:', error);
       setIsLoading(false);
-      setData([]);
+      setDeliveriesData([]);
     }
   }
 
   useEffect(() => {
     handlePageChange({ pageNumber: 1 });
 
-    // setData(tData);
+    // setDeliveriesData(tData);
   }, []);
 
   return (
     <section className="min-h-screen rounded-md bg-white p-4 md:p-8">
-      <DeliveryStats />
-      <AssignOrderList />
+      <DeliveryStats stat={stats} />
+      <AssignOrderList orders={unassignOrder} />
       <ReDataTable
         label="Deliveries"
         columns={columns}
-        data={data}
+        data={deliveriesData}
         isLoading={false}
         onPageChange={handlePageChange}
         rowClickMode="none"
