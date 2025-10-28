@@ -35,7 +35,7 @@ export const SearchableSelect = ({
 
   // ✅ Efficient filtering with memoization
   const filteredOptions = useMemo(() => {
-    if (!searchTerm) return options.slice(0, limit); // show only first N banks initially
+    if (!searchTerm) return options.slice(0, limit);
     return options.filter((option) => option.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [options, searchTerm, limit]);
 

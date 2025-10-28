@@ -159,10 +159,10 @@ export default function SettlementKycForm() {
                 <FormItem>
                   <SearchableSelect
                     options={banks}
-                    defaultValue="Select bank"
                     onChange={field.onChange}
                     loading={loadingBanks}
                     placeholder="Select bank"
+                    limit={25}
                   />
                   {errors.bankName && (
                     <p className="text-sm text-red-500">{errors.bankName.message}</p>

@@ -117,7 +117,7 @@ export default function WithdrawFund() {
     mode: 'onChange',
   });
 
-  const { handleSubmit, register, formState, control, watch, setValue } = form;  
+  const { handleSubmit, register, formState, control, watch, setValue } = form;
   const { isSubmitting, errors } = formState;
 
   const {
@@ -143,8 +143,9 @@ export default function WithdrawFund() {
   }, [selectedBankName, banks, setValue]);
 
   const onSubmit = (data: TWithdrawfund) => {
-    setWithdrawalData(data);
-    setIsShowPaymentConfirmation(true);
+    console.log(data);
+    // setWithdrawalData(data);
+    // setIsShowPaymentConfirmation(true);
   };
 
   const onSubmitForTransfer = (data: TTransferfundSchema) => {
@@ -252,16 +253,19 @@ export default function WithdrawFund() {
           <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
             <div className="mb-4">
               <ReHeading heading="Amount to withdraw" size="base" />
-              <ReInput name="amountWithdraw" type="number" />
-              {/* <input
+              {/* <ReInput name="amountWithdraw" type="number" /> */}
+              <input
                 type="number"
                 placeholder="₦"
+                inputMode="numeric"
                 {...registerTransfer('amountWithdraw', { valueAsNumber: true })}
-                className="w-full rounded-md border p-3"
+                className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               {transferErrors.amountWithdraw && (
-                <p className="text-sm text-red-500">{transferErrors.amountWithdraw.message}</p>
-              )} */}
+                <p className="text-base font-normal text-primary-800">
+                  {transferErrors.amountWithdraw.message}
+                </p>
+              )}
               <p className="mt-2 text-sm text-gray-600">
                 Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
               </p>
@@ -339,7 +343,9 @@ export default function WithdrawFund() {
                         limit={25}
                       />
                       {errors.bankName && (
-                        <p className="text-sm text-red-500">{errors.bankName.message}</p>
+                        <p className="text-base font-normal text-primary-800">
+                          {errors.bankName.message}
+                        </p>
                       )}
                     </FormItem>
                   )}
@@ -347,7 +353,7 @@ export default function WithdrawFund() {
               </div>
 
               <ReHeading heading="Account Number" size="base" />
-              <ReInput name="accountNumber" type="number" />
+              <ReInput name="accountNumber" inputMode="numeric" type="number" />
               {/* <input
                 type="text"
                 placeholder="Enter account number"
@@ -364,16 +370,19 @@ export default function WithdrawFund() {
               </div>
 
               <ReHeading heading="Amount to Transfer" size="base" />
-              <ReInput name="amountWithdraw" type="number" />
-              {/* <input
+              {/* <ReInput name="amountWithdraw" inputMode="numeric" type="number" /> */}
+              <input
                 type="number"
                 placeholder="₦"
+                inputMode="numeric"
                 {...register('amountWithdraw', { valueAsNumber: true })}
-                className="w-full rounded-md border p-3"
+                className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
               />
               {errors.amountWithdraw && (
-                <p className="text-sm text-red-500">{errors.amountWithdraw.message}</p>
-              )} */}
+                <p className="text-base font-normal text-primary-800">
+                  {errors.amountWithdraw.message}
+                </p>
+              )}
 
               <p className="text-sm text-gray-600">
                 Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
@@ -384,7 +393,7 @@ export default function WithdrawFund() {
               className={`mt-6 w-full rounded-full p-5 ${
                 !bankAmount || bankAmount <= 0 || (user?.Wallet?.[0]?.balance || 0) < bankAmount
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white'
+                  : 'bg-[#3A3DF8] text-white'
               }`}
               type="submit"
               isSubmitting={isSubmitting}
