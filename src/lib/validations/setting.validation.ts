@@ -67,3 +67,13 @@ export const pinSchema = z
   });
 
 export type PinFormData = z.infer<typeof pinSchema>;
+
+export const addSettlementSchema = z.object({
+  bankName: z.string().min(1, 'Bank name is required'),
+  bankCode: z.string().min(3, 'Bank code is required').optional().optional(),
+  accountNumber: z.string().length(10, 'account number must be 10 digit account number'),
+  accountHolder: z.string().optional(),
+  isDefaultPayout: z.boolean().default(false).optional(),
+});
+
+export type TAddSettlement = z.infer<typeof addSettlementSchema>;
