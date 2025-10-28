@@ -9,15 +9,15 @@ import PaymentModal from './PaymentModal';
 
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-const orders = Array.from({ length: 5 }, (_, i) => ({
-  id: i + 1,
-  orderId: '12855098',
-  trackingId: 'SMS20250770STD986E',
-  name: 'Paul Simeon',
-  product: 'HP EliteBook 840 G5 - 8GB RAM',
-}))
+// const orders = Array.from({ length: 5 }, (_, i) => ({
+//   id: i + 1,
+//   orderId: '12855098',
+//   trackingId: 'SMS20250770STD986E',
+//   name: 'Paul Simeon',
+//   product: 'HP EliteBook 840 G5 - 8GB RAM',
+// }))
 
-const AssignOrderList = () => {
+const AssignOrderList = ({ orders }:any) => {
   const [showAll, setShowAll] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -78,7 +78,7 @@ const AssignOrderList = () => {
         </button>
       </div>
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
-        {visibleOrders.map((order) => (
+        {visibleOrders.map((order:any) => (
           <div
             key={order.id}
             className="flex flex-col justify-between rounded-2xl border border-gray-100 bg-[#F8F8F8] p-5 shadow-sm transition-all hover:shadow-md"
@@ -86,17 +86,30 @@ const AssignOrderList = () => {
             {/* Order details */}
             <div>
               <div className="text-sm text-gray-500">
-                Order ID: <span className="font-medium text-gray-400">{order.orderId}</span>
+                Order ID: <span className="font-medium text-gray-400">{order.id}</span>
               </div>
               <div className="text-sm text-gray-500 mb-1">
-                Tracking Link: <span className="font-medium text-gray-400">{order.trackingId}</span>
+                Price: <span className="font-medium text-gray-400">{order.amount}</span>
               </div>
-
+              <div className="text-sm text-gray-500 mb-1">
+                Status: <span className="font-medium text-gray-400">{order.status}</span>
+              </div>
               <div className="mt-1 font-inter text-[15px] font-bold text-gray-900">
-                {order.name}
+                {order?.buyerName}
               </div>
 
-              <div className="mt-1 text-[15px] text-gray-800">{order.product}</div>
+              {order?.items &&
+                order?.items?.map((item:any,index:number) => (
+                  <>
+                    <div key={index} className="mt-1 text-[15px] text-gray-800">
+                      <span>Item: </span> {item.name}
+                    </div>
+                    <div className="mt-1 text-[15px] text-gray-800">
+                      <span>Quantity: </span>
+                      {item.quantity}
+                    </div>
+                  </>
+                ))}
             </div>
 
             {/* Button */}
