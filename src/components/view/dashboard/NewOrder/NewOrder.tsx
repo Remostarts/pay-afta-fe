@@ -404,9 +404,16 @@ export default function NewOrder({ onBack }: any) {
                   <ReInput name="item1Quantity" placeholder="Enter Quantity" />
                   <ReInput name="item1Prize" placeholder="₦ 00.00" />
                 </div>
-                <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                  <CirclePlus onClick={handleClickGetItem2} />
-                  <span className="font-inter">Add more</span>
+                {/* ✅ Container with flex and justify-end */}
+                <div className="flex justify-end w-full">
+                  <button
+                    type="button"
+                    className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                    onClick={handleClickGetItem2}
+                  >
+                    <CirclePlus />
+                    <span className="font-inter">Add more</span>
+                  </button>
                 </div>
               </div>
               {isItem2Show && (
@@ -417,9 +424,15 @@ export default function NewOrder({ onBack }: any) {
                     <ReInput name="item2Quantity" placeholder="Enter Quantity" />
                     <ReInput name="item2Prize" placeholder="₦ 00.00" />
                   </div>
-                  <div className="flex w-full cursor-pointer items-center gap-2">
-                    <Trash2 color="#d73737" onClick={handleClickRemoveItem2} />
-                    <span className="font-inter text-[#d73737]">Delete</span>
+                  <div className="flex justify-start w-full">
+                    <button
+                      type="button"
+                      className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                      onClick={handleClickRemoveItem2}
+                    >
+                      <Trash2 color="#d73737" />
+                      <span className="font-inter text-[#d73737]">Delete</span>
+                    </button>
                   </div>
                 </div>
               )}
@@ -429,7 +442,10 @@ export default function NewOrder({ onBack }: any) {
                   size={'base'}
                   className="text-gray-700"
                 />
-                <ReTextarea name="detailAboutItem" className="font-inter outline-none" />
+                <ReTextarea
+                  name="detailAboutItem"
+                  className="font-inter outline-none focus-visible:ring-0 focus-visible:outline-none"
+                />
               </div>
               <div>
                 <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
@@ -484,18 +500,37 @@ export default function NewOrder({ onBack }: any) {
                     <div className="mt-5">
                       <div>
                         <ReHeading heading="Milestone 1" size={'base'} className="text-gray-700" />
-                        <ReInput name="milestone1" placeholder="Describe deliverable" />
-                        <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
+                        <ReInput
+                          name="milestone1"
+                          placeholder="Describe deliverable"
+                          className="w-full"
+                        />
+
+                        <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 sm:gap-5 items-center">
                           <ReDatePicker
                             name="milestone1DeliveryDate"
                             placeholder="Select delivery date"
                             disablePast={true}
+                            className="w-full"
                           />
-                          <ReInput name="milestone1Amount" placeholder="₦ 00.00" />
+                          <ReInput
+                            name="milestone1Amount"
+                            placeholder="₦ 00.00"
+                            className="w-full"
+                            type="number"
+                            inputMode="numeric"
+                          />
                         </div>
-                        <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                          <CirclePlus onClick={handleClickGetMilestone2} />
-                          <span className="font-inter">Add more</span>
+
+                        <div className="flex justify-end w-full mt-4">
+                          <button
+                            type="button"
+                            className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                            onClick={handleClickGetMilestone2}
+                          >
+                            <CirclePlus />
+                            <span className="font-inter">Add more</span>
+                          </button>
                         </div>
                       </div>
                       {isMilestone2Show && (
@@ -506,23 +541,38 @@ export default function NewOrder({ onBack }: any) {
                             className="text-gray-700"
                           />
                           <ReInput name="milestone2" placeholder="Describe deliverable" />
-                          <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
+                          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 sm:gap-5 items-center">
                             <ReDatePicker
                               name="milestone2DeliveryDate"
                               placeholder="Select delivery date"
                               disablePast={true}
+                              className="w-full"
                             />
-                            <ReInput name="milestone2Amount" placeholder="₦ 00.00" />
+                            <ReInput
+                              name="milestone2Amount"
+                              placeholder="₦ 00.00"
+                              className="w-full"
+                              type="number"
+                              inputMode="numeric"
+                            />
                           </div>
-                          <div className="flex w-full cursor-pointer items-center justify-end gap-2">
-                            <div className="flex gap-2">
+                          <div className="flex justify-end w-full">
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                              onClick={handleClickGetMilestone3}
+                            >
                               <CirclePlus onClick={handleClickGetMilestone3} />
                               <span className="font-inter">Add more</span>
-                            </div>
-                            <div className="flex gap-2">
-                              <Trash2 color="#d73737" onClick={handleClickRemoveMilestone2} />
+                            </button>
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                              onClick={handleClickRemoveMilestone2}
+                            >
+                              <Trash2 color="#d73737" />
                               <span className="font-inter text-[#d73737]">Delete</span>
-                            </div>
+                            </button>
                           </div>
                         </div>
                       )}
@@ -534,17 +584,30 @@ export default function NewOrder({ onBack }: any) {
                             className="text-gray-700"
                           />
                           <ReInput name="milestone3" placeholder="Describe deliverable" />
-                          <div className="grid lg:grid-cols-2 lg:gap-5 items-center justify-center">
+                          <div className="grid grid-cols-1 gap-4 mt-4 sm:grid-cols-2 sm:gap-5 items-center">
                             <ReDatePicker
                               name="milestone3DeliveryDate"
                               placeholder="Select delivery date"
                               disablePast={true}
+                              className="w-full"
                             />
-                            <ReInput name="milestone3Amount" placeholder="₦ 00.00" />
+                            <ReInput
+                              name="milestone3Amount"
+                              placeholder="₦ 00.00"
+                              className="w-full"
+                              inputMode="numeric"
+                              type="number"
+                            />
                           </div>
-                          <div className="flex w-full cursor-pointer items-center gap-2">
-                            <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
-                            <span className="font-inter text-[#d73737]">Delete</span>
+                          <div className="flex justify-start w-full">
+                            <button
+                              type="button"
+                              className="flex items-center gap-2 hover:bg-transparent focus:outline-none focus:ring-0 cursor-pointer"
+                              onClick={handleClickRemoveMilestone3}
+                            >
+                              <Trash2 color="#d73737" onClick={handleClickRemoveMilestone3} />
+                              <span className="font-inter text-[#d73737]">Delete</span>
+                            </button>
                           </div>
                         </div>
                       )}

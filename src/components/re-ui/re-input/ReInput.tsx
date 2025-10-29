@@ -23,6 +23,7 @@ type TReInputProps = {
   required?: boolean;
   readonly?: boolean;
   inputMode?: 'text' | 'none' | 'tel' | 'url' | 'email' | 'numeric' | 'decimal';
+  className?: string;
 };
 
 const ReInput = ({
@@ -36,6 +37,7 @@ const ReInput = ({
   required = false,
   readonly = false,
   inputMode,
+  className,
 }: TReInputProps) => {
   const { control } = useFormContext();
   return (
@@ -51,7 +53,7 @@ const ReInput = ({
             <FormControl>
               <div className="flex-center rounded border border-gray-300 ">
                 <Input
-                  className="border-none font-spaceGrotesk [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                  className={`border-none font-spaceGrotesk [appearance:textfield] [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none ${className}`}
                   placeholder={placeholder}
                   type={type}
                   autoComplete={autoComplete}

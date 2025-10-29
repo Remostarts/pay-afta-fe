@@ -39,6 +39,13 @@ export const SearchableSelect = ({
     return options.filter((option) => option.name.toLowerCase().includes(searchTerm.toLowerCase()));
   }, [options, searchTerm, limit]);
 
+  // Update selectedValue when defaultValue changes
+  useEffect(() => {
+    if (defaultValue !== selectedValue) {
+      setSelectedValue(defaultValue);
+    }
+  }, [defaultValue]);
+
   // Focus search input when dropdown opens
   useEffect(() => {
     if (isOpen && inputRef.current) {
@@ -73,8 +80,10 @@ export const SearchableSelect = ({
     >
       <FormControl>
         <SelectTrigger className="w-full" onClick={() => setIsOpen(true)}>
-          {/*  Fix: placeholder now shows properly */}
-          <SelectValue placeholder={loading ? 'Loading banks...' : selectedValue || placeholder} />
+          {/* Fixed: Use conditional rendering for the SelectValue */}
+          <SelectValue placeholder={loading ? 'Loading banks...' : placeholder}>
+            {selectedValue || ''}
+          </SelectValue>
         </SelectTrigger>
       </FormControl>
 

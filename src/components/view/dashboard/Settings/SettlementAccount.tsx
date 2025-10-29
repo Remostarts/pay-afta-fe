@@ -66,7 +66,7 @@ export default function SettlementAccount() {
     : [];
 
   return (
-    <div className="p-8">
+    <div className="md:p-8">
       {/* Add Settlement Dialog */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
         <DialogContent className="border-none bg-transparent p-0 shadow-none">
@@ -83,15 +83,17 @@ export default function SettlementAccount() {
 
       <div className="">
         <div className="mb-8">
-          <h3 className="mb-2 text-xl font-semibold">Default Escrow Payout</h3>
-          <div className="flex items-center justify-between rounded-lg border bg-white p-6">
-            <div>
-              <div className="font-semibold">Settlement Account</div>
-              <div className="text-sm text-gray-500">
-                When turn on all escrow released payment will be sent to your settlement account
-              </div>
+          <h3 className="mb-2 text-xl font-semibold font-inter">Default Escrow Payout</h3>
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between rounded-lg border bg-white p-4 sm:p-6 gap-4 sm:gap-0">
+            <div className="flex-1">
+              <h1 className="font-semibold font-inter text-base sm:text-lg">Settlement Account</h1>
+              <span className="text-xs sm:text-sm text-gray-500 font-inter block mt-1">
+                When turned on, all escrow released payments will be sent to your settlement account
+              </span>
             </div>
-            <ReToggle checked={toggleSettlementAcc} onChange={handleSettlementAcc} />
+            <div className="self-start sm:self-auto">
+              <ReToggle checked={toggleSettlementAcc} onChange={handleSettlementAcc} />
+            </div>
           </div>
         </div>
 
@@ -138,7 +140,11 @@ export default function SettlementAccount() {
                 </div>
               </div>
             ))}
-            {sortedBanks?.length===0&&<h1 className='text-center text-2xl border border-gray-400 rounded-md p-6'>You don't have settlement account, please create one.</h1>}
+            {sortedBanks?.length === 0 && (
+              <h1 className="text-center text-2xl border border-gray-400 rounded-md p-6">
+                You don't have settlement account, please create one.
+              </h1>
+            )}
           </div>
         </div>
       </div>
