@@ -10,9 +10,9 @@ export default function FundWallet() {
   const [copied, setCopied] = useState(false);
 
   const accountDetails = {
-    bankName: user?.Wallet?.[0]?.bankName || 'STERLING BANK',
-    accountNumber: user?.Wallet?.[0]?.accountNumber || '0099881122',
-    accountName: user?.Wallet?.[0]?.accountName || 'Paul Simeon/STERLING BANK',
+    bankName: user?.Wallet?.[0]?.bankName || 'N/A',
+    accountNumber: user?.Wallet?.[0]?.accountNumber || 'N/A',
+    accountName: user?.Wallet?.[0]?.accountName || 'N/A',
   };
 
   const copyToClipboard = (text: string): void => {
