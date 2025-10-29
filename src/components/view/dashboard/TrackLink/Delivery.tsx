@@ -34,12 +34,13 @@ export default function Delivery({
   handleRejectDelivery,
 }: DeliveryProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [isAcceptDeliveryLoading, setIsAcceptDeliveryLoading] = useState<boolean>(false);
   const route = useRouter();
 
   const handleAccept = () => {
     if (userRole !== 'buyer') return;
     handleAcceptDelivery();
-    handleCurrentStepChange(currentStepChange + 1);
+    setIsAcceptDeliveryLoading(true);
   };
 
   const handleReject = () => {
@@ -87,9 +88,7 @@ export default function Delivery({
                 />
               </DialogContent>
             </Dialog>
-            <ReButton className="w-2/5 rounded-full" onClick={handleAccept}>
-              Confirm Delivery
-            </ReButton>
+            <ReButton className="w-2/5 rounded-full">Confirm Delivery</ReButton>
           </div>
         )}
         <p className="mt-4 font-inter text-gray-600">
@@ -116,6 +115,7 @@ export default function Delivery({
         <Dialog open={isOpen} onOpenChange={setIsOpen}>
           <DialogTrigger asChild>
             <ReButton
+              disabled={isAcceptDeliveryLoading}
               className="w-2/5 rounded-full border-2 border-[#03045B] bg-white text-[#03045B] hover:bg-white"
               onClick={handleReject}
             >
@@ -134,8 +134,12 @@ export default function Delivery({
             />
           </DialogContent>
         </Dialog>
-        <ReButton className="w-2/5 rounded-full" onClick={handleAccept}>
-          Accept
+        <ReButton
+          disabled={isAcceptDeliveryLoading}
+          className="w-2/5 rounded-full"
+          onClick={handleAccept}
+        >
+          {isAcceptDeliveryLoading ? 'Accepting...' : 'Accept'}
         </ReButton>
       </div>
       <p className="mt-4 font-inter text-gray-600">

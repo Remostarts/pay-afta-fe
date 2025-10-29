@@ -62,9 +62,13 @@ export default function WithdrawFund() {
   const [isShowPaymentConfirmation, setIsShowPaymentConfirmation] = useState(false);
   const [isShowSwitchAccount, setIsShowSwitchAccount] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<AccountProps | null>(null);
+  console.log('🌼 🔥🔥 WithdrawFund 🔥🔥 selectedAccount🌼', selectedAccount);
+
   const [withdrawalData, setWithdrawalData] = useState<TWithdrawfund | TTransferfundSchema | null>(
     null
   );
+  console.log('🌼 🔥🔥 WithdrawFund 🔥🔥 withdrawalData🌼', withdrawalData);
+
   const [transferType, setTransferType] = useState<'bank' | 'settlement' | null>(null);
 
   const [banks, setBanks] = useState<Bank[]>([]);
@@ -143,9 +147,8 @@ export default function WithdrawFund() {
   }, [selectedBankName, banks, setValue]);
 
   const onSubmit = (data: TWithdrawfund) => {
-    console.log(data);
-    // setWithdrawalData(data);
-    // setIsShowPaymentConfirmation(true);
+    setWithdrawalData(data);
+    setIsShowPaymentConfirmation(true);
   };
 
   const onSubmitForTransfer = (data: TTransferfundSchema) => {
