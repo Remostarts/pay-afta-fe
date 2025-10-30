@@ -4,12 +4,18 @@ import { ChevronRight } from 'lucide-react';
 import React, { useState } from 'react';
 
 interface ChooseDeliveryMethodModalProps {
-  onProceed: () => void;
+  onProceed: (type: 'LOGISTIC' | 'SELLER') => void;
   onClose: () => void;
 }
 
 function ChooseDeliveryMethodModal({ onProceed, onClose }: ChooseDeliveryMethodModalProps) {
   const [selected, setSelected] = useState('partner');
+
+  const handleDeliveryType = () => {
+    const type = selected === 'partner' ? 'LOGISTIC' : 'SELLER';
+    onProceed(type);
+  };
+
   return (
     <div className="relative w-full max-w-md rounded-xl bg-white p-8">
       <h2 className="mb-2 font-inter text-lg font-semibold">Choose Your Delivery Methods</h2>
@@ -50,7 +56,7 @@ function ChooseDeliveryMethodModal({ onProceed, onClose }: ChooseDeliveryMethodM
       </div>
       <button
         className="w-full rounded-full bg-[#03045B] py-2 font-semibold text-white"
-        onClick={onProceed}
+        onClick={() => handleDeliveryType()}
       >
         Proceed
       </button>

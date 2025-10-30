@@ -42,3 +42,20 @@ export const OneTimeUseWallet = z.object({
 });
 
 export type TOneTimeUseWallet = z.infer<typeof OneTimeUseWallet>;
+
+// assign delivery
+export const PaymentMethodEnum = z.enum(['PAY_NOW', 'PAY_ON_DELIVERY']);
+export const DeliveryPickupTypeEnum = z.enum(['SELLER_DOOR', 'SELLER_DROP_OFF']);
+
+// Assign Delivery Partner Schema
+export const assignDeliveryPartnerSchema = z.object({
+  orderId: z.string().min(1, 'Order ID is required'),
+  logisticId: z.string().min(1, 'Logistic ID is required'),
+  pickupAddress: z.string().min(1, 'Pickup address is required'),
+  dropoffAddress: z.string().min(1, 'Dropoff address is required'),
+  distanceInMiles: z.number().min(0, 'Distance in miles must be a positive number'),
+  pickupType: DeliveryPickupTypeEnum,
+  paymentMethod: PaymentMethodEnum,
+});
+
+export type TAssignDeliveryPartnerInput = z.infer<typeof assignDeliveryPartnerSchema>;

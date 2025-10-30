@@ -33,6 +33,8 @@ export async function partialSignup(formData: TInitialSignUp) {
       body: JSON.stringify({ ...validation.data, role: 'user' }),
       cache: 'no-store',
     });
+    console.log('🌼 🔥🔥 partialSignup 🔥🔥 response🌼', response);
+
 
     const data = await response.json();
 
@@ -42,6 +44,8 @@ export async function partialSignup(formData: TInitialSignUp) {
 
     return data;
   } catch (error: any) {
+    console.log('🌼 🔥🔥 partialSignup 🔥🔥 error🌼', error);
+
     getErrorMessage(error.message || 'Unknown error');
     throw error;
   }

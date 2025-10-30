@@ -19,7 +19,7 @@ import {
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { useGeneral } from '@/context/generalProvider';
-import { withdrawFund } from '@/lib/actions/root/withdrawFund';
+ 
 
 import {
   Select,
@@ -31,6 +31,7 @@ import {
 import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { SearchableSelect } from '../shared/SearchableSelect';
+import { withdrawFundFromWallet } from '@/lib/actions/root/user.action';
 
 type Bank = {
   name: string;
@@ -194,7 +195,7 @@ export default function WithdrawFund() {
         body.savedAccountId = selectedAccount?.id || defaultAccount.id;
       }
 
-      const res = await withdrawFund(body);
+      const res = await withdrawFundFromWallet(body);
 
       if (!res.success) throw new Error(res.message || 'Withdrawal failed');
 
