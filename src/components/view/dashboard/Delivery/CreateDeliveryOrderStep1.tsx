@@ -29,9 +29,9 @@ function CreateDeliveryOrderStep1({
     defaultValues: {
       orderId,
       logisticId: '',
-      pickupLocation: '',
-      dropOffLocation: '',
-      distanceInMiles: '',
+      pickupAddress: '',
+      dropoffAddress: '',
+      distanceInMiles: 0,
     },
   });
 
@@ -51,13 +51,13 @@ function CreateDeliveryOrderStep1({
           {/* Pickup Location */}
           <div>
             <ReHeading heading="Pickup Location" size="base" />
-            <ReInput name="pickupLocation" placeholder="Enter pickup location" />
+            <ReInput name="pickupAddress" placeholder="Enter pickup location" />
           </div>
 
           {/* Dropoff Location */}
           <div>
             <ReHeading heading="Drop-off Location" size="base" />
-            <ReInput name="dropOffLocation" placeholder="Enter drop-off location" />
+            <ReInput name="dropoffAddress" placeholder="Enter drop-off location" />
           </div>
 
           {/* Distance */}

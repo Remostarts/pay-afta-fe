@@ -3,10 +3,7 @@
 import { getServerSession } from 'next-auth';
 import { authOptions } from '@/lib/AuthOptions';
 import { getErrorMessage } from '@/lib/responseError';
-import {
-  DeliveryProgressStatusValidation,
-  UpdateDeliveryProgressPayload,
-} from '@/lib/validations/delivery.validation';
+import { DeliveryProgressStatusValidation } from '@/lib/validations/delivery.validation';
 
 export async function getAllDeliverPartners() {
   try {
@@ -35,10 +32,7 @@ export async function getAllDeliverPartners() {
   }
 }
 
-export async function updateDeliveryProgressStatus(
-  payload: UpdateDeliveryProgressPayload,
-  deliveryId: string
-) {
+export async function updateDeliveryProgressStatus(payload: any, deliveryId: string) {
   try {
     //  Validate action (status)
     const validation = DeliveryProgressStatusValidation.safeParse(payload.action);

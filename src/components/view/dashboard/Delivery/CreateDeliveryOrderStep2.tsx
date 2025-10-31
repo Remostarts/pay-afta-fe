@@ -35,7 +35,7 @@ const CreateDeliveryOrderStep2 = ({
   const form = useForm<DeliveryOrderStep2Input>({
     resolver: zodResolver(deliveryOrderStep2Schema),
     defaultValues: {
-      pickupOption: previousData?.pickupOption || 'Seller Door Pick-up',
+      pickupType: previousData?.pickupType || 'Seller Door Pick-up',
       // paymentMethod: previousData?.paymentMethod || 'Pay Now',
     },
   });
@@ -48,28 +48,26 @@ const CreateDeliveryOrderStep2 = ({
   const onSubmit = async (data: DeliveryOrderStep2Input) => {
     setIsSubmitting(true);
     const pickupType =
-      data.pickupOption === 'Seller Drop-off'
+      data.pickupType === 'Seller Drop-off'
         ? DeliveryPickupType.SELLER_DROP_OFF
         : DeliveryPickupType.SELLER_DOOR;
 
-    const payload = { ...previousData, ...data, pickupOption: pickupType };
+    const payload = { ...previousData, ...data, pickupType: pickupType };
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 payload🌼', payload);
-    toast.success('Delivery request submitted. Waiting for logistic approval.');
-    setIsSubmitting(true);
-    onClose();
-    // try {
-    //   const res = await assignDeliveryPartner(payload);
+    try {
+      const res = await assignDeliveryPartner(payload);
 
-    //   // We don’t “accept” here – backend handles approval
-    //   console.log('Delivery request submitted:', res);
-    //   alert('Delivery request submitted. Waiting for logistic approval.');
-    //   onClose(); // close modal after submission
-    // } catch (err) {
-    //   console.error('Failed to submit delivery request', err);
-    //   alert('Something went wrong. Please try again.');
-    // } finally {
-    //   setIsSubmitting(false);
-    // }
+      if (res.success) {
+        console.log('Delivery request submitted:', res);
+        toast.success(res.message || 'Delivery request submitted. Waiting for logistic approval.');
+        onClose();
+      }
+    } catch (err: any) {
+      console.error('Failed to submit delivery request', err);
+      toast.error(err.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -81,14 +79,14 @@ const CreateDeliveryOrderStep2 = ({
             <div className="flex-1">
               <ReHeading heading="Pick-up Options" size="base" />
               <ReRadioGroup
-                name="pickupOption"
+                name="pickupType"
                 options={[
                   { label: 'Seller Door Pick-up', value: 'Seller Door Pick-up' },
                   { label: 'Seller Drop-off', value: 'Seller Drop-off' },
                 ]}
               />
-              {errors.pickupOption && (
-                <p className="mt-1 text-sm text-red-500">{errors.pickupOption.message}</p>
+              {errors.pickupType && (
+                <p className="mt-1 text-sm text-red-500">{errors.pickupType.message}</p>
               )}
             </div>
           </div>

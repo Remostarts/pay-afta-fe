@@ -110,16 +110,15 @@ export default function Delivery() {
     const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
     try {
       const { data } = await getUnassignOrdersAndStatsByUser(page);
-      console.log('🌼 🔥🔥 handlePageChange 🔥🔥 data🌼', data);
 
       console.log({ pageNumber, selectedDate, Status });
       setTimeout(() => {
-        // setTotalCount(tData.length);
         setStats(data?.stats);
         setUnassignOrders(data?.orders);
         setDeliveriesData(data?.deliveries);
-        // setPage(pageNumber);
-        // setIsLoading(false);
+        setTotalCount(data?.deliveries?.length);
+        setPage(pageNumber);
+        setIsLoading(false);
       }, 500);
     } catch (error) {
       console.error('Error loading data:', error);

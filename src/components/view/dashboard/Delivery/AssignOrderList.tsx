@@ -52,7 +52,7 @@ const AssignOrderList = ({ orders }: any) => {
         <DialogContent className="max-w-md border-none bg-transparent p-0 shadow-none">
           {step === 1 && (
             <ChooseDeliveryMethodModal
-              onProceed={(type) => handleProceed({ deliveryMethod: type })}
+              onProceed={(type) => handleProceed({ deliveryType: type })}
               onClose={handleClose}
             />
           )}
