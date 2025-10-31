@@ -6,14 +6,15 @@ import { authOptions } from '@/lib/AuthOptions';
 import { getErrorMessage } from '@/lib/responseError';
 import { createOrderZodSchema, TCreateOrderInput } from '@/lib/validations/newOrder.validation';
 import {
+  assignDeliveryPartnerSchema,
   OneTimeUseWallet,
   PersonalWalletPayment,
+  TAssignDeliveryPartnerInput,
   TOneTimeUseWallet,
   TPersonalWalletPaymentInput,
   UpdateOrderProgressDTO,
   updateOrderProgressSchema,
 } from '@/lib/validations/order';
-// import { authOptions } from '@/lib/AuthOptions';
 
 export async function createOrder(formData: TCreateOrderInput) {
   const validation = createOrderZodSchema.safeParse(formData);
@@ -91,6 +92,40 @@ export async function getAllOrdersByUser(page: number) {
   } catch (error) {
     console.log('🌼 🔥🔥 getOrder 🔥🔥 error🌼', error);
 
+    getErrorMessage(error);
+  }
+}
+
+export async function assignDeliveryPartner(formData: TAssignDeliveryPartnerInput) {
+  // Validate with Zod
+  const validation = assignDeliveryPartnerSchema.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors += `${issue.path[0]}: ${issue.message}. `;
+    });
+    throw new Error(zodErrors);
+  }
+
+  // Get session token
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/order/assign-delivery-partner`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error('🌼 🔥🔥 assignDeliveryPartner 🔥🔥 error 🌼', error);
     getErrorMessage(error);
   }
 }
