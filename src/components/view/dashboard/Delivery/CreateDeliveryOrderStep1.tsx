@@ -1,47 +1,45 @@
 'use client';
 
-import React, { useState } from 'react';
-import { zodResolver } from '@hookform/resolvers/zod';
+import React from 'react';
 import { useForm } from 'react-hook-form';
-
+import { zodResolver } from '@hookform/resolvers/zod';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import {
-  DeliveryOrderStep1Input,
-  deliveryOrderStep1Schema,
-} from '@/lib/validations/delivery-order';
 import { Form } from '@/components/ui/form';
 import { ReButton } from '@/components/re-ui/ReButton';
+import { DeliveryOrderStepInput, deliveryOrderStepSchema } from '@/lib/validations/delivery-order';
 
 interface CreateDeliveryOrderStep1Props {
-  onProceed: (data: DeliveryOrderStep1Input) => void;
+  onProceed: (data: DeliveryOrderStepInput) => void;
   onBack: () => void;
   onClose: () => void;
+  orderId: string;
+  partners: any[];
 }
 
-const partners = [
-  { name: 'SendBox', price: '₦ 30 / Mile' },
-  { name: 'Kwik', price: '₦ 30 / Mile' },
-  { name: 'Nipost EMS', price: '₦ 30 / Mile' },
-] as const;
-
-function CreateDeliveryOrderStep1({ onProceed, onBack, onClose }: CreateDeliveryOrderStep1Props) {
-  const form = useForm<DeliveryOrderStep1Input>({
-    resolver: zodResolver(deliveryOrderStep1Schema),
+function CreateDeliveryOrderStep1({
+  onProceed,
+  onBack,
+  onClose,
+  orderId,
+  partners,
+}: CreateDeliveryOrderStep1Props) {
+  const form = useForm<DeliveryOrderStepInput>({
+    resolver: zodResolver(deliveryOrderStepSchema),
     defaultValues: {
-      pickupLocation: '',
-      dropOffLocation: '',
-      deliveryPartner: 'SendBox',
+      orderId,
+      logisticId: '',
+      pickupAddress: '',
+      dropoffAddress: '',
+      distanceInMiles: 0,
     },
   });
 
   const { handleSubmit, formState, watch, setValue } = form;
-
   const { isSubmitting, errors } = formState;
-  const selectedPartner = watch('deliveryPartner');
+  const selectedPartner = watch('logisticId');
 
-  const onSubmit = (data: DeliveryOrderStep1Input) => {
-    console.log(data);
+  const onSubmit = (data: DeliveryOrderStepInput) => {
     onProceed(data);
   };
 
@@ -49,59 +47,69 @@ function CreateDeliveryOrderStep1({ onProceed, onBack, onClose }: CreateDelivery
     <div className="relative w-full max-w-md rounded-xl bg-white p-8">
       <ReHeading heading="Create Delivery Order" size="2xl" />
       <Form {...form}>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          <div className="my-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+          {/* Pickup Location */}
+          <div>
             <ReHeading heading="Pickup Location" size="base" />
-            <ReInput name="pickupLocation" />
+            <ReInput name="pickupAddress" placeholder="Enter pickup location" />
           </div>
-          <div className="mb-4">
+
+          {/* Dropoff Location */}
+          <div>
             <ReHeading heading="Drop-off Location" size="base" />
-            <ReInput name="dropOffLocation" />
+            <ReInput name="dropoffAddress" placeholder="Enter drop-off location" />
           </div>
-          <div className="mb-6">
+
+          {/* Distance */}
+          <div>
+            <ReHeading heading="Distance (Miles)" size="base" />
+            <ReInput name="distanceInMiles" placeholder="e.g., 12" />
+          </div>
+
+          {/* Choose Partner */}
+          <div>
             <ReHeading heading="Choose Delivery Partner" size="base" />
-            <div className="space-y-4 mt-2">
-              {partners.map((p) => (
+            <div className="space-y-3 mt-2">
+              {partners?.map((p) => (
                 <button
+                  key={p.id}
                   type="button"
-                  key={p.name}
-                  className={`flex w-full cursor-pointer items-center justify-between rounded-lg border px-4 py-3 ${
-                    selectedPartner === p.name ? 'border-[#12BA4A] bg-blue-50' : 'border-gray-200'
+                  onClick={() => setValue('logisticId', p.id, { shouldValidate: true })}
+                  className={`flex w-full justify-between items-center rounded-lg border px-4 py-3 transition-all ${
+                    selectedPartner === p.id ? 'border-[#12BA4A] bg-blue-50' : 'border-gray-200'
                   }`}
-                  onClick={() => setValue('deliveryPartner', p.name)}
                 >
                   <div className="flex items-center gap-2">
                     <span
                       className={`flex size-5 items-center justify-center rounded-full border ${
-                        selectedPartner === p.name ? 'border-[#12BA4A]' : 'border-gray-300'
+                        selectedPartner === p.id ? 'border-[#12BA4A]' : 'border-gray-300'
                       }`}
                     >
-                      {selectedPartner === p.name && (
+                      {selectedPartner === p.id && (
                         <span className="block size-3 rounded-full bg-[#12BA4A]" />
                       )}
                     </span>
-                    <span>{p.name}</span>
+                    <span>{p.logistic?.companyName}</span>
                   </div>
-                  <span className="text-sm">{p.price}</span>
+                  <span className="text-sm">₦{p.logistic?.costPerMile}/Mile</span>
                 </button>
               ))}
             </div>
-            {errors.deliveryPartner && (
-              <p className="mt-1 text-sm text-red-500">{errors.deliveryPartner.message}</p>
-            )}
           </div>
-          <div className="flex gap-2">
+
+          {/* Buttons */}
+          <div className="flex gap-2 pt-4">
             <button
               type="button"
               className="w-1/2 rounded-full border border-[#03045B] py-2 font-semibold text-[#03045B]"
               onClick={onBack}
             >
-              Cancel
+              Back
             </button>
             <ReButton
               type="submit"
-              className="w-1/2 rounded-full bg-[#03045B] py-2 font-semibold text-white"
               isSubmitting={isSubmitting}
+              className="w-1/2 rounded-full bg-[#03045B] py-2 font-semibold text-white"
             >
               Proceed
             </ReButton>

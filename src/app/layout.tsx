@@ -24,12 +24,12 @@ const playfair = Playfair({
 
 export const metadata: Metadata = {
   title: {
-    template: 'Pay Afta – %s',
-    default: 'Pay Afta',
+    template: 'PayAfta – %s',
+    default: 'PayAfta',
   },
   description: '',
   icons: {
-    icon: './favicon.svg',
+    icon: '/favicon.svg',
   },
 };
 
