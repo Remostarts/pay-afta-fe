@@ -59,8 +59,8 @@ export const sideNavMenu = [
     id: 9,
     imgBlack: '/assets/admin-dashboard/dashboard/payment-order-icon.svg',
     imgColor: '/assets/admin-dashboard/dashboard/paymentorderColorIcon.svg',
-    name: 'Delivery Date',
-    alt: 'delivery-date',
+    name: 'Delivery Data',
+    alt: 'delivery-data',
   },
   {
     id: 10,
