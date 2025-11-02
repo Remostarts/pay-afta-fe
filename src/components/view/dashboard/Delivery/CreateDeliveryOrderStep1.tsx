@@ -94,6 +94,7 @@ function CreateDeliveryOrderStep1({
                   <span className="text-sm">₦{p.logistic?.costPerMile}/Mile</span>
                 </button>
               ))}
+              <div className="text-red-500 text-sm mt-1">{errors.logisticId?.message}</div>
             </div>
           </div>
 
@@ -109,6 +110,7 @@ function CreateDeliveryOrderStep1({
             <ReButton
               type="submit"
               isSubmitting={isSubmitting}
+              disabled={!selectedPartner}
               className="w-1/2 rounded-full bg-[#03045B] py-2 font-semibold text-white"
             >
               Proceed

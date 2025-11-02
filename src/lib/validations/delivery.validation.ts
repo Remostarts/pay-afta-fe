@@ -14,3 +14,7 @@ export const DeliveryProgressStatusValidation = z.enum([
   'CANCELLED',
 ]);
 
+export interface UpdateDeliveryPayload {
+  action: z.infer<typeof DeliveryProgressStatusValidation>;
+  note?: string;
+}

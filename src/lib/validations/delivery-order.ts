@@ -9,7 +9,7 @@ export const deliveryOrderStepSchema = z.object({
     .string({ required_error: 'Drop-off location is required' })
     .min(3, 'Enter the Drop-off location.'),
   orderId: z.string({ required_error: 'OrderId is required.' }),
-  logisticId: z.string({ required_error: 'Please select a delivery partner' }),
+  logisticId: z.string().min(1, 'Please select a delivery partner'),
   distanceInMiles: z.coerce
     .number()
     .positive('Distance must be greater than 0')
