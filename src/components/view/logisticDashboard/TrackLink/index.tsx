@@ -27,29 +27,6 @@ interface OrderData {
   estimatedDelivery?: string;
 }
 
-// const deliverySteps = [
-//   { key: 'accepted', label: 'Accepted', step: 1 },
-//   { key: 'picked-up', label: 'Picked Up', step: 2 },
-//   { key: 'in-transit', label: 'In Transit', step: 3 },
-//   { key: 'delivered', label: 'Delivered', step: 4 },
-// ];
-
-// const statusDisplayNames = {
-//   accepted: 'Accepted',
-//   'picked-up': 'Picked up',
-//   'in-transit': 'In transit',
-//   delivered: 'Delivered',
-//   failed: 'Failed',
-// };
-
-// const statusColors = {
-//   accepted: 'text-orange-600',
-//   'picked-up': 'text-blue-600',
-//   'in-transit': 'text-blue-600',
-//   delivered: 'text-green-600',
-//   failed: 'text-red-600',
-// };
-
 export default function OrderDeliveryTracker() {
   const [pickupDetailsOpen, setPickupDetailsOpen] = useState(true);
   const [deliveryDetailsOpen, setDeliveryDetailsOpen] = useState(false);

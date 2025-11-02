@@ -72,15 +72,16 @@ export async function getRequestedDeliveries() {
 
 /**
  * Get all active/accepted deliveries for logistic
- * (status = APPROVED, PICKED_UP, IN_TRANSIT)
+ * (status = ACCEPTED, PICKED_UP, IN_TRANSIT)
  */
-export async function getActiveDeliveries() {
+
+export async function getDeliveries() {
   try {
     const session = await getServerSession(authOptions);
     const token = (session as any)?.accessToken;
     // if (!token) throw new Error('Unauthorized: No access token found.');
 
-    const response = await fetch(`${process.env.BACKEND_URL}/delivery/active-deliveries`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/delivery/deliveries`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -91,12 +92,12 @@ export async function getActiveDeliveries() {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch active deliveries');
+      throw new Error(error.message || 'Failed to fetch  deliveries');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('🔥 getActiveDeliveries error:', error);
+    console.error('🔥 getDeliveries error:', error);
     throw new Error(getErrorMessage(error));
   }
 }
