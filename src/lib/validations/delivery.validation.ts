@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const DeliveryProgressStatusValidation = z.enum([
   'REJECTED',
-  'APPROVED',
+  'ACCEPTED',
   'PAID',
   'PICKED_UP',
   'IN_TRANSIT',

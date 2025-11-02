@@ -6,6 +6,7 @@ import Link from 'next/link';
 
 import { ReDataTable } from '../shared/ReDateTable';
 import TransactionModal from '../shared/TransactionModal';
+import { getDeliveries } from '@/lib/actions/delivery/delivery.actions';
 
 export type Payment = {
   deliveryId: string;
@@ -64,72 +65,6 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const tData = [
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-  {
-    deliveryId: 'US-123456789',
-    date: '09-07-2025',
-    fee: '₦200,000.00',
-    status: 'Accepted',
-    action: '',
-  },
-];
-
 interface PageChangeParams {
   pageNumber?: number;
   selectedDate?: string;
@@ -143,27 +78,40 @@ export default function Delivery() {
   const [totalCount, setTotalCount] = useState(0);
   const pageSize = 8;
 
-  function handlePageChange(params: PageChangeParams = {}) {
-    const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
+  async function fetchDeliveries({
+    pageNumber = 1,
+    selectedDate = 'Today',
+    Status = 'Active',
+  }: PageChangeParams = {}) {
+    setIsLoading(true);
     try {
-      console.log({ pageNumber, selectedDate, Status });
-      setTimeout(() => {
-        setTotalCount(tData.length);
-        setData(tData);
-        setPage(pageNumber);
-        setIsLoading(false);
-      }, 500);
+      const apiResponse = await getDeliveries();
+
+      const deliveries = apiResponse.data || [];
+      const count = apiResponse.count || deliveries.length;
+
+      const startIndex = (pageNumber - 1) * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = deliveries.slice(startIndex, endIndex);
+
+      setTotalCount(count);
+      setData(deliveries);
+      setPage(pageNumber);
     } catch (error) {
-      console.error('Error loading data:', error);
+      console.error('Error loading deliveries from API:', error);
+      setTotalCount(data.length);
+      setData(data);
+    } finally {
       setIsLoading(false);
-      setData([]);
     }
+  }
+
+  function handlePageChange(params: PageChangeParams = {}) {
+    fetchDeliveries(params);
   }
 
   useEffect(() => {
     handlePageChange({ pageNumber: 1 });
-
-    setData(tData);
   }, []);
 
   return (

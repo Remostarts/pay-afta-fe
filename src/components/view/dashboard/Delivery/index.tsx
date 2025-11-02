@@ -51,46 +51,6 @@ const columns: ColumnDef<Payment>[] = [
   },
 ];
 
-const tData = [
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
-    status: 'Delivered',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
-    status: 'InTransit',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John Doe',
-    amount: '₦200,000.00',
-    status: 'Delivered',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John 4',
-    amount: '₦200,000.00',
-    status: 'Scheduled',
-  },
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John 3',
-    amount: '₦200,000.00',
-    status: 'InTransit',
-  },
-
-  {
-    date: 'US-123456789',
-    deliveryCompany: 'John 2',
-    amount: '₦200,000.00',
-    status: 'Scheduled',
-  },
-];
-
 interface PageChangeParams {
   pageNumber?: number;
   selectedDate?: string;
