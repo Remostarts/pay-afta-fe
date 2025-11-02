@@ -158,6 +158,7 @@ export default function SettlementKycForm() {
               render={({ field }) => (
                 <FormItem>
                   <SearchableSelect
+                    type="bank"
                     options={banks}
                     onChange={field.onChange}
                     loading={loadingBanks}

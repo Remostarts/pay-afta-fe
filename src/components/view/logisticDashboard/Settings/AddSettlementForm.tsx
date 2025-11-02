@@ -91,6 +91,7 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* <ReInput label="Bank Name" name="bankName" placeholder="Enter bank name" required /> */}
           <SearchableSelect
+            type="bank"
             options={banks}
             onChange={(value) => methods.setValue('bankName', value)}
             placeholder="Select bank"

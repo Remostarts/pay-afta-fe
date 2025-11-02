@@ -76,11 +76,11 @@ export const sideNavMenu = [
     name: 'Rider',
     alt: 'rider',
   },
-  // {
-  //   id: 7,
-  //   imgBlack: '/assets/admin-dashboard/dashboard/settings.svg',
-  //   imgColor: '/assets/admin-dashboard/dashboard/settings.svg',
-  //   name: 'Settings',
-  //   alt: 'setting',
-  // },
+  {
+    id: 12,
+    imgBlack: '/assets/admin-dashboard/dashboard/settings.svg',
+    imgColor: '/assets/admin-dashboard/dashboard/settings.svg',
+    name: 'Settings',
+    alt: 'setting',
+  },
 ];

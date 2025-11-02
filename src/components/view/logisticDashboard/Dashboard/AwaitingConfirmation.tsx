@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 const AwaitingConfirmation = () => {
   const [orders, setOrders] = useState<any[]>([]);
   const [loadingAction, setLoadingAction] = useState<{
-    [key: string]: 'APPROVED' | 'REJECTED' | null;
+    [key: string]: 'ACCEPTED' | 'REJECTED' | null;
   }>({});
 
   useEffect(() => {
@@ -27,9 +27,9 @@ const AwaitingConfirmation = () => {
     fetchOrders();
   }, []);
 
-  const handleAction = async (deliveryId: string, action: 'APPROVED' | 'REJECTED') => {
+  const handleAction = async (deliveryId: string, action: 'ACCEPTED' | 'REJECTED') => {
     const confirmMessage =
-      action === 'APPROVED'
+      action === 'ACCEPTED'
         ? 'Are you sure you want to APPROVE this delivery?'
         : 'Are you sure you want to REJECT this delivery?';
     if (!window.confirm(confirmMessage)) return;
@@ -41,7 +41,7 @@ const AwaitingConfirmation = () => {
 
       // Remove order after success
       setOrders((prev) => prev.filter((o) => o.id !== deliveryId));
-      toast.success(`Delivery ${action === 'APPROVED' ? 'approved' : 'rejected'} successfully.`);
+      toast.success(`Delivery ${action === 'ACCEPTED' ? 'accepted' : 'rejected'} successfully.`);
     } catch (error: any) {
       console.error('Action failed:', error);
       toast.error(error?.message || 'Something went wrong. Try again.');
@@ -88,11 +88,11 @@ const AwaitingConfirmation = () => {
                 {loadingAction[order.id] === 'REJECTED' ? 'Rejecting...' : 'Reject'}
               </button>
               <button
-                disabled={loadingAction[order.id] === 'APPROVED'}
-                onClick={() => handleAction(order.id, 'APPROVED')}
+                disabled={loadingAction[order.id] === 'ACCEPTED'}
+                onClick={() => handleAction(order.id, 'ACCEPTED')}
                 className="flex-1 rounded-full bg-[#03045B] py-3 font-semibold text-white"
               >
-                {loadingAction[order.id] === 'APPROVED' ? 'Approving...' : 'Accept'}
+                {loadingAction[order.id] === 'ACCEPTED' ? 'Accepting...' : 'Accept'}
               </button>
             </div>
           </div>

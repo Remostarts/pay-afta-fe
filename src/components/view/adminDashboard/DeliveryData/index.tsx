@@ -57,7 +57,7 @@ interface PageChangeParams {
   Status?: string;
 }
 
-export default function Delivery() {
+export default function DeliveryData() {
   const [deliveriesData, setDeliveriesData] = useState<Payment[]>([]);
   const [stats, setStats] = useState({});
   const [unassignOrder, setUnassignOrders] = useState([]);
@@ -68,23 +68,23 @@ export default function Delivery() {
 
   async function handlePageChange(params: PageChangeParams = {}) {
     const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
-    try {
-      const { data } = await getUnassignOrdersAndStatsByUser(page);
+    // try {
+    //   const { data } = await getUnassignOrdersAndStatsByUser(page);
 
-      console.log({ pageNumber, selectedDate, Status });
-      setTimeout(() => {
-        setStats(data?.stats);
-        setUnassignOrders(data?.orders);
-        setDeliveriesData(data?.deliveries);
-        setTotalCount(data?.deliveries?.length);
-        setPage(pageNumber);
-        setIsLoading(false);
-      }, 500);
-    } catch (error) {
-      console.error('Error loading data:', error);
-      setIsLoading(false);
-      setDeliveriesData([]);
-    }
+    //   console.log({ pageNumber, selectedDate, Status });
+    //   setTimeout(() => {
+    //     setStats(data?.stats);
+    //     setUnassignOrders(data?.orders);
+    //     setDeliveriesData(data?.deliveries);
+    //     setTotalCount(data?.deliveries?.length);
+    //     setPage(pageNumber);
+    //     setIsLoading(false);
+    //   }, 500);
+    // } catch (error) {
+    //   console.error('Error loading data:', error);
+    //   setIsLoading(false);
+    //   setDeliveriesData([]);
+    // }
   }
 
   useEffect(() => {

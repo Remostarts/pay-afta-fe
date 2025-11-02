@@ -1,40 +1,79 @@
 'use client';
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import { ReHeading } from '@/components/re-ui/ReHeading';
+import { toast } from 'sonner';
+import {
+  addSettlementBankAccount,
+  getPillaBanks,
+} from '@/lib/actions/onboarding/onboarding.actions';
+import { ReButton } from '@/components/re-ui/ReButton';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { TAddSettlement, addSettlementSchema } from '@/lib/validations/setting.validation';
 
 interface AddSettlementFormProps {
   onClose: () => void;
   onSuccess: () => void;
 }
 
-type SettlementFormValues = {
-  bankName: string;
-  accountNumber: string;
-  accountName: string;
+type Bank = {
+  name: string;
+  code: string;
+};
+
+const defaultValues: TAddSettlement = {
+  bankName: '',
+  bankCode: undefined,
+  accountNumber: '',
+  accountHolder: '',
+  isDefaultPayout: false,
 };
 
 const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSuccess }) => {
-  const methods = useForm<SettlementFormValues>({
-    defaultValues: {
-      bankName: '',
-      accountNumber: '',
-      accountName: '',
-    },
+  const methods = useForm<TAddSettlement>({
+    resolver: zodResolver(addSettlementSchema),
+    defaultValues,
+    mode: 'onChange',
   });
 
-  const { handleSubmit } = methods;
+  const { handleSubmit, formState } = methods;
+  const { isSubmitting } = formState;
 
-  const onSubmit: SubmitHandler<SettlementFormValues> = (data) => {
-    alert('confirm');
-    console.log('💰 Submitted Settlement Data:', data);
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loadingBanks, setLoadingBanks] = useState(false);
 
-    // API call example
-    // await addSettlementAccount(data);
+  useEffect(() => {
+    async function fetchBanks() {
+      setLoadingBanks(true);
+      try {
+        const res: any = await getPillaBanks();
+        setBanks(res?.data || []);
+      } catch (error) {
+        toast.error('Failed to load bank list');
+      } finally {
+        setLoadingBanks(false);
+      }
+    }
+    fetchBanks();
+  }, []);
 
-    onSuccess(); // success modal দেখানোর জন্য
+  const onSubmit: SubmitHandler<TAddSettlement> = async (data) => {
+    // console.log('💰 Submitted Settlement Data:', data);
+    // onSuccess();
+    try {
+      const result = await addSettlementBankAccount(data);
+
+      if (result?.success) {
+        toast.success('Settlement account added successfully!');
+        onSuccess();
+      } else {
+        toast.error(result?.message || 'Failed to add settlement account');
+      }
+    } catch (error) {
+      toast.error((error as Error).message || 'Something went wrong!');
+    }
   };
 
   return (
@@ -50,27 +89,47 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <ReHeading heading="Bank Name" />
-            <ReInput name="bankName" placeholder="Enter bank name" required />
-          </div>
+          {/* <ReInput label="Bank Name" name="bankName" placeholder="Enter bank name" required /> */}
+          <SearchableSelect
+            type="bank"
+            options={banks}
+            onChange={(value) => methods.setValue('bankName', value)}
+            placeholder="Select bank"
+            limit={25}
+            loading={loadingBanks}
+          />
+          {/* <ReInput
+            label="Bank Code"
+            name="bankCode"
+            placeholder="Enter bank Code"
+            type="number"
+            inputMode="numeric"
+            required
+          /> */}
+          <ReInput
+            label="Account Number"
+            name="accountNumber"
+            type="number"
+            inputMode="numeric"
+            placeholder="Enter account number"
+            required
+          />
+          <ReInput
+            label="Account Holder Name"
+            name="accountHolder"
+            placeholder="Enter account holder name"
+          />
 
-          <div>
-            <ReHeading heading="Account Number" />
-            <ReInput name="accountNumber" placeholder="Enter account number" required />
+          <div className="flex justify-end">
+            <ReButton
+              type="submit"
+              disabled={isSubmitting || !methods.formState.isValid}
+              isSubmitting={isSubmitting}
+              className="rounded-full text-white lg:w-2/5"
+            >
+              {isSubmitting ? 'Submitting...' : 'Submit'}
+            </ReButton>
           </div>
-
-          <div>
-            <ReHeading heading="Account Holder Name" />
-            <ReInput name="accountName" placeholder="Enter account holder name" required />
-          </div>
-
-          <button
-            type="submit"
-            className="mt-4 w-full rounded-full bg-blue-900 py-2 font-semibold text-white"
-          >
-            Submit
-          </button>
         </form>
       </div>
     </FormProvider>
