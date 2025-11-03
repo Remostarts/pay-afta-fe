@@ -7,7 +7,7 @@ import CreateDeliveryOrderStep2 from './CreateDeliveryOrderStep2';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { getAllDeliverPartners } from '@/lib/actions/delivery/delivery.actions';
 
-const AssignOrderList = ({ orders }: any) => {
+const AssignOrderList = ({ orders, onAssignSuccess }: any) => {
   const [showAll, setShowAll] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [step, setStep] = useState(0);
@@ -33,6 +33,7 @@ const AssignOrderList = ({ orders }: any) => {
 
   const handleClose = () => {
     setDialogOpen(false);
+    onAssignSuccess?.();
     setStep(0);
     setDeliveryData({});
   };
