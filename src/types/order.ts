@@ -64,6 +64,11 @@ type Item = {
   quantity: number;
 };
 
+type Delivery = {
+  trackingNumber: string;
+  status: string;
+};
+
 export type OrderDetails = {
   id: string;
   buyerId: string;
@@ -81,6 +86,7 @@ export type OrderDetails = {
   progressHistory: ProgressStep[];
   milestones: Milestone[];
   items: Item[];
+  delivery: Delivery;
   Payment: PaymentDetails;
   Transaction: Transaction[]; // Empty array in this case
   buyer: UserProfile;
