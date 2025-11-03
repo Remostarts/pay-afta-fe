@@ -27,10 +27,16 @@ const stats = [
     icon: '/assets/admin-dashboard/dashboard/card-balance.svg',
     //   backgroundColor: 'bg-[white]',
   },
+  {
+    title: 'Ledger Balance',
+    value: '0',
+    icon: '/assets/admin-dashboard/dashboard/card-balance.svg',
+    //   backgroundColor: 'bg-[white]',
+  },
 ];
 export default function StatsSection() {
   return (
-    <div className="mt-5 grid w-full lg:grid-cols-4">
+    <div className="mt-5 grid w-full lg:grid-cols-5">
       {stats?.map((stat, index) => (
         <div
           key={index}

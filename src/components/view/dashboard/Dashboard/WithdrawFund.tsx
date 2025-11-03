@@ -339,6 +339,7 @@ export default function WithdrawFund() {
                   render={({ field }) => (
                     <FormItem>
                       <SearchableSelect
+                        type="bank"
                         options={banks}
                         onChange={field.onChange}
                         loading={loadingBanks}
