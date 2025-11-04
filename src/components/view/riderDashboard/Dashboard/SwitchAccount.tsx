@@ -23,7 +23,7 @@ const AccountItem: React.FC<AccountProps> = ({
 }) => (
   <button
     onClick={onSelect}
-    className={`flex justify-between items-center p-4 mb-2 border rounded-lg w-full transition-colors ${
+    className={`flex justify-between w-full items-center p-4 mb-2 border rounded-lg transition-colors ${
       isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'
     }`}
   >
