@@ -2,9 +2,7 @@
 
 import React, { useState } from 'react';
 import Link from 'next/link';
-
 import PaymentSuccessful from '../shared/PaymentSuccessful';
-
 import { ReButton } from '@/components/re-ui/ReButton';
 import RePin from '@/components/re-ui/RePin';
 
@@ -12,88 +10,82 @@ type PaymentConfirmationProps = {
   amount: number;
   bankName: string;
   accountNumber: string;
-  accountName: string;
+  bankCode: string;
+  onAuthorize: (pin: string) => Promise<boolean>; // 🔹 new prop
 };
 
 const PaymentConfirmation = ({
   amount,
   bankName,
   accountNumber,
-  accountName,
+  bankCode,
+  onAuthorize,
 }: PaymentConfirmationProps) => {
-  const [isShowTranscationPin, setIsShowTranscationPin] = useState<boolean>(false);
-  const [isShowTranscationDone, setIsShowTranscationDone] = useState<boolean>(false);
-  const [pin, setPin] = useState<string>('');
+  const [isShowTranscationPin, setIsShowTranscationPin] = useState(false);
+  const [isShowTranscationDone, setIsShowTranscationDone] = useState(false);
+  const [pin, setPin] = useState('');
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-  function handleChange(data: any) {
-    setPin(data);
-  }
-
-  function handleClick() {
-    setIsShowTranscationPin(true);
-  }
-
-  function handleTranscationPin() {
-    setIsShowTranscationDone(true);
+  async function handleTranscationPin() {
+    try {
+      setIsSubmitting(true);
+      const success = await onAuthorize(pin);
+      if (success) setIsShowTranscationDone(true);
+    } finally {
+      setIsSubmitting(false);
+    }
   }
 
   return (
     <section>
       {!isShowTranscationPin && (
         <div className="mx-auto max-w-md rounded-lg bg-white">
-          <h2 className="mb-2 text-center font-inter text-2xl font-bold">
-            Review & Confirm Payment
-          </h2>
-          <p className="mb-4 text-center font-inter text-gray-600">
+          <h2 className="mb-2 text-center text-2xl font-bold">Review & Confirm Payment</h2>
+          <p className="mb-4 text-center text-gray-600">
             Verify the details below before completing the payment.
           </p>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Amount</p>
-            <p className="text-xl text-gray-900">₦{amount?.toLocaleString()}</p>
+          <div className="mb-4 flex justify-between">
+            <p>Amount</p>
+            <p className="text-xl">₦{amount.toLocaleString()}</p>
           </div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Bank Name</p>
-            <p className="font-inter text-gray-900">{bankName}</p>
+          <div className="mb-2 flex justify-between">
+            <p>Bank Name</p>
+            <p>{bankName}</p>
           </div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Account Number</p>
-            <p className="font-inter text-gray-900">{accountNumber}</p>
+          <div className="mb-2 flex justify-between">
+            <p>Account Number</p>
+            <p>{accountNumber}</p>
           </div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Account Name</p>
-            <p className="font-inter text-gray-900">{accountName}</p>
+          <div className="mb-4 flex justify-between">
+            <p>Bank Code</p>
+            <p>{bankCode}</p>
           </div>
-          <div className="mb-4 flex items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Fee</p>
-            <p className="font-inter text-gray-900">100</p>
-          </div>
-          <div className="mb-4 flex flex-col items-center justify-between">
-            <p className="font-inter font-medium text-gray-700">Total</p>
-            <p className="font-inter text-gray-900">₦34,100.00</p>
-          </div>
-          <ReButton className="w-full rounded-full font-inter" onClick={handleClick}>
+          <ReButton className="w-full rounded-full" onClick={() => setIsShowTranscationPin(true)}>
             Authorize Payment
           </ReButton>
         </div>
       )}
+
       {isShowTranscationPin && !isShowTranscationDone && (
         <div className="flex flex-col items-center justify-center rounded-lg bg-white p-6">
-          <h2 className="mb-2 text-center font-inter text-2xl font-bold">Enter Transaction Pin</h2>
-          <Link href="" className="mb-4 text-center font-inter text-[#1F7EAD]">
+          <h2 className="mb-2 text-2xl font-bold">Enter Transaction PIN</h2>
+          <Link href="#" className="mb-4 text-blue-600">
             Forgot PIN?
           </Link>
-          <RePin count={4} onChange={handleChange} />
+          <RePin count={4} onChange={setPin} />
           <ReButton
-            className="mt-5 w-full rounded-full font-inter"
+            className="mt-5 w-full rounded-full"
             onClick={handleTranscationPin}
-            disabled={pin.length !== 4}
+            disabled={pin.length !== 4 || isSubmitting}
+            isSubmitting={isSubmitting}
           >
             Authorize Payment
           </ReButton>
         </div>
       )}
+
       {isShowTranscationDone && (
-        <PaymentSuccessful label={'Withdrawal Successful'} amount={amount} bankName={bankName} />
+        <PaymentSuccessful label="Withdrawal Successful" amount={amount} bankName={bankName} />
       )}
     </section>
   );

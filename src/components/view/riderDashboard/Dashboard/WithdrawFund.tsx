@@ -2,14 +2,13 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Image from 'next/image';
+import { toast } from 'sonner';
 
 import PaymentConfirmation from './PaymentConfirmation';
 import SwitchAccount from './SwitchAccount';
-
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReButton } from '@/components/re-ui/ReButton';
 import {
   withdrawfundSchema,
@@ -17,16 +16,35 @@ import {
   TTransferfundSchema,
   transferfundSchema,
 } from '@/lib/validations/withdrawfund.validation';
-import { Form } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
+import { useGeneral } from '@/context/generalProvider';
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
+import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
+import ReInput from '@/components/re-ui/re-input/ReInput';
+import { withdrawFundFromWallet } from '@/lib/actions/root/user.action';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
+
+type Bank = {
+  name: string;
+  code: string;
+};
 
 type AccountProps = {
   bankName: string;
   accountNumber: string;
   accountName: string;
+  bankCode?: string;
+  id?: string;
 };
 
-// ✅ Use number for amountWithdraw
 const defaultValues: TWithdrawfund = {
   bankName: '',
   accountNumber: '',
@@ -39,18 +57,57 @@ const defaultValuesForTransferFund: TTransferfundSchema = {
 };
 
 export default function WithdrawFund() {
+  const { user } = useGeneral();
+
   const [isShowPaymentConfirmation, setIsShowPaymentConfirmation] = useState(false);
   const [isShowSwitchAccount, setIsShowSwitchAccount] = useState(false);
   const [selectedAccount, setSelectedAccount] = useState<AccountProps | null>(null);
+  console.log('🌼 🔥🔥 WithdrawFund 🔥🔥 selectedAccount🌼', selectedAccount);
+
   const [withdrawalData, setWithdrawalData] = useState<TWithdrawfund | TTransferfundSchema | null>(
     null
   );
+  console.log('🌼 🔥🔥 WithdrawFund 🔥🔥 withdrawalData🌼', withdrawalData);
+
   const [transferType, setTransferType] = useState<'bank' | 'settlement' | null>(null);
 
-  const accounts = [
-    { bankName: 'Sterling Bank', accountNumber: '0011223344', accountName: 'John Doe' },
-    { bankName: 'First Bank', accountNumber: '5566778899', accountName: 'John Doe' },
-  ];
+  const [banks, setBanks] = useState<Bank[]>([]);
+  const [loadingBanks, setLoadingBanks] = useState(false);
+
+  useEffect(() => {
+    async function fetchBanks() {
+      setLoadingBanks(true);
+      try {
+        const res: any = await getPillaBanks();
+        setBanks(res?.data || []);
+      } catch (error) {
+        toast.error('Failed to load bank list');
+      } finally {
+        setLoadingBanks(false);
+      }
+    }
+    if (transferType === 'bank' && banks.length === 0) {
+      fetchBanks();
+    }
+  }, [transferType, banks.length]);
+  // -----------------------------------------------------------
+
+  const accounts: AccountProps[] =
+    user?.Bank?.map((bank) => ({
+      bankName: bank.bankName || '',
+      accountNumber: bank.accountNumber || '',
+      accountName: bank.accountHolder || '',
+      bankCode: bank.bankCode || '',
+      id: bank.id,
+    })) || [];
+
+  const defaultAccount: AccountProps = accounts[0] || {
+    bankName: '',
+    accountNumber: '',
+    accountName: '',
+    bankCode: '',
+    id: '',
+  };
 
   const form = useForm<TWithdrawfund>({
     resolver: zodResolver(withdrawfundSchema),
@@ -64,20 +121,38 @@ export default function WithdrawFund() {
     mode: 'onChange',
   });
 
-  const { handleSubmit, formState } = form;
-  const { isSubmitting } = formState;
+  const { handleSubmit, register, formState, control, watch, setValue } = form;
+  const { isSubmitting, errors } = formState;
 
-  const { handleSubmit: handleSubmitForTransfer, formState: formStateForTransfer } = transferForm;
-  const { isSubmitting: isSubmittingForTransfer } = formStateForTransfer;
+  const {
+    handleSubmit: handleSubmitForTransfer,
+    register: registerTransfer,
+    formState: formStateForTransfer,
+  } = transferForm;
+  const { isSubmitting: isSubmittingForTransfer, errors: transferErrors } = formStateForTransfer;
+
+  const bankAmount = form.watch('amountWithdraw');
+  const selectedBankName = watch('bankName');
+  const settlementAmount = transferForm.watch('amountWithdraw');
+
+  useEffect(() => {
+    if (selectedBankName && banks.length > 0) {
+      const selected = banks.find((b) => b.name === selectedBankName);
+      if (selected) {
+        setValue('bankCode', selected.code, { shouldValidate: true });
+      }
+    } else {
+      setValue('bankCode', '');
+    }
+  }, [selectedBankName, banks, setValue]);
 
   const onSubmit = (data: TWithdrawfund) => {
-    // Ensure number type
-    setWithdrawalData({ ...data, amountWithdraw: Number(data.amountWithdraw) });
+    setWithdrawalData(data);
     setIsShowPaymentConfirmation(true);
   };
 
   const onSubmitForTransfer = (data: TTransferfundSchema) => {
-    setWithdrawalData({ ...data, amountWithdraw: Number(data.amountWithdraw) });
+    setWithdrawalData(data);
     setIsShowPaymentConfirmation(true);
   };
 
@@ -86,14 +161,62 @@ export default function WithdrawFund() {
     setIsShowSwitchAccount(false);
   };
 
+  const handleWithdraw = async (pin: string) => {
+    try {
+      if (transferType === 'bank') {
+        const parsed = withdrawfundSchema.safeParse(withdrawalData);
+        if (!parsed.success) {
+          const errors = parsed.error.errors.map((e) => e.message).join(', ');
+          toast.error(errors);
+          throw new Error(errors);
+        }
+      } else if (transferType === 'settlement') {
+        const parsed = transferfundSchema.safeParse(withdrawalData);
+        if (!parsed.success) {
+          const errors = parsed.error.errors.map((e) => e.message).join(', ');
+          toast.error(errors);
+          throw new Error(errors);
+        }
+      }
+
+      const body: any = {
+        amount: withdrawalData?.amountWithdraw,
+        withdrawPassword: pin,
+      };
+
+      if (transferType === 'bank') {
+        body.newAccount = {
+          bankName: (withdrawalData as TWithdrawfund)?.bankName || '',
+          accountNumber: (withdrawalData as TWithdrawfund)?.accountNumber || '',
+          bankCode: (withdrawalData as TWithdrawfund)?.bankCode || '',
+        };
+      } else if (transferType === 'settlement') {
+        body.savedAccountId = selectedAccount?.id || defaultAccount.id;
+      }
+
+      const res = await withdrawFundFromWallet(body);
+
+      if (!res.success) throw new Error(res.message || 'Withdrawal failed');
+
+      toast.success('Withdrawal successful 🎉');
+      return true;
+    } catch (err: any) {
+      toast.error(err.message || 'Withdrawal failed');
+      return false;
+    }
+  };
+
+  const getSafeString = (value?: string | null, fallback = '') => value || fallback;
+
   return (
     <section>
+      {/* Step 1: Select transfer type */}
       {!transferType && (
-        <div className="w-full max-w-md rounded-md bg-white p-4">
+        <div className="w-full max-w-md rounded-md bg-white">
           <h2 className="mb-4 text-lg font-bold">Transfer To</h2>
           <div className="flex flex-col gap-4">
             <button
-              className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4"
+              className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('bank')}
             >
               <Image
@@ -109,7 +232,7 @@ export default function WithdrawFund() {
             </button>
 
             <button
-              className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4"
+              className="flex items-center gap-4 rounded-md border border-gray-200 bg-[#F7F8FA] p-4 transition hover:bg-[#E6E7FE]"
               onClick={() => setTransferType('settlement')}
             >
               <Image
@@ -127,36 +250,187 @@ export default function WithdrawFund() {
         </div>
       )}
 
+      {/* Step 2A: Settlement Form (Remains the same) */}
       {transferType === 'settlement' && !isShowPaymentConfirmation && (
         <Form {...transferForm}>
           <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
-            <ReInput type="number" name="amountWithdraw" placeholder="₦" />
-            <ReButton type="submit" isSubmitting={isSubmittingForTransfer}>
+            <div className="mb-4">
+              <ReHeading heading="Amount to withdraw" size="base" />
+              {/* <ReInput name="amountWithdraw" type="number" /> */}
+              <input
+                type="number"
+                placeholder="₦"
+                inputMode="numeric"
+                {...registerTransfer('amountWithdraw', { valueAsNumber: true })}
+                className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              {transferErrors.amountWithdraw && (
+                <p className="text-base font-normal text-primary-800">
+                  {transferErrors.amountWithdraw.message}
+                </p>
+              )}
+              <p className="mt-2 text-sm text-gray-600">
+                Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
+              </p>
+            </div>
+
+            <div className="mb-4">
+              <div className="mb-1 flex items-center justify-between">
+                <span className="font-semibold">Settlement Account</span>
+                <button
+                  type="button"
+                  className="text-sm font-medium text-blue-600"
+                  onClick={() => setIsShowSwitchAccount(true)}
+                >
+                  Switch Account
+                </button>
+              </div>
+              <div className="space-y-1 rounded-md border border-dashed p-4 bg-[#F8F8F8]">
+                <p>
+                  Bank Name: {getSafeString(selectedAccount?.bankName, defaultAccount.bankName)}
+                </p>
+                <p>
+                  Account Number:{' '}
+                  {getSafeString(selectedAccount?.accountNumber, defaultAccount.accountNumber)}
+                </p>
+                <p>
+                  Account Name:{' '}
+                  {getSafeString(selectedAccount?.accountName, defaultAccount.accountName)}
+                </p>
+                <p>
+                  Bank Code: {getSafeString(selectedAccount?.bankCode, defaultAccount.bankCode)}
+                </p>
+              </div>
+            </div>
+
+            <ReButton
+              className={`mt-3 w-full rounded-full p-5 ${
+                !settlementAmount ||
+                settlementAmount <= 0 ||
+                (user?.Wallet?.[0]?.balance || 0) < settlementAmount
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-blue-600 text-white'
+              }`}
+              type="submit"
+              isSubmitting={isSubmittingForTransfer}
+              disabled={
+                isSubmittingForTransfer ||
+                !settlementAmount ||
+                settlementAmount <= 0 ||
+                (user?.Wallet?.[0]?.balance || 0) < settlementAmount
+              }
+            >
               Proceed
             </ReButton>
           </form>
         </Form>
       )}
 
+      {/* Step 2B: New Bank Form (Updated for Select) */}
       {transferType === 'bank' && !isShowPaymentConfirmation && (
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
-            <ReInput type="text" name="bankName" placeholder="Enter bank name" />
-            <ReInput type="number" name="accountNumber" placeholder="Enter account number" />
-            <ReInput type="number" name="amountWithdraw" placeholder="₦" />
-            <ReButton type="submit" isSubmitting={isSubmitting}>
+            <div className="space-y-4">
+              <div>
+                <ReHeading heading="Select Bank Name" size="base" className="mb-3" />
+                <FormField
+                  control={control}
+                  name="bankName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <SearchableSelect
+                        type="bank"
+                        options={banks}
+                        onChange={field.onChange}
+                        loading={loadingBanks}
+                        placeholder="Select bank"
+                        limit={25}
+                      />
+                      {errors.bankName && (
+                        <p className="text-base font-normal text-primary-800">
+                          {errors.bankName.message}
+                        </p>
+                      )}
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <ReHeading heading="Account Number" size="base" />
+              <ReInput name="accountNumber" inputMode="numeric" type="number" />
+              {/* <input
+                type="text"
+                placeholder="Enter account number"
+                {...register('accountNumber')}
+                className="w-full rounded-md border p-3"
+              />
+              {errors.accountNumber && (
+                <p className="text-sm text-red-500">{errors.accountNumber.message}</p>
+              )} */}
+
+              <input type="hidden" {...register('bankCode')} />
+              <div className="text-sm text-gray-500">
+                Bank Code: {watch('bankCode') || 'Auto-filled upon bank selection'}
+              </div>
+
+              <ReHeading heading="Amount to Transfer" size="base" />
+              {/* <ReInput name="amountWithdraw" inputMode="numeric" type="number" /> */}
+              <input
+                type="number"
+                placeholder="₦"
+                inputMode="numeric"
+                {...register('amountWithdraw', { valueAsNumber: true })}
+                className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+              />
+              {errors.amountWithdraw && (
+                <p className="text-base font-normal text-primary-800">
+                  {errors.amountWithdraw.message}
+                </p>
+              )}
+
+              <p className="text-sm text-gray-600">
+                Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
+              </p>
+            </div>
+
+            <ReButton
+              className={`mt-6 w-full rounded-full p-5 ${
+                !bankAmount || bankAmount <= 0 || (user?.Wallet?.[0]?.balance || 0) < bankAmount
+                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                  : 'bg-[#3A3DF8] text-white'
+              }`}
+              type="submit"
+              isSubmitting={isSubmitting}
+              disabled={
+                isSubmitting ||
+                !bankAmount ||
+                bankAmount <= 0 ||
+                (user?.Wallet?.[0]?.balance || 0) < bankAmount
+              }
+            >
               Proceed
             </ReButton>
           </form>
         </Form>
       )}
 
+      {/* Step 3: Payment Confirmation + PIN (Remains the same) */}
       {isShowPaymentConfirmation && withdrawalData && (
         <PaymentConfirmation
-          amount={withdrawalData.amountWithdraw}
-          bankName={selectedAccount?.bankName || accounts[0].bankName}
-          accountNumber={selectedAccount?.accountNumber || accounts[0].accountNumber}
-          accountName={selectedAccount?.accountName || accounts[0].accountName}
+          amount={withdrawalData.amountWithdraw || 0}
+          bankName={getSafeString(
+            selectedAccount?.bankName,
+            (withdrawalData as TWithdrawfund)?.bankName || defaultAccount.bankName
+          )}
+          accountNumber={getSafeString(
+            selectedAccount?.accountNumber,
+            (withdrawalData as TWithdrawfund)?.accountNumber || defaultAccount.accountNumber
+          )}
+          bankCode={getSafeString(
+            selectedAccount?.bankCode,
+            (withdrawalData as TWithdrawfund)?.bankCode || defaultAccount.bankCode
+          )}
+          onAuthorize={handleWithdraw}
         />
       )}
 

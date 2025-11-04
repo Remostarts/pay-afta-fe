@@ -2,7 +2,6 @@
 
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
-
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { DeliveryStatus } from '@/types/order';
@@ -12,46 +11,55 @@ interface OrderHeaderProps {
   amount: string;
   status: DeliveryStatus;
   onStatusUpdate: (status: DeliveryStatus) => void;
+  isPaymentDone: boolean;
 }
 
-export default function OrderHeader({ orderId, amount, status, onStatusUpdate }: OrderHeaderProps) {
+export default function OrderHeader({
+  orderId,
+  amount,
+  status,
+  onStatusUpdate,
+  isPaymentDone,
+}: OrderHeaderProps) {
   const getNextStatusAction = () => {
+    if (!isPaymentDone) {
+      return {
+        label: 'Waiting for Payment',
+        action: () => {},
+        variant: 'secondary' as const,
+        disabled: true,
+      };
+    }
+
     switch (status) {
       case 'accepted':
         return {
           label: 'Mark as Picked Up',
           action: () => onStatusUpdate('picked-up'),
           variant: 'default' as const,
+          disabled: false,
         };
       case 'picked-up':
         return {
           label: 'Mark as In Transit',
           action: () => onStatusUpdate('in-transit'),
           variant: 'default' as const,
+          disabled: false,
         };
       case 'in-transit':
         return {
           label: 'Mark as Delivered',
           action: () => onStatusUpdate('delivered'),
           variant: 'default' as const,
-          showFailButton: true,
-          failAction: () => onStatusUpdate('failed'),
+          disabled: false,
         };
-      case 'delivered':
+      default:
         return {
-          label: 'Delivered',
+          label: 'Update',
           action: () => {},
           variant: 'secondary' as const,
           disabled: true,
         };
-      case 'failed':
-        return {
-          label: 'Retry Delivery',
-          action: () => onStatusUpdate('picked-up'),
-          variant: 'default' as const,
-        };
-      default:
-        return null;
     }
   };
 
@@ -65,33 +73,20 @@ export default function OrderHeader({ orderId, amount, status, onStatusUpdate }:
         </Link>
         <h1 className="text-xl font-semibold">Order ID {orderId}</h1>
       </div>
+
       <div className="flex items-center gap-4">
         <span className="text-xl font-semibold">{amount}</span>
-        {nextAction && (
-          <>
-            {nextAction.showFailButton && (
-              <Button
-                onClick={nextAction.failAction}
-                variant="destructive"
-                className="rounded-full border-2 border-[#03045B] text-[#03045B]"
-              >
-                Mark as Failed
-              </Button>
-            )}
-            <Button
-              onClick={nextAction.action}
-              variant={nextAction.variant}
-              disabled={nextAction.disabled}
-              className={cn(
-                nextAction.variant === 'default'
-                  ? 'bg-[#03045B] rounded-full text-white'
-                  : 'bg-[#B3B3B3] text-[#FFFFFF] rounded-full'
-              )}
-            >
-              {nextAction.label}
-            </Button>
-          </>
-        )}
+        <Button
+          onClick={nextAction.action}
+          disabled={nextAction.disabled}
+          className={cn(
+            nextAction.variant === 'default'
+              ? 'bg-[#03045B] rounded-full text-white'
+              : 'bg-gray-300 rounded-full text-gray-600'
+          )}
+        >
+          {nextAction.label}
+        </Button>
       </div>
     </div>
   );

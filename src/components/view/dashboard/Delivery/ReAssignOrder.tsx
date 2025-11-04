@@ -9,6 +9,8 @@ import { getAllDeliverPartners } from '@/lib/actions/delivery/delivery.actions';
 export default function ReAssignOrder({ orders, onAssignSuccess, reAssignOrderId }: any) {
   const [step, setStep] = useState(1);
   const [deliveryData, setDeliveryData] = useState<any>({});
+  console.log('🌼 🔥🔥 ReAssignOrder 🔥🔥 deliveryData🌼', deliveryData);
+
   const [partners, setPartners] = useState([]);
   const orderId = orders?.id;
 
@@ -21,7 +23,7 @@ export default function ReAssignOrder({ orders, onAssignSuccess, reAssignOrderId
   // };
 
   const handleProceed = (data: any) => {
-    setDeliveryData((prev: any) => ({ reAssignOrderId }));
+    setDeliveryData((prev: any) => ({ orderId: reAssignOrderId }));
     setStep((s) => s + 1);
   };
 

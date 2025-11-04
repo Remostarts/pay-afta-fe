@@ -158,102 +158,6 @@ export type Payment = {
   trackingNumber?: string;
 };
 
-// const columns: ColumnDef<Payment>[] = [
-//   {
-//     accessorKey: 'date',
-//     header: 'Date',
-//   },
-//   {
-//     accessorKey: 'deliveryCompany',
-//     header: 'Delivery Company',
-//   },
-//   {
-//     accessorKey: 'amount',
-//     header: 'Amount',
-//   },
-//   {
-//     accessorKey: 'status',
-//     header: 'Status',
-//     cell({ row }) {
-//       const status = row.getValue('status') as string;
-
-//       const styles =
-//         {
-//           REQUESTED:
-//             'bg-[#E0F2FE] text-[#0369A1] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           ACCEPTED:
-//             'bg-[#ABEFC6] text-[#067647] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           REJECTED:
-//             'bg-[#FEE4E2] text-[#B42318] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           PICKED_UP:
-//             'bg-[#FEF9C3] text-[#854D0E] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           IN_TRANSIT:
-//             'bg-[#D5D9EB] text-[#363F72] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           DELIVERED:
-//             'bg-[#D1FADF] text-[#027A48] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           FAILED:
-//             'bg-[#FEE4E2] text-[#B42318] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           RETURNED:
-//             'bg-[#FFE4E6] text-[#9F1239] text-center py-1 text-sm font-medium font-inter rounded-full',
-//           RETRY:
-//             'bg-[#FDE68A] text-[#92400E] text-center py-1 text-sm font-medium font-inter rounded-full',
-//         }[status] || 'bg-gray-100 text-gray-600 text-center py-1 text-sm font-medium rounded-full';
-
-//       return <div className={styles}>{status}</div>;
-//     },
-//   },
-
-//   // ---------- DYNAMIC ACTION COLUMN ----------
-//   {
-//     id: 'action',
-//     header: 'Action',
-//     cell({ row }) {
-//       const delivery = row.original;
-//       const status = delivery.status;
-//       const trackingNumber = delivery.trackingNumber;
-
-//       if (status === 'ACCEPTED') {
-//         return (
-//           <Button
-//             size="sm"
-//             className="bg-[#027A48] text-white hover:bg-[#01663C]"
-//             onClick={() => handlePayNow(delivery)}
-//           >
-//             Pay Now
-//           </Button>
-//         );
-//       }
-
-//       if (status === 'REJECTED') {
-//         return (
-//           <Button
-//             size="sm"
-//             className="bg-[#B54708] text-white hover:bg-[#933C07]"
-//             onClick={() => console.log(`Reassign delivery partner for ${delivery.id}`)}
-//           >
-//             Re-Assign
-//           </Button>
-//         );
-//       }
-
-//       if (trackingNumber) {
-//         return (
-//           <Button
-//             size="sm"
-//             className="bg-[#1D4ED8] text-white hover:bg-[#153EA1]"
-//             onClick={() => console.log(`View details for ${delivery.id}`)}
-//           >
-//             View
-//           </Button>
-//         );
-//       }
-
-//       // Default fallback
-//       return <span className="text-gray-400 text-sm italic">No Action</span>;
-//     },
-//   },
-// ];
-
 interface PageChangeParams {
   pageNumber?: number;
   selectedDate?: string;
@@ -364,7 +268,7 @@ export default function Delivery() {
               className="bg-[#1D4ED8] text-white hover:bg-[#153EA1]"
               onClick={() => console.log(`View details for ${delivery.id}`)}
             >
-              View
+              Track Order
             </Button>
           );
         }
@@ -416,13 +320,13 @@ export default function Delivery() {
   };
 
   const handleReAssignOrder = (delivery: any) => {
+    console.log('🌼 🔥🔥 handleReAssignOrder 🔥🔥 delivery🌼', delivery);
+
     // console.log(delivery);
     setReAssignOrderId(delivery?.id);
     setSelectedReAssignOrder(delivery);
     setIsReAssignOrderOpen(true);
   };
-
-  // console.log(reAssignOrderId);
 
   return (
     <section className="min-h-screen rounded-md bg-white p-4 md:p-8">
