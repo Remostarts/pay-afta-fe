@@ -43,9 +43,9 @@ export default function RiderProfileHeader() {
               <Notifications handleNotificationBtn={handleNotificationBtn} />
             </button>
           </div>
-          <div className="relative inline-block cursor-pointer">
+          {/* <div className="relative inline-block cursor-pointer">
             <Search />
-          </div>
+          </div> */}
           <Image
             src="/assets/admin-dashboard/users/prof-avatar.svg"
             alt="user-profile"
