@@ -6,7 +6,7 @@ import CreateDeliveryOrderStep1 from './CreateDeliveryOrderStep1';
 import CreateDeliveryOrderStep2 from './CreateDeliveryOrderStep2';
 import { getAllDeliverPartners } from '@/lib/actions/delivery/delivery.actions';
 
-export default function ReAssignOrder({ orders, onAssignSuccess, reAssignOrderId }: any) {
+export default function ReAssignOrder({  onAssignSuccess, reAssignOrderId }: any) {
   const [step, setStep] = useState(1);
   const [deliveryData, setDeliveryData] = useState<any>({});
   console.log('🌼 🔥🔥 ReAssignOrder 🔥🔥 deliveryData🌼', deliveryData);
