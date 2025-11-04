@@ -225,6 +225,8 @@ export async function makeSellerWalletDeliveryPayment(formData: TSellerPersonalW
 export async function sellerCreateOneTimeUseWallet(formData: TDeliveryOneTimeUseWallet) {
   const validation = DeliveryOneTimeUseWallet.safeParse(formData);
 
+  // console.log(validation);
+
   if (!validation.success) {
     let zodErrors = '';
     validation.error.issues.forEach((issue) => {

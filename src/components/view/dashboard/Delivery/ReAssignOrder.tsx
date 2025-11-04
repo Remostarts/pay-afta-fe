@@ -6,15 +6,15 @@ import CreateDeliveryOrderStep1 from './CreateDeliveryOrderStep1';
 import CreateDeliveryOrderStep2 from './CreateDeliveryOrderStep2';
 import { getAllDeliverPartners } from '@/lib/actions/delivery/delivery.actions';
 
-export default function ReAssignOrder({ orders, onAssignSuccess, reAssignOrderId }: any) {
+export default function ReAssignOrder({  onAssignSuccess, reAssignOrderId }: any) {
   const [step, setStep] = useState(1);
   const [deliveryData, setDeliveryData] = useState<any>({});
   console.log('🌼 🔥🔥 ReAssignOrder 🔥🔥 deliveryData🌼', deliveryData);
 
   const [partners, setPartners] = useState([]);
-  const orderId = orders?.id;
+  // const orderId = orders?.id;
 
-  console.log(reAssignOrderId);
+  // console.log(reAssignOrderId);
 
   // const handleAssignClick = (orderId: string) => {
   //   // setOrderId(orderId);
@@ -23,11 +23,11 @@ export default function ReAssignOrder({ orders, onAssignSuccess, reAssignOrderId
   // };
 
   const handleProceed = (data: any) => {
-    setDeliveryData((prev: any) => ({ orderId: reAssignOrderId }));
+    setDeliveryData((prev: any) => ({ ...prev, ...data, reAssignOrderId }));
     setStep((s) => s + 1);
   };
 
-  console.log(deliveryData);
+  // console.log(deliveryData);
 
   const handleBack = () => setStep((s) => s - 1);
 

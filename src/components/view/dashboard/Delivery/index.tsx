@@ -311,7 +311,7 @@ export default function Delivery() {
     setIsPaymentModalOpen(false);
     setSelectedDelivery(null);
     // Refresh data to update status
-    handlePageChange({ pageNumber: page });
+    handlePageChange?.();
   };
 
   const handlePaymentClose = () => {
@@ -322,8 +322,8 @@ export default function Delivery() {
   const handleReAssignOrder = (delivery: any) => {
     console.log('🌼 🔥🔥 handleReAssignOrder 🔥🔥 delivery🌼', delivery);
 
-    // console.log(delivery);
-    setReAssignOrderId(delivery?.id);
+    console.log(delivery);
+    setReAssignOrderId(delivery?.orderId);
     setSelectedReAssignOrder(delivery);
     setIsReAssignOrderOpen(true);
   };
@@ -378,7 +378,7 @@ export default function Delivery() {
 
       <Dialog open={isReAssignOrderOpen} onOpenChange={setIsReAssignOrderOpen}>
         <DialogContent className="">
-          <ReAssignOrder orders={selectedReAssignOrder} reAssignOrderId={reAssignOrderId} />
+          <ReAssignOrder onAssignSuccess={handlePageChange} reAssignOrderId={reAssignOrderId} />
         </DialogContent>
       </Dialog>
     </section>
