@@ -322,8 +322,8 @@ export default function Delivery() {
   const handleReAssignOrder = (delivery: any) => {
     console.log('🌼 🔥🔥 handleReAssignOrder 🔥🔥 delivery🌼', delivery);
 
-    // console.log(delivery);
-    setReAssignOrderId(delivery?.id);
+    console.log(delivery);
+    setReAssignOrderId(delivery?.orderId);
     setSelectedReAssignOrder(delivery);
     setIsReAssignOrderOpen(true);
   };

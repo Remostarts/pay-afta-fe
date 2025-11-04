@@ -14,6 +14,14 @@ import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/o
 import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
 import { useGeneral } from '@/context/generalProvider';
 import PaymentSummary from './PaymentSummary';
+import {
+  TDeliveryOneTimeUseWallet,
+  TSellerPersonalWalletPaymentInput,
+} from '@/lib/validations/delivery-order';
+import {
+  makeSellerWalletDeliveryPayment,
+  sellerCreateOneTimeUseWallet,
+} from '@/lib/actions/delivery/delivery.actions';
 
 interface OrderAgreementProps {
   handleCurrentStepChange?: (step: number) => void;
@@ -50,15 +58,13 @@ export default function MakePayment({
 
   const handleWalletPayment = async () => {
     setLocalLoading(true);
-    const data = {
-      buyerId: order?.buyerId,
+    const data: TSellerPersonalWalletPaymentInput = {
       amount: totalAmount,
-      sellerId: order?.sellerId,
-      orderId: order?.id,
-      milestoneId: order?.milestones[0]?.id,
-    } as TPersonalWalletPaymentInput;
+      deliveryId: order?.id ?? '',
+    };
+    // console.log(data);
     try {
-      const response = await makeWalletPayment(data);
+      const response = await makeSellerWalletDeliveryPayment(data);
       console.log('🌼 🔥🔥 handleWalletPayment 🔥🔥 response🌼', response);
 
       if (response?.success) {
@@ -76,12 +82,25 @@ export default function MakePayment({
 
   const handleBankTransferSelect = async () => {
     setLocalLoading(true);
-    const data = {
-      amount: totalAmount,
-      orderId: order?.id,
-    } as TOneTimeUseWallet;
+    const amount = order?.amount ? Number(String(order.amount).replace(/[^\d.]/g, '')) : 0;
+    const deliveryId = order?.id ?? '';
+
+    if (!amount || !deliveryId) {
+      toast.error('Amount and delivery ID are required for payment.');
+      setLocalLoading(false);
+      return;
+    }
+
+    const data: TDeliveryOneTimeUseWallet = {
+      amount: amount,
+      deliveryId,
+    };
+
     try {
-      const response = await createOneTimeUseWallet(data);
+      console.log('Sending data:', data);
+      const response = await sellerCreateOneTimeUseWallet(data);
+
+      console.log(response);
 
       if (response?.success) {
         setOneTimeUseWallet(response?.data);
@@ -105,13 +124,13 @@ export default function MakePayment({
     setCurrentComponent('summary');
   };
 
-  const handleMilestoneNext = () => {
-    setCurrentComponent('successful');
-    setTimeout(() => {
-      handleCurrentStepChange?.((currentStepChange ?? 0) + 1);
-      onPaymentSuccess?.(); // Call the callback
-    }, 2000);
-  };
+  // const handleMilestoneNext = () => {
+  //   setCurrentComponent('successful');
+  //   setTimeout(() => {
+  //     handleCurrentStepChange?.((currentStepChange ?? 0) + 1);
+  //     onPaymentSuccess?.(); // Call the callback
+  //   }, 2000);
+  // };
 
   const handleSuccessComplete = () => {
     if (isProduct) {

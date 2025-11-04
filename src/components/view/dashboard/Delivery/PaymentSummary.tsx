@@ -34,12 +34,12 @@ export default function PaymentSummary({
 
     console.log('🌼 🔥🔥 PaymentSummary 🔥🔥 walletBalance🌼', walletBalance);
 
-    console.log(
-      '🌼 🔥🔥 PaymentSummary 🔥🔥 user🌼',
-      typeof user?.Wallet[0]?.balance,
-      typeof walletBalance,
-      Number(user?.Wallet[0]?.balance)
-    );
+    // console.log(
+    //   '🌼 🔥🔥 PaymentSummary 🔥🔥 user🌼',
+    //   typeof user?.Wallet[0]?.balance,
+    //   typeof walletBalance,
+    //   Number(user?.Wallet[0]?.balance)
+    // );
   }, [user, amount]);
 
   useEffect(() => {

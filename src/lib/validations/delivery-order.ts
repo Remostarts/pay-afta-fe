@@ -34,7 +34,6 @@ export const SellerPersonalWalletPayment = z.object({
 
 export type TSellerPersonalWalletPaymentInput = z.infer<typeof SellerPersonalWalletPayment>;
 
-
 export const DeliveryOneTimeUseWallet = z.object({
   amount: z.number().min(1, 'Amount must be at least 1'),
   deliveryId: z.string().min(1, 'Delivery ID is required'),
