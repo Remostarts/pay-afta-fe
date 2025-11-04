@@ -15,6 +15,8 @@ const AssignOrderList = ({ orders, onAssignSuccess }: any) => {
   const [orderId, setOrderId] = useState<string | null>(null);
   const [deliveryData, setDeliveryData] = useState<any>({});
 
+  console.log(orders);
+
   const visibleOrders = showAll ? orders : orders.slice(0, 6);
 
   const handleAssignClick = (orderId: string) => {
