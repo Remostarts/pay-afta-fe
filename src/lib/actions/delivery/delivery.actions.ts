@@ -7,6 +7,12 @@ import {
   DeliveryProgressStatusValidation,
   UpdateDeliveryPayload,
 } from '@/lib/validations/delivery.validation';
+import {
+  TSellerPersonalWalletPaymentInput,
+  SellerPersonalWalletPayment,
+  TDeliveryOneTimeUseWallet,
+  DeliveryOneTimeUseWallet,
+} from '@/lib/validations/delivery-order';
 
 /**
  * Get all verified logistic partners (for user/admin)
@@ -105,6 +111,7 @@ export async function getDeliveries() {
 /**
  *  Get single delivery detail with timeline (for logistic)
  */
+
 export async function getDeliveryDetail(deliveryId: string) {
   try {
     if (!deliveryId) throw new Error('Delivery ID is required');
@@ -179,5 +186,71 @@ export async function updateDeliveryProgressStatus(
   } catch (error) {
     console.error('🔥 updateDeliveryProgressStatus error:', error);
     throw new Error(getErrorMessage(error));
+  }
+}
+
+export async function makeSellerWalletDeliveryPayment(formData: TSellerPersonalWalletPaymentInput) {
+  const validation = SellerPersonalWalletPayment.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+    });
+    throw new Error(zodErrors);
+  }
+
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/pilla/delivery/payment`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 makeDeliveryWalletPayment 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+export async function sellerCreateOneTimeUseWallet(formData: TDeliveryOneTimeUseWallet) {
+  const validation = DeliveryOneTimeUseWallet.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+    });
+    throw new Error(zodErrors);
+  }
+
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/pilla/delivery/one-time-use`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 sellerCakeWalletPayment 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
   }
 }

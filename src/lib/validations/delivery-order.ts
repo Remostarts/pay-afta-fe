@@ -26,3 +26,18 @@ export const deliveryOrderStep2Schema = z.object({
 });
 
 export type DeliveryOrderStep2Input = z.infer<typeof deliveryOrderStep2Schema>;
+
+export const SellerPersonalWalletPayment = z.object({
+  deliveryId: z.string().min(1, 'Delivery ID is required'),
+  amount: z.number().min(1, 'Amount must be at least 1'),
+});
+
+export type TSellerPersonalWalletPaymentInput = z.infer<typeof SellerPersonalWalletPayment>;
+
+
+export const DeliveryOneTimeUseWallet = z.object({
+  amount: z.number().min(1, 'Amount must be at least 1'),
+  deliveryId: z.string().min(1, 'Delivery ID is required'),
+});
+
+export type TDeliveryOneTimeUseWallet = z.infer<typeof DeliveryOneTimeUseWallet>;

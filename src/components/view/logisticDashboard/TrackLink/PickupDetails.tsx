@@ -1,12 +1,14 @@
 'use client';
 
 import { useState } from 'react';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown, ChevronUp, Phone } from 'lucide-react';
 
 import ContactButtons from './ContactButtons';
+import { Button } from 'react-day-picker';
 
 interface PickupDetailsProps {
   sellerName: string;
+  phone: string;
   address: string;
   pickupDate: string;
   pickupTime: string;
@@ -14,6 +16,7 @@ interface PickupDetailsProps {
 
 export default function PickupDetails({
   sellerName,
+  phone,
   address,
   pickupDate,
   pickupTime,
@@ -50,7 +53,15 @@ export default function PickupDetails({
               {pickupDate}. {pickupTime}
             </span>
           </div>
-          <ContactButtons />
+          <div className="flex items-center justify-between border-t pt-2">
+            <span className="font-semibold text-gray-900">Contact Seller</span>
+            <div className="flex gap-2">
+              <div className="flex">
+                {phone}
+                <Phone className="size-4 text-blue-600" />
+              </div>
+            </div>
+          </div>
         </div>
       )}
     </div>

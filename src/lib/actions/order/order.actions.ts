@@ -96,40 +96,6 @@ export async function getAllOrdersByUser(page: number) {
   }
 }
 
-export async function assignDeliveryPartner(formData: TAssignDeliveryPartnerInput) {
-  // Validate with Zod
-  const validation = assignDeliveryPartnerSchema.safeParse(formData);
-
-  if (!validation.success) {
-    let zodErrors = '';
-    validation.error.issues.forEach((issue) => {
-      zodErrors += `${issue.path[0]}: ${issue.message}. `;
-    });
-    throw new Error(zodErrors);
-  }
-
-  // Get session token
-  const session = (await getServerSession(authOptions)) as any;
-  const token = session?.accessToken;
-
-  try {
-    const response = await fetch(`${process.env.BACKEND_URL}/order/assign-delivery-partner`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-      body: JSON.stringify(validation.data),
-      cache: 'no-store',
-    });
-
-    return response.json();
-  } catch (error) {
-    console.error('🌼 🔥🔥 assignDeliveryPartner 🔥🔥 error 🌼', error);
-    getErrorMessage(error);
-  }
-}
-
 export async function updateOrderProgress(formData: UpdateOrderProgressDTO, id: string) {
   const validation = updateOrderProgressSchema.safeParse(formData);
 
@@ -250,6 +216,74 @@ export async function getUnassignOrdersAndStatsByUser(page: number) {
   } catch (error) {
     console.log('🌼 🔥🔥 seller unassigned service order 🔥🔥 error🌼', error);
 
+    getErrorMessage(error);
+  }
+}
+
+export async function assignDeliveryPartner(formData: TAssignDeliveryPartnerInput) {
+  // Validate with Zod
+  const validation = assignDeliveryPartnerSchema.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors += `${issue.path[0]}: ${issue.message}. `;
+    });
+    throw new Error(zodErrors);
+  }
+
+  // Get session token
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/order/assign-delivery-partner`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error('🌼 🔥🔥 assignDeliveryPartner 🔥🔥 error 🌼', error);
+    getErrorMessage(error);
+  }
+}
+
+export async function reAssignDeliveryPartner(formData: TAssignDeliveryPartnerInput) {
+  // Validate with Zod
+  const validation = assignDeliveryPartnerSchema.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors += `${issue.path[0]}: ${issue.message}. `;
+    });
+    throw new Error(zodErrors);
+  }
+
+  // Get session token
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/order/assign-delivery-partner`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error('🌼 🔥🔥 assignDeliveryPartner 🔥🔥 error 🌼', error);
     getErrorMessage(error);
   }
 }
