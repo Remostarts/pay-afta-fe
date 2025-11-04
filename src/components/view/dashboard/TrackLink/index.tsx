@@ -43,7 +43,7 @@ export default function TrackLink() {
   const [orders, setOrders] = useState<Order[]>([]);
   console.log('🌼 🔥🔥 TrackLink 🔥🔥 orders🌼', orders);
 
-  const { session, user } = useGeneral();
+  const { session, user, loadUserData } = useGeneral();
 
   const columns: ColumnDef<Order>[] = [
     {
