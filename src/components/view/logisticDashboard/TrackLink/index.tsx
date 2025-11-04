@@ -1,85 +1,130 @@
 'use client';
 
-import { useState } from 'react';
-import { ChevronDown, ChevronUp, ArrowLeft, Phone, MessageCircle } from 'lucide-react';
-
-import DeliveryDetails from './DeliveryDetails';
-import PickupDetails from './PickupDetails';
+import { useEffect, useState } from 'react';
+import { Card, CardContent } from '@/components/ui/card';
 import OrderHeader from './OrderHeader';
 import StatusIndicator from './StatusIndicator';
 import ProgressTimeline from './ProgressTimeline';
+import PickupDetails from './PickupDetails';
+import DeliveryDetails from './DeliveryDetails';
+import {
+  getDeliveryDetail,
+  updateDeliveryProgressStatus,
+} from '@/lib/actions/delivery/delivery.actions';
+import { DeliveryStatus } from '@/types/order';
+import { UpdateDeliveryPayload } from '@/lib/validations/delivery.validation';
 
-import { cn } from '@/lib/utils';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-
-type DeliveryStatus = 'accepted' | 'picked-up' | 'in-transit' | 'delivered' | 'failed';
-
-interface OrderData {
-  id: string;
-  status: DeliveryStatus;
-  amount: string;
-  sellerName: string;
-  address: string;
-  pickupDate: string;
-  pickupTime: string;
-  deliveryAddress?: string;
-  estimatedDelivery?: string;
+interface TimelineStep {
+  step: string;
+  note?: string;
+  timestamp: string;
+  status: string;
 }
 
-// const deliverySteps = [
-//   { key: 'accepted', label: 'Accepted', step: 1 },
-//   { key: 'picked-up', label: 'Picked Up', step: 2 },
-//   { key: 'in-transit', label: 'In Transit', step: 3 },
-//   { key: 'delivered', label: 'Delivered', step: 4 },
-// ];
+interface DeliveryData {
+  id: string;
+  orderNumber: string;
+  status: DeliveryStatus;
+  currentStep: number;
+  amount: string;
+  sellerName: string;
+  sellerPhone?: string;
+  buyerName?: string;
+  buyerPhone?: string;
+  pickupAddress?: string;
+  dropoffAddress?: string;
+  estimatedDelivery?: string;
+  timeline?: TimelineStep[];
+}
 
-// const statusDisplayNames = {
-//   accepted: 'Accepted',
-//   'picked-up': 'Picked up',
-//   'in-transit': 'In transit',
-//   delivered: 'Delivered',
-//   failed: 'Failed',
-// };
+interface Props {
+  deliveryId: string;
+}
 
-// const statusColors = {
-//   accepted: 'text-orange-600',
-//   'picked-up': 'text-blue-600',
-//   'in-transit': 'text-blue-600',
-//   delivered: 'text-green-600',
-//   failed: 'text-red-600',
-// };
+// Map frontend-friendly DeliveryStatus to backend-compatible status
+const statusMap: Record<DeliveryStatus, UpdateDeliveryPayload['action']> = {
+  accepted: 'ACCEPTED',
+  'picked-up': 'PICKED_UP',
+  'in-transit': 'IN_TRANSIT',
+  delivered: 'DELIVERED',
+  failed: 'FAILED',
+};
 
-export default function OrderDeliveryTracker() {
-  const [pickupDetailsOpen, setPickupDetailsOpen] = useState(true);
-  const [deliveryDetailsOpen, setDeliveryDetailsOpen] = useState(false);
+export default function OrderDeliveryTracker({ deliveryId }: Props) {
+  const [orderData, setOrderData] = useState<DeliveryData | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // Sample order data - in real app this would come from props or API
-  const [orderData, setOrderData] = useState<OrderData>({
-    id: '01',
-    status: 'accepted',
-    amount: '₦2,000',
-    sellerName: 'Name',
-    address: 'No 24 Gimo Oluwatoisin Street, Lekki Phase one',
-    pickupDate: 'August 24th',
-    pickupTime: '5:30 pm',
-    deliveryAddress: 'No 24 Gimo Oluwatoisin Street, Lekki Phase one',
-    estimatedDelivery: 'August 25th. 2:00 pm',
-  });
+  useEffect(() => {
+    async function fetchDelivery() {
+      try {
+        setLoading(true);
+        const { data } = await getDeliveryDetail(deliveryId);
+        console.log('🌼 🔥🔥 fetchDelivery 🔥🔥 data🌼', data);
 
-  const updateOrderStatus = (newStatus: DeliveryStatus) => {
-    setOrderData((prev) => ({ ...prev, status: newStatus }));
+        const mapped: DeliveryData = {
+          id: data?.id,
+          orderNumber: data?.order?.orderNumber,
+          status: data.status.toLowerCase() as DeliveryStatus,
+          currentStep: data.currentStep,
+          amount: data.totalCost ? `₦${data?.totalCost}` : '₦0',
+          sellerName: `${data.seller.firstName} ${data.seller.lastName}`,
+          sellerPhone: data.seller.phone,
+          buyerName: data.order?.buyer
+            ? `${data.order.buyer.firstName} ${data.order.buyer.lastName}`
+            : undefined,
+          buyerPhone: data.order?.buyer?.phone,
+          pickupAddress: data.pickupAddress || '',
+          dropoffAddress: data.dropoffAddress || '',
+          estimatedDelivery: data.order?.deliveryDate
+            ? new Date(data.order.deliveryDate).toLocaleString()
+            : undefined,
+          timeline: data.timeline?.map((t: any) => ({
+            step: t.step,
+            note: t.note,
+            timestamp: new Date(t.timestamp).toLocaleString(),
+            status: t.status,
+          })),
+        };
+
+        setOrderData(mapped);
+      } catch (err) {
+        console.error(err);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    fetchDelivery();
+  }, [deliveryId]);
+
+  const handleStatusUpdate = async (newStatus: DeliveryStatus) => {
+    if (!orderData) return;
+
+    try {
+      const apiStatus = statusMap[newStatus];
+      await updateDeliveryProgressStatus({ action: apiStatus }, orderData.id);
+      setOrderData({ ...orderData, status: newStatus });
+    } catch (err) {
+      console.error(err);
+    }
   };
 
+  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (!orderData) return <div className="text-center py-10">No delivery found</div>;
+
+  // Disable button if current step < PAYMENT or status is not paid
+  const isPaymentDone = orderData.currentStep >= 1;
+
   return (
-    <div className="mx-auto w-full bg-white">
+    <div className="mx-auto w-full bg-white p-4">
       <Card className="shadow-sm">
         <CardContent className="p-6">
           <OrderHeader
-            orderId={orderData.id}
+            orderId={orderData.orderNumber}
             amount={orderData.amount}
             status={orderData.status}
-            onStatusUpdate={updateOrderStatus}
+            onStatusUpdate={handleStatusUpdate}
+            isPaymentDone={isPaymentDone}
           />
 
           <StatusIndicator status={orderData.status} />
@@ -88,13 +133,16 @@ export default function OrderDeliveryTracker() {
 
           <PickupDetails
             sellerName={orderData.sellerName}
-            address={orderData.address}
-            pickupDate={orderData.pickupDate}
-            pickupTime={orderData.pickupTime}
+            phone={orderData?.sellerPhone || ''}
+            address={orderData.pickupAddress || ''}
+            pickupDate={orderData.estimatedDelivery?.split(',')[0] || ''}
+            pickupTime={orderData.estimatedDelivery?.split(',')[1] || ''}
           />
 
           <DeliveryDetails
-            deliveryAddress={orderData.deliveryAddress}
+            buyerName={orderData?.buyerName || ''}
+            phone={orderData?.buyerPhone || ''}
+            deliveryAddress={orderData.dropoffAddress}
             estimatedDelivery={orderData.estimatedDelivery}
           />
         </CardContent>

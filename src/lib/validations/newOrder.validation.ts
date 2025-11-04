@@ -137,6 +137,7 @@ export const newOrderSchema = (
 ) => {
   // Create common schema fields
   const baseSchema = {
+    // role: z.string().min(1, 'Select an option.'),
     transactionType: z.string().min(1, 'Select an option.'),
     item1Name: z.string().min(1, 'Name is required.'),
     item1Quantity: z.string().min(1, 'Quantity is required.'),

@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 export const DeliveryProgressStatusValidation = z.enum([
   'REJECTED',
-  'APPROVED',
+  'ACCEPTED',
   'PAID',
   'PICKED_UP',
   'IN_TRANSIT',
@@ -14,3 +14,7 @@ export const DeliveryProgressStatusValidation = z.enum([
   'CANCELLED',
 ]);
 
+export interface UpdateDeliveryPayload {
+  action: z.infer<typeof DeliveryProgressStatusValidation>;
+  note?: string;
+}

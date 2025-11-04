@@ -22,7 +22,7 @@ import { Skeleton } from '@/components/ui/skeleton'; // 👈 IMPORT SKELETON
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
 import { getPillaBanks, kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
-import { SearchableSelect } from '../../dashboard/shared/SearchableSelect';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 
 // Define the Bank type outside the component for clarity
 type Bank = {
@@ -158,6 +158,7 @@ export default function SettlementKycForm() {
               render={({ field }) => (
                 <FormItem>
                   <SearchableSelect
+                    type="bank"
                     options={banks}
                     onChange={field.onChange}
                     loading={loadingBanks}

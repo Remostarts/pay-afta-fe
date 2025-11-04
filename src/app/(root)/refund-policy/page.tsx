@@ -51,7 +51,7 @@ export default function Page() {
           <h2 className="mb-3 text-2xl font-semibold">3. Refund Processing Time</h2>
           <div className="space-y-4 pl-6 text-lg leading-relaxed">
             <p>
-              3.1 Approved refunds will be processed within 7-14 business days through the original
+              3.1 ACCEPTED refunds will be processed within 7-14 business days through the original
               payment method.
             </p>
             <p>3.2 Bank processing times may vary.</p>

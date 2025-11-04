@@ -36,7 +36,7 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   const [order, setOrder] = useState<OrderDetails | null>(null);
   console.log('🌼 🔥🔥 TransactionsSummaryForProduct 🔥🔥 order🌼', order);
 
-  const { user } = useGeneral();
+  const { user, loadUserData } = useGeneral();
   const [userRole, setUserRole] = useState<UserRole>(null);
   const [progressLoading, setProgressLoading] = useState<boolean>(false);
 
@@ -87,8 +87,14 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   }, [socket]);
 
   useEffect(() => {
-    loadOrder();
-  }, [id]);
+    const init = async () => {
+      if (!user) {
+        await loadUserData();
+      }
+      await loadOrder();
+    };
+    init();
+  }, [id, user]);
 
   // Delivery handlers
   const handleAcceptDelivery = async () => {

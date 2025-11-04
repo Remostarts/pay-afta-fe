@@ -9,7 +9,7 @@ import {
   getPillaBanks,
 } from '@/lib/actions/onboarding/onboarding.actions';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { SearchableSelect } from '../shared/SearchableSelect';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { TAddSettlement, addSettlementSchema } from '@/lib/validations/setting.validation';
 
@@ -91,6 +91,7 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           {/* <ReInput label="Bank Name" name="bankName" placeholder="Enter bank name" required /> */}
           <SearchableSelect
+            type="bank"
             options={banks}
             onChange={(value) => methods.setValue('bankName', value)}
             placeholder="Select bank"

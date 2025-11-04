@@ -19,7 +19,6 @@ import {
 import { Form, FormControl, FormField, FormItem } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { useGeneral } from '@/context/generalProvider';
- 
 
 import {
   Select,
@@ -30,8 +29,8 @@ import {
 } from '@/components/ui/select';
 import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import { SearchableSelect } from '../shared/SearchableSelect';
 import { withdrawFundFromWallet } from '@/lib/actions/root/user.action';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 
 type Bank = {
   name: string;
@@ -340,6 +339,7 @@ export default function WithdrawFund() {
                   render={({ field }) => (
                     <FormItem>
                       <SearchableSelect
+                        type="bank"
                         options={banks}
                         onChange={field.onChange}
                         loading={loadingBanks}

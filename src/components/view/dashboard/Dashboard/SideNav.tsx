@@ -3,7 +3,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import Image from 'next/image';
-import { X } from 'lucide-react';
+import { X, ChevronDown } from 'lucide-react';
 import { signOut } from 'next-auth/react';
 
 import { sideNavMenu } from '../../../../constants/dashboard/shared';
@@ -68,33 +68,31 @@ export default function Sidebar({ onClose }: SidebarProps) {
 
   return (
     <>
-      <aside className="flex min-h-screen w-64 flex-col bg-white shadow-lg lg:ml-5 lg:mt-6 lg:h-[calc(100vh-100px)] lg:shadow-none">
+      <aside className="flex h-full w-64 flex-col bg-white shadow-xl lg:rounded-lg lg:shadow-md">
         {/* Mobile Header */}
-        <div className="flex items-center justify-between border-b p-3 md:p-6 lg:hidden">
-          <div>
-            <Link href="/">
-              <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
-            </Link>
-          </div>
+        <div className="flex items-center justify-between border-b border-gray-200 p-4 lg:hidden">
+          <Link href="/" onClick={onClose}>
+            <Image src="/Logo.svg" alt="PayAfta logo" width={130} height={26} className="h-auto" />
+          </Link>
           <button
             onClick={onClose}
-            className="rounded-full p-1 hover:bg-gray-100"
+            className="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-700 transition-colors"
             aria-label="Close menu"
           >
-            <X className="size-6" />
+            <X className="h-5 w-5" />
           </button>
         </div>
 
         {/* Desktop Logo */}
-        <div className="mx-auto hidden lg:block pt-6 pb-8">
+        <div className="hidden items-center justify-center border-b border-gray-100 py-6 lg:flex">
           <Link href="/">
-            <Image src="/Logo.svg" alt="Pay Afta logo" width={150} height={28} />
+            <Image src="/Logo.svg" alt="Pay Afta logo" width={140} height={28} className="h-auto" />
           </Link>
         </div>
 
-        {/* Navigation */}
-        <nav className="mx-auto flex-1 overflow-y-auto p-4">
-          <ul className="space-y-4">
+        {/* Navigation - Scrollable Area */}
+        <nav className="flex-1 overflow-y-auto px-3 py-4 lg:px-4">
+          <ul className="space-y-1.5">
             {sideNavMenu.map((nav) => {
               const isChildren = nav.isChildrean;
               const active = isActive(nav);
@@ -105,32 +103,37 @@ export default function Sidebar({ onClose }: SidebarProps) {
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value={`item-${nav.id}`} className="border-none">
                         <AccordionTrigger
-                          className={`flex items-center gap-4 rounded-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] transition-colors hover:no-underline [&[data-state=open]>svg]:rotate-180 ${
-                            active ? 'bg-[#E9F5FB] text-[#1F7EAD]' : 'text-[#999999]'
+                          className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 hover:no-underline [&[data-state=open]>svg]:rotate-180 ${
+                            active
+                              ? 'bg-[#E9F5FB] text-[#1F7EAD] shadow-sm'
+                              : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                           }`}
                         >
-                          <div className="flex items-center gap-4 flex-1">
-                            <Image
-                              src={active ? nav.imgColor : nav.imgBlack}
-                              alt={`${nav.alt}-icon`}
-                              width={24}
-                              height={24}
-                            />
-                            <span className="font-inter font-medium tracking-wider">
-                              {nav.name}
-                            </span>
+                          <div className="flex items-center gap-3 flex-1">
+                            <div className="flex h-6 w-6 items-center justify-center">
+                              <Image
+                                src={active ? nav.imgColor : nav.imgBlack}
+                                alt={`${nav.alt}-icon`}
+                                width={20}
+                                height={20}
+                                className="h-5 w-5"
+                              />
+                            </div>
+                            <span className="font-inter tracking-wide">{nav.name}</span>
                           </div>
                         </AccordionTrigger>
-                        <AccordionContent className="pb-0 pt-2">
-                          <div className="pl-11 space-y-2">
+                        <AccordionContent className="pb-0 pt-1">
+                          <div className="space-y-1 pl-9">
                             {[nav.newOrder, nav.viewOrder].map((subNav) => {
                               const subIsActive = subNav.alt === currPage;
                               return (
                                 <Link
                                   key={subNav.id}
                                   href={`/dashboard/${subNav.alt}`}
-                                  className={`flex items-center rounded-md py-2 px-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] transition-colors ${
-                                    subIsActive ? 'bg-[#E9F5FB] text-[#1F7EAD]' : 'text-[#999999]'
+                                  className={`flex items-center rounded-lg py-2 px-3 text-sm transition-all duration-200 ${
+                                    subIsActive
+                                      ? 'bg-[#E9F5FB] text-[#1F7EAD] font-medium shadow-sm'
+                                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                                   }`}
                                   onClick={() => {
                                     if (onClose && window.innerWidth < 1024) {
@@ -138,9 +141,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
                                     }
                                   }}
                                 >
-                                  <span className="font-inter tracking-wider text-sm">
-                                    {subNav.name}
-                                  </span>
+                                  <span className="font-inter tracking-wide">{subNav.name}</span>
                                 </Link>
                               );
                             })}
@@ -151,8 +152,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
                   ) : (
                     <Link
                       href={`/dashboard/${nav.alt}`}
-                      className={`flex items-center gap-4 rounded-md p-3 hover:bg-[#E9F5FB] hover:text-[#1F7EAD] transition-colors ${
-                        active ? 'bg-[#E9F5FB] text-[#1F7EAD]' : 'text-[#999999]'
+                      className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all duration-200 ${
+                        active
+                          ? 'bg-[#E9F5FB] text-[#1F7EAD] shadow-sm'
+                          : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                       }`}
                       onClick={() => {
                         if (onClose && window.innerWidth < 1024) {
@@ -160,57 +163,67 @@ export default function Sidebar({ onClose }: SidebarProps) {
                         }
                       }}
                     >
-                      <Image
-                        src={active ? nav.imgColor : nav.imgBlack}
-                        alt={`${nav.alt}-icon`}
-                        width={24}
-                        height={24}
-                      />
-                      <span className="font-inter font-medium tracking-wider">{nav.name}</span>
+                      <div className="flex h-6 w-6 items-center justify-center">
+                        <Image
+                          src={active ? nav.imgColor : nav.imgBlack}
+                          alt={`${nav.alt}-icon`}
+                          width={20}
+                          height={20}
+                          className="h-5 w-5"
+                        />
+                      </div>
+                      <span className="font-inter tracking-wide">{nav.name}</span>
                     </Link>
                   )}
                 </li>
               );
             })}
-
-            {/* User Profile Section */}
-            <li className="mt-8 pt-4 border-t border-gray-200 mb-8">
-              <div className="flex items-center justify-between px-3 gap-6">
-                <div className="flex items-center gap-4 mb-8">
-                  <Image
-                    src={user?.profileImage || '/assets/admin-dashboard/users/prof-avatar.svg'}
-                    alt="profile-img"
-                    width={40}
-                    height={40}
-                    className="rounded-full"
-                  />
-                  <span className="font-inter font-medium tracking-wider">
-                    {user?.firstName} {user?.lastName}
-                  </span>
-                </div>
-                <button
-                  onClick={handleLogoutClick}
-                  className="p-1 hover:bg-gray-100 rounded-full mb-8"
-                  aria-label="Logout"
-                >
-                  <Image
-                    src="/assets/dashboard/Dashboard/power-button.svg"
-                    alt="logout"
-                    width={25}
-                    height={25}
-                  />
-                </button>
-              </div>
-            </li>
           </ul>
         </nav>
+
+        {/* User Profile & Logout - Fixed at Bottom */}
+        <div className="border-t border-gray-200 bg-white p-4">
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex min-w-0 flex-1 items-center gap-3">
+              <div className="relative h-10 w-10 flex-shrink-0">
+                <Image
+                  src={user?.profileImage || '/assets/admin-dashboard/users/prof-avatar.svg'}
+                  alt="Profile"
+                  width={40}
+                  height={40}
+                  className="rounded-full object-cover ring-2 ring-gray-100"
+                />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="truncate text-sm font-medium text-gray-900">
+                  {user?.firstName} {user?.lastName}
+                </p>
+                <p className="truncate text-xs text-gray-500">Customer</p>
+              </div>
+            </div>
+            <button
+              onClick={handleLogoutClick}
+              className="flex-shrink-0 rounded-lg p-2 text-gray-500 hover:bg-red-50 hover:text-red-600 transition-colors"
+              aria-label="Logout"
+              title="Logout"
+            >
+              <Image
+                src="/assets/dashboard/Dashboard/power-button.svg"
+                alt="Logout"
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
+            </button>
+          </div>
+        </div>
       </aside>
 
       {/* Logout Confirmation Dialog */}
       <AlertDialog open={showLogoutDialog} onOpenChange={setShowLogoutDialog}>
         <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
-            <AlertDialogTitle>Logout Confirmation</AlertDialogTitle>
+            <AlertDialogTitle>Confirm Logout</AlertDialogTitle>
             <AlertDialogDescription>
               Are you sure you want to logout? You will need to sign in again to access your
               account.
@@ -220,7 +233,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
             <AlertDialogCancel onClick={handleLogoutCancel}>Cancel</AlertDialogCancel>
             <AlertDialogAction
               onClick={handleLogoutConfirm}
-              className="bg-red-600 hover:bg-red-700"
+              className="bg-red-600 hover:bg-red-700 text-white"
             >
               Logout
             </AlertDialogAction>

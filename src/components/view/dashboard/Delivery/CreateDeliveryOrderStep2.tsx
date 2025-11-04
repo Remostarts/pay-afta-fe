@@ -11,7 +11,7 @@ import {
   DeliveryOrderStep2Input,
   deliveryOrderStep2Schema,
 } from '@/lib/validations/delivery-order';
-import { assignDeliveryPartner } from '@/lib/actions/order/order.actions';
+import { assignDeliveryPartner, reAssignDeliveryPartner } from '@/lib/actions/order/order.actions';
 import { toast } from 'sonner';
 
 export enum DeliveryPickupType {
@@ -54,10 +54,21 @@ const CreateDeliveryOrderStep2 = ({
 
     const payload = { ...previousData, ...data, pickupType: pickupType };
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 payload🌼', payload);
-    try {
-      const res = await assignDeliveryPartner(payload);
+    console.log(payload.reAssignOrderId);
 
-      if (res.success) {
+    try {
+      let res;
+      if (payload?.reAssignOrderId) {
+        // If reAssignOrderId exists, call reAssignDeliveryPartner API
+        res = await reAssignDeliveryPartner(payload);
+      } else {
+        // Otherwise, call assignDeliveryPartner API
+        res = await assignDeliveryPartner(payload);
+      }
+
+      console.log(res);
+
+      if (res?.success) {
         console.log('Delivery request submitted:', res);
         toast.success(res.message || 'Delivery request submitted. Waiting for logistic approval.');
         onClose();
