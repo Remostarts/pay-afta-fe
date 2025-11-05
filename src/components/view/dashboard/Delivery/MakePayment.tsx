@@ -48,8 +48,8 @@ export default function MakePayment({
   >('summary');
   const [localLoading, setLocalLoading] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState('wallet');
-  const amountWithSymbol = order?.amount;
-  const totalAmount = Number(String(amountWithSymbol).replace(/[^\d]/g, '') || 0);
+const amountWithSymbol = order?.amount;
+const totalAmount = Number(String(amountWithSymbol).replace(/[^0-9.]/g, '') || 0);
   const router = useRouter();
   const [oneTimeUseWallet, setOneTimeUseWallet] = useState<TWalletData | null>(null);
 
