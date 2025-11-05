@@ -1,6 +1,5 @@
 import '../styles/globals.css';
 // import { FormProvider } from 'react-hook-form';
-export const dynamic = 'force-dynamic';
 
 import { getServerSession } from 'next-auth';
 import type { Metadata } from 'next';
@@ -39,7 +38,12 @@ export default async function RootLayout({ children }: TChildrenProps) {
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={` ${(inter.variable, playfair.variable)} `}>
+      <body
+        className={` ${(inter.variable, playfair.variable)} `}
+        cz-shortcut-listen="true"
+        data-new-gr-c-s-check-loaded="14.1260.0"
+        data-gr-ext-installed=""
+      >
         {/* <FormProvider> */}
         <Providers session={session}>
           <div>{children}</div>
