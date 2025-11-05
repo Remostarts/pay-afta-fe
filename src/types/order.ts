@@ -4,7 +4,7 @@ export type DeliveryStatus =
   | 'PICKED_UP'
   | 'IN_TRANSIT'
   | 'DELIVERED'
-  | 'FAILED'
+  | 'FAILED';
 
 export interface OrderData {
   id: string;
@@ -73,6 +73,7 @@ type Item = {
 type Delivery = {
   trackingNumber: string;
   status: string;
+  totalCost: number;
 };
 
 export type OrderDetails = {
