@@ -1,4 +1,10 @@
-export type DeliveryStatus = 'accepted' | 'picked-up' | 'in-transit' | 'delivered' | 'failed';
+export type DeliveryStatus =
+  | 'ACCEPTED'
+  | 'PAID'
+  | 'PICKED_UP'
+  | 'IN_TRANSIT'
+  | 'DELIVERED'
+  | 'FAILED'
 
 export interface OrderData {
   id: string;

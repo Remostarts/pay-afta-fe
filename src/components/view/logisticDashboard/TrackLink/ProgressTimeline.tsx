@@ -7,18 +7,24 @@ interface ProgressTimelineProps {
 }
 
 export default function ProgressTimeline({ status }: ProgressTimelineProps) {
-  const getStatusStep = (status: DeliveryStatus) => {
-    const statusMap = { accepted: 1, 'picked-up': 2, 'in-transit': 3, delivered: 4, failed: 4 };
-    return statusMap[status] || 1;
+  // Map DeliveryStatus to step numbers
+  const statusToStep: Record<DeliveryStatus, number> = {
+    ACCEPTED: 1,
+    PAID: 1,
+    PICKED_UP: 2,
+    IN_TRANSIT: 3,
+    DELIVERED: 4,
+    FAILED: 4,
   };
 
-  const currentStep = getStatusStep(status);
+  const currentStep = statusToStep[status] || 1;
 
   return (
     <div className="mb-8 flex items-center justify-between">
       {deliverySteps.map((step, index) => {
-        const isCompleted = step.step <= currentStep && status !== 'failed';
-        const isFailed = status === 'failed' && step.step === 4;
+        const isCompleted = step.step < currentStep && status !== 'FAILED';
+        const isCurrent = step.step === currentStep && status !== 'FAILED';
+        const isFailed = status === 'FAILED' && step.step === 4;
 
         return (
           <div key={step.key} className="flex flex-1 items-center">
@@ -26,25 +32,30 @@ export default function ProgressTimeline({ status }: ProgressTimelineProps) {
               <div
                 className={cn(
                   'w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-semibold',
-                  isCompleted ? 'bg-green-500' : isFailed ? 'bg-red-500' : 'bg-gray-300'
+                  isFailed
+                    ? 'bg-red-500'
+                    : isCompleted || isCurrent
+                      ? 'bg-green-500'
+                      : 'bg-gray-300'
                 )}
               >
-                {isCompleted && step.step === 1 ? '✓' : step.step}
+                {isCompleted || isFailed ? '✓' : step.step}
               </div>
               <span
                 className={cn(
                   'text-sm text-center font-medium',
-                  isCompleted ? 'text-gray-900' : 'text-gray-500'
+                  isCompleted || isCurrent ? 'text-gray-900' : 'text-gray-500'
                 )}
               >
-                {isFailed && step.step === 4 ? 'Failed' : step.label}
+                {isFailed ? 'Failed' : step.label}
               </span>
             </div>
+
             {index < deliverySteps.length - 1 && (
               <div
                 className={cn(
                   'flex-1 h-0.5 mx-4',
-                  step.step < currentStep ? 'bg-green-500' : 'bg-gray-300'
+                  step.step < currentStep && status !== 'FAILED' ? 'bg-green-500' : 'bg-gray-300'
                 )}
               />
             )}

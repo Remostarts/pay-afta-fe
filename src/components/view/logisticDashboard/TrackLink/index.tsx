@@ -13,6 +13,7 @@ import {
 } from '@/lib/actions/delivery/delivery.actions';
 import { DeliveryStatus } from '@/types/order';
 import { UpdateDeliveryPayload } from '@/lib/validations/delivery.validation';
+import { toast } from 'sonner';
 
 interface TimelineStep {
   step: string;
@@ -25,7 +26,7 @@ interface DeliveryData {
   id: string;
   orderNumber: string;
   status: DeliveryStatus;
-  currentStep: number;
+  currentStep: string;
   amount: string;
   sellerName: string;
   sellerPhone?: string;
@@ -43,11 +44,12 @@ interface Props {
 
 // Map frontend-friendly DeliveryStatus to backend-compatible status
 const statusMap: Record<DeliveryStatus, UpdateDeliveryPayload['action']> = {
-  accepted: 'ACCEPTED',
-  'picked-up': 'PICKED_UP',
-  'in-transit': 'IN_TRANSIT',
-  delivered: 'DELIVERED',
-  failed: 'FAILED',
+  ACCEPTED: 'ACCEPTED',
+  PAID: 'PAID',
+  PICKED_UP: 'PICKED_UP',
+  IN_TRANSIT: 'IN_TRANSIT',
+  DELIVERED: 'DELIVERED',
+  FAILED: 'FAILED',
 };
 
 export default function OrderDeliveryTracker({ deliveryId }: Props) {
@@ -64,7 +66,7 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
         const mapped: DeliveryData = {
           id: data?.id,
           orderNumber: data?.order?.orderNumber,
-          status: data.status.toLowerCase() as DeliveryStatus,
+          status: data.status as DeliveryStatus,
           currentStep: data.currentStep,
           amount: data.totalCost ? `₦${data?.totalCost}` : '₦0',
           sellerName: `${data.seller.firstName} ${data.seller.lastName}`,
@@ -97,15 +99,24 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
     fetchDelivery();
   }, [deliveryId]);
 
-  const handleStatusUpdate = async (newStatus: DeliveryStatus) => {
+  const handleStatusUpdate = async (newStatus: DeliveryStatus | 'RETRY') => {
     if (!orderData) return;
 
     try {
+      if (newStatus === 'RETRY') {
+        await updateDeliveryProgressStatus({ action: 'RETRY' }, orderData.id);
+        setOrderData({ ...orderData, status: 'IN_TRANSIT' });
+        toast.success('Retry initiated! Delivery is now In Transit.');
+        return;
+      }
+
       const apiStatus = statusMap[newStatus];
       await updateDeliveryProgressStatus({ action: apiStatus }, orderData.id);
       setOrderData({ ...orderData, status: newStatus });
+      toast.success(`Delivery status updated to ${newStatus.replace('_', ' ')}`);
     } catch (err) {
       console.error(err);
+      toast.error('Failed to update delivery status. Please try again.');
     }
   };
 
@@ -113,7 +124,7 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
   if (!orderData) return <div className="text-center py-10">No delivery found</div>;
 
   // Disable button if current step < PAYMENT or status is not paid
-  const isPaymentDone = orderData.currentStep >= 1;
+  const isPaymentDone = orderData.currentStep === 'PAYMENT';
 
   return (
     <div className="mx-auto w-full bg-white p-4">

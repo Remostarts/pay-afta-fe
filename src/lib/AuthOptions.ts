@@ -66,9 +66,13 @@ export const authOptions: AuthOptions = {
       const verifiedToken = jwtHelpers.verifyToken(token?.accessToken, process.env.JWT_SECRET!);
 
       // Refresh if expired
-      if (!verifiedToken) {
-        const { data } = await getNewAccessToken(token?.refreshToken);
-        token.accessToken = data?.accessToken;
+      try {
+        if (!verifiedToken) {
+          const { data } = await getNewAccessToken(token?.refreshToken);
+          token.accessToken = data?.accessToken;
+        }
+      } catch (err) {
+        console.error('Token refresh failed', err);
       }
 
       console.log('🌼 🔥 session 🔥 token after refresh 🌼', token);
@@ -83,7 +87,7 @@ export const authOptions: AuthOptions = {
   // Session
   session: {
     strategy: 'jwt',
-    maxAge: 24 * 60 * 60,  
+    maxAge: 24 * 60 * 60,
   },
 
   // JWT secret
@@ -94,7 +98,7 @@ export const authOptions: AuthOptions = {
   //   App secret
   secret: process.env.NEXTAUTH_SECRET,
 
-  // 📄 Pages
+  // Pages
   pages: {
     signIn: '/sign-in',
     signOut: '/sign-in',
