@@ -8,9 +8,8 @@ export const DeliveryProgressStatusValidation = z.enum([
   'IN_TRANSIT',
   'DELIVERED',
   'FAILED',
-  'RETURN_INITIATED',
+  'RETRY',
   'RETURNED',
-  'COMPLETED',
   'CANCELLED',
 ]);
 

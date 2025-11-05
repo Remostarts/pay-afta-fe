@@ -85,7 +85,7 @@ export async function getDeliveries() {
   try {
     const session = await getServerSession(authOptions);
     const token = (session as any)?.accessToken;
-    // if (!token) throw new Error('Unauthorized: No access token found.');
+    if (!token) throw new Error('Unauthorized: No access token found.');
 
     const response = await fetch(`${process.env.BACKEND_URL}/delivery/deliveries`, {
       method: 'GET',

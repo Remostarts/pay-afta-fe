@@ -1,4 +1,4 @@
-import type { DeliveryStep } from '@/types/order';
+import type { DeliveryStatus, DeliveryStep } from '@/types/order';
 
 export const deliverySteps: DeliveryStep[] = [
   { key: 'accepted', label: 'Accepted', step: 1 },
@@ -6,19 +6,20 @@ export const deliverySteps: DeliveryStep[] = [
   { key: 'in-transit', label: 'In Transit', step: 3 },
   { key: 'delivered', label: 'Delivered', step: 4 },
 ];
-
-export const statusDisplayNames = {
-  accepted: 'Accepted',
-  'picked-up': 'Picked up',
-  'in-transit': 'In transit',
-  delivered: 'Delivered',
-  failed: 'Failed',
+export const statusDisplayNames: Record<DeliveryStatus, string> = {
+  ACCEPTED: 'Accepted',
+  PAID: 'Paid',
+  PICKED_UP: 'Picked Up',
+  IN_TRANSIT: 'In Transit',
+  DELIVERED: 'Delivered',
+  FAILED: 'Failed',
 };
 
-export const statusColors = {
-  accepted: 'text-[#B54708] bg-[#FFFAEB]',
-  'picked-up': 'text-[#5925DC] bg-[#F4F3FF]',
-  'in-transit': 'text-[#175CD3] bg-[#EFF8FF]',
-  delivered: 'text-[#0F973C] bg-[#E8FDEF]',
-  failed: 'text-[#B42318] bg-[#FEF3F2]',
+export const statusColors: Record<DeliveryStatus, string> = {
+  ACCEPTED: 'text-[#B54708] bg-[#FFFAEB]',
+  PAID: 'text-[#175CD3] bg-[#EFF8FF]',
+  PICKED_UP: 'text-[#5925DC] bg-[#F4F3FF]',
+  IN_TRANSIT: 'text-[#175CD3] bg-[#EFF8FF]',
+  DELIVERED: 'text-[#0F973C] bg-[#E8FDEF]',
+  FAILED: 'text-[#B42318] bg-[#FEF3F2]',
 };
