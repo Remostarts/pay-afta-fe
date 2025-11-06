@@ -49,7 +49,7 @@ export default function DeliveryDetails({
           <div className="flex items-center justify-between border-t pt-2">
             <span className="font-semibold text-gray-900">Contact Buyer</span>
             <div className="flex gap-2">
-              <div className="flex">
+              <div className="flex items-center justify-center gap-3">
                 {phone}
                 <Phone className="size-4 text-blue-600" />
               </div>
