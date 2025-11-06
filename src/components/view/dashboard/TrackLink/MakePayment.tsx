@@ -262,7 +262,7 @@ export default function MakePayment({
 
   const totalAmount = Number(order?.amount);
 
-  // ✅ If payment already completed, show message instead of payment form
+  // If payment already completed, show message instead of payment form
   if (order?.status === 'PAYMENT' && order?.currentStep >= 2) {
     return (
       <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
@@ -275,7 +275,7 @@ export default function MakePayment({
     );
   }
 
-  // 🔹 If user can't take action (not buyer)
+  // If user can't take action (not buyer)
   if (!showActions) {
     return (
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
@@ -288,13 +288,13 @@ export default function MakePayment({
     );
   }
 
-  // 🧾 Open payment summary modal
+  //  Open payment summary modal
   const handleAcceptOrder = () => {
     setIsOpen(true);
     setCurrentComponent('summary');
   };
 
-  // 💳 Wallet payment handler
+  //  Wallet payment handler
   const handleWalletPayment = async () => {
     if (!order) return;
     setLocalLoading(true);
@@ -329,7 +329,7 @@ export default function MakePayment({
     }
   };
 
-  // 🏦 Bank transfer handler
+  //  Bank transfer handler
   const handleBankTransferSelect = async () => {
     if (!order) return;
     setLocalLoading(true);
@@ -354,7 +354,7 @@ export default function MakePayment({
     }
   };
 
-  // 🔁 When bank transfer confirmed
+  //  When bank transfer confirmed
   const handleBankTransferSuccess = () => {
     setCurrentComponent('successful');
     setTimeout(() => {
@@ -363,18 +363,18 @@ export default function MakePayment({
     }, 2000);
   };
 
-  // 🔙 Close / navigate back
+  //  Close / navigate back
   const handleBackToSummary = () => {
     setCurrentComponent('summary');
   };
 
-  // 🪄 Close modal
+  // Close modal
   const handleCloseDialog = () => {
     setIsOpen(false);
     setCurrentComponent('summary');
   };
 
-  // ✅ After success modal complete
+  // After success modal complete
   const handleSuccessComplete = () => {
     if (isProduct) {
       setTimeout(() => {
@@ -385,7 +385,7 @@ export default function MakePayment({
     }
   };
 
-  // 💰 Render Payment UI
+  //  Render Payment UI
   return (
     <section>
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-gray-100 p-5">

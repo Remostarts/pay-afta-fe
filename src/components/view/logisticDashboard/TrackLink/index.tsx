@@ -14,6 +14,7 @@ import {
 import { DeliveryStatus } from '@/types/order';
 import { UpdateDeliveryPayload } from '@/lib/validations/delivery.validation';
 import { toast } from 'sonner';
+import OrderTrackingSkeleton from './OrderTrackingSkeleton';
 
 interface TimelineStep {
   step: string;
@@ -120,7 +121,12 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
     }
   };
 
-  if (loading) return <div className="text-center py-10">Loading...</div>;
+  if (loading)
+    return (
+      <div className="text-center py-10">
+        <OrderTrackingSkeleton />
+      </div>
+    );
   if (!orderData) return <div className="text-center py-10">No delivery found</div>;
 
   // Disable button if current step < PAYMENT or status is not paid

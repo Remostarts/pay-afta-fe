@@ -1,6 +1,7 @@
 'use client';
 
-import { ArrowLeft } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Loader } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -21,6 +22,8 @@ export default function OrderHeader({
   onStatusUpdate,
   isPaymentDone,
 }: OrderHeaderProps) {
+  const [loadingIndex, setLoadingIndex] = useState<number | null>(null);
+
   const getNextStatusActions = () => {
     if (!isPaymentDone) {
       return [
@@ -38,7 +41,11 @@ export default function OrderHeader({
         return [
           {
             label: 'Mark as Picked Up',
-            action: () => onStatusUpdate('PICKED_UP'),
+            action: async () => {
+              setLoadingIndex(0);
+              await onStatusUpdate('PICKED_UP');
+              setLoadingIndex(null);
+            },
             variant: 'default' as const,
             disabled: false,
           },
@@ -48,7 +55,11 @@ export default function OrderHeader({
         return [
           {
             label: 'Mark as In Transit',
-            action: () => onStatusUpdate('IN_TRANSIT'),
+            action: async () => {
+              setLoadingIndex(0);
+              await onStatusUpdate('IN_TRANSIT');
+              setLoadingIndex(null);
+            },
             variant: 'default' as const,
             disabled: false,
           },
@@ -58,13 +69,21 @@ export default function OrderHeader({
         return [
           {
             label: 'Mark as Delivered',
-            action: () => onStatusUpdate('DELIVERED'),
+            action: async () => {
+              setLoadingIndex(0);
+              await onStatusUpdate('DELIVERED');
+              setLoadingIndex(null);
+            },
             variant: 'default' as const,
             disabled: false,
           },
           {
             label: 'Mark as Failed',
-            action: () => onStatusUpdate('FAILED'),
+            action: async () => {
+              setLoadingIndex(1);
+              await onStatusUpdate('FAILED');
+              setLoadingIndex(null);
+            },
             variant: 'destructive' as const,
             disabled: false,
           },
@@ -74,13 +93,21 @@ export default function OrderHeader({
         return [
           {
             label: 'Retry Delivery',
-            action: () => onStatusUpdate('RETRY'),
+            action: async () => {
+              setLoadingIndex(0);
+              await onStatusUpdate('RETRY');
+              setLoadingIndex(null);
+            },
             variant: 'retry' as const,
             disabled: false,
           },
           {
             label: 'Mark as Delivered',
-            action: () => onStatusUpdate('DELIVERED'),
+            action: async () => {
+              setLoadingIndex(1);
+              await onStatusUpdate('DELIVERED');
+              setLoadingIndex(null);
+            },
             variant: 'default' as const,
             disabled: false,
           },
@@ -125,7 +152,7 @@ export default function OrderHeader({
           <Button
             key={idx}
             onClick={action.action}
-            disabled={action.disabled}
+            disabled={action.disabled || loadingIndex === idx}
             className={cn(
               action.variant === 'default'
                 ? 'bg-[#03045B] rounded-full text-white'
@@ -136,7 +163,14 @@ export default function OrderHeader({
                     : 'bg-gray-300 rounded-full text-gray-600'
             )}
           >
-            {action.label}
+            {loadingIndex === idx ? (
+              <>
+                <Loader className="mr-2 h-4 w-4 animate-spin" />
+                Loading...
+              </>
+            ) : (
+              action.label
+            )}
           </Button>
         ))}
       </div>

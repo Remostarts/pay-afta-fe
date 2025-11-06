@@ -134,7 +134,11 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   const handleAcceptDelivery = async () => {
     try {
       const res = await updateOrderProgress(
-        { status: 'CLOSED', step: 5, notes: 'Buyer confirmed delivery.' } as UpdateOrderProgressDTO,
+        {
+          status: 'COMPLETED',
+          step: 5,
+          notes: 'Buyer confirmed delivery.',
+        } as UpdateOrderProgressDTO,
         order?.id as string
       );
       setOrder(res);
