@@ -256,3 +256,33 @@ export async function sellerCreateOneTimeUseWallet(formData: TDeliveryOneTimeUse
     getErrorMessage(error);
   }
 }
+
+/**
+ * Get delivery detail for public tracking (no auth required)
+ */
+export async function getPublicDeliveryDetail(deliveryId: string) {
+  try {
+    if (!deliveryId) throw new Error('Delivery ID is required');
+
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/delivery/public-delivery-detail/${deliveryId}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        cache: 'no-store',
+      }
+    );
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.message || 'Failed to fetch delivery detail');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('🔥 getPublicDeliveryDetail error:', error);
+    throw new Error(getErrorMessage(error));
+  }
+}

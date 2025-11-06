@@ -127,7 +127,23 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
         <OrderTrackingSkeleton />
       </div>
     );
-  if (!orderData) return <div className="text-center py-10">No delivery found</div>;
+
+  if (!orderData) {
+    return (
+      <div className="mx-auto w-full bg-white p-4">
+        <Card className="shadow-sm">
+          <CardContent className="p-6">
+            <div className="text-center py-10">
+              <h2 className="text-xl font-semibold text-gray-900 mb-2">Delivery Not Found</h2>
+              <p className="text-gray-600">
+                {'The delivery information you are looking for could not be found.'}
+              </p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Disable button if current step < PAYMENT or status is not paid
   const isPaymentDone = orderData.currentStep === 'PAYMENT';
