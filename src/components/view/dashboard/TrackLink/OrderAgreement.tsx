@@ -87,7 +87,7 @@ export default function OrderAgreement({
   };
 
   // -------------------- SELLER VIEW --------------------
-  if (userRole === 'seller' && order?.status === 'PENDING') {
+  if (userRole === 'seller' && (order?.status === 'PENDING' || order?.status === 'AGREEMENT')) {
     return (
       <div className="mt-5 rounded-xl border-2 border-gray-200 bg-[#eeeeee] p-5">
         <h2 className="mb-2 font-inter text-lg font-medium">Awaiting Approval</h2>
@@ -100,7 +100,7 @@ export default function OrderAgreement({
   }
 
   // -------------------- BUYER VIEW --------------------
-  if (userRole === 'buyer' && order?.status === 'PENDING') {
+  if (userRole === 'buyer' && (order?.status === 'PENDING' || order?.status === 'AGREEMENT')) {
     return (
       <section className="mt-5 rounded-xl border-2 border-gray-200 bg-[#E6E6E6] p-5">
         {/* Header */}
@@ -160,7 +160,7 @@ export default function OrderAgreement({
 
             <DialogContent className="sm:max-w-[425px]">
               <DialogHeader>
-                <DialogTitle>Transaction Confirmation</DialogTitle>
+                <DialogTitle>Order Confirmation</DialogTitle>
               </DialogHeader>
 
               <PaymentSuccessful label="Order Created!" />
@@ -196,6 +196,19 @@ export default function OrderAgreement({
           </ReButton>
         </div>
       </section>
+    );
+  }
+
+  // If order is in AGREEMENT status and current step is 1, show completed state
+  if (order?.status === 'AGREEMENT' && currentStepChange === 1) {
+    return (
+      <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
+        <h2 className="mb-2 font-inter text-lg font-medium text-green-800">Agreement Completed</h2>
+        <p className="font-inter text-sm text-green-700">
+          The escrow agreement has been signed and accepted by both parties. The transaction is now
+          ready to proceed to the payment stage.
+        </p>
+      </div>
     );
   }
 
