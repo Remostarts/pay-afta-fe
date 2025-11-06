@@ -1,5 +1,4 @@
-import React from 'react';
-import { UserRole } from './TransactionsSummaryForProduct';
+import type { UserRole } from './TransactionsSummaryForProduct';
 
 interface SummaryProps {
   showActions?: boolean;
@@ -22,70 +21,51 @@ export default function Summary({
   quantity,
   price,
 }: SummaryProps) {
-  if (!showActions) {
-    return (
-      <div className="rounded-lg bg-white lg:w-4/5">
-        <h2 className="mb-4 font-inter text-2xl font-bold">Transaction Summary</h2>
-        <div className="grid gap-4">
-          <div>
-            <p className="font-inter text-gray-500">Name</p>
-            <p className="font-inter">{name}</p>
-          </div>
-          <div>
-            <p className="font-inter text-gray-500">Payment Method</p>
-            <p className="font-inter">{paymentMethod}</p>
-          </div>
-          <div>
-            <p className="font-inter text-gray-500">Delivery Date</p>
-            <p className="font-inter">{deliveryDate}</p>
-          </div>
-          <p className="font-inter text-gray-500">Item</p>
-          <div className="rounded-md bg-gray-100 px-5 pb-3">
-            <div>
-              <p className="font-inter">{item}</p>
-            </div>
-            <div className="grid grid-cols-2">
-              <p className="font-inter text-gray-500">Quantity</p>
-              <p className="font-inter">{quantity}</p>
-            </div>
-            <div className="grid grid-cols-2">
-              <p className="font-inter text-gray-500">Price</p>
-              <p className="font-inter">₦{price.toLocaleString()}</p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-lg bg-white lg:w-4/5">
-      <h2 className="mb-4 font-inter text-2xl font-bold">Transaction Summary</h2>
-      <div className="grid gap-4">
-        <div>
-          <p className="font-inter text-gray-500">Name</p>
-          <p className="font-inter">{name}</p>
-        </div>
-        <div>
-          <p className="font-inter text-gray-500">Payment Method</p>
-          <p className="font-inter">{paymentMethod}</p>
-        </div>
-        <div>
-          <p className="font-inter text-gray-500">Delivery Date</p>
-          <p className="font-inter">{deliveryDate}</p>
-        </div>
-        <p className="font-inter text-gray-500">Item</p>
-        <div className="rounded-md bg-gray-100 px-5 pb-3">
+    <div className="w-full rounded-2xl bg-card shadow-sm border border-border p-8">
+      <h2 className="mb-8 text-3xl font-bold text-foreground tracking-tight">
+        Transaction Summary
+      </h2>
+
+      <div className="space-y-6">
+        <div className="grid grid-cols-1 gap-4 pb-6 border-b border-border">
           <div>
-            <p className="font-inter">{item}</p>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Name</p>
+            <p className="text-lg font-semibold text-foreground">{name}</p>
           </div>
-          <div className="grid grid-cols-2">
-            <p className="font-inter text-gray-500">Quantity</p>
-            <p className="font-inter">{quantity}</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 pb-6 border-b border-border">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Payment Method</p>
+            <p className="text-lg font-semibold text-foreground">{paymentMethod}</p>
           </div>
-          <div className="grid grid-cols-2">
-            <p className="font-inter text-gray-500">Price</p>
-            <p className="font-inter">₦{price.toLocaleString()}</p>
+        </div>
+
+        <div className="grid grid-cols-1 gap-4 pb-6 border-b border-border">
+          <div>
+            <p className="text-sm font-medium text-muted-foreground mb-2">Delivery Date</p>
+            <p className="text-lg font-semibold text-foreground">{deliveryDate}</p>
+          </div>
+        </div>
+
+        <div>
+          <p className="text-sm font-medium text-muted-foreground mb-4">Item</p>
+          <div className="rounded-lg bg-secondary/50 p-6 border border-border/50">
+            <div className="mb-6">
+              <p className="text-base font-medium text-foreground">{item}</p>
+            </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center justify-between py-3 border-b border-border/30">
+                <p className="text-sm font-medium text-muted-foreground">Quantity</p>
+                <p className="text-sm font-semibold text-foreground">{quantity}</p>
+              </div>
+              <div className="flex items-center justify-between pt-2">
+                <p className="text-sm font-medium text-muted-foreground">Price</p>
+                <p className="text-lg font-bold text-primary">₦{price.toLocaleString()}</p>
+              </div>
+            </div>
           </div>
         </div>
       </div>
