@@ -146,7 +146,7 @@ export default function OrderDeliveryTracker({ deliveryId }: Props) {
   }
 
   // Disable button if current step < PAYMENT or status is not paid
-  const isPaymentDone = orderData.currentStep === 'PAYMENT';
+  const isPaymentDone = orderData.currentStep !== 'PENDING';
 
   return (
     <div className="mx-auto w-full bg-white p-4">

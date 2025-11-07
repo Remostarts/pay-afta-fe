@@ -125,13 +125,15 @@ export default function Delivery() {
 
         if (trackingNumber) {
           return (
-            <Button
-              size="sm"
-              className="bg-[#1D4ED8] text-white hover:bg-[#153EA1]"
-              onClick={() => console.log(`View details for ${delivery.id}`)}
+            <a
+              href={`/tracking/order/${delivery.trackingNumber}`}
+              target="_blank"
+              rel="noopener noreferrer"
             >
-              Track Order
-            </Button>
+              <Button size="sm" className="bg-[#1D4ED8] text-white hover:bg-[#153EA1]">
+                Track Order
+              </Button>
+            </a>
           );
         }
 

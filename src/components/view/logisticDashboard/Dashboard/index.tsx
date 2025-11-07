@@ -7,6 +7,7 @@ import TopCards from './TopCards';
 import DeliveryAnalysis from './DeliveryAnalysis';
 import AwaitingConfirmation from './AwaitingConfirmation';
 import { getLogisticDashboardDeliveries } from '@/lib/actions/delivery/delivery.actions';
+import DashboardSkeleton from './DashboardSkeleton';
 
 export default function Dashboard() {
   const [data, setData] = useState<any>(null);
@@ -35,8 +36,8 @@ export default function Dashboard() {
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center text-gray-600">
-        Loading dashboard...
+      <div>
+        <DashboardSkeleton />
       </div>
     );
   }

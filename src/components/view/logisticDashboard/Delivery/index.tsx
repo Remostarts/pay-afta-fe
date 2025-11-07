@@ -47,7 +47,7 @@ const columns: ColumnDef<Payment>[] = [
             'bg-[#EFF8FF] text-[#175CD3] text-center py-1 text-sm font-medium font-inter rounded-full',
           Failed:
             'bg-[#FEF3F2] text-[#B42318] text-center py-1 text-sm font-medium font-inter rounded-full',
-        }[status] || '';
+        }[status] || 'bg-gray-100 text-gray-600 text-center py-1 text-sm font-medium rounded-full';
 
       return <div className={styles}>{status}</div>;
       //   console.log(status);
