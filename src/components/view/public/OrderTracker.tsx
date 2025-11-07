@@ -20,7 +20,7 @@ interface TimelineStep {
 
 interface DeliveryData {
   id: string;
-  orderNumber: string;
+  trackingNumber: string;
   status: DeliveryStatus;
   currentStep: string;
   amount: string;
@@ -35,10 +35,10 @@ interface DeliveryData {
 }
 
 interface Props {
-  deliveryId: string;
+  trackingId: string;
 }
 
-export default function OrderTracker({ deliveryId }: Props) {
+export default function OrderTracker({ trackingId }: Props) {
   const [orderData, setOrderData] = useState<DeliveryData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -52,16 +52,18 @@ export default function OrderTracker({ deliveryId }: Props) {
         let data;
 
         // Check if this is a mock delivery ID first
-        if (isMockDelivery(deliveryId)) {
-          data = getMockDeliveryById(deliveryId);
+        if (isMockDelivery(trackingId)) {
+          data = getMockDeliveryById(trackingId);
         } else {
           // Try real API call
           try {
-            const response = await getPublicDeliveryDetail(deliveryId);
+            const response = await getPublicDeliveryDetail(trackingId);
+            console.log('🌼 🔥🔥 fetchDelivery 🔥🔥 response🌼', response);
+
             data = response.data;
           } catch (apiError) {
             // If API fails and it's not a mock, return error
-            if (!isMockDelivery(deliveryId)) {
+            if (!isMockDelivery(trackingId)) {
               throw apiError;
             }
             // If it's not a mock but API failed, we could show a message
@@ -72,10 +74,10 @@ export default function OrderTracker({ deliveryId }: Props) {
         if (data) {
           const mapped: DeliveryData = {
             id: data.id,
-            orderNumber: data.order?.orderNumber,
+            trackingNumber: data.trackingNumber,
             status: data.status as DeliveryStatus,
             currentStep: data.currentStep,
-            amount: data.totalCost ? `₦${data.totalCost}` : '₦0',
+            amount: data.order?.amount ? `₦${data.order?.amount}` : '₦0',
             sellerName: `${data.seller.firstName} ${data.seller.lastName}`,
             sellerPhone: data.seller.phone,
             buyerName: data.order?.buyer
@@ -108,7 +110,7 @@ export default function OrderTracker({ deliveryId }: Props) {
     }
 
     fetchDelivery();
-  }, [deliveryId]);
+  }, [trackingId]);
 
   if (loading) {
     return (
@@ -142,7 +144,9 @@ export default function OrderTracker({ deliveryId }: Props) {
           {/* Simplified Header - No action buttons */}
           <div className="mb-6 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <h1 className="text-xl font-semibold">Order ID {orderData.orderNumber || 314354}</h1>
+              <h1 className="text-xl font-semibold">
+                Tracking Number: {orderData.trackingNumber || 314354}
+              </h1>
             </div>
             <div className="flex items-center gap-4">
               <span className="text-xl font-semibold">{orderData.amount || '00'}</span>

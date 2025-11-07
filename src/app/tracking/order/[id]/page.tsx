@@ -8,11 +8,11 @@ import { useParams, useSearchParams } from 'next/navigation';
 export default function OrderTrackingPage() {
   const params = useParams();
   const searchParams = useSearchParams();
-  const deliveryId = params.id as string;
+  const trackingId = params.id as string;
   const type = searchParams.get('type') || 'delivery';
 
   // Validate that we have a delivery ID
-  if (!deliveryId) {
+  if (!trackingId) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -27,7 +27,7 @@ export default function OrderTrackingPage() {
   return (
     <div className="min-h-screen bg-gray-50 py-8">
       <div className="container mx-auto px-4">
-        <OrderTracker deliveryId={deliveryId} />
+        <OrderTracker trackingId={trackingId} />
       </div>
     </div>
   );

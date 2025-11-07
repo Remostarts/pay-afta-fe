@@ -46,16 +46,16 @@ export async function getAllDeliverPartners() {
 }
 
 /**
- * Get all requested deliveries for logistic (status = REQUESTED)
+ * Get all LogisticDashboard deliveries for logistic (status = LogisticDashboard)
  */
 
-export async function getRequestedDeliveries() {
+export async function getLogisticDashboardDeliveries() {
   try {
     const session = await getServerSession(authOptions);
     const token = (session as any)?.accessToken;
     if (!token) throw new Error('Unauthorized: No access token found.');
 
-    const response = await fetch(`${process.env.BACKEND_URL}/delivery/requested-deliveries`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/delivery/logistic-dashboard`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
@@ -66,12 +66,12 @@ export async function getRequestedDeliveries() {
 
     if (!response.ok) {
       const error = await response.json();
-      throw new Error(error.message || 'Failed to fetch requested deliveries');
+      throw new Error(error.message || 'Failed to fetch logistic-dashboard deliveries');
     }
 
     return await response.json();
   } catch (error) {
-    console.error('🔥 getRequestedDeliveries error:', error);
+    console.error('🔥 getLogisticDashboardDeliveries error:', error);
     throw new Error(getErrorMessage(error));
   }
 }
@@ -260,20 +260,17 @@ export async function sellerCreateOneTimeUseWallet(formData: TDeliveryOneTimeUse
 /**
  * Get delivery detail for public tracking (no auth required)
  */
-export async function getPublicDeliveryDetail(deliveryId: string) {
+export async function getPublicDeliveryDetail(trackingId: string) {
   try {
-    if (!deliveryId) throw new Error('Delivery ID is required');
+    if (!trackingId) throw new Error('Delivery ID is required');
 
-    const response = await fetch(
-      `${process.env.BACKEND_URL}/delivery/public-delivery-detail/${deliveryId}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        cache: 'no-store',
-      }
-    );
+    const response = await fetch(`${process.env.BACKEND_URL}/delivery/public-track/${trackingId}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    });
 
     if (!response.ok) {
       const error = await response.json();
