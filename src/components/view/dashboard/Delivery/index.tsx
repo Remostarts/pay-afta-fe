@@ -130,7 +130,9 @@ export default function Delivery() {
               className="bg-[#1D4ED8] text-white hover:bg-[#153EA1]"
               onClick={() => console.log(`View details for ${delivery.id}`)}
             >
-              Track Order
+              <a href={`/tracking/order/${delivery.id}`} target="_blank" rel="noopener noreferrer">
+                Track Order
+              </a>
             </Button>
           );
         }

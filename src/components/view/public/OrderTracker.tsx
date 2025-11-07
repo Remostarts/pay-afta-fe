@@ -4,12 +4,12 @@ import { useEffect, useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import OrderTrackingSkeleton from '../logisticDashboard/TrackLink/OrderTrackingSkeleton';
 import StatusIndicator from '../logisticDashboard/TrackLink/StatusIndicator';
-import ProgressTimeline from '../logisticDashboard/TrackLink/ProgressTimeline';
 import PickupDetails from '../logisticDashboard/TrackLink/PickupDetails';
 import DeliveryDetails from '../logisticDashboard/TrackLink/DeliveryDetails';
 import { getPublicDeliveryDetail } from '@/lib/actions/delivery/delivery.actions';
 import { getMockDeliveryById, isMockDelivery } from '@/lib/mock-data/delivery-tracking';
 import { DeliveryStatus } from '@/types/order';
+import ProgressTimeline from './ProgressTimeline';
 
 interface TimelineStep {
   step: string;
@@ -112,6 +112,8 @@ export default function OrderTracker({ trackingId }: Props) {
     fetchDelivery();
   }, [trackingId]);
 
+  console.log(orderData);
+
   if (loading) {
     return (
       <div className="text-center py-10">
@@ -155,7 +157,7 @@ export default function OrderTracker({ trackingId }: Props) {
 
           <StatusIndicator status={orderData.status || 'Paid'} />
 
-          <ProgressTimeline status={orderData.status || 'ACCEPTED'} />
+          <ProgressTimeline timeline={orderData.timeline || []} />
 
           <PickupDetails
             sellerName={orderData.sellerName || 'anurag'}
@@ -167,7 +169,7 @@ export default function OrderTracker({ trackingId }: Props) {
 
           <DeliveryDetails
             buyerName={orderData?.buyerName || 'N/A'}
-            phone={orderData?.buyerPhone || '354646165464'}
+            phone={orderData?.buyerPhone}
             deliveryAddress={orderData.dropoffAddress}
             estimatedDelivery={orderData.estimatedDelivery}
           />
