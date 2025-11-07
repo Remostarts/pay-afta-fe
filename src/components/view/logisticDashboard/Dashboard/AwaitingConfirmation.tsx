@@ -1,60 +1,53 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
-import {
-  getRequestedDeliveries,
-  updateDeliveryProgressStatus,
-} from '@/lib/actions/delivery/delivery.actions';
+import { updateDeliveryProgressStatus } from '@/lib/actions/delivery/delivery.actions';
 import { toast } from 'sonner';
 
-const AwaitingConfirmation = () => {
-  const [orders, setOrders] = useState<any[]>([]);
+interface Order {
+  id: string;
+  totalCost: number;
+  pickupAddress: string;
+  dropoffAddress: string;
+  createdAt?: string;
+}
+
+interface AwaitingConfirmationProps {
+  initialOrders: Order[];
+}
+
+export default function AwaitingConfirmation({ initialOrders }: AwaitingConfirmationProps) {
+  const [orders, setOrders] = useState<Order[]>(initialOrders);
   const [loadingAction, setLoadingAction] = useState<{
     [key: string]: 'ACCEPTED' | 'REJECTED' | null;
   }>({});
 
-  useEffect(() => {
-    async function fetchOrders() {
-      try {
-        const response = await getRequestedDeliveries();
-        setOrders(response?.data || []);
-      } catch (error) {
-        console.error(error);
-        toast.error('Failed to load deliveries.');
-      }
-    }
-    fetchOrders();
-  }, []);
-
   const handleAction = async (deliveryId: string, action: 'ACCEPTED' | 'REJECTED') => {
-    const confirmMessage =
-      action === 'ACCEPTED'
-        ? 'Are you sure you want to APPROVE this delivery?'
-        : 'Are you sure you want to REJECT this delivery?';
-    if (!window.confirm(confirmMessage)) return;
+    if (!window.confirm(`Are you sure you want to ${action} this delivery?`)) return;
 
     setLoadingAction((prev) => ({ ...prev, [deliveryId]: action }));
 
     try {
       await updateDeliveryProgressStatus({ action }, deliveryId);
 
-      // Remove order after success
       setOrders((prev) => prev.filter((o) => o.id !== deliveryId));
       toast.success(`Delivery ${action === 'ACCEPTED' ? 'accepted' : 'rejected'} successfully.`);
     } catch (error: any) {
-      console.error('Action failed:', error);
-      toast.error(error?.message || 'Something went wrong. Try again.');
+      console.error(error);
+      toast.error(error?.message || 'Something went wrong.');
     } finally {
       setLoadingAction((prev) => ({ ...prev, [deliveryId]: null }));
     }
   };
 
+  if (orders.length === 0) return <div>No deliveries awaiting confirmation.</div>;
+
   return (
     <div className="rounded-xl bg-white p-6 shadow-sm">
       <div className="mb-4 flex items-center justify-between">
         <div className="flex items-center gap-1 text-lg font-semibold">Awaiting Confirmation</div>
-        <Link href="" className="text-sm font-medium text-[#0a0a3c]">
+        <Link href="#" className="text-sm font-medium text-[#0a0a3c]">
           VIEW ALL
         </Link>
       </div>
@@ -67,7 +60,7 @@ const AwaitingConfirmation = () => {
           >
             <div className="flex items-center justify-between">
               <div className="mb-1 text-sm font-semibold text-[#7d7dfb]">Order ID {order.id}</div>
-              <div className="mb-2 text-lg font-bold text-[#0a0a3c]">{order.totalCost}</div>
+              <div className="mb-2 text-lg font-bold text-[#0a0a3c]"> ₦{order.totalCost}</div>
             </div>
             <div className="mb-1 text-sm">
               <b>Pickup:</b> {order.pickupAddress}
@@ -97,11 +90,7 @@ const AwaitingConfirmation = () => {
             </div>
           </div>
         ))}
-
-        {orders.length === 0 && <div>No deliveries awaiting confirmation.</div>}
       </div>
     </div>
   );
-};
-
-export default AwaitingConfirmation;
+}

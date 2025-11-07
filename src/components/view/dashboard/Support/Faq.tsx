@@ -1,51 +1,60 @@
 'use client';
-
-import Image from 'next/image';
 import { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
-
+import { AnimatePresence, motion } from 'framer-motion';
 import { Faq } from '@/constants/dashboard/support/faq';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 
 export default function Faqs() {
-  const [activeButton, setActiveButton] = useState(1);
-  const [expandedQuestion, setExpandedQuestion] = useState<number | null>(null);
-  // console.log(activeButton);
+  const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
+
+  const toggleQuestion = (index: number) =>
+    setExpandedIndex(expandedIndex === index ? null : index);
 
   return (
-    <>
-      <div className="relative mt-8 w-full rounded-md border border-gray-200 p-3 font-inter md:mt-20">
-        {/* Container with responsive padding and layout */}
-        <div className=" md:px-2">
-          {/* Header Section */}
-          {/* <h1 className="text-gray text-center font-inter text-4xl font-semibold ">
-            Frequently Asked Questions
-          </h1> */}
-          <ReHeading heading="Frequently Asked Questions" size={'2xl'} />
+    <section className="relative mt-8 w-full rounded-md border border-gray-200 bg-white p-4 sm:p-5 font-inter md:mt-20">
+      <div className="md:px-2">
+        <ReHeading heading="Frequently Asked Questions" size="2xl" className="text-gray-900" />
 
-          {/* Questions */}
-          <div className="mt-6 space-y-4">
-            {Faq?.map((questionItem, index) => (
-              <div key={questionItem?.id} className="border-black-100 pb-4">
+        <div className="mt-6 space-y-4">
+          {Faq.map((faqItem, index) => {
+            const isOpen = expandedIndex === index;
+
+            return (
+              <div key={faqItem.id} className="border-b border-gray-100 last:border-none pb-3">
                 <button
-                  className="flex w-full items-center justify-between px-1 text-left"
-                  onClick={() => setExpandedQuestion(expandedQuestion === index ? null : index)}
+                  onClick={() => toggleQuestion(index)}
+                  className="flex w-full items-center justify-between text-left focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 rounded-md px-1 py-1 transition-colors"
+                  aria-expanded={isOpen}
                 >
-                  <span className=" pr-8 text-sm font-medium md:text-base">
-                    {questionItem?.question}
+                  <span className="text-sm sm:text-base font-medium text-gray-800 pr-4">
+                    {faqItem.question}
                   </span>
-                  <ChevronDown />
+                  <ChevronDown
+                    className={`transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+                    size={18}
+                  />
                 </button>
-                {expandedQuestion === index && (
-                  <p className="mt-2 px-1 text-sm text-gray-600 md:text-base">
-                    {questionItem?.answer}
-                  </p>
-                )}
+
+                <AnimatePresence>
+                  {isOpen && (
+                    <motion.p
+                      key="answer"
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.25 }}
+                      className="mt-2 text-sm sm:text-base text-gray-600 pl-1 leading-relaxed"
+                    >
+                      {faqItem.answer}
+                    </motion.p>
+                  )}
+                </AnimatePresence>
               </div>
-            ))}
-          </div>
+            );
+          })}
         </div>
       </div>
-    </>
+    </section>
   );
 }

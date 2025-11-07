@@ -13,6 +13,8 @@ export default function OrderShipping({ userRole, order }: OrderShippingProps) {
   // Buyer-friendly message
   const isBuyer = userRole === 'buyer';
   const trackingNumber = order?.delivery?.trackingNumber;
+  // const orderId = order?.id;
+  // console.log(order?.id);
 
   return (
     <section>
@@ -24,7 +26,7 @@ export default function OrderShipping({ userRole, order }: OrderShippingProps) {
               Great news! Your order is on the way. You can track it in real-time{' '}
               {trackingNumber ? (
                 <a
-                  href={`https://www.getpayafta.com/tracking/${trackingNumber}`}
+                  href={`/tracking/order/${trackingNumber}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-blue-600 underline"
