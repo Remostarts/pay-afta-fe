@@ -1,5 +1,16 @@
 import { z } from 'zod';
 
+// Identity Verification schema
+export const identityVerificationSchema = z.object({
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  gender: z.string().min(1, 'Gender is required'),
+  dateOfBirth: z.coerce.date(),
+  bvn: z.string().min(1, 'BNV is required'),
+});
+
+export type TidentityVerification = z.infer<typeof identityVerificationSchema>;
+
 // personal kyc schema
 export const personalKycSchema = z.object({
   nin: z.string().min(1, 'NIN is required'),
@@ -15,6 +26,24 @@ export const personalKycSchema = z.object({
 });
 
 export type TPersonalKyc = z.infer<typeof personalKycSchema>;
+
+// username schema
+export const usernameSchema = z.object({
+  username: z
+    .string()
+    .min(3, 'Username must be at least 3 characters')
+    .max(30, 'Username must be at most 30 characters')
+    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
+});
+
+export type TUsername = z.infer<typeof usernameSchema>;
+
+// NIN Verification Form
+export const ninVerificationSchema = z.object({
+  nin: z.string().min(1, 'NIN is required'),
+});
+
+export type TNinVerificationSchema = z.infer<typeof ninVerificationSchema>;
 
 // settlement kyc schema
 export const settlementKycSchema = z.object({
