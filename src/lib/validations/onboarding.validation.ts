@@ -6,7 +6,14 @@ export const identityVerificationSchema = z.object({
   lastName: z.string().min(1, 'Last name is required'),
   gender: z.string().min(1, 'Gender is required'),
   dateOfBirth: z.coerce.date(),
-  bvn: z.string().min(1, 'BNV is required'),
+  phone: z
+    .string()
+    .min(9, 'Phone Number is required')
+    .regex(/^\d+$/, 'Phone number must contain only numbers'),
+  bvn: z
+    .string()
+    .length(11, 'BVN must be exactly 11 digits')
+    .regex(/^\d+$/, 'BVN must contain only numbers'),
 });
 
 export type TidentityVerification = z.infer<typeof identityVerificationSchema>;
@@ -50,7 +57,6 @@ export const settlementKycSchema = z.object({
   bankName: z.string().min(1, 'Bank name is required'),
   bankCode: z.string().min(3, 'Bank code is required').optional().nullable(),
   accountNumber: z.string().length(10, 'account number must be 10 digit account number'),
-  bvn: z.string().length(11, 'BVN must be 11 digits').optional(),
   accountHolder: z.string().optional(),
   isDefaultPayout: z.boolean().default(false).optional(),
 });

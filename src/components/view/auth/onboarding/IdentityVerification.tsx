@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReHeading } from '@/components/re-ui/ReHeading';
@@ -15,12 +15,15 @@ import {
 } from '@/lib/validations/onboarding.validation';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { useGeneral } from '@/context/generalProvider';
+import { kycIdentityVerification } from '@/lib/actions/onboarding/onboarding.actions';
+import { toast } from 'sonner';
 
 type defaultVal = {
   firstName: string;
   lastName: string;
   gender: string;
   dateOfBirth: Date;
+  phone: string;
   bvn: string;
 };
 
@@ -29,6 +32,7 @@ const defaultValues: defaultVal = {
   lastName: '',
   gender: '',
   dateOfBirth: new Date(),
+  phone: '',
   bvn: '',
 };
 
@@ -39,7 +43,7 @@ const genderOptions = [
 ];
 
 export default function IdentityVerification() {
-  const route = useRouter();
+  const router = useRouter();
   const form = useForm<TidentityVerification>({
     resolver: zodResolver(identityVerificationSchema),
     defaultValues,
@@ -51,12 +55,33 @@ export default function IdentityVerification() {
   const [isUsernameValid, setIsUsernameValid] = useState(false);
   const [usernameValidityLoading, setUsernameValidityLoading] = useState(false);
   const { loadUserData } = useGeneral();
+  const [kycResult, setKycResult] = useState<{
+    success: boolean;
+    message: string;
+  } | null>(null);
 
   const [open, setOpen] = useState(false);
   const [date, setDate] = useState<Date | undefined>(undefined);
 
   const onSubmit = async (data: TidentityVerification) => {
-    console.log(data);
+    try {
+      const result = await kycIdentityVerification(data);
+
+      if (result.success) {
+        toast.success(result.message || 'Identity verified successfully!');
+        setKycResult({ success: true, message: result.message });
+        loadUserData();
+        router.push('/dashboard');
+      } else {
+        toast.error(result.message || 'Identity verification failed.');
+        setKycResult({ success: false, message: result.message });
+      }
+    } catch (err: any) {
+      console.error(err);
+      const msg = err?.message || 'Something went wrong';
+      toast.error(msg);
+      setKycResult({ success: false, message: msg });
+    }
   };
 
   return (
@@ -89,8 +114,23 @@ export default function IdentityVerification() {
             </div>
           </div>
           <div>
+            <ReHeading heading="Enter Phone Number" size={'base'} />
+            <ReInput name="phone" />
+          </div>
+          <div>
             <ReHeading heading="Enter BVN" size={'base'} />
             <ReInput name="bvn" />
+          </div>
+          <div>
+            {kycResult && (
+              <p
+                className={`mt-3 font-medium ${
+                  kycResult.success ? 'text-green-600' : 'text-red-600'
+                }`}
+              >
+                {kycResult.message}
+              </p>
+            )}
           </div>
           <div className="mt-5 flex justify-end">
             {/* <DialogClose asChild> */}
