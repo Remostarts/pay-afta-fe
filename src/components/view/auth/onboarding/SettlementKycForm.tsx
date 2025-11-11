@@ -94,7 +94,7 @@ export default function SettlementKycForm() {
   // Handle Form Submission
   async function onSubmit(data: TSettlementKyc) {
     try {
-      console.log('hello');
+      console.log(data);
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update kyc bank information');
     }

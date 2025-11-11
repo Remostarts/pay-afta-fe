@@ -11,7 +11,7 @@ type PaymentConfirmationProps = {
   bankName: string;
   accountNumber: string;
   bankCode: string;
-  onAuthorize: (pin: string) => Promise<boolean>; // 🔹 new prop
+  onAuthorize: (pin: string) => Promise<boolean>;  
 };
 
 const PaymentConfirmation = ({

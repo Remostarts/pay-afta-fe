@@ -18,21 +18,12 @@ export const identityVerificationSchema = z.object({
 
 export type TidentityVerification = z.infer<typeof identityVerificationSchema>;
 
-// personal kyc schema
-export const personalKycSchema = z.object({
+// NIN Verification Form
+export const ninVerificationSchema = z.object({
   nin: z.string().min(1, 'NIN is required'),
-  gender: z.string().min(1, 'Gender is required'),
-  dateOfBirth: z.coerce.date(),
-  username: z
-    .string()
-    .min(3, 'Username must be at least 3 characters')
-    .max(30, 'Username must be at most 30 characters')
-    .regex(/^[a-zA-Z0-9_]+$/, 'Username can only contain letters, numbers, and underscores'),
-  instaUsername: z.string().optional(),
-  facebookUsername: z.string().optional(),
 });
 
-export type TPersonalKyc = z.infer<typeof personalKycSchema>;
+export type TNinVerificationSchema = z.infer<typeof ninVerificationSchema>;
 
 // username schema
 export const usernameSchema = z.object({
@@ -44,13 +35,6 @@ export const usernameSchema = z.object({
 });
 
 export type TUsername = z.infer<typeof usernameSchema>;
-
-// NIN Verification Form
-export const ninVerificationSchema = z.object({
-  nin: z.string().min(1, 'NIN is required'),
-});
-
-export type TNinVerificationSchema = z.infer<typeof ninVerificationSchema>;
 
 // settlement kyc schema
 export const settlementKycSchema = z.object({
@@ -66,11 +50,11 @@ export type TSettlementKyc = z.infer<typeof settlementKycSchema>;
 // transactionPin schema
 export const transactionPinSchema = z
   .object({
-    verificationCode: z.string().min(4, 'Verification Code must be in 4 digit'),
+    verificationCode: z.string().min(4, 'Transaction pin must be in 4 digit'),
     confirmVerificationCode: z.string(),
   })
   .refine((data) => data.verificationCode === data.confirmVerificationCode, {
-    message: "Verification code don't match",
+    message: "Transaction pin don't match",
     path: ['confirmVerificationCode'],
   });
 

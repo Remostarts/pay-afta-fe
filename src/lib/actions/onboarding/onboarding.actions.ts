@@ -6,13 +6,15 @@ import { authOptions } from '@/lib/AuthOptions';
 import { getErrorMessage } from '@/lib/responseError';
 import {
   identityVerificationSchema,
-  personalKycSchema,
+  ninVerificationSchema,
   PinFormData,
   pinSchema,
   settlementKycSchema,
   TidentityVerification,
-  TPersonalKyc,
+  TNinVerificationSchema,
   TSettlementKyc,
+  TUsername,
+  usernameSchema,
 } from '@/lib/validations/onboarding.validation';
 
 console.log(process.env.BACKEND_URL);
@@ -45,8 +47,8 @@ export async function kycIdentityVerification(formData: TidentityVerification) {
   }
 }
 
-export async function kycPersonalInfo(formData: TPersonalKyc) {
-  const validation = personalKycSchema.safeParse(formData);
+export async function addKycNinVerification(formData: TNinVerificationSchema) {
+  const validation = ninVerificationSchema.safeParse(formData);
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;
   if (!validation.success) {
@@ -58,7 +60,7 @@ export async function kycPersonalInfo(formData: TPersonalKyc) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/user/kyc-personal-info`, {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/kyc-nin-verification`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: token },
       body: JSON.stringify({ ...validation.data }),
@@ -67,7 +69,35 @@ export async function kycPersonalInfo(formData: TPersonalKyc) {
 
     return response.json();
   } catch (error) {
-    console.log('🌼 🔥🔥 kycPersonalInfo 🔥🔥 error🌼', error);
+    console.log('🌼 🔥🔥 addKycNinVerification 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+export async function setUsername(formData: TUsername) {
+  const validation = usernameSchema.safeParse(formData);
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+    });
+    throw new Error(zodErrors);
+  }
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/set-username`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: token },
+      body: JSON.stringify({ ...validation.data }),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 addUsername 🔥🔥 error🌼', error);
 
     getErrorMessage(error);
   }
@@ -93,8 +123,6 @@ export async function getPillaBanks() {
     throw error;
   }
 }
-
- 
 
 export async function kycPin(formData: PinFormData) {
   const validation = pinSchema.safeParse(formData);
