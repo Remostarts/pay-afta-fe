@@ -22,19 +22,13 @@ import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.
 import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 type defaultVal = {
-  firstName: string;
-  lastName: string;
   email: string;
-  phoneNumber: string;
   password: string;
   confirmPassword: string;
 };
 
 const defaultValues: defaultVal = {
-  firstName: '',
-  lastName: '',
   email: '',
-  phoneNumber: '',
   password: '',
   confirmPassword: '',
 };
