@@ -13,6 +13,7 @@ type Profile = {
   yearOfGraduation: number | null;
   nigeriaLawSchoolCurrentlyAt: string | null;
   onBoardingStatus: boolean;
+  identityVerified: boolean;
   personalKycStatus: boolean;
   settlementKycStatus: boolean;
   pinSet: boolean;

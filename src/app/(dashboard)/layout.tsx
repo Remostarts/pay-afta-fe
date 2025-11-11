@@ -27,10 +27,14 @@ export default function Layout({ children }: TChildrenProps) {
   useEffect(() => {
     console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
 
-    if (onboardingStatus === false && user?.role !== 'admin') {
+    if (
+      onboardingStatus === false &&
+      user?.profile?.identityVerified === false &&
+      user?.role !== 'admin'
+    ) {
       router.push('/onboarding');
     }
-  }, [onboardingStatus, router]);
+  }, [onboardingStatus, user, router]);
 
   // Check if path starts with either /dashboard or /admin-dashboard
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');

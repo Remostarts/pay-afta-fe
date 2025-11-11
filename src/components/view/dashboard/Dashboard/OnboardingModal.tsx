@@ -12,7 +12,7 @@ import TransactionPin from '../../auth/onboarding/TransactionPin';
 import SettlementKycForm from '../../auth/onboarding/SettlementKycForm';
 
 import { useGeneral } from '@/context/generalProvider';
-import { kycPersonalInfo, kycPin, kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { kycPersonalInfo, kycPin } from '@/lib/actions/onboarding/onboarding.actions';
 import {
   TNinVerificationSchema,
   TUsername,
@@ -156,10 +156,6 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
             pin: stepData.pin,
             confirmPin: stepData.confirmPin,
           });
-          break;
-
-        case 3: // Settlement KYC
-          response = await kycBankInfo(stepData);
           break;
 
         default:

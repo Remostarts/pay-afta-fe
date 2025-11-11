@@ -20,7 +20,7 @@ import {
 // Assuming you have these components/utilities
 import { Skeleton } from '@/components/ui/skeleton'; // 👈 IMPORT SKELETON
 import { TSettlementKyc, settlementKycSchema } from '@/lib/validations/onboarding.validation';
-import { getPillaBanks, kycBankInfo } from '@/lib/actions/onboarding/onboarding.actions';
+import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
 import { useGeneral } from '@/context/generalProvider';
 import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 
@@ -34,7 +34,6 @@ type Bank = {
 type SettlementKycDefaults = {
   bankName: string;
   accountNumber: string;
-  bvn: string;
   bankCode: string;
   isDefaultPayout: boolean;
 };
@@ -42,7 +41,6 @@ type SettlementKycDefaults = {
 const defaultValues: SettlementKycDefaults = {
   bankName: '',
   accountNumber: '',
-  bvn: '',
   bankCode: '',
   isDefaultPayout: false,
 };
@@ -96,14 +94,7 @@ export default function SettlementKycForm() {
   // Handle Form Submission
   async function onSubmit(data: TSettlementKyc) {
     try {
-      const response = await kycBankInfo(data);
-
-      if (response?.success) {
-        loadUserData();
-        toast.success('Settlement KYC Completed');
-      } else {
-        toast.error(response?.errorMessages?.[0]?.message || 'Failed to update KYC info');
-      }
+      console.log('hello');
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Failed to update kyc bank information');
     }
@@ -182,22 +173,6 @@ export default function SettlementKycForm() {
                 <ReInput
                   label="Enter 10 digit account number"
                   placeholder="4234....."
-                  type="number"
-                  {...field}
-                />
-              </FormItem>
-            )}
-          />
-
-          {/* BVN Field */}
-          <FormField
-            control={control}
-            name="bvn"
-            render={({ field }) => (
-              <FormItem>
-                <ReInput
-                  label="BVN (Bank Verification Number)"
-                  placeholder="00000000000"
                   type="number"
                   {...field}
                 />
