@@ -12,7 +12,7 @@ import TransactionPin from '../../auth/onboarding/TransactionPin';
 import SettlementKycForm from '../../auth/onboarding/SettlementKycForm';
 
 import { useGeneral } from '@/context/generalProvider';
-import { kycPersonalInfo, kycPin } from '@/lib/actions/onboarding/onboarding.actions';
+import { addKycNinVerification, setUsername } from '@/lib/actions/onboarding/onboarding.actions';
 import {
   TNinVerificationSchema,
   TUsername,
@@ -139,23 +139,17 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
       let response;
       switch (activeStepDialog) {
         case 0: // NIN Verification
-          response = await kycPersonalInfo({
+          response = await addKycNinVerification({
             nin: stepData.nin,
-            gender: 'other',
-            dateOfBirth: new Date('1990-01-01'),
-            username: user?.username || '',
           });
           break;
 
         case 1: // Username
-          response = { success: true };
+          response = await setUsername({ username: stepData.username });
           break;
 
         case 2: // Transaction PIN
-          response = await kycPin({
-            pin: stepData.pin,
-            confirmPin: stepData.confirmPin,
-          });
+          response = { success: true };
           break;
 
         default:

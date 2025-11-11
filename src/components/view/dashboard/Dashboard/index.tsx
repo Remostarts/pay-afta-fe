@@ -19,7 +19,6 @@ export default function Dashboard() {
 
   // Check if user needs to complete onboarding
   const needsOnboarding =
-    !user?.profile?.onBoardingStatus ||
     !user?.profile?.personalKycStatus ||
     !user?.username ||
     !user?.profile?.pinSet ||
