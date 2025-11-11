@@ -22,19 +22,13 @@ import { initialSignUpSchema, TInitialSignUp } from '@/lib/validations/userAuth.
 import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 type defaultVal = {
-  firstName: string;
-  lastName: string;
   email: string;
-  phoneNumber: string;
   password: string;
   confirmPassword: string;
 };
 
 const defaultValues: defaultVal = {
-  firstName: '',
-  lastName: '',
   email: '',
-  phoneNumber: '',
   password: '',
   confirmPassword: '',
 };
@@ -94,22 +88,22 @@ export default function SignupForm() {
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
           <div className="mt-3 space-y-4">
-            <div>
+            {/* <div>
               <ReHeading heading="First Name" size={'base'} />
               <ReInput name="firstName" />
             </div>
             <div>
               <ReHeading heading="Last Name" size={'base'} />
               <ReInput name="lastName" />
-            </div>
+            </div> */}
             <div>
               <ReHeading heading="Email Address" size={'base'} />
               <ReInput name="email" />
             </div>
-            <div>
-              {/* <ReHeading heading="Phone Number" size="lg" /> */}
+            {/* <div>
+              <ReHeading heading="Phone Number" size="lg" />
               <RePhoneNumberInput name="phoneNumber" />
-            </div>
+            </div> */}
             <div>
               <ReHeading heading="Password" size={'base'} />
               <RePassInput name="password" />
@@ -119,6 +113,11 @@ export default function SignupForm() {
               <ReHeading heading="Confirm Password" size={'base'} />
               <RePassInput name="confirmPassword" />
             </div>
+            <div>
+              <ReHeading heading="Referral" size={'base'} />
+              <ReInput name="referral" />
+            </div>
+
             <div>
               <label className="flex items-start cursor-pointer select-none">
                 <span className="relative flex items-center">
