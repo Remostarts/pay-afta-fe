@@ -13,10 +13,7 @@ export type IUserCategory = z.infer<typeof userCategorySchema>;
 export const initialSignUpForLogisticSchema = z
   .object({
     companyName: z.string().min(1, 'Company name is required'),
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
     email: z.string().min(1, 'Email is required'),
-    phoneNumber: z.string().min(1, 'Phone number is required'),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters long')
@@ -38,11 +35,9 @@ export type TInitialSignUpForLogistic = z.infer<typeof initialSignUpForLogisticS
 // initial signup schema
 export const initialSignUpSchema = z
   .object({
-    firstName: z.string().min(1, 'First name is required'),
-    lastName: z.string().min(1, 'Last name is required'),
-    companyName: z.string().optional(),
+    // companyName: z.string().optional(),
     email: z.string().min(1, 'Email is required'),
-    phoneNumber: z.string().min(1, 'Phone number is required'),
+    referral: z.string().optional(),
     password: z
       .string()
       .min(8, 'Password must be at least 8 characters long')

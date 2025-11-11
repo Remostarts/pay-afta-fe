@@ -23,7 +23,7 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
         <span className="absolute bg-white px-3 text-gray-500">or</span>
       </div>
 
-      <Button className="flex w-full items-center justify-evenly gap-2 rounded-full border border-gray-300 bg-white font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg">
+      <Button className="flex w-full items-center gap-6 rounded-full border border-gray-300 bg-white font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg">
         <Image
           src="/assets/auth/google-icons.svg"
           alt="Google"
@@ -36,7 +36,7 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
 
       <Button
         variant="outline"
-        className="flex w-full items-center justify-evenly gap-2 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
+        className="flex w-full items-center gap-6 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
       >
         <Image
           src="/assets/auth/apple-icons.svg"
@@ -50,7 +50,7 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
 
       <Button
         variant="outline"
-        className="flex w-full items-center justify-evenly gap-2 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
+        className="flex w-full items-center gap-6 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
       >
         <Image
           src="/assets/auth/facebook-icons.svg"
