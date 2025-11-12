@@ -53,7 +53,6 @@ export default function NINVerificationForm({
       // Simulate validation logic
       if (nin.length === 11 && /^\d{11}$/.test(nin)) {
         setIsVerified(true);
-        toast.success('NIN verified successfully!');
         return true;
       } else {
         setIsVerified(false);
