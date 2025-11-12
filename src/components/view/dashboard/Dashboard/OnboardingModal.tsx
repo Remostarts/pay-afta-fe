@@ -151,7 +151,10 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
         case 2: // Transaction PIN
           response = { success: true };
           break;
-
+        
+        case 3: // Settlement KYC
+          response = { success: true };
+          break;
         default:
           throw new Error('Invalid step');
       }
