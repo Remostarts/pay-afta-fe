@@ -23,6 +23,7 @@ import {
   TNewOrder,
 } from '@/lib/validations/newOrder.validation';
 import { createOrder } from '@/lib/actions/order/order.actions';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 
 type defaultVal = {
   transactionType: string;
@@ -264,7 +265,7 @@ export default function NewOrder({ onBack }: any) {
             <span className="text-lg">Create Escrow Order</span>
           </Link>
         </button>
-        <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
+        {/* <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
           <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
             <TabsTrigger
               value="buyer"
@@ -298,11 +299,24 @@ export default function NewOrder({ onBack }: any) {
               I am the Seller
             </TabsTrigger>
           </TabsList>
-        </Tabs>
+        </Tabs> */}
         <div>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col sm:flex-row sm:justify-center sm:gap-6">
+                <div className="w-full">
+                  <ReHeading heading="Role" size={'base'} className="text-gray-700 mb-2" />
+                  <ReSelect
+                    name="role"
+                    options={[
+                      { label: 'Buyer', value: 'Buyer' },
+                      { label: 'Seller', value: 'Seller' },
+                    ]}
+                    placeholder="Select"
+                    onChange={handleTabChange}
+                  />
+                </div>
+
                 {/* Transaction Type */}
                 <div className="w-full">
                   <ReHeading
@@ -321,7 +335,7 @@ export default function NewOrder({ onBack }: any) {
                 </div>
 
                 {/* Email/Phone Field */}
-                <div className="w-full">
+                {/* <div className="w-full">
                   {activeTab === 'buyer' ? (
                     <>
                       <ReHeading
@@ -375,7 +389,7 @@ export default function NewOrder({ onBack }: any) {
                       ) : null}
                     </>
                   )}
-                </div>
+                </div> */}
               </div>
 
               {/* Summary of validated emails
@@ -396,6 +410,29 @@ export default function NewOrder({ onBack }: any) {
                   )}
                 </div>
               )} */}
+
+              {/* Counterparty Search */}
+              <div className="mt-2 mb-2">
+                <ReHeading
+                  heading="Conunterparty Search"
+                  size={'base'}
+                  className="text-gray-700 mb-1"
+                />
+                <SearchableSelect
+                  type="counterparty"
+                  loading={false}
+                  placeholder="Search or add counterparty"
+                  options={[
+                    { name: 'Alice Johnson', email: 'alice@email.com' },
+                    { name: 'Bob Smith', email: 'bob@email.com' },
+                    { name: 'Charlie Lee', email: 'charlie@email.com' },
+                  ]}
+                  onChange={(value) => {
+                    // For demo: log selected value
+                    console.log('Selected counterparty:', value);
+                  }}
+                />
+              </div>
 
               <div>
                 <ReHeading heading="Item 1" size={'base'} className="text-gray-700" />
