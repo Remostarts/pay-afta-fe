@@ -59,7 +59,9 @@ export default function Social() {
         toast.error(response.error || 'Failed to update social profiles');
       }
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : 'An unexpected error occurred');
+      toast.error(
+        error instanceof Error ? error.message : 'Something went wrong, please try again.'
+      );
     }
   };
 

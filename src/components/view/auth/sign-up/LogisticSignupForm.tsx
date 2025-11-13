@@ -30,20 +30,20 @@ import { PasswordStrengthIndicator } from './password-strength-indicator';
 
 type defaultVal = {
   companyName: string;
-  firstName: string;
-  lastName: string;
+  // firstName: string;
+  // lastName: string;
   email: string;
-  phoneNumber: string;
+  // phoneNumber: string;
   password: string;
   confirmPassword: string;
 };
 
 const defaultValues: defaultVal = {
   companyName: '',
-  firstName: '',
-  lastName: '',
+  // firstName: '',
+  // lastName: '',
   email: '',
-  phoneNumber: '',
+  // phoneNumber: '',
   password: '',
   confirmPassword: '',
 };
@@ -112,22 +112,22 @@ export default function LogisticSignupForm() {
                 <ReHeading heading="Company Name" size={'base'} />
                 <ReInput name="companyName" />
               </div>
-              <div>
+              {/* <div>
                 <ReHeading heading="First Name" size={'base'} />
                 <ReInput name="firstName" />
-              </div>
-              <div>
+              </div> */}
+              {/* <div>
                 <ReHeading heading="Last Name" size={'base'} />
                 <ReInput name="lastName" />
-              </div>
+              </div> */}
               <div>
                 <ReHeading heading="Email Address" size={'base'} />
                 <ReInput name="email" />
               </div>
-              <div>
-                {/* <ReHeading heading="Phone Number" size="lg" /> */}
+              {/* <div>
+                <ReHeading heading="Phone Number" size="lg" />
                 <RePhoneNumberInput name="phoneNumber" />
-              </div>
+              </div> */}
               <div>
                 <ReHeading heading="Password" size={'base'} />
                 <RePassInput name="password" />

@@ -33,7 +33,6 @@ export async function userProfileUpdate(formData: TProfileUpdate) {
   }
 }
 
-
 export async function withdrawFundFromWallet(
   data:
     | TWithdrawfund
@@ -76,3 +75,22 @@ export async function withdrawFundFromWallet(
     return { success: false, message: getErrorMessage(error) };
   }
 }
+
+export const searchCounterParty = async (email: string) => {
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/search-counter-party?emailPhoneNo=${email}`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      cache: 'no-store',
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(`Error validate user with email ${email}`);
+  }
+
+  return await response.json();
+};

@@ -52,7 +52,7 @@ export default function ChangePasswordModal({ dialogClose }: ChangePasswordModal
       }
     } catch (error) {
       console.error('Error submitting feedback:', error);
-      toast.error('An unexpected error occurred');
+      toast.error('Something went wrong, please try again.');
     }
   };
 

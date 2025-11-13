@@ -451,7 +451,7 @@ export default function ChatUI() {
   //       console.error('Error uploading file:', error);
   //       toast({
   //         title: 'Error',
-  //         description: 'An unexpected error occurred while uploading the file.',
+  //         description: 'Something went wrong, please try again. while uploading the file.',
   //         variant: 'destructive',
   //       });
   //     } finally {
@@ -549,7 +549,7 @@ export default function ChatUI() {
           console.error('Error uploading file:', error);
           // toast({
           //   title: 'Error',
-          //   description: 'An unexpected error occurred while uploading the file.',
+          //   description: 'Something went wrong, please try again. while uploading the file.',
           //   variant: 'destructive',
           // });
         })
@@ -628,7 +628,8 @@ export default function ChatUI() {
               //   variant: 'success',
               // });
               socket?.emit('file_uploaded', {
-                receiverEmail: chat?.participants?.find((p) => p.id !== session.id)?.email as string,
+                receiverEmail: chat?.participants?.find((p) => p.id !== session.id)
+                  ?.email as string,
               });
               refetch();
             } else {
@@ -645,7 +646,7 @@ export default function ChatUI() {
             console.error('Error uploading file:', error);
             // toast({
             //   title: 'Error',
-            //   description: 'An unexpected error occurred while uploading the file.',
+            //   description: 'Something went wrong, please try again. while uploading the file.',
             //   variant: 'destructive',
             // });
           })
