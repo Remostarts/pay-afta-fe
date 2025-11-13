@@ -1,14 +1,12 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { ChevronLeft, CirclePlus, Loader, LoaderCircle, Trash2 } from 'lucide-react';
+import { ChevronLeft, CirclePlus, Trash2 } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import Image from 'next/image';
 
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Form } from '@/components/ui/form';
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import ReSelect from '@/components/re-ui/ReSelect';
@@ -23,6 +21,9 @@ import {
   TNewOrder,
 } from '@/lib/validations/newOrder.validation';
 import { createOrder } from '@/lib/actions/order/order.actions';
+import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
+import { useGeneral } from '@/context/generalProvider';
+import { SearchableCounterpartySelect } from '@/components/re-ui/SearchableCounterpartySelect';
 
 type defaultVal = {
   transactionType: string;
@@ -75,55 +76,53 @@ const defaultValues: defaultVal = {
 };
 
 export default function NewOrder({ onBack }: any) {
-  const [activeTab, setActiveTab] = useState('buyer');
+  const { user } = useGeneral();
+  const [initiatorRole, setInitiatorRole] = useState('Buyer');
+
   const [isItem2Show, setIsItem2Show] = useState<boolean>(false);
   const [paymentType, setPaymentType] = useState<string>('');
   const [isLoadingEmail, setIsLoadingEmail] = useState<boolean>(false);
-  const [isBuyerEmailValid, setIsBuyerEmailValid] = useState<boolean>(false);
-  const [isSellerEmailValid, setIsSellerEmailValid] = useState<boolean>(false);
   const [isMilestone2Show, setIsMilestone2Show] = useState<boolean>(false);
   const [isMilestone3Show, setIsMilestone3Show] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
 
-  console.log(paymentType);
-
   const form = useForm<TNewOrder>({
     resolver: zodResolver(
-      newOrderSchema(setIsLoadingEmail, setIsBuyerEmailValid, setIsSellerEmailValid, activeTab)
+      newOrderSchema().refine(
+        (data) => {
+          if (initiatorRole === 'Buyer') {
+            return !!data.sellerEmailPhoneNo;
+          } else {
+            return !!data.buyerEmailPhoneNo;
+          }
+        },
+        {
+          message: 'Please select a counterparty',
+          path: ['counterparty'],
+        }
+      )
     ),
     defaultValues,
     mode: 'onChange',
-    context: { paymentType, activeTab },
+    context: { paymentType, initiatorRole },
     reValidateMode: 'onChange',
   });
 
   const { formState, handleSubmit, register, reset, watch, setValue } = form;
   const { isValid, isSubmitting, errors } = formState;
 
-  // Watch the buyer email field to detect changes
-  const buyerEmail = watch('buyerEmailPhoneNo');
-  const sellerEmail = watch('sellerEmailPhoneNo');
-
-  const transactionType = watch('transactionType');
-  // console.log(transactionType);
-
-  // console.log(buyerEmail);
-  // console.log(sellerEmail);
-
-  // // Auto-switch to seller tab when buyer email is validated
-  // useEffect(() => {
-  //   if (isBuyerEmailValid && activeTab === 'buyer') {
-  //     // Add a small delay to show the success message before switching
-  //     const timer = setTimeout(() => {
-  //       setActiveTab('seller');
-  //     }, 1000);
-  //     return () => clearTimeout(timer);
-  //   }
-  // }, [isBuyerEmailValid, activeTab]);
-
   // Handle tab change
-  const handleTabChange = (value: string) => {
-    setActiveTab(value);
+  const handleRoleChange = (value: string) => {
+    setInitiatorRole(value);
+    if (value === 'Buyer') {
+      // initiator if buyer
+      setValue('buyerEmailPhoneNo', user?.email || '');
+      setValue('sellerEmailPhoneNo', ''); // reset seller
+    } else if (value === 'Seller') {
+      // initiator if seller
+      setValue('sellerEmailPhoneNo', user?.email || '');
+      setValue('buyerEmailPhoneNo', ''); // reset buyer
+    }
   };
 
   function handleClickGetItem2() {
@@ -228,29 +227,25 @@ export default function NewOrder({ onBack }: any) {
       paymentType: data.paymentType,
       transactionFee: data.transactionFee,
       transactionType: data.transactionType,
-      items, // Array of item objects
-      milestones, // Array of milestone objects (dummy or provided)
+      items,
+      milestones,
     };
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 processedData🌼', processedData);
 
     try {
       const response = await createOrder(processedData as TCreateOrderInput);
       console.log('🌼 🔥🔥 onSubmit 🔥🔥 response🌼', response);
-
       if (response.success) {
         toast.success('Order created successfully');
         reset();
       } else {
-        toast.error(response.error || 'Failed to create order');
+        toast.error(response.message || 'Failed to create order');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error creating order', error);
-      toast.error('An unexpected error occurred');
+      toast.error(error?.message || 'Something went wrong, please try again.');
     }
   }
-
-  // Check if form can be submitted
-  const canSubmit = isBuyerEmailValid && isSellerEmailValid;
 
   return (
     <div className="min-h-full rounded-xl bg-white">
@@ -264,45 +259,24 @@ export default function NewOrder({ onBack }: any) {
             <span className="text-lg">Create Escrow Order</span>
           </Link>
         </button>
-        <Tabs value={activeTab} className="bg-white" onValueChange={handleTabChange}>
-          <TabsList className="mb-8 grid w-full max-w-xl grid-cols-2 rounded-full bg-gray-100 pb-12">
-            <TabsTrigger
-              value="buyer"
-              className={`
-                gap-2 rounded-full px-6 py-3 text-base font-medium transition-all
-                ${activeTab === 'buyer' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
-              `}
-            >
-              <Image
-                alt="buyer"
-                src={`${activeTab === 'buyer' ? '/assets/dashboard/Dashboard/activeBuyer.svg' : '/assets/dashboard/Dashboard/InactiveBuyer.svg'}`}
-                width={20}
-                height={20}
-              />
-              I am the Buyer
-            </TabsTrigger>
-            <TabsTrigger
-              value="seller"
-              className={`
-                gap-2 rounded-full px-6 py-3 text-base font-medium transition-all
-                ${activeTab === 'seller' ? 'bg-[#03045B] text-white' : 'bg-transparent text-gray-500'}
-              `}
-              // disabled={!isBuyerEmailValid}
-            >
-              <Image
-                alt="buyer"
-                src={`${activeTab === 'seller' ? '/assets/dashboard/Dashboard/activeSeller.svg' : '/assets/dashboard/Dashboard/InactiveSeller.svg'}`}
-                width={20}
-                height={20}
-              />
-              I am the Seller
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
+
         <div>
           <Form {...form}>
             <form onSubmit={handleSubmit(onSubmit)}>
               <div className="flex flex-col sm:flex-row sm:justify-center sm:gap-6">
+                <div className="w-full">
+                  <ReHeading heading="Role" size={'base'} className="text-gray-700 mb-2" />
+                  <ReSelect
+                    name="role"
+                    options={[
+                      { label: 'Buyer', value: 'Buyer' },
+                      { label: 'Seller', value: 'Seller' },
+                    ]}
+                    placeholder="Select"
+                    onChange={handleRoleChange}
+                  />
+                </div>
+
                 {/* Transaction Type */}
                 <div className="w-full">
                   <ReHeading
@@ -319,83 +293,37 @@ export default function NewOrder({ onBack }: any) {
                     placeholder="Select"
                   />
                 </div>
-
-                {/* Email/Phone Field */}
-                <div className="w-full">
-                  {activeTab === 'buyer' ? (
-                    <>
-                      <ReHeading
-                        heading="Email or phone number"
-                        size={'base'}
-                        className="text-gray-700 mb-2"
-                      />
-                      <input
-                        {...register('buyerEmailPhoneNo')}
-                        className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                        value={buyerEmail}
-                      />
-                      {isLoadingEmail ? (
-                        <div className="mt-1 flex items-center">
-                          <LoaderCircle className="mr-2 size-4 animate-spin" />
-                          <span className="text-sm text-gray-500">Verifying email...</span>
-                        </div>
-                      ) : isBuyerEmailValid ? (
-                        <p className="mt-1 text-sm font-normal text-green-500">
-                          ✓ Verified - You&apos;ll be moved to seller section
-                        </p>
-                      ) : errors.buyerEmailPhoneNo ? (
-                        <p className="mt-1 text-sm font-normal text-red-500">
-                          {errors.buyerEmailPhoneNo.message}
-                        </p>
-                      ) : null}
-                    </>
-                  ) : (
-                    <>
-                      <ReHeading
-                        heading="Seller email or phone number"
-                        size={'base'}
-                        className="text-gray-700 mb-2"
-                      />
-                      <input
-                        {...register('sellerEmailPhoneNo')}
-                        className="border-input bg-background placeholder:text-muted-foreground flex h-10 w-full rounded-md border border-gray-300 px-3 py-2 font-spaceGrotesk text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
-                        value={sellerEmail}
-                      />
-                      {isLoadingEmail ? (
-                        <div className="mt-1 flex items-center">
-                          <LoaderCircle className="mr-2 size-4 animate-spin" />
-                          <span className="text-sm text-gray-500">Verifying email...</span>
-                        </div>
-                      ) : isSellerEmailValid ? (
-                        <p className="mt-1 text-sm font-normal text-green-500">✓ Verified</p>
-                      ) : errors.sellerEmailPhoneNo ? (
-                        <p className="mt-1 text-sm font-normal text-red-500">
-                          {errors.sellerEmailPhoneNo.message}
-                        </p>
-                      ) : null}
-                    </>
-                  )}
-                </div>
               </div>
 
-              {/* Summary of validated emails
-              {(isBuyerEmailValid || isSellerEmailValid) && (
-                <div className="my-4 rounded-md border border-gray-200 bg-gray-50 p-3">
-                  <h3 className="mb-2 font-medium text-gray-700">Participants</h3>
-                  {isBuyerEmailValid && (
-                    <div className="mb-1 flex items-center">
-                      <span className="mr-2 text-green-500">✓</span>
-                      <span className="text-sm">Buyer: {buyerEmail}</span>
-                    </div>
-                  )}
-                  {isSellerEmailValid && (
-                    <div className="flex items-center">
-                      <span className="mr-2 text-green-500">✓</span>
-                      <span className="text-sm">Seller: {sellerEmail}</span>
-                    </div>
-                  )}
-                </div>
-              )} */}
+              {/* Counterparty Search */}
+              <div className="mt-2 mb-2">
+                <ReHeading
+                  heading="Counterparty Search"
+                  size={'base'}
+                  className="text-gray-700 mb-1"
+                />
+                {/* <SearchableSelect
+                  type="counterparty"
+                  loading={false}
+                  placeholder="Search or add counterparty"
+                  options={[
+                    { name: 'Alice Johnson', email: 'alice@email.com' },
+                    { name: 'Bob Smith', email: 'bob@email.com' },
+                    { name: 'Charlie Lee', email: 'charlie@email.com' },
+                  ]}
+                  onChange={(email) => {
+                    if (initiatorRole === 'Buyer')
+                      setValue('sellerEmailPhoneNo', email, { shouldValidate: true });
+                    else setValue('buyerEmailPhoneNo', email, { shouldValidate: true });
+                  }}
+                /> */}
+                <SearchableCounterpartySelect
+                  onChange={(email) => {
+                    if (initiatorRole === 'Buyer') setValue('sellerEmailPhoneNo', email);
+                    else setValue('buyerEmailPhoneNo', email);
+                  }}
+                />
+              </div>
 
               <div>
                 <ReHeading heading="Item 1" size={'base'} className="text-gray-700" />
@@ -404,7 +332,7 @@ export default function NewOrder({ onBack }: any) {
                   <ReInput name="item1Quantity" placeholder="Enter Quantity" />
                   <ReInput name="item1Prize" placeholder="₦ 00.00" />
                 </div>
-                {/* ✅ Container with flex and justify-end */}
+                {/*  Container with flex and justify-end */}
                 <div className="flex justify-end w-full">
                   <button
                     type="button"
@@ -449,22 +377,7 @@ export default function NewOrder({ onBack }: any) {
               </div>
               <div>
                 <ReHeading heading="Payment Type" size={'base'} className="text-gray-700" />
-                {/* {transactionType === 'Product' ? (
-                  <ReRadioGroup
-                    name="paymentType"
-                    options={[
-                      {
-                        label: 'One time Payment',
-                        value: 'One time Payment',
-                        radioDescription:
-                          'Pay the agreed amount to the seller at once immediately after reaching an agreement.',
-                      },
-                    ]}
-                    className="flex flex-col lg:grid lg:grid-cols-1"
-                    onChange={handleChangePaymentType}
-                    // defaultValue="One time Payment"
-                  />
-                ) : ( */}
+
                 <ReRadioGroup
                   name="paymentType"
                   options={[
@@ -641,7 +554,6 @@ export default function NewOrder({ onBack }: any) {
                   className="mt-3 w-[70%] rounded-full p-5 font-inter md:w-[30%] "
                   type="submit"
                   isSubmitting={isSubmitting || loading}
-                  disabled={!canSubmit}
                 >
                   Create Order
                 </ReButton>

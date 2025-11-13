@@ -19,7 +19,7 @@ type SearchableSelectTypes = {
     code?: string;
     email?: string;
     phone?: string;
-    avatar?: string; // For counterparty avatars
+    avatar?: string;
   }[];
   defaultValue?: string;
   onChange: (value: string) => void;
@@ -31,6 +31,8 @@ type SearchableSelectTypes = {
   recentOptions?: { name: string; email?: string; phone?: string; avatar?: string }[];
   onInvite?: () => void; // Callback for "Invite supplier" action
   searchPlaceholder?: string; // Custom search placeholder
+  searchTerm?: string;
+  setSearchTerm?: (val: string) => void;
 };
 
 export const SearchableSelect = ({
@@ -46,8 +48,11 @@ export const SearchableSelect = ({
   recentOptions = [],
   onInvite,
   searchPlaceholder,
+  searchTerm: propSearchTerm,
+  setSearchTerm: setPropSearchTerm,
 }: SearchableSelectTypes) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
+
   const [selectedValue, setSelectedValue] = useState<string | undefined>(value || defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -99,6 +104,15 @@ export const SearchableSelect = ({
     setSearchTerm('');
     setIsOpen(false);
     onChange(value);
+
+    const selectedOption = options.find((o) => o.name === value);
+    if (!selectedOption) return;
+
+    if (type === 'counterparty' && selectedOption.email) {
+      onChange(selectedOption.email);
+    } else {
+      onChange(selectedOption.name);
+    }
   };
 
   const handleInputClick = (e: React.MouseEvent) => e.stopPropagation();
@@ -122,7 +136,9 @@ export const SearchableSelect = ({
 
   const getSearchPlaceholder = () => {
     if (searchPlaceholder) return searchPlaceholder;
-    return type === 'counterparty' ? 'Search counterparty' : 'Search banks...';
+    return type === 'counterparty'
+      ? 'enter counterparty username, email address or phone number'
+      : 'Search banks...';
   };
 
   const renderAvatar = (option: { name: string; avatar?: string }) => {
@@ -190,7 +206,15 @@ export const SearchableSelect = ({
               ref={inputRef}
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              // onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchTerm(val);
+
+                if (type === 'counterparty' && typeof setPropSearchTerm === 'function') {
+                  setPropSearchTerm(val);
+                }
+              }}
               onClick={handleInputClick}
               onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}

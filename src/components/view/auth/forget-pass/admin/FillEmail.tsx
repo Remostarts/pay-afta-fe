@@ -40,7 +40,8 @@ export default function FillEmail({ handleCurrentStep }: IFillEmailProps) {
       console.error('Error sending verification code:', error);
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'An unexpected error occurred',
+        description:
+          error instanceof Error ? error.message : 'Something went wrong, please try again.',
       });
     }
   };
