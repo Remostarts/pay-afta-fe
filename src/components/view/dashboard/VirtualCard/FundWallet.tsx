@@ -3,12 +3,15 @@
 import { ChevronRight, Copy } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
+import { useGeneral } from '@/context/generalProvider';
 
 export default function FundWallet() {
+  const { user } = useGeneral();
+  
   const accountDetails = {
-    bankName: 'STERLING BANK',
-    accountNumber: '0099881122',
-    accountName: 'Paul Simeon/STERLING BANK',
+    bankName: user?.Wallet?.[0]?.bankName || 'N/A',
+    accountNumber: user?.Wallet?.[0]?.accountNumber || 'N/A',
+    accountName: user?.Wallet?.[0]?.accountName || 'N/A',
   };
 
   const copyToClipboard = (text: string): void => {
