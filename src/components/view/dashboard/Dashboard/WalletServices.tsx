@@ -3,7 +3,7 @@ import { Dispatch, SetStateAction } from 'react';
 
 import FundWallet from './FundWallet';
 import WithdrawFund from './WithdrawFund';
-import NewOrder from './NewOrder';
+import NewOrder from '../NewOrder/NewOrder';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 
