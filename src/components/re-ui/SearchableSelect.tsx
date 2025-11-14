@@ -11,6 +11,8 @@ import {
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, X, Plus } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
+import InviteCounterparty from '../view/dashboard/Dashboard/InviteCounterparty';
 
 type SearchableSelectTypes = {
   type: 'counterparty' | 'bank';
@@ -268,7 +270,7 @@ export const SearchableSelect = ({
           {/* Invite supplier button for counterparties */}
           {type === 'counterparty' && onInvite && (
             <div className="border-t p-2">
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onInvite();
@@ -278,7 +280,18 @@ export const SearchableSelect = ({
               >
                 <Plus className="w-4 h-4" />
                 <span>Invite supplier</span>
-              </button>
+              </button> */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    Invite counterparty
+                    <Plus width={16} height={16} />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <InviteCounterparty />
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </div>

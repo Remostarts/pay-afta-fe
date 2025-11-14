@@ -35,7 +35,7 @@ export type TInitialSignUpForLogistic = z.infer<typeof initialSignUpForLogisticS
 // initial signup schema
 export const initialSignUpSchema = z
   .object({
-    // companyName: z.string().optional(),
+    companyName: z.string().optional(),
     email: z.string().min(1, 'Email is required'),
     referral: z.string().optional(),
     password: z
