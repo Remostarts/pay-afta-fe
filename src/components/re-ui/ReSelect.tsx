@@ -48,7 +48,13 @@ const ReSelect = ({
           </FormLabel>
           <FormControl>
             <div className={`rounded border border-gray-300 bg-white max-h-[40vh] overflow-y-auto`}>
-              <Select onValueChange={field.onChange} defaultValue={field.value}>
+              <Select
+                onValueChange={(val) => {
+                  field.onChange(val);
+                  onChange?.(val);
+                }}
+                defaultValue={field.value}
+              >
                 <SelectTrigger className="w-full border-none ">
                   <SelectValue placeholder={placeholder} className="text-gray-400" />
                 </SelectTrigger>

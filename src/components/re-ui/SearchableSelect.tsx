@@ -11,6 +11,8 @@ import {
 import React, { useEffect, useState, useRef, useMemo } from 'react';
 import { Input } from '@/components/ui/input';
 import { Search, X, Plus } from 'lucide-react';
+import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
+import InviteCounterparty from '../view/dashboard/Dashboard/InviteCounterparty';
 
 type SearchableSelectTypes = {
   type: 'counterparty' | 'bank';
@@ -19,7 +21,7 @@ type SearchableSelectTypes = {
     code?: string;
     email?: string;
     phone?: string;
-    avatar?: string; // For counterparty avatars
+    avatar?: string;
   }[];
   defaultValue?: string;
   onChange: (value: string) => void;
@@ -31,6 +33,8 @@ type SearchableSelectTypes = {
   recentOptions?: { name: string; email?: string; phone?: string; avatar?: string }[];
   onInvite?: () => void; // Callback for "Invite supplier" action
   searchPlaceholder?: string; // Custom search placeholder
+  searchTerm?: string;
+  setSearchTerm?: (val: string) => void;
 };
 
 export const SearchableSelect = ({
@@ -46,8 +50,11 @@ export const SearchableSelect = ({
   recentOptions = [],
   onInvite,
   searchPlaceholder,
+  searchTerm: propSearchTerm,
+  setSearchTerm: setPropSearchTerm,
 }: SearchableSelectTypes) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
+
   const [selectedValue, setSelectedValue] = useState<string | undefined>(value || defaultValue);
   const [isOpen, setIsOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -99,6 +106,15 @@ export const SearchableSelect = ({
     setSearchTerm('');
     setIsOpen(false);
     onChange(value);
+
+    const selectedOption = options.find((o) => o.name === value);
+    if (!selectedOption) return;
+
+    if (type === 'counterparty' && selectedOption.email) {
+      onChange(selectedOption.email);
+    } else {
+      onChange(selectedOption.name);
+    }
   };
 
   const handleInputClick = (e: React.MouseEvent) => e.stopPropagation();
@@ -122,7 +138,9 @@ export const SearchableSelect = ({
 
   const getSearchPlaceholder = () => {
     if (searchPlaceholder) return searchPlaceholder;
-    return type === 'counterparty' ? 'Search counterparty' : 'Search banks...';
+    return type === 'counterparty'
+      ? 'enter counterparty username, email address or phone number'
+      : 'Search banks...';
   };
 
   const renderAvatar = (option: { name: string; avatar?: string }) => {
@@ -190,7 +208,15 @@ export const SearchableSelect = ({
               ref={inputRef}
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              // onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={(e) => {
+                const val = e.target.value;
+                setSearchTerm(val);
+
+                if (type === 'counterparty' && typeof setPropSearchTerm === 'function') {
+                  setPropSearchTerm(val);
+                }
+              }}
               onClick={handleInputClick}
               onPointerDown={(e) => e.stopPropagation()}
               onMouseDown={(e) => e.stopPropagation()}
@@ -244,7 +270,7 @@ export const SearchableSelect = ({
           {/* Invite supplier button for counterparties */}
           {type === 'counterparty' && onInvite && (
             <div className="border-t p-2">
-              <button
+              {/* <button
                 onClick={(e) => {
                   e.stopPropagation();
                   onInvite();
@@ -254,7 +280,18 @@ export const SearchableSelect = ({
               >
                 <Plus className="w-4 h-4" />
                 <span>Invite supplier</span>
-              </button>
+              </button> */}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
+                    Invite counterparty
+                    <Plus width={16} height={16} />
+                  </button>
+                </DialogTrigger>
+                <DialogContent className="sm:max-w-[425px]">
+                  <InviteCounterparty />
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </div>

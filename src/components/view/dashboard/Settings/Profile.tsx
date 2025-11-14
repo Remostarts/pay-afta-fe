@@ -164,10 +164,10 @@ export default function Profile() {
       console.error('Error updating profile:', error);
       // toast({
       //   title: 'Error',
-      //   description: 'An unexpected error occurred',
+      //   description: 'Something went wrong, please try again.',
       //   variant: 'destructive',
       // });
-      toast.error('An unexpected error occurred');
+      toast.error('Something went wrong, please try again.');
     }
   };
 
