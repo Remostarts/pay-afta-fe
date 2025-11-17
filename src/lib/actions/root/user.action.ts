@@ -94,3 +94,22 @@ export const searchCounterParty = async (email: string) => {
 
   return await response.json();
 };
+
+export const inviteCounterParty = async (email: string) => {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!token) throw new Error('Unauthorized. Please log in again.');
+
+  const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/user/invite-counter-party`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: token,
+    },
+    body: JSON.stringify({ email }),
+    cache: 'no-store',
+  });
+
+  return await response.json();
+};

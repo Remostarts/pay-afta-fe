@@ -27,3 +27,30 @@
   -ms-overflow-style: none;
   scrollbar-width: none;
 }
+
+/* Fix month & year dropdown alignment in DOB calendar */
+.re-dob-calendar .rdp-caption {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 0;
+}
+
+/* Month + Year dropdown container */
+.re-dob-calendar .rdp-caption_dropdowns {
+  display: flex !important;
+  flex-direction: row !important;
+  gap: 8px;
+}
+
+/* Fix individual dropdowns */
+.re-dob-calendar select {
+  appearance: none;
+  padding: 4px 28px 4px 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background: white url('data:image/svg+xml;utf8,<svg fill="black" height="12" width="12" xmlns="http://www.w3.org/2000/svg"><polygon points="0,0 12,0 6,6"/></svg>') no-repeat right 8px center;
+  font-size: 14px;
+  cursor: pointer;
+}

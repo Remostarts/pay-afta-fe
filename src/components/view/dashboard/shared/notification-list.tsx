@@ -69,7 +69,7 @@ export default function NotificationList({ notifications, onView }: Notification
             <Badge className={`${getBadgeColor(notification.type)} text-white`}>
               {notification.type}
             </Badge>
-            <Button
+            {/* <Button
               variant="ghost"
               size="sm"
               onClick={() => {
@@ -78,7 +78,7 @@ export default function NotificationList({ notifications, onView }: Notification
               }}
             >
               {notification.type === NotificationType.message ? 'View Chat' : 'View'}
-            </Button>
+            </Button> */}
           </div>
         </div>
       ))}

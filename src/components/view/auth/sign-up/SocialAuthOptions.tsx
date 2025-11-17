@@ -34,7 +34,7 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
         Continue with Google
       </Button>
 
-      <Button
+      {/* <Button
         variant="outline"
         className="flex w-full items-center gap-6 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
       >
@@ -46,9 +46,9 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
           height={20}
         />
         Continue with Apple
-      </Button>
+      </Button> */}
 
-      <Button
+      {/* <Button
         variant="outline"
         className="flex w-full items-center gap-6 rounded-full border border-gray-300 bg-white py-6 font-inter font-semibold text-gray-700 sm:py-7 sm:text-lg"
       >
@@ -60,7 +60,7 @@ export function SocialAuthOptions({ onContinueWithEmail }: SocialAuthOptionsProp
           height={20}
         />
         Continue with Facebook
-      </Button>
+      </Button> */}
     </div>
   );
 }

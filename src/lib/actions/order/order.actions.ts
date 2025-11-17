@@ -21,6 +21,7 @@ export async function createOrder(formData: TCreateOrderInput) {
 
   if (!validation.success) {
     let zodErrors = '';
+    console.log(zodErrors);
     validation.error.issues.forEach((issue) => {
       zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
     });

@@ -35,12 +35,7 @@ export async function partialSignup(formData: TInitialSignUp) {
     });
     console.log('🌼 🔥🔥 partialSignup 🔥🔥 response🌼', response);
 
-
     const data = await response.json();
-
-    if (!response.ok) {
-      return { success: false, message: data.message || 'Something went wrong!' };
-    }
 
     return data;
   } catch (error: any) {
