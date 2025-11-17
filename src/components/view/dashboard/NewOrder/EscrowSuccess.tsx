@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
-import { CheckCircle2 } from 'lucide-react';
 import Image from 'next/image';
+import { useRouter } from 'next/navigation';
 
 interface EscrowSuccessProps {
   orderId: string;
@@ -17,6 +17,8 @@ const EscrowSuccess: React.FC<EscrowSuccessProps> = ({
   trackUrl = 'www.getpayafta.com/track/ord-123456ABC',
   buyerName = 'John Doe',
 }) => {
+  const router = useRouter();
+
   const [copied, setCopied] = useState(false);
 
   const handleCopy = async () => {
@@ -75,7 +77,10 @@ const EscrowSuccess: React.FC<EscrowSuccessProps> = ({
             View Order
           </button>
 
-          <button className="w-full py-3 rounded-full bg-black text-white font-medium hover:bg-gray-900">
+          <button
+            onClick={() => router.push('/dashboard')}
+            className="w-full py-3 rounded-full bg-black text-white font-medium hover:bg-gray-900"
+          >
             Return to Dashboard
           </button>
         </div>

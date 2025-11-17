@@ -44,14 +44,21 @@ export const SearchableCounterpartySelect = ({
       try {
         const res = await searchCounterParty(searchTerm);
 
-        const transformedOptions: SelectOption[] = (res.data || []).map(
-          (u: CounterpartyOption) => ({
-            name: u.username || `${u.firstName || ''} ${u.lastName || ''}`.trim(),
+        const transformedOptions: SelectOption[] = (res.data || []).map((u: CounterpartyOption) => {
+          const displayName =
+            u.username ||
+            `${u.firstName || ''} ${u.lastName || ''}`.trim() ||
+            u.email ||
+            u.phone ||
+            'Unknown';
+
+          return {
+            name: displayName,
             email: u.email,
             phone: u.phone,
             avatar: u.profileImage,
-          })
-        );
+          };
+        });
 
         setOptions(transformedOptions);
       } catch (err) {
