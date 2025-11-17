@@ -49,7 +49,11 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
       setLoadingBanks(true);
       try {
         const res: any = await getPillaBanks();
-        setBanks(res?.data || []);
+        setBanks(
+          (res?.data || []).sort((a: Bank, b: Bank) =>
+            a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+          )
+        );
       } catch (error) {
         toast.error('Failed to load bank list');
       } finally {

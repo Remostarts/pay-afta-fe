@@ -1,13 +1,23 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { SocialAuthOptions } from '@/components/view/auth/sign-up/SocialAuthOptions';
 import SignupForm from '@/components/view/auth/sign-up/SignupForm';
 import Link from 'next/link';
 import Image from 'next/image';
 
 export default function SignupEmailOrSocialAuth() {
+  const searchParams = useSearchParams();
+  const inviteEmail = searchParams.get('email');
+  const inviteRef = searchParams.get('ref');
   const [showEmailSignup, setShowEmailSignup] = useState(false);
+
+  useEffect(() => {
+    if (inviteEmail || inviteRef) {
+      setShowEmailSignup(true);
+    }
+  }, [inviteEmail, inviteRef]);
 
   return (
     <section>
@@ -25,6 +35,7 @@ export default function SignupEmailOrSocialAuth() {
           </Link>
         </p>
       </div>
+
       {showEmailSignup ? (
         <SignupForm />
       ) : (

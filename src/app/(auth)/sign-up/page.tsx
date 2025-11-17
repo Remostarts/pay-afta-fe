@@ -1,6 +1,5 @@
 import { Metadata } from 'next';
 
-import SignupForm from '@/components/view/auth/sign-up/SignupForm';
 import SignupEmailOrSocialAuth from './SignupEmailOrSocialAuth';
 
 export const metadata: Metadata = {

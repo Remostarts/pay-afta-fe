@@ -50,7 +50,11 @@ export default function SettlementKycForm({ onComplete }: SettlementKycFormProps
       try {
         setLoadingBanks(true);
         const res = await getPillaBanks();
-        setBanks(res?.data || []);
+        setBanks(
+          (res?.data || []).sort((a: Bank, b: Bank) =>
+            a.name.localeCompare(b.name, undefined, { sensitivity: 'base' })
+          )
+        );
       } catch {
         toast.error('Failed to load bank list');
         setBanks([]);
