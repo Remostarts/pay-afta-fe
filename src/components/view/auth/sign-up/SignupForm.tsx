@@ -58,7 +58,7 @@ export default function SignupForm() {
       if (response?.success) {
         router.push('/sign-up/verification');
       } else {
-        toast.error(response?.error || response?.message || 'Sign up failed');
+        toast.error(response?.message || response?.error || 'Sign up failed');
       }
     } catch (error) {
       toast.error(error instanceof Error ? error.message : 'Sign up Failed');
@@ -100,10 +100,7 @@ export default function SignupForm() {
               <ReHeading heading="Email Address" size={'base'} />
               <ReInput name="email" />
             </div>
-            {/* <div>
-              <ReHeading heading="Phone Number" size="lg" />
-              <RePhoneNumberInput name="phoneNumber" />
-            </div> */}
+
             <div>
               <ReHeading heading="Password" size={'base'} />
               <RePassInput name="password" />
