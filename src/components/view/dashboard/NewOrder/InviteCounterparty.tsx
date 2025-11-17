@@ -1,53 +1,57 @@
 'use client';
 
 import { useState } from 'react';
-import { Copy, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { useForm, FormProvider } from 'react-hook-form';
+import { toast } from 'sonner';
+import { inviteCounterParty } from '@/lib/actions/root/user.action';
 
 export default function InviteCounterparty() {
-  const methods = useForm();
-  const { watch } = methods;
+  const methods = useForm<{ email: string }>();
+  const { handleSubmit } = methods;
+  const [loading, setLoading] = useState(false);
 
-  const email = watch('email');
-  const phone = watch('number');
-
-  const handleInvite = () => {};
+  const onSubmit = async (data: { email: string }) => {
+    setLoading(true);
+    try {
+      const response = await inviteCounterParty(data.email);
+      if (response.success) {
+        toast.success(response.message || 'Invite sent successfully!');
+      } else {
+        toast.error(response.message || 'Failed to send invite.');
+      }
+    } catch (err: any) {
+      toast.error(err?.message || 'Something went wrong.');
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <FormProvider {...methods}>
       <section className="mx-auto w-full max-w-md">
-        <div className="flex items-start justify-between">
-          <h1 className="font-inter text-xl font-bold text-gray-900">Invite Counterparty</h1>
-        </div>
-
+        <h1 className="font-inter text-xl font-bold text-gray-900">Invite Counterparty</h1>
         <p className="mt-1 font-inter text-sm text-gray-600 leading-relaxed">
           We need their contact information to send them a secure invitation.
         </p>
 
-        {/* Email */}
-        <div className="mt-3">
+        <form onSubmit={handleSubmit(onSubmit)} className="mt-3">
           <ReInput name="email" label="Email Address" placeholder="example@gmail.com" />
-        </div>
 
-        {/* <div className="mt-3 flex items-center gap-3">
-          <div className="flex-1 h-px bg-gray-300" />
-          <span className="font-inter text-sm text-gray-500">Or</span>
-          <div className="flex-1 h-px bg-gray-300" />
-        </div>
-
-        <div className="mt-3">
-          <ReInput name="number" label="Phone Number" placeholder="Enter phone number!" />
-        </div> */}
-
-        {/* Buttons */}
-        <div className="flex justify-between gap-2">
-          <Button className="mt-5 w-full border border-[#CCCCCC] rounded-full">Cancel</Button>
-          <Button className="mt-5 w-full bg-black text-white rounded-full" onClick={handleInvite}>
-            Send Invite & Continue
-          </Button>
-        </div>
+          <div className="flex justify-between gap-2 mt-5">
+            <Button type="button" className="w-full border border-[#CCCCCC] rounded-full">
+              Cancel
+            </Button>
+            <Button
+              type="submit"
+              className="w-full bg-black text-white rounded-full"
+              disabled={loading}
+            >
+              {loading ? 'Sending...' : 'Send Invite & Continue'}
+            </Button>
+          </div>
+        </form>
       </section>
     </FormProvider>
   );

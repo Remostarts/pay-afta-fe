@@ -3,7 +3,7 @@
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import ReInput from '@/components/re-ui/re-input/ReInput';
 import { ReHeading } from '@/components/re-ui/ReHeading';
@@ -64,17 +64,19 @@ export default function IdentityVerification() {
 
   const { handleSubmit, formState, watch } = form;
   const { isSubmitting, isValid } = formState;
-  const [isUsernameValid, setIsUsernameValid] = useState(false);
-  const [usernameValidityLoading, setUsernameValidityLoading] = useState(false);
-  const { loadUserData, user } = useGeneral();
+  const { onboardingStatus, user, loadUserData } = useGeneral();
   const [showLogoutDialog, setShowLogoutDialog] = useState(false);
   const [kycResult, setKycResult] = useState<{
     success: boolean;
     message: string;
   } | null>(null);
 
-  const [open, setOpen] = useState(false);
-  const [date, setDate] = useState<Date | undefined>(undefined);
+  // if completed identityVerification
+  useEffect(() => {
+    if (onboardingStatus === true && user?.profile?.identityVerified === true) {
+      router.push('/dashboard');
+    }
+  }, [onboardingStatus, user, router]);
 
   const onSubmit = async (data: TidentityVerification) => {
     try {
