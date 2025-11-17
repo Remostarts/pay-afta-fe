@@ -195,11 +195,13 @@ export default function Delivery() {
   return (
     <section className="min-h-screen rounded-md bg-white p-4 md:p-8">
       <DeliveryStats stat={stats} />
-      <AssignOrderList
-        orders={unassignOrder}
-        onAssignSuccess={handlePageChange}
-        onStatusChange={handlePageChange}
-      />
+      {unassignOrder.length > 0 ? (
+        <AssignOrderList
+          orders={unassignOrder}
+          onAssignSuccess={handlePageChange}
+          onStatusChange={handlePageChange}
+        />
+      ) : null}
       <ReDataTable
         label="Deliveries"
         columns={columns}
