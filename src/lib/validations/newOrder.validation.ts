@@ -56,8 +56,6 @@ export const newOrderSchema = () =>
 
       // Counterparties
       counterpartyEmailOrPhoneNo: z.string().min(3, 'Counterparty email is required.'),
-      // buyerEmailPhoneNo: z.string().optional(),
-      // sellerEmailPhoneNo: z.string().optional(),
     })
     .superRefine((data, ctx) => {
       // Role validation - must be either Buyer or Seller
@@ -199,7 +197,7 @@ export type TNewOrder = z.infer<ReturnType<typeof newOrderSchema>>;
 
 // Backend validation schema (used in action or API route)
 export const createOrderZodSchema = z.object({
-  role: z.string().min(3, 'Initiator role is required.'),
+  initiatorRole: z.string().min(3, 'Initiator role is required.'),
 
   counterpartyEmailOrPhoneNo: z.string().min(3, 'Counterparty email is required.'),
 

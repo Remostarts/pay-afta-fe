@@ -67,7 +67,7 @@ export default function OrderDetails({
                 label="Counter Party Email or PhoneNo"
                 value={orderData.counterpartyEmailOrPhoneNo}
               />
-              {orderData.role === 'Buyer' ? (
+              {orderData.initiatorRole === 'Buyer' ? (
                 <Row label={'Invoice Date'} value={formatDate(orderData.invoiceDate)} />
               ) : (
                 <Row label={'Delivery Date'} value={formatDate(orderData.deliveryDate)} />

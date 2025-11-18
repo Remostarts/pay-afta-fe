@@ -35,7 +35,7 @@ interface OrderSuccessData {
   orderId: string;
   amount: string;
   trackUrl: string;
-  buyerName: string;
+  buyerName?: string;
 }
 
 const ESCROW_FEE_RATE = 0.025; // 2.5%
@@ -233,7 +233,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
     }
 
     const processedData: TCreateOrderInput = {
-      role: data.role,
+      initiatorRole: data.role,
       counterpartyEmailOrPhoneNo: data.counterpartyEmailOrPhoneNo,
       invoiceDate: data.invoiceDate || new Date(),
       deliveryDate: data.deliveryDate || new Date(),
@@ -272,47 +272,47 @@ export default function NewOrder({ onBack }: NewOrderProps) {
 
     setIsCreatingOrder(true);
 
-    // try {
-    //   console.log('Creating order with data:', pendingOrderData);
-    //   const response = await createOrder(pendingOrderData);
+    try {
+      console.log('Creating order with data:', pendingOrderData);
+      const response = await createOrder(pendingOrderData);
 
-    //   if (response.success) {
-    //     toast.success('Order created successfully');
+      if (response?.success) {
+        toast.success('Order created successfully');
 
-    //     // Calculate amounts
-    //     const totalAmount = pendingOrderData.items.reduce(
-    //       (total, item) => total + Number(item.price || 0),
-    //       0
-    //     );
-    //     const escrowFee = totalAmount * ESCROW_FEE_RATE;
-    //     const finalAmount = totalAmount + escrowFee;
+        // Calculate amounts
+        const totalAmount = pendingOrderData.items.reduce(
+          (total, item) => total + Number(item.price || 0),
+          0
+        );
+        const escrowFee = totalAmount * ESCROW_FEE_RATE;
+        const finalAmount = totalAmount + escrowFee;
 
-    //     // Set success data
-    //     // setOrderSuccessData({
-    //     //   orderId: response.data?.orderId || `ORD-${Date.now()}`,
-    //     //   amount: new Intl.NumberFormat('en-NG', {
-    //     //     style: 'currency',
-    //     //     currency: 'NGN',
-    //     //     minimumFractionDigits: 2,
-    //     //   }).format(finalAmount),
-    //     //   trackUrl: response.data?.trackUrl || `www.getpayafta.com/track/order-${Date.now()}`,
-    //     // });
+        // Set success data
+        setOrderSuccessData({
+          orderId: response.data?.orderId || `ORD-${Date.now()}`,
+          amount: new Intl.NumberFormat('en-NG', {
+            style: 'currency',
+            currency: 'NGN',
+            minimumFractionDigits: 2,
+          }).format(finalAmount),
+          trackUrl: response.data?.trackUrl || `www.getpayafta.com/track/order-${Date.now()}`,
+        });
 
-    //     // Close order details and show success
-    //     setShowOrderDetails(false);
-    //     setShowEscrowSuccess(true);
+        // Close order details and show success
+        setShowOrderDetails(false);
+        setShowEscrowSuccess(true);
 
-    //     // Reset form state
-    //     resetFormState();
-    //   } else {
-    //     toast.error(response.message || 'Failed to create order');
-    //   }
-    // } catch (error: any) {
-    //   console.error('Error creating order:', error);
-    //   toast.error(error?.message || 'Something went wrong. Please try again.');
-    // } finally {
-    setIsCreatingOrder(false);
-    // }
+        // Reset form state
+        resetFormState();
+      } else {
+        toast.error(response.message || 'Failed to create order');
+      }
+    } catch (error: any) {
+      console.error('Error creating order:', error);
+      toast.error(error?.message || 'Something went wrong. Please try again.');
+    } finally {
+      setIsCreatingOrder(false);
+    }
   };
 
   // Reset form state
