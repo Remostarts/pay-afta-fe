@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Search, X, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 import InviteCounterparty from '../view/dashboard/NewOrder/InviteCounterparty';
+import { inviteCounterParty } from '@/lib/actions/root/user.action';
 
 type SearchableSelectTypes = {
   type: 'counterparty' | 'bank';
@@ -25,6 +26,7 @@ type SearchableSelectTypes = {
   }[];
   defaultValue?: string;
   onChange: (value: string) => void;
+  inviteCounterParty?: (email: string) => void;
   loading: boolean;
   placeholder?: string;
   limit?: number;
@@ -50,6 +52,7 @@ export const SearchableSelect = ({
   recentOptions = [],
   onInvite,
   searchPlaceholder,
+  inviteCounterParty,
   searchTerm: propSearchTerm,
   setSearchTerm: setPropSearchTerm,
 }: SearchableSelectTypes) => {
@@ -289,7 +292,7 @@ export const SearchableSelect = ({
                   </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
-                  <InviteCounterparty />
+                  <InviteCounterparty onHandleEmailChange={inviteCounterParty} />
                 </DialogContent>
               </Dialog>
             </div>
