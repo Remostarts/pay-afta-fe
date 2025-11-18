@@ -26,7 +26,7 @@ const EscrowSuccess: React.FC<EscrowSuccessProps> = ({
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
-
+ 
   return (
     <div className="w-full flex justify-center bg-white py-12 px-4">
       <div className="w-full max-w-lg flex flex-col items-center text-center">
