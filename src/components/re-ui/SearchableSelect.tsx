@@ -255,7 +255,7 @@ export const SearchableSelect = ({
             <div className="p-4 text-center text-sm text-gray-500">
               {searchTerm
                 ? type === 'counterparty'
-                  ? 'No counterparties found.'
+                  ? 'No counterparty found.'
                   : 'No banks found.'
                 : type === 'counterparty'
                   ? 'No counterparties available.'
