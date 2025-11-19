@@ -151,7 +151,7 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
         case 2: // Transaction PIN
           response = { success: true };
           break;
-        
+
         case 3: // Settlement KYC
           response = { success: true };
           break;
@@ -182,9 +182,12 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
           onClose();
         }
       } else {
-        throw new Error(response?.error || 'Failed to process step');
+        console.log(response);
+        throw new Error(response?.message || 'Failed to process step');
       }
     } catch (error) {
+      console.log('🌼 🔥🔥 handleStepComplete 🔥🔥 error🌼', error);
+
       const errorMessage = error instanceof Error ? error.message : 'An error occurred';
       setSubmitError(errorMessage);
       toast.error(errorMessage);

@@ -63,17 +63,14 @@ export default function OrderDetails({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
               <Row label="Transaction Type" value={orderData.transactionType} />
               <Row label="Payment Type" value={orderData.paymentType} />
-              <Row label="Buyer" value={orderData.buyerEmailPhoneNo} />
-              <Row label="Seller" value={orderData.sellerEmailPhoneNo} />
-              {orderData.deliveryDate && (
-                <Row
-                  label={
-                    orderData.paymentType === 'One time Payment'
-                      ? 'Delivery Date'
-                      : 'Final Delivery Date'
-                  }
-                  value={formatDate(orderData.deliveryDate)}
-                />
+              <Row
+                label="Counter Party Email or PhoneNo"
+                value={orderData.counterpartyEmailOrPhoneNo}
+              />
+              {orderData.initiatorRole === 'Buyer' ? (
+                <Row label={'Invoice Date'} value={formatDate(orderData.invoiceDate)} />
+              ) : (
+                <Row label={'Delivery Date'} value={formatDate(orderData.deliveryDate)} />
               )}
             </div>
           </section>

@@ -23,7 +23,7 @@ type SelectOption = {
 
 export const SearchableCounterpartySelect = ({
   onChange,
-  placeholder = 'Search counterparties...',
+  placeholder = 'Search Counterparty',
 }: {
   onChange: (email: string) => void;
   placeholder?: string;
@@ -89,6 +89,7 @@ export const SearchableCounterpartySelect = ({
           onChange(selected.email); // send email to parent
         }
       }}
+      inviteCounterParty={onChange}
       searchTerm={searchTerm}
       setSearchTerm={setSearchTerm}
       placeholder={placeholder}

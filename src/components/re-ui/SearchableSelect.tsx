@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Search, X, Plus } from 'lucide-react';
 import { Dialog, DialogContent, DialogTrigger } from '../ui/dialog';
 import InviteCounterparty from '../view/dashboard/NewOrder/InviteCounterparty';
+import { inviteCounterParty } from '@/lib/actions/root/user.action';
 
 type SearchableSelectTypes = {
   type: 'counterparty' | 'bank';
@@ -25,6 +26,7 @@ type SearchableSelectTypes = {
   }[];
   defaultValue?: string;
   onChange: (value: string) => void;
+  inviteCounterParty?: (email: string) => void;
   loading: boolean;
   placeholder?: string;
   limit?: number;
@@ -50,6 +52,7 @@ export const SearchableSelect = ({
   recentOptions = [],
   onInvite,
   searchPlaceholder,
+  inviteCounterParty,
   searchTerm: propSearchTerm,
   setSearchTerm: setPropSearchTerm,
 }: SearchableSelectTypes) => {
@@ -57,6 +60,7 @@ export const SearchableSelect = ({
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(value || defaultValue);
   const [isOpen, setIsOpen] = useState(false);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Efficient filtering with memoization
@@ -255,7 +259,7 @@ export const SearchableSelect = ({
             <div className="p-4 text-center text-sm text-gray-500">
               {searchTerm
                 ? type === 'counterparty'
-                  ? 'No counterparties found.'
+                  ? 'No counterparty found.'
                   : 'No banks found.'
                 : type === 'counterparty'
                   ? 'No counterparties available.'
@@ -281,7 +285,7 @@ export const SearchableSelect = ({
                 <Plus className="w-4 h-4" />
                 <span>Invite supplier</span>
               </button> */}
-              <Dialog>
+              <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                 <DialogTrigger asChild>
                   <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
                     <Plus width={16} height={16} />
@@ -289,7 +293,16 @@ export const SearchableSelect = ({
                   </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
-                  <InviteCounterparty />
+                  <InviteCounterparty
+                    onHandleEmailChange={inviteCounterParty}
+                    onSuccess={() => {
+                      setIsInviteDialogOpen(false);
+                      setIsOpen(false); // Close the select dropdown as well
+                    }}
+                    onCancel={() => {
+                      setIsInviteDialogOpen(false);
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
