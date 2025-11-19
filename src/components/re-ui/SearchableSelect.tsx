@@ -60,6 +60,7 @@ export const SearchableSelect = ({
 
   const [selectedValue, setSelectedValue] = useState<string | undefined>(value || defaultValue);
   const [isOpen, setIsOpen] = useState(false);
+  const [isInviteDialogOpen, setIsInviteDialogOpen] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   // Efficient filtering with memoization
@@ -284,7 +285,7 @@ export const SearchableSelect = ({
                 <Plus className="w-4 h-4" />
                 <span>Invite supplier</span>
               </button> */}
-              <Dialog>
+              <Dialog open={isInviteDialogOpen} onOpenChange={setIsInviteDialogOpen}>
                 <DialogTrigger asChild>
                   <button className="w-full flex items-center gap-2 px-3 py-2 text-sm text-blue-600 hover:bg-blue-50 rounded transition-colors">
                     <Plus width={16} height={16} />
@@ -292,7 +293,16 @@ export const SearchableSelect = ({
                   </button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-[425px]">
-                  <InviteCounterparty onHandleEmailChange={inviteCounterParty} />
+                  <InviteCounterparty
+                    onHandleEmailChange={inviteCounterParty}
+                    onSuccess={() => {
+                      setIsInviteDialogOpen(false);
+                      setIsOpen(false); // Close the select dropdown as well
+                    }}
+                    onCancel={() => {
+                      setIsInviteDialogOpen(false);
+                    }}
+                  />
                 </DialogContent>
               </Dialog>
             </div>
