@@ -269,8 +269,8 @@ export default function OrderAgreement({
           </Dialog>
 
           <ReButton
-            // onClick={() => setIsRejectDialogOpen(true)}
-            onClick={() => {}}
+            onClick={() => setIsRejectDialogOpen(true)}
+            // onClick={() => {}}
             disabled={!canRejectOrder(order)}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
@@ -418,8 +418,8 @@ export default function OrderAgreement({
           </Dialog>
 
           <ReButton
-            // onClick={() => setIsRejectDialogOpen(true)}
-            onClick={() => {}}
+            onClick={() => setIsRejectDialogOpen(true)}
+            // onClick={() => {}}
             disabled={!canRejectOrder(order)}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
@@ -469,7 +469,6 @@ export default function OrderAgreement({
           {order && (
             <RejectOrderModal
               orderId={order?.id || ''}
-              isOpen={isRejectDialogOpen}
               onClose={() => setIsRejectDialogOpen(false)}
               onSuccess={handleRejectModalSuccess}
               orderDetails={

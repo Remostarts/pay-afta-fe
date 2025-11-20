@@ -17,7 +17,6 @@ import { rejectOrder } from '@/lib/actions/order/order.actions';
 
 interface RejectOrderModalProps {
   orderId: string;
-  isOpen: boolean;
   onClose: () => void;
   onSuccess: () => void;
   orderDetails?: {
@@ -29,7 +28,6 @@ interface RejectOrderModalProps {
 
 export default function RejectOrderModal({
   orderId,
-  isOpen,
   onClose,
   onSuccess,
   orderDetails,
@@ -52,16 +50,15 @@ export default function RejectOrderModal({
   const { errors, isValid } = formState;
 
   useEffect(() => {
-    if (isOpen) {
-      reset({
-        orderId,
-        rejectionReason: undefined,
-        rejectionComments: '',
-        resolutionDetails: '',
-        contactPreference: undefined,
-      });
-    }
-  }, [isOpen, orderId, reset]);
+    // Reset form whenever orderId changes
+    reset({
+      orderId,
+      rejectionReason: undefined,
+      rejectionComments: '',
+      resolutionDetails: '',
+      contactPreference: undefined,
+    });
+  }, [orderId, reset]);
 
   const onSubmit = async (data: TRejectOrderInput) => {
     try {
@@ -131,7 +128,6 @@ export default function RejectOrderModal({
               <ReSelect
                 name="rejectionReason"
                 options={[
-                  { label: 'Select a reason', value: '' },
                   { label: 'Payment Issue', value: 'Payment Issue' },
                   { label: 'Product/Service Quality', value: 'Product/Service Quality' },
                   { label: 'Delivery Issues', value: 'Delivery Issues' },
@@ -192,7 +188,6 @@ export default function RejectOrderModal({
             <ReSelect
               name="contactPreference"
               options={[
-                { label: 'Select contact preference', value: '' },
                 { label: 'Email', value: 'Email' },
                 { label: 'Phone', value: 'Phone' },
                 { label: 'Platform Messages', value: 'Platform Messages' },
