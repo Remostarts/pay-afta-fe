@@ -39,6 +39,13 @@ export const sideNavMenu = [
     alt: 'delivery',
   },
   {
+    id: 4,
+    imgBlack: '/assets/dashboard/Dashboard/deliveryIcon.svg',
+    imgColor: '/assets/dashboard/Dashboard/deliveryColorIcon.svg',
+    name: 'Add Referral',
+    alt: 'add-referral',
+  },
+  {
     id: 5,
     imgBlack: '/assets/dashboard/Dashboard/chat.svg',
     imgColor: '/assets/dashboard/Dashboard/chatColorIcon.svg',
@@ -53,14 +60,14 @@ export const sideNavMenu = [
   //   alt: 'virtual-card',
   // },
   {
-    id: 7,
+    id: 6,
     imgBlack: '/assets/dashboard/Dashboard/settings.svg',
     imgColor: '/assets/dashboard/Dashboard/settingColorIcons.svg',
     name: 'Settings',
     alt: 'settings',
   },
   {
-    id: 8,
+    id: 7,
     imgBlack: '/assets/dashboard/Dashboard/support.svg',
     imgColor: '/assets/dashboard/Dashboard/supportColorIcon.svg',
     name: 'Support',
