@@ -23,7 +23,7 @@ function ChooseDeliveryMethodModal({ onProceed, onClose }: ChooseDeliveryMethodM
         Select one of the delivery methods listed below
       </p>
       <div className="mb-6 space-y-3">
-        <button
+        {/* <button
           className={`flex w-full cursor-pointer items-center justify-between rounded-lg border px-4 py-3 ${selected === 'partner' ? 'border-[#12BA4A] bg-blue-50' : 'border-gray-200'}`}
           onClick={() => setSelected('partner')}
         >
@@ -38,7 +38,7 @@ function ChooseDeliveryMethodModal({ onProceed, onClose }: ChooseDeliveryMethodM
             <span className="font-inter">Use Payafter Logistics Partner</span>
           </div>
           <ChevronRight />
-        </button>
+        </button> */}
         <button
           className={`flex w-full cursor-pointer items-center justify-between rounded-lg border px-4 py-3 ${selected === 'seller' ? 'border-[#12BA4A] bg-blue-50' : 'border-gray-200'}`}
           onClick={() => setSelected('seller')}

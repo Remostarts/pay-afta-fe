@@ -27,7 +27,7 @@ export default function PaymentSuccessful({
       case 'Withdrawal Successful':
       case 'Transfer Successful':
         return `You sent ₦${amount?.toLocaleString() ?? 0} to ${bankName || 'recipient'}.`;
-      case 'Order Created!':
+      case 'Agreement Accepted':
         return 'Proceed to the next stage of the transaction.';
       case 'Payment Successful':
         return `Your payment of ₦${amount?.toLocaleString() ?? 0} has been successfully secured in escrow, ensuring a safe and smooth transaction process.`;

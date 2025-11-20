@@ -262,7 +262,7 @@ export const SearchableSelect = ({
                   ? 'No counterparty found.'
                   : 'No banks found.'
                 : type === 'counterparty'
-                  ? 'No counterparties available.'
+                  ? 'No counterparty found'
                   : 'No banks available.'}
             </div>
           ) : (
