@@ -132,7 +132,7 @@ export default function TrackLink() {
     },
     {
       accessorKey: 'view',
-      header: 'Action',
+      header: 'Actions',
       cell: ({ row }) => (
         <button
           onClick={() =>

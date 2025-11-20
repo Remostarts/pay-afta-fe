@@ -20,6 +20,7 @@ type TReTextareaProps = {
   description?: string;
   required?: boolean;
   defaultValue?: string;
+  rows?: number;
 };
 
 export function ReTextarea({
@@ -30,6 +31,7 @@ export function ReTextarea({
   description,
   required,
   defaultValue,
+  rows,
 }: TReTextareaProps) {
   const { control } = useFormContext();
 
@@ -48,6 +50,7 @@ export function ReTextarea({
                 placeholder={placeholder}
                 className={`resize-none border-2 font-spaceGrotesk ${className}`}
                 defaultValue={defaultValue}
+                rows={rows}
                 {...field}
               />
             </FormControl>

@@ -49,3 +49,68 @@ export const assignDeliveryPartnerSchema = z.object({
 });
 
 export type TAssignDeliveryPartnerInput = z.infer<typeof assignDeliveryPartnerSchema>;
+
+// Edit Order validation schema
+export const editOrderSchema = z.object({
+  transactionType: z.enum(['Product', 'Services']),
+  detailAboutItem: z.string().min(1, 'Item details are required'),
+  paymentType: z.enum(['One time Payment', 'Milestone Payment']),
+  transactionFee: z.enum([
+    'I will pay for the transaction',
+    'Seller pays for the transaction fee',
+    'Both Parties Pay (50/50)',
+  ]),
+  deliveryDate: z.date().optional(),
+  invoiceDate: z.date().optional(),
+  items: z
+    .array(
+      z.object({
+        name: z.string().min(1, 'Item name is required'),
+        price: z.string().min(1, 'Item price is required'),
+        quantity: z.string().min(1, 'Item quantity is required'),
+      })
+    )
+    .min(1, 'At least one item is required'),
+  milestones: z
+    .array(
+      z.object({
+        title: z.string().min(1, 'Milestone title is required'),
+        amount: z.string().min(1, 'Milestone amount is required'),
+        deliveryDate: z.date(),
+      })
+    )
+    .optional(),
+});
+
+export type TEditOrderInput = z.infer<typeof editOrderSchema>;
+
+// Order rejection validation schema
+export const rejectOrderSchema = z.object({
+  orderId: z.string().min(1, 'Order ID is required'),
+  rejectionReason: z.enum(
+    [
+      'Payment Issue',
+      'Product/Service Quality',
+      'Delivery Issues',
+      'Miscommunication',
+      'Item Not as Described',
+      'Price Dispute',
+      'Timeline Issues',
+      'Buyer/Seller Unresponsive',
+      'Fraud/Security Concerns',
+      'Other',
+    ],
+    {
+      errorMap: () => ({ message: 'Please select a rejection reason' }),
+    }
+  ),
+  rejectionComments: z.string().min(10, 'Please provide detailed comments (minimum 10 characters)'),
+  resolutionDetails: z.string().optional(),
+  contactPreference: z
+    .enum(['Email', 'Phone', 'Platform Messages'], {
+      errorMap: () => ({ message: 'Please select your preferred contact method' }),
+    })
+    .optional(),
+});
+
+export type TRejectOrderInput = z.infer<typeof rejectOrderSchema>;

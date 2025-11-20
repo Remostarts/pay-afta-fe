@@ -276,6 +276,8 @@ export default function NewOrder({ onBack }: NewOrderProps) {
       console.log('Creating order with data:', pendingOrderData);
       const response = await createOrder(pendingOrderData);
 
+      console.log(response);
+
       if (response?.success) {
         toast.success('Order created successfully');
 
@@ -295,7 +297,8 @@ export default function NewOrder({ onBack }: NewOrderProps) {
             currency: 'NGN',
             minimumFractionDigits: 2,
           }).format(finalAmount),
-          trackUrl: response.data?.trackUrl || `www.getpayafta.com/track/order-${Date.now()}`,
+          trackUrl:
+            response.data?.trackUrl || `www.getpayafta.com/tracking/order/${response.data?.id}`,
         });
 
         // Close order details and show success

@@ -7,13 +7,17 @@ import { getErrorMessage } from '@/lib/responseError';
 import { createOrderZodSchema, TCreateOrderInput } from '@/lib/validations/newOrder.validation';
 import {
   assignDeliveryPartnerSchema,
+  editOrderSchema,
   OneTimeUseWallet,
   PersonalWalletPayment,
   TAssignDeliveryPartnerInput,
+  TEditOrderInput,
   TOneTimeUseWallet,
   TPersonalWalletPaymentInput,
   UpdateOrderProgressDTO,
   updateOrderProgressSchema,
+  rejectOrderSchema,
+  TRejectOrderInput,
 } from '@/lib/validations/order';
 
 export async function createOrder(formData: TCreateOrderInput) {
@@ -45,6 +49,40 @@ export async function createOrder(formData: TCreateOrderInput) {
     return response.json();
   } catch (error) {
     console.log('🌼 🔥🔥 createOrder 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+export async function updateOrder(formData: TEditOrderInput, id: string) {
+  const validation = editOrderSchema.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    console.log(zodErrors);
+    validation.error.issues.forEach((issue) => {
+      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+    });
+    throw new Error(zodErrors);
+  }
+
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/order/update/${id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 updateOrder 🔥🔥 error🌼', error);
 
     getErrorMessage(error);
   }
@@ -285,6 +323,43 @@ export async function reAssignDeliveryPartner(formData: TAssignDeliveryPartnerIn
     return response.json();
   } catch (error) {
     console.error('🌼 🔥🔥 assignDeliveryPartner 🔥🔥 error 🌼', error);
+    getErrorMessage(error);
+  }
+}
+
+export async function rejectOrder(formData: TRejectOrderInput) {
+  const validation = rejectOrderSchema.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors += `${issue.path[0]}: ${issue.message}. `;
+    });
+    throw new Error(zodErrors);
+  }
+
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/order/reject/${formData.orderId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify({
+        rejectionReason: formData.rejectionReason,
+        rejectionComments: formData.rejectionComments,
+        resolutionDetails: formData.resolutionDetails,
+        contactPreference: formData.contactPreference,
+      }),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.error('🌼 🔥🔥 rejectOrder 🔥🔥 error 🌼', error);
     getErrorMessage(error);
   }
 }
