@@ -7,6 +7,7 @@ import { Copy, Check } from 'lucide-react';
 
 interface EscrowSuccessProps {
   orderId: string;
+  transactionType: string;
   amount: string;
   trackUrl: string;
   buyerName?: string;
@@ -15,6 +16,7 @@ interface EscrowSuccessProps {
 
 export default function EscrowSuccess({
   orderId,
+  transactionType,
   amount,
   trackUrl,
   buyerName = 'the counterparty',
@@ -33,12 +35,10 @@ export default function EscrowSuccess({
     }
   };
 
+  console.log('Transaction type', transactionType);
+
   const handleViewOrder = () => {
-    if (onViewOrder) {
-      onViewOrder();
-    } else {
-      router.push(`/orders/${orderId}`);
-    }
+    router.push(`track-links/${transactionType}/${orderId}`);
   };
 
   const handleReturnToDashboard = () => {
