@@ -7,6 +7,7 @@ import router from 'next/router';
 
 import { DataTable } from './DataTable';
 import MilestoneDialog from './MilestoneDialog';
+import TrackButtonDropdown from './TrackButtonDropdown';
 
 import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { useGeneral } from '@/context/generalProvider';
@@ -32,6 +33,8 @@ export type Order = {
   name: string;
   status: string;
 };
+
+export type { Order as SimpleOrder };
 
 export default function TrackLink() {
   const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
@@ -134,14 +137,13 @@ export default function TrackLink() {
       accessorKey: 'view',
       header: 'Actions',
       cell: ({ row }) => (
-        <button
-          onClick={() =>
-            handleViewTransaction(true, row?.original?.transactionType, row?.original?.id)
-          }
-          className="cursor-pointer text-[#333333]"
-        >
-          Track
-        </button>
+        <TrackButtonDropdown
+          order={row?.original}
+          onOrderUpdate={() => {
+            // Refresh the orders data when an order is updated
+            handlePageChange(1, 'All', 'All');
+          }}
+        />
       ),
     },
   ];
@@ -170,11 +172,6 @@ export default function TrackLink() {
   useEffect(() => {
     handlePageChange(1, 'All', 'All');
   }, []);
-
-  const handleViewTransaction = (p0: boolean, transactionType: string, id: string) => {
-    console.log('transaction type', transactionType, 'id', id);
-    router.push(`/dashboard/track-links/${transactionType}/${id}`);
-  };
 
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);

@@ -33,6 +33,7 @@ interface NewOrderProps {
 
 interface OrderSuccessData {
   orderId: string;
+  transactionType: string;
   amount: string;
   trackUrl: string;
   buyerName?: string;
@@ -60,6 +61,9 @@ export default function NewOrder({ onBack }: NewOrderProps) {
 
   // Loading state
   const [isCreatingOrder, setIsCreatingOrder] = useState(false);
+
+  // Counter Party Email - track invited email
+  const [invitedEmail, setInvitedEmail] = useState<string>('');
 
   // console.log(initiatorRole);
 
@@ -118,6 +122,12 @@ export default function NewOrder({ onBack }: NewOrderProps) {
   // Handle counterparty selection
   const handleCounterpartyChange = (email: string) => {
     // console.log(email);
+    setValue('counterpartyEmailOrPhoneNo', email);
+  };
+
+  // Handle invited counterparty email
+  const handleInvitedEmail = (email: string) => {
+    setInvitedEmail(email);
     setValue('counterpartyEmailOrPhoneNo', email);
   };
 
@@ -268,15 +278,15 @@ export default function NewOrder({ onBack }: NewOrderProps) {
       return;
     }
 
-    console.log(pendingOrderData);
+    // console.log(pendingOrderData);
 
     setIsCreatingOrder(true);
 
     try {
-      console.log('Creating order with data:', pendingOrderData);
+      // console.log('Creating order with data:', pendingOrderData);
       const response = await createOrder(pendingOrderData);
 
-      console.log(response);
+      // console.log(response);
 
       if (response?.success) {
         toast.success('Order created successfully');
@@ -291,14 +301,16 @@ export default function NewOrder({ onBack }: NewOrderProps) {
 
         // Set success data
         setOrderSuccessData({
-          orderId: response.data?.orderId || `ORD-${Date.now()}`,
+          orderId: response.data?.orderId || response.data?.id || `ORD-${Date.now()}`,
+          transactionType: response.data?.transactionType,
           amount: new Intl.NumberFormat('en-NG', {
             style: 'currency',
             currency: 'NGN',
             minimumFractionDigits: 2,
           }).format(finalAmount),
           trackUrl:
-            response.data?.trackUrl || `www.getpayafta.com/tracking/order/${response.data?.id}`,
+            response.data?.trackUrl ||
+            `${typeof window !== 'undefined' ? window.location.origin : ''}/invoice/${response.data?.orderId || response.data?.id}`,
         });
 
         // Close order details and show success
@@ -352,6 +364,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
     setShowMilestone2(false);
     setShowMilestone3(false);
     setPendingOrderData(null);
+    setInvitedEmail(''); // Clear invited email
   };
 
   // Handle modal closes
@@ -365,6 +378,8 @@ export default function NewOrder({ onBack }: NewOrderProps) {
     setOrderSuccessData(null);
   };
 
+  console.log(orderSuccessData);
+
   // Render success screen
   if (showEscrowSuccess && orderSuccessData) {
     return (
@@ -374,6 +389,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
           amount={orderSuccessData.amount}
           trackUrl={orderSuccessData.trackUrl}
           buyerName={orderSuccessData.buyerName}
+          transactionType={orderSuccessData.transactionType}
           onViewOrder={() => {
             // Handle view order
             console.log('View order:', orderSuccessData.orderId);
@@ -437,7 +453,11 @@ export default function NewOrder({ onBack }: NewOrderProps) {
                   size="base"
                   className="text-gray-700 mb-2"
                 />
-                <SearchableCounterpartySelect onChange={handleCounterpartyChange} />
+                <SearchableCounterpartySelect
+                  onChange={handleCounterpartyChange}
+                  inviteCounterpartyEmail={invitedEmail}
+                  onInviteSuccess={handleInvitedEmail}
+                />
               </div>
 
               {/* Item 1 */}
