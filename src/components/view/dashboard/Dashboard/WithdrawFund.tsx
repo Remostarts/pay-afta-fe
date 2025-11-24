@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/select';
 import { getPillaBanks } from '@/lib/actions/onboarding/onboarding.actions';
 import ReInput from '@/components/re-ui/re-input/ReInput';
-import { withdrawFundFromWallet } from '@/lib/actions/root/user.action';
+import { withdrawFundFromWallet, enquiryBankAccount } from '@/lib/actions/root/user.action';
 import { SearchableSelect } from '@/components/re-ui/SearchableSelect';
 
 type Bank = {
@@ -41,6 +41,7 @@ type AccountProps = {
   bankName: string;
   accountNumber: string;
   accountName: string;
+  narration: string;
   bankCode?: string;
   id?: string;
 };
@@ -49,6 +50,8 @@ const defaultValues: TWithdrawfund = {
   bankName: '',
   accountNumber: '',
   bankCode: '',
+  accountName: '',
+  narration: '',
   amountWithdraw: 0,
 };
 
@@ -73,6 +76,14 @@ export default function WithdrawFund() {
 
   const [banks, setBanks] = useState<Bank[]>([]);
   const [loadingBanks, setLoadingBanks] = useState(false);
+  const [enquiryLoading, setEnquiryLoading] = useState(false);
+  const [enquiryResult, setEnquiryResult] = useState<{
+    accountName: string;
+    accountNumber: string;
+    bankName: string;
+    bankCode: string;
+  } | null>(null);
+  const [enquiryError, setEnquiryError] = useState<string | null>(null);
 
   useEffect(() => {
     async function fetchBanks() {
@@ -101,6 +112,7 @@ export default function WithdrawFund() {
       bankName: bank.bankName || '',
       accountNumber: bank.accountNumber || '',
       accountName: bank.accountHolder || '',
+      narration: (bank as any).narration || '',
       bankCode: bank.bankCode || '',
       id: bank.id,
     })) || [];
@@ -110,6 +122,7 @@ export default function WithdrawFund() {
     accountNumber: '',
     accountName: '',
     bankCode: '',
+    narration: '',
     id: '',
   };
 
@@ -138,6 +151,53 @@ export default function WithdrawFund() {
   const bankAmount = form.watch('amountWithdraw');
   const selectedBankName = watch('bankName');
   const settlementAmount = transferForm.watch('amountWithdraw');
+  const accountNumberValue = form.watch('accountNumber');
+  const bankCodeValue = form.watch('bankCode');
+
+  // Bank account enquiry function
+  const handleBankAccountEnquiry = async (accountNumber: string, bankCode: string) => {
+    if (!accountNumber || !bankCode || accountNumber.length < 10) {
+      setEnquiryResult(null);
+      setEnquiryError(null);
+      return;
+    }
+
+    setEnquiryLoading(true);
+    setEnquiryError(null);
+
+    try {
+      const result = await enquiryBankAccount({
+        account_number: accountNumber,
+        bank_code: parseInt(bankCode),
+      });
+
+      console.log(result);
+
+      if (result.success && result.data) {
+        setEnquiryResult({
+          accountName: result.data.account_name || '',
+          accountNumber: accountNumber,
+          bankName: result.data.bank_name || '',
+          bankCode: bankCode,
+        });
+        setEnquiryError(null);
+        // Update form with account name
+        setValue('accountName', result.data.account_name || '', { shouldValidate: true });
+      } else {
+        setEnquiryResult(null);
+        setEnquiryError(result.message || 'Failed to verify account details');
+        // Clear account name on failed enquiry
+        setValue('accountName', '', { shouldValidate: true });
+      }
+    } catch (error: any) {
+      setEnquiryResult(null);
+      setEnquiryError(error.message || 'Account verification failed');
+      // Clear account name on error
+      setValue('accountName', '', { shouldValidate: true });
+    } finally {
+      setEnquiryLoading(false);
+    }
+  };
 
   useEffect(() => {
     if (selectedBankName && banks.length > 0) {
@@ -149,6 +209,25 @@ export default function WithdrawFund() {
       setValue('bankCode', '');
     }
   }, [selectedBankName, banks, setValue]);
+
+  // Watch for account number and bank code changes to trigger enquiry
+  useEffect(() => {
+    if (accountNumberValue && bankCodeValue && transferType === 'bank') {
+      const timeoutId = setTimeout(() => {
+        handleBankAccountEnquiry(accountNumberValue, bankCodeValue);
+      }, 1000); // Debounce for 1 second
+
+      return () => clearTimeout(timeoutId);
+    }
+  }, [accountNumberValue, bankCodeValue, transferType]);
+
+  // Clear enquiry results when transfer type changes
+  useEffect(() => {
+    if (transferType !== 'bank') {
+      setEnquiryResult(null);
+      setEnquiryError(null);
+    }
+  }, [transferType]);
 
   const onSubmit = (data: TWithdrawfund) => {
     setWithdrawalData(data);
@@ -192,7 +271,10 @@ export default function WithdrawFund() {
         body.newAccount = {
           bankName: (withdrawalData as TWithdrawfund)?.bankName || '',
           accountNumber: (withdrawalData as TWithdrawfund)?.accountNumber || '',
+          accountName:
+            enquiryResult?.accountName || (withdrawalData as TWithdrawfund)?.accountName || '',
           bankCode: (withdrawalData as TWithdrawfund)?.bankCode || '',
+          narration: (withdrawalData as TWithdrawfund)?.narration || '',
         };
       } else if (transferType === 'settlement') {
         body.savedAccountId = selectedAccount?.id || defaultAccount.id;
@@ -372,6 +454,67 @@ export default function WithdrawFund() {
                 <p className="text-sm text-red-500">{errors.accountNumber.message}</p>
               )} */}
 
+              {/* Bank Account Enquiry Results */}
+              {(enquiryLoading || enquiryResult || enquiryError) && (
+                <div className="mt-2 p-3 rounded-md border">
+                  {enquiryLoading && (
+                    <div className="flex items-center gap-2 text-sm text-blue-600">
+                      <div className="animate-spin h-4 w-4 border-2 border-blue-600 border-t-transparent rounded-full"></div>
+                      Verifying account details...
+                    </div>
+                  )}
+
+                  {enquiryResult && !enquiryLoading && (
+                    <div className="space-y-1">
+                      <div className="flex items-center gap-2 text-sm text-green-600">
+                        <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Account verified successfully
+                      </div>
+                      <p className="text-sm font-medium text-gray-900">
+                        Account Name: {enquiryResult.accountName}
+                      </p>
+                      <p className="text-xs text-gray-500">
+                        {enquiryResult.accountNumber} • {enquiryResult.bankName}
+                      </p>
+                    </div>
+                  )}
+
+                  {enquiryError && !enquiryLoading && (
+                    <div className="flex items-center gap-2 text-sm text-red-600">
+                      <svg className="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+                        <path
+                          fillRule="evenodd"
+                          d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                          clipRule="evenodd"
+                        />
+                      </svg>
+                      {enquiryError}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Manual Enquiry Button */}
+              {!enquiryLoading &&
+                accountNumberValue &&
+                bankCodeValue &&
+                accountNumberValue.length >= 10 &&
+                !enquiryResult && (
+                  <button
+                    type="button"
+                    onClick={() => handleBankAccountEnquiry(accountNumberValue, bankCodeValue)}
+                    className="text-sm text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Verify Account Details
+                  </button>
+                )}
+
               <input type="hidden" {...register('bankCode')} />
               <div className="text-sm text-gray-500">
                 Bank Code: {watch('bankCode') || 'Auto-filled upon bank selection'}
@@ -397,11 +540,16 @@ export default function WithdrawFund() {
               </p>
             </div>
 
+            <div>
+              <ReHeading heading="Narration" size="base" />
+              <ReInput name="narration" />
+            </div>
+
             <ReButton
               className={`mt-6 w-full rounded-full p-5 ${
                 !bankAmount || bankAmount <= 0 || (user?.Wallet?.[0]?.balance || 0) < bankAmount
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-[#3A3DF8] text-white'
+                  : 'bg-[#03045B] text-white'
               }`}
               type="submit"
               isSubmitting={isSubmitting}
@@ -443,7 +591,7 @@ export default function WithdrawFund() {
           <SwitchAccount
             accounts={accounts}
             onClose={() => setIsShowSwitchAccount(false)}
-            onAccountSelect={handleAccountSelect}
+            onAccountSelect={(account) => handleAccountSelect({ ...account, narration: '' })}
           />
         </DialogContent>
       </Dialog>
