@@ -8,6 +8,8 @@ export const withdrawfundSchema = z.object({
     .max(6, 'Bank code is too long')
     .trim(),
   accountNumber: z.string().regex(/^\d{10,12}$/, 'Account number must be 10–12 digits'),
+  accountName: z.string().min(1, 'Account name verification is required').trim(),
+  narration: z.string().optional(),
   amountWithdraw: z
     .number({ invalid_type_error: 'Amount must be a number' })
     .positive('Amount must be greater than zero'),

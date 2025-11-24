@@ -99,6 +99,8 @@ export async function enquiryBankAccount(payload: { account_number: string; bank
 
     const result = await response.json();
 
+    console.log(result);
+
     if (!response.ok) throw new Error(result.message || 'Bank enquiry failed');
 
     return result;
@@ -107,7 +109,6 @@ export async function enquiryBankAccount(payload: { account_number: string; bank
     return { success: false, message: getErrorMessage(error) };
   }
 }
-
 
 export const searchCounterParty = async (email: string) => {
   const response = await fetch(
@@ -146,5 +147,3 @@ export const inviteCounterParty = async (email: string) => {
 
   return await response.json();
 };
-
-
