@@ -44,6 +44,7 @@ export async function withdrawFundFromWallet(
           bankCode?: string;
         };
         withdrawPassword: string;
+        narration?: string;
       })
 ) {
   try {
@@ -72,6 +73,39 @@ export async function withdrawFundFromWallet(
     return result;
   } catch (error) {
     console.error('🔥 withdrawFund error:', error);
+    return { success: false, message: getErrorMessage(error) };
+  }
+}
+
+export async function enquiryBankAccount(payload: { account_number: string; bank_code: number }) {
+  try {
+    const session = (await getServerSession(authOptions)) as any;
+    const token = session?.accessToken;
+
+    if (!token) throw new Error('Unauthorized. Please log in again.');
+
+    const response = await fetch(
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/pilla/enquiry-bank-account`,
+      {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        body: JSON.stringify(payload),
+        cache: 'no-store',
+      }
+    );
+
+    const result = await response.json();
+
+    console.log(result);
+
+    if (!response.ok) throw new Error(result.message || 'Bank enquiry failed');
+
+    return result;
+  } catch (error) {
+    console.error('🔥 enquiryBankAccount error:', error);
     return { success: false, message: getErrorMessage(error) };
   }
 }

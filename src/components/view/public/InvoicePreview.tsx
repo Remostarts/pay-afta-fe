@@ -4,7 +4,7 @@ import React from 'react';
 import { CheckCircle, XCircle } from 'lucide-react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-
+import { useGeneral } from '@/context/generalProvider';
 interface InvoicePreviewProps {
   orderId?: string;
   invoiceData?: {
@@ -50,54 +50,55 @@ export default function InvoicePreview({
   onReject,
 }: InvoicePreviewProps) {
   const router = useRouter();
+  const { user } = useGeneral();
 
   // Use provided data or fallback to defaults
-  const data = invoiceData || {
-    id: orderId,
-    issueDate: '3 Nov, 2023',
-    dueDate: '24 Nov, 2023',
-    seller: {
-      name: 'John Doe',
-      email: 'johndoe@mail.com',
-    },
-    buyer: {
-      name: 'John Doe',
-      email: 'johndoe@mail.com',
-    },
-    items: [
-      {
-        id: '1',
-        description:
-          'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-        quantity: 70,
-        price: 300000,
-      },
-    ],
-    milestones: [
-      {
-        id: '1',
-        title: 'Milestone 1',
-        description:
-          'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-        deliveryDate: 'November 24, 2023',
-        amount: 150000,
-      },
-      {
-        id: '2',
-        title: 'Milestone 2',
-        description:
-          'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-        deliveryDate: 'November 24, 2023',
-        amount: 150000,
-      },
-    ],
-    totals: {
-      subtotal: 300000,
-      tax: 0,
-      shipping: 0,
-      total: 300000,
-    },
-  };
+  // const data = invoiceData || {
+  //   id: orderId,
+  //   issueDate: '3 Nov, 2023',
+  //   dueDate: '24 Nov, 2023',
+  //   seller: {
+  //     name: 'John Doe',
+  //     email: 'johndoe@mail.com',
+  //   },
+  //   buyer: {
+  //     name: 'John Doe',
+  //     email: 'johndoe@mail.com',
+  //   },
+  //   items: [
+  //     {
+  //       id: '1',
+  //       description:
+  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
+  //       quantity: 70,
+  //       price: 300000,
+  //     },
+  //   ],
+  //   milestones: [
+  //     {
+  //       id: '1',
+  //       title: 'Milestone 1',
+  //       description:
+  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
+  //       deliveryDate: 'November 24, 2023',
+  //       amount: 150000,
+  //     },
+  //     {
+  //       id: '2',
+  //       title: 'Milestone 2',
+  //       description:
+  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
+  //       deliveryDate: 'November 24, 2023',
+  //       amount: 150000,
+  //     },
+  //   ],
+  //   totals: {
+  //     subtotal: 300000,
+  //     tax: 0,
+  //     shipping: 0,
+  //     total: 300000,
+  //   },
+  // };
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -112,7 +113,7 @@ export default function InvoicePreview({
       onAccept();
     } else {
       // Navigate to finalize payment page
-      router.push(`/finalize-payment?orderId=${data.id}`);
+      router.push(`/finalize-payment?orderId=${invoiceData?.id}`);
     }
   };
 
@@ -125,6 +126,8 @@ export default function InvoicePreview({
     }
   };
 
+  console.log(user);
+
   return (
     <div className="w-full bg-white shadow-sm rounded-xl px-6 py-8">
       {/* Title */}
@@ -134,17 +137,17 @@ export default function InvoicePreview({
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b pb-6">
         <div>
           <p className="text-xs text-gray-500">Invoice Number</p>
-          <p className="font-medium">{data.id}</p>
+          <p className="font-medium">{invoiceData?.id}</p>
         </div>
 
         <div>
           <p className="text-xs text-gray-500">Issue Date</p>
-          <p className="font-medium">{data.issueDate}</p>
+          <p className="font-medium">{invoiceData?.issueDate}</p>
         </div>
 
         <div>
           <p className="text-xs text-gray-500">Due Date</p>
-          <p className="font-medium">{data.dueDate}</p>
+          <p className="font-medium">{invoiceData?.dueDate}</p>
         </div>
       </div>
 
@@ -156,8 +159,8 @@ export default function InvoicePreview({
             <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Initiator
           </p>
           <p className="mt-3 text-sm text-gray-500">Seller</p>
-          <p className="font-semibold">{data.seller.name}</p>
-          <p className="text-gray-500 text-sm">{data.seller.email}</p>
+          <p className="font-semibold">{invoiceData?.seller.name}</p>
+          <p className="text-gray-500 text-sm">{invoiceData?.seller.email}</p>
         </div>
 
         {/* Buyer */}
@@ -166,13 +169,13 @@ export default function InvoicePreview({
             <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Counterparty
           </p>
           <p className="mt-3 text-sm text-gray-500">Buyer</p>
-          <p className="font-semibold">{data.buyer.name}</p>
-          <p className="text-gray-500 text-sm">{data.buyer.email}</p>
+          <p className="font-semibold">{invoiceData?.buyer.name}</p>
+          <p className="text-gray-500 text-sm">{invoiceData?.buyer.email}</p>
         </div>
       </div>
 
       {/* Items */}
-      {data.items.map((item, index) => (
+      {invoiceData?.items.map((item, index) => (
         <div key={item.id} className="border rounded-lg overflow-hidden mb-4">
           <div className="bg-gray-50 px-4 py-2 font-medium text-sm">Item {index + 1}</div>
 
@@ -201,7 +204,7 @@ export default function InvoicePreview({
       <h2 className="text-sm font-medium mt-8 mb-4">Payment Milestones</h2>
 
       <div className="space-y-4">
-        {data.milestones.map((milestone, index) => (
+        {invoiceData?.milestones.map((milestone, index) => (
           <div key={milestone.id} className="border rounded-lg p-4">
             <p className="font-semibold text-sm mb-2">{milestone.title}</p>
             <p className="text-sm text-gray-600">{milestone.description}</p>
@@ -221,21 +224,21 @@ export default function InvoicePreview({
       </div>
 
       {/* Totals */}
-      <div className="flex justify-end mt-8 text-sm">
+      {/* <div className="flex justify-end mt-8 text-sm">
         <div className="w-full max-w-xs space-y-2">
           <div className="flex justify-between">
             <span>Subtotal</span>
-            <span>{formatCurrency(data.totals.subtotal)}</span>
+            <span>{formatCurrency(invoiceData?.totals.subtotal)}</span>
           </div>
 
           <div className="flex justify-between">
-            <span>Tax ({((data.totals.tax / data.totals.subtotal) * 100).toFixed(0)}%)</span>
-            <span>{formatCurrency(data.totals.tax)}</span>
+            <span>Tax ({((invoiceData?.totals.tax / invoiceData?.totals.subtotal) * 100).toFixed(0)}%)</span>
+            <span>{formatCurrency(invoiceData?.totals.tax)}</span>
           </div>
 
           <div className="flex justify-between">
             <span>Shipping</span>
-            <span>{formatCurrency(data.totals.shipping)}</span>
+            <span>{formatCurrency(invoiceData?.totals.shipping)}</span>
           </div>
 
           <div className="flex justify-between font-semibold text-lg border-t pt-2">
@@ -243,7 +246,7 @@ export default function InvoicePreview({
             <span>{formatCurrency(data.totals.total)}</span>
           </div>
         </div>
-      </div>
+      </div> */}
 
       {/* Approval Section */}
       <div className="border rounded-xl p-6 mt-10 bg-[#E6E6E6]">

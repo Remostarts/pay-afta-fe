@@ -24,14 +24,27 @@ type SelectOption = {
 export const SearchableCounterpartySelect = ({
   onChange,
   placeholder = 'Search Counterparty',
+  inviteCounterpartyEmail,
+  onInviteSuccess,
 }: {
   onChange: (email: string) => void;
   placeholder?: string;
+  inviteCounterpartyEmail: string | undefined;
+  onInviteSuccess?: (email: string) => void;
 }) => {
   const [options, setOptions] = useState<SelectOption[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>('');
+
+  console.log(inviteCounterpartyEmail);
+
+  // Update the value when inviteCounterpartyEmail changes
+  useEffect(() => {
+    if (inviteCounterpartyEmail) {
+      setSelectedEmail(inviteCounterpartyEmail);
+    }
+  }, [inviteCounterpartyEmail]);
 
   useEffect(() => {
     if (!searchTerm) {
@@ -80,7 +93,7 @@ export const SearchableCounterpartySelect = ({
       type="counterparty"
       loading={loading}
       options={options}
-      value={selectedOption?.name || ''}
+      value={selectedOption?.name || inviteCounterpartyEmail || ''}
       onChange={(val: string) => {
         // val is the name selected, find corresponding email
         const selected = options.find((o) => o.name === val);
@@ -89,7 +102,11 @@ export const SearchableCounterpartySelect = ({
           onChange(selected.email); // send email to parent
         }
       }}
-      inviteCounterParty={onChange}
+      inviteCounterParty={(email: string) => {
+        setSelectedEmail(email);
+        onChange(email);
+        onInviteSuccess?.(email);
+      }}
       searchTerm={searchTerm}
       setSearchTerm={setSearchTerm}
       placeholder={placeholder}

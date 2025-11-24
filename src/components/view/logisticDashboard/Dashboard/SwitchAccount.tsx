@@ -1,8 +1,7 @@
 import React from 'react';
 
-export interface AccountProps {
+interface AccountProps {
   bankName: string;
-  bankCode: string;
   accountNumber: string;
   accountName: string;
   isSelected?: boolean;
@@ -24,7 +23,7 @@ const AccountItem: React.FC<AccountProps> = ({
 }) => (
   <button
     onClick={onSelect}
-    className={`flex justify-between items-center p-4 mb-2 border rounded-lg w-full transition-colors ${
+    className={`flex justify-between w-full items-center p-4 mb-2 border rounded-lg transition-colors ${
       isSelected ? 'border-green-500 bg-green-50' : 'border-gray-200 hover:bg-gray-50'
     }`}
   >
@@ -35,7 +34,9 @@ const AccountItem: React.FC<AccountProps> = ({
     </div>
     <div className="relative">
       <div
-        className={`w-5 h-5 rounded-full border-2 ${isSelected ? 'border-green-500 bg-green-500' : 'border-gray-300'}`}
+        className={`w-5 h-5 rounded-full border-2 ${
+          isSelected ? 'border-green-500 bg-green-500' : 'border-gray-300'
+        }`}
       >
         {isSelected && (
           <div className="absolute inset-0 flex items-center justify-center">
@@ -48,34 +49,50 @@ const AccountItem: React.FC<AccountProps> = ({
 );
 
 const SwitchAccount: React.FC<SwitchAccountProps> = ({ accounts, onClose, onAccountSelect }) => {
-  const [selectedAccountNumber, setSelectedAccountNumber] = React.useState(
+  const [selectedAccount, setSelectedAccount] = React.useState<string>(
     accounts[0]?.accountNumber || ''
   );
 
   const handleAccountSelect = (account: AccountProps) => {
-    setSelectedAccountNumber(account.accountNumber);
+    setSelectedAccount(account.accountNumber);
+    // Don't immediately call onAccountSelect - just update local state
   };
 
   const handleConfirmSelection = () => {
-    const account = accounts.find((acc) => acc.accountNumber === selectedAccountNumber);
-    if (account) onAccountSelect(account);
+    const selectedAccountData = accounts.find(
+      (account) => account.accountNumber === selectedAccount
+    );
+    if (selectedAccountData) {
+      onAccountSelect(selectedAccountData);
+    }
   };
 
   return (
     <div className="w-full max-w-md bg-white py-5 rounded-xl">
-      <h2 className="text-xl font-semibold text-gray-800 mb-4">Switch Account</h2>
-      {accounts.map((account) => (
-        <AccountItem
-          key={account.accountNumber}
-          {...account}
-          isSelected={selectedAccountNumber === account.accountNumber}
-          onSelect={() => handleAccountSelect(account)}
-        />
-      ))}
-      <div className="flex gap-3 mt-4">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-semibold text-gray-800">Switch Account</h2>
+        {/* <button onClick={onClose} className="text-gray-400 hover:text-gray-600 transition-colors">
+          ✕
+        </button> */}
+      </div>
+
+      <h3 className="text-base font-medium text-gray-700 mb-4">Saved Accounts</h3>
+
+      <div className="space-y-2 mb-6">
+        {accounts.map((account) => (
+          <AccountItem
+            key={account.accountNumber}
+            {...account}
+            isSelected={selectedAccount === account.accountNumber}
+            onSelect={() => handleAccountSelect(account)}
+          />
+        ))}
+      </div>
+
+      <div className="flex gap-3">
         <button
           onClick={onClose}
-          className="flex-1 px-4 py-2 border border-gray-300 rounded-full font-inter text-gray-700"
+          className="flex-1 px-4 py-2 border border-gray-300 rounded-full font-inter text-gray-700 "
         >
           Cancel
         </button>
