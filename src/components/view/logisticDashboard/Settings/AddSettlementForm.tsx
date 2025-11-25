@@ -91,6 +91,17 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
   const accountNumberValue = methods.watch('accountNumber');
   const bankCodeValue = methods.watch('bankCode');
 
+  // Compute if account verification is needed
+  const needsAccountVerification = bankNameValue && accountNumberValue && bankCodeValue;
+
+  // Compute if the form is ready to submit
+  // Form is ready when: all fields valid AND not loading AND (verification not needed OR account verified)
+  const isFormReadyToSubmit =
+    methods.formState.isValid &&
+    !isSubmitting &&
+    !enquiryLoading &&
+    (!needsAccountVerification || enquiryResult !== null);
+
   // Set bank code when bank name changes
   useEffect(() => {
     if (bankNameValue && banks.length > 0) {
@@ -271,11 +282,11 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
           <div className="flex justify-end">
             <ReButton
               type="submit"
-              disabled={isSubmitting || enquiryLoading || !methods.formState.isValid}
-              isSubmitting={isSubmitting || enquiryLoading}
+              disabled={!isFormReadyToSubmit}
+              isSubmitting={isSubmitting}
               className="rounded-full text-white lg:w-2/5"
             >
-              {isSubmitting || enquiryLoading ? 'Submitting...' : 'Submit'}
+              {isSubmitting ? 'Submitting...' : 'Submit'}
             </ReButton>
           </div>
         </form>
