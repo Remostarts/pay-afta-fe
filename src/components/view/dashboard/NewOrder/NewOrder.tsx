@@ -556,16 +556,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
                 </div>
               )} */}
 
-              {initiatorRole === 'Buyer' ? (
-                <div>
-                  <ReHeading
-                    heading="Select Invoice Date"
-                    size="base"
-                    className="text-gray-700 mb-2"
-                  />
-                  <ReDatePicker name="invoiceDate" className="lg:w-2/5" disablePast />
-                </div>
-              ) : (
+              {initiatorRole === 'Seller' ? (
                 <div>
                   <ReHeading
                     heading="Select Delivery Date"
@@ -574,7 +565,15 @@ export default function NewOrder({ onBack }: NewOrderProps) {
                   />
                   <ReDatePicker name="deliveryDate" className="lg:w-2/5" disablePast />
                 </div>
-              )}
+              ) : // <div>
+              //   <ReHeading
+              //     heading="Select Delivery Date"
+              //     size="base"
+              //     className="text-gray-700 mb-2"
+              //   />
+              //   <ReDatePicker name="deliveryDate" className="lg:w-2/5" disablePast />
+              // </div>
+              null}
 
               {paymentType === 'Milestone Payment' && (
                 <div className="space-y-6">

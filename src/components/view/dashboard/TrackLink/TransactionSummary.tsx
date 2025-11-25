@@ -42,11 +42,19 @@ export default function TransactionSummary({ order }: TransactionSummaryProps) {
             <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 md:grid-cols-4">
               <SummaryCard
                 label="Buyer"
-                value={`${order?.buyer?.firstName} ${order?.buyer?.lastName}`}
+                value={
+                  order?.buyer
+                    ? `${order?.buyer?.firstName} ${order?.buyer?.lastName}`
+                    : 'Guest User'
+                }
               />
               <SummaryCard
                 label="Seller"
-                value={`${order?.seller?.firstName} ${order?.seller?.lastName}`}
+                value={
+                  order?.seller
+                    ? `${order?.seller?.firstName} ${order?.seller?.lastName}`
+                    : 'Guest User'
+                }
               />
               <SummaryCard label="Payment Method" value={`${order?.paymentType}  `} />
               <SummaryCard

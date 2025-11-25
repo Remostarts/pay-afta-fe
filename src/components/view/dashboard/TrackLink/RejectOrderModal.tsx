@@ -13,7 +13,7 @@ import { ReButton } from '@/components/re-ui/ReButton';
 import ReSelect from '@/components/re-ui/ReSelect';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import { rejectOrderSchema, TRejectOrderInput } from '@/lib/validations/order';
-import { rejectOrder } from '@/lib/actions/order/order.actions';
+import { rejectOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
 
 interface RejectOrderModalProps {
   orderId: string;
@@ -38,7 +38,7 @@ export default function RejectOrderModal({
     resolver: zodResolver(rejectOrderSchema),
     defaultValues: {
       orderId: orderId || '',
-      rejectionReason: undefined,
+      // rejectionReason: undefined,
       rejectionComments: '',
       resolutionDetails: '',
       contactPreference: undefined,
@@ -53,7 +53,7 @@ export default function RejectOrderModal({
     // Reset form whenever orderId changes
     reset({
       orderId,
-      rejectionReason: undefined,
+      // rejectionReason: undefined,
       rejectionComments: '',
       resolutionDetails: '',
       contactPreference: undefined,
@@ -61,10 +61,18 @@ export default function RejectOrderModal({
   }, [orderId, reset]);
 
   const onSubmit = async (data: TRejectOrderInput) => {
+    console.log(data);
     try {
       setIsSubmitting(true);
 
-      const response = await rejectOrder(data);
+      const response = await updateOrderProgress(
+        {
+          status: 'REJECTED',
+          step: 8,
+          notes: data.rejectionComments,
+        },
+        orderId
+      );
 
       if (response?.success) {
         toast.success('Order rejected successfully!');
@@ -118,7 +126,7 @@ export default function RejectOrderModal({
       <Form {...form}>
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
           {/* Rejection Reason */}
-          <div>
+          {/* <div>
             <ReHeading
               heading="Reason for Rejection *"
               size="base"
@@ -147,11 +155,11 @@ export default function RejectOrderModal({
                 {errors.rejectionReason.message}
               </p>
             )}
-          </div>
+          </div> */}
 
           {/* Rejection Comments */}
           <div>
-            <ReHeading heading="Detailed Comments *" size="base" className="text-gray-700 mb-2" />
+            <ReHeading heading="Notes" size="base" className="text-gray-700 mb-2" />
             <ReTextarea
               name="rejectionComments"
               className="font-inter"
@@ -167,7 +175,7 @@ export default function RejectOrderModal({
           </div>
 
           {/* Resolution Details */}
-          <div>
+          {/* <div>
             <ReHeading heading="Resolution Details" size="base" className="text-gray-700 mb-2" />
             <ReTextarea
               name="resolutionDetails"
@@ -176,10 +184,10 @@ export default function RejectOrderModal({
               rows={3}
             />
             <p className="mt-1 text-xs text-gray-500">Optional field for additional context</p>
-          </div>
+          </div> */}
 
           {/* Contact Preference */}
-          <div>
+          {/* <div>
             <ReHeading
               heading="Preferred Contact Method"
               size="base"
@@ -197,7 +205,7 @@ export default function RejectOrderModal({
             <p className="mt-1 text-xs text-gray-500">
               Optional: How you'd like to be contacted about this rejection
             </p>
-          </div>
+          </div> */}
 
           {/* Warning Message */}
           <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
