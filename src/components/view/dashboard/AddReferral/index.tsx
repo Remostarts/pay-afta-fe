@@ -11,6 +11,8 @@ import { ReButton } from '@/components/re-ui/ReButton';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 import { z } from 'zod';
+import { useGeneral } from '@/context/generalProvider';
+import { inviteCounterParty } from '@/lib/actions/root/user.action';
 
 const inviteSchema = z.object({
   email: z.string().email('Enter a valid email address'),
@@ -19,9 +21,11 @@ const inviteSchema = z.object({
 type InviteSchema = z.infer<typeof inviteSchema>;
 
 export default function ReferralPage() {
+  const { user } = useGeneral();
+
   const [copied, setCopied] = useState(false);
 
-  const referralLink = 'https://payafta.com/ref/YOURCODE';
+  const referralLink = `https://www.getpayafta.com/sign-up?ref=${user?.referralCode}`;
 
   const handleCopy = () => {
     navigator.clipboard.writeText(referralLink);
@@ -31,9 +35,14 @@ export default function ReferralPage() {
   };
 
   const sendInvite = async (data: InviteSchema) => {
-    toast.success('Invite sent!', {
-      description: `The invitation has been sent to ${data.email}.`,
-    });
+    const result = await inviteCounterParty(data.email);
+    if (result.success) {
+      toast.success('Invite sent!', {
+        description: `The invitation has been sent to ${data.email}.`,
+      });
+    } else {
+      toast.error('Invite failed, try again!')
+    }
   };
 
   return (
