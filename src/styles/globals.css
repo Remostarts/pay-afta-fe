@@ -17,6 +17,191 @@
   .flex-between {
     @apply flex justify-between items-center;
   }
+
+  Order Details Component Utilities .order-modal-backdrop {
+    @apply fixed inset-0 bg-black/60 backdrop-blur-sm z-50;
+  }
+
+  .order-modal-container {
+    @apply relative bg-white dark:bg-gray-900 rounded-2xl shadow-2xl w-full max-w-7xl max-h-[95vh] overflow-hidden;
+  }
+
+  .order-section {
+    @apply border border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden transition-all duration-300;
+  }
+
+  .order-section-button {
+    @apply w-full flex items-center justify-between p-4 text-left hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-inset;
+  }
+
+  .order-info-card {
+    @apply p-4 rounded-lg border transition-colors duration-200;
+  }
+
+  .order-info-card-highlight {
+    @apply border-primary-200 dark:border-primary-700 bg-primary-50 dark:bg-primary-900/20;
+  }
+
+  .order-info-card-default {
+    @apply border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800;
+  }
+
+  .order-item-card {
+    @apply p-4 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-300 dark:hover:border-primary-600 transition-colors duration-200;
+  }
+
+  .order-action-button {
+    @apply flex items-center justify-center space-x-2 py-3 px-4 rounded-xl font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 min-h-[44px] transform hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .order-action-button-primary {
+    @apply bg-primary-800 hover:bg-primary-800/90 disabled:bg-gray-400 text-white focus:ring-primary-500;
+  }
+
+  .order-action-button-secondary {
+    @apply border-2 border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 focus:ring-gray-400;
+  }
+
+  /* Touch-friendly enhancements */
+  .touch-target {
+    @apply min-h-[44px] min-w-[44px];
+  }
+
+  /* Responsive grid utilities */
+  .order-grid-responsive {
+    @apply grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-6;
+  }
+
+  .order-grid-compact {
+    @apply grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4;
+  }
+
+  /* Loading and animation utilities */
+  .loading-spinner {
+    @apply w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin;
+  }
+
+  .animate-scale-in {
+    animation: scaleIn 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 200ms ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slideUp 300ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes scaleIn {
+    from {
+      opacity: 0;
+      transform: scale(0.9) rotateX(-10deg);
+    }
+
+    to {
+      opacity: 1;
+      transform: scale(1) rotateX(0deg);
+    }
+  }
+
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+
+    to {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  /* High contrast mode support */
+  @media (prefers-contrast: high) {
+    .order-section {
+      @apply border-2 border-black dark:border-white;
+    }
+
+    .order-info-card {
+      @apply border-2 border-black dark:border-white;
+    }
+
+    .order-action-button {
+      @apply border-2 border-current;
+    }
+  }
+
+  /* Reduced motion support */
+  @media (prefers-reduced-motion: reduce) {
+
+    .order-section,
+    .order-section-button,
+    .order-info-card,
+    .order-item-card,
+    .order-action-button,
+    .animate-scale-in,
+    .animate-fade-in,
+    .animate-slide-up {
+      animation: none !important;
+      transition: none !important;
+    }
+  }
+
+  /* Focus indicators for accessibility */
+  .focus-ring {
+    @apply focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900;
+  }
+
+  /* Status indicators */
+  .status-pending {
+    @apply bg-yellow-100 text-yellow-800 border-yellow-200 dark:bg-yellow-900/20 dark:text-yellow-300 dark:border-yellow-700;
+  }
+
+  .status-confirmed {
+    @apply bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-900/20 dark:text-blue-300 dark:border-blue-700;
+  }
+
+  .status-processing {
+    @apply bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-900/20 dark:text-purple-300 dark:border-purple-700;
+  }
+
+  .status-completed {
+    @apply bg-green-100 text-green-800 border-green-200 dark:bg-green-900/20 dark:text-green-300 dark:border-green-700;
+  }
+
+  /* Custom scrollbar for modal content */
+  .modal-scroll {
+    scrollbar-width: thin;
+    scrollbar-color: rgb(156 163 175) transparent;
+  }
+
+  .modal-scroll::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .modal-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .modal-scroll::-webkit-scrollbar-thumb {
+    background-color: rgb(156 163 175);
+    border-radius: 3px;
+  }
+
+  .modal-scroll::-webkit-scrollbar-thumb:hover {
+    background-color: rgb(107 114 128);
+  }
 }
 
 .scrollbar-hide::-webkit-scrollbar {

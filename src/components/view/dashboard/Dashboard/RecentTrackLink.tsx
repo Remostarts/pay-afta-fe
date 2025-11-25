@@ -59,7 +59,7 @@ export default function RecentTrackLink() {
     PAYMENT: { label: 'Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#D33030]' },
     SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
     DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
-    CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },
+    CLOSED: { label: 'Awaiting Agreement', bg: 'bg-gray-200', text: 'text-gray-600' },
     DISPUTED: { label: 'Dispute', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
     CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
   };
@@ -96,7 +96,11 @@ export default function RecentTrackLink() {
               className="border-b last:border-b-0 py-4 hover:bg-gray-50 transition-colors rounded-lg px-2 -mx-2"
             >
               <div className="flex items-center justify-between mb-2">
-                <h3 className="font-inter font-medium text-gray-800">{counterpart}</h3>
+                <h3 className="font-inter font-medium text-gray-800">
+                  {counterpart && counterpart.trim() !== '' && counterpart !== 'undefined undefined'
+                    ? counterpart
+                    : 'Guest User'}
+                </h3>
                 <span className="font-inter text-2xl font-semibold text-gray-900">
                   ₦{service.amount.toLocaleString()}
                 </span>

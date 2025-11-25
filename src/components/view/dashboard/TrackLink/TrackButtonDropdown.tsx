@@ -235,7 +235,7 @@ export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButto
             aria-haspopup="menu"
             aria-expanded={isOpen}
           >
-            Track
+            Actions
             <ChevronDown className="ml-1 h-3 w-3" />
           </Button>
         </DropdownMenuTrigger>

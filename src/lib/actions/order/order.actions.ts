@@ -92,6 +92,10 @@ export async function getSingleOrder(id: string) {
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;
 
+  if (!token) {
+    getErrorMessage('No token found And You are not auth.');
+  }
+
   try {
     const response = await fetch(`${process.env.BACKEND_URL}/order/${id}`, {
       method: 'GET',
@@ -349,7 +353,7 @@ export async function rejectOrder(formData: TRejectOrderInput) {
         Authorization: token,
       },
       body: JSON.stringify({
-        rejectionReason: formData.rejectionReason,
+        // rejectionReason: formData.rejectionReason,
         rejectionComments: formData.rejectionComments,
         resolutionDetails: formData.resolutionDetails,
         contactPreference: formData.contactPreference,

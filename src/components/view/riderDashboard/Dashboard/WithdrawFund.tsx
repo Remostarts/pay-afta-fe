@@ -153,6 +153,11 @@ export default function WithdrawFund() {
   const settlementAmount = transferForm.watch('amountWithdraw');
   const accountNumberValue = form.watch('accountNumber');
   const bankCodeValue = form.watch('bankCode');
+  const accountNameValue = form.watch('accountName');
+
+  // Get form validation states
+  const { isValid: isFormValid, errors: formErrors } = form.formState;
+  const { isValid: isTransferFormValid } = transferForm.formState;
 
   // Bank account enquiry function
   const handleBankAccountEnquiry = async (accountNumber: string, bankCode: string) => {
@@ -294,6 +299,33 @@ export default function WithdrawFund() {
 
   const getSafeString = (value?: string | null, fallback = '') => value || fallback;
 
+  // Helper function to check if bank transfer form is properly validated
+  const isBankFormValid = () => {
+    return (
+      isFormValid &&
+      !!selectedBankName &&
+      !!bankCodeValue &&
+      !!accountNumberValue &&
+      !!accountNameValue &&
+      !!bankAmount &&
+      bankAmount > 0 &&
+      (user?.Wallet?.[0]?.balance || 0) >= bankAmount &&
+      !enquiryError &&
+      (!!enquiryResult || !enquiryLoading) &&
+      accountNumberValue.length >= 10
+    );
+  };
+
+  // Helper function to check if settlement form is properly validated
+  const isSettlementFormValid = () => {
+    return (
+      isTransferFormValid &&
+      !!settlementAmount &&
+      settlementAmount > 0 &&
+      (user?.Wallet?.[0]?.balance || 0) >= settlementAmount
+    );
+  };
+
   return (
     <section>
       {/* Step 1: Select transfer type */}
@@ -391,20 +423,13 @@ export default function WithdrawFund() {
 
             <ReButton
               className={`mt-3 w-full rounded-full p-5 ${
-                !settlementAmount ||
-                settlementAmount <= 0 ||
-                (user?.Wallet?.[0]?.balance || 0) < settlementAmount
+                !isSettlementFormValid()
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-blue-600 text-white'
               }`}
               type="submit"
               isSubmitting={isSubmittingForTransfer}
-              disabled={
-                isSubmittingForTransfer ||
-                !settlementAmount ||
-                settlementAmount <= 0 ||
-                (user?.Wallet?.[0]?.balance || 0) < settlementAmount
-              }
+              disabled={isSubmittingForTransfer || !isSettlementFormValid()}
             >
               Proceed
             </ReButton>
@@ -547,18 +572,13 @@ export default function WithdrawFund() {
 
             <ReButton
               className={`mt-6 w-full rounded-full p-5 ${
-                !bankAmount || bankAmount <= 0 || (user?.Wallet?.[0]?.balance || 0) < bankAmount
+                !isBankFormValid()
                   ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                   : 'bg-[#03045B] text-white'
               }`}
               type="submit"
               isSubmitting={isSubmitting}
-              disabled={
-                isSubmitting ||
-                !bankAmount ||
-                bankAmount <= 0 ||
-                (user?.Wallet?.[0]?.balance || 0) < bankAmount
-              }
+              disabled={isSubmitting || !isBankFormValid()}
             >
               Proceed
             </ReButton>

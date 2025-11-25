@@ -211,6 +211,36 @@ export async function setDefaultBankAccount(accountId: string) {
   }
 }
 
+export async function deleteBankAccount(accountId: string) {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!accountId) {
+    throw new Error('Account ID is required');
+  }
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/user/bank-account/${accountId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      cache: 'no-store',
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || 'Failed to delete bank account');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('🔥 Error deleting bank account:', error);
+    throw error;
+  }
+}
+
 export async function usernameValidityCheck(username: string) {
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;

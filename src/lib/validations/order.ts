@@ -4,15 +4,17 @@ export const OrderProgressStatus: {
   AGREEMENT: 'AGREEMENT';
   COMPLETED: 'COMPLETED';
   DISPUTED: 'DISPUTED';
+  REJECTED: 'REJECTED';
 } = {
   AGREEMENT: 'AGREEMENT',
   COMPLETED: 'COMPLETED',
   DISPUTED: 'DISPUTED',
+  REJECTED: 'REJECTED',
 };
 
 export const updateOrderProgressSchema = z.object({
   status: z.nativeEnum(OrderProgressStatus),
-  step: z.number().int().min(1).max(5),
+  step: z.number().int().min(1),
   notes: z.string().optional(),
 });
 
@@ -87,23 +89,23 @@ export type TEditOrderInput = z.infer<typeof editOrderSchema>;
 // Order rejection validation schema
 export const rejectOrderSchema = z.object({
   orderId: z.string().min(1, 'Order ID is required'),
-  rejectionReason: z.enum(
-    [
-      'Payment Issue',
-      'Product/Service Quality',
-      'Delivery Issues',
-      'Miscommunication',
-      'Item Not as Described',
-      'Price Dispute',
-      'Timeline Issues',
-      'Buyer/Seller Unresponsive',
-      'Fraud/Security Concerns',
-      'Other',
-    ],
-    {
-      errorMap: () => ({ message: 'Please select a rejection reason' }),
-    }
-  ),
+  // rejectionReason: z.enum(
+  //   [
+  //     'Payment Issue',
+  //     'Product/Service Quality',
+  //     'Delivery Issues',
+  //     'Miscommunication',
+  //     'Item Not as Described',
+  //     'Price Dispute',
+  //     'Timeline Issues',
+  //     'Buyer/Seller Unresponsive',
+  //     'Fraud/Security Concerns',
+  //     'Other',
+  //   ],
+  //   {
+  //     errorMap: () => ({ message: 'Please select a rejection reason' }),
+  //   }
+  // ),
   rejectionComments: z.string().min(10, 'Please provide detailed comments (minimum 10 characters)'),
   resolutionDetails: z.string().optional(),
   contactPreference: z
