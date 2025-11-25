@@ -53,6 +53,7 @@ export type TUser = {
   lastName: string;
   emailNotification: boolean;
   textNotification: boolean;
+  referralCode: string;
   email: string;
   phone: string | null;
   username: string | null;
