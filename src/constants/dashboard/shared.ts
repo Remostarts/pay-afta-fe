@@ -42,8 +42,8 @@ export const sideNavMenu = [
     id: 4,
     imgBlack: '/assets/dashboard/Dashboard/referral-icon.svg',
     imgColor: '/assets/dashboard/Dashboard/referral-icon.svg',
-    name: 'Add Referral',
-    alt: 'add-referral',
+    name: 'Referral',
+    alt: 'referral',
   },
   {
     id: 5,

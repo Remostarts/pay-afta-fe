@@ -41,7 +41,7 @@ export default function ReferralPage() {
         description: `The invitation has been sent to ${data.email}.`,
       });
     } else {
-      toast.error('Invite failed, try again!')
+      toast.error(result?.message || 'Invite failed, try again!');
     }
   };
 
