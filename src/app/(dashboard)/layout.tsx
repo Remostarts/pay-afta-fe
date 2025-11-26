@@ -14,27 +14,37 @@ import LogisticProfileHeader from '@/components/view/logisticDashboard/shared/Lo
 import RiderSidebar from '@/components/view/riderDashboard/Dashboard/SideNav';
 import RiderProfileHeader from '@/components/view/riderDashboard/shared/RiderProfileHeader';
 import { MessageNotificationManager } from '@/components/view/dashboard/shared/message-notification-manager';
+import DashboardSkeleton from '@/components/view/logisticDashboard/Dashboard/DashboardSkeleton';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
-  const { onboardingStatus, user } = useGeneral();
+  const { user, loadingUser } = useGeneral();
   // console.log('🌼 🔥🔥 Layout 🔥🔥 user🌼', user);
 
   // console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
 
-  useEffect(() => {
-    console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
+  // Onboarding redirect removed - identity verification is now handled within the dashboard
 
-    if (
-      onboardingStatus === false &&
-      user?.profile?.identityVerified === false &&
-      user?.role !== 'admin'
-    ) {
-      router.push('/onboarding');
-    }
-  }, [onboardingStatus, user, router]);
+  // Show loading state in the layout while user data is being fetched
+  if (loadingUser) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
+        <div className="flex flex-col items-center space-y-6 rounded-xl shadow-lg p-8 bg-white border border-gray-200">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+          <div className="flex flex-col items-center">
+            <p className="text-lg font-semibold text-blue-800 font-inter">
+              Loading your dashboard...
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Please wait while we get things ready for you.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   // Check if path starts with either /dashboard or /admin-dashboard
   const isAdminDashboard = pathName.startsWith('/admin-dashboard');

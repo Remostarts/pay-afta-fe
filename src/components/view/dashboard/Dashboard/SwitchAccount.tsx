@@ -80,7 +80,7 @@ const SwitchAccount: React.FC<SwitchAccountProps> = ({ accounts, onClose, onAcco
   };
 
   const handleNavigateToSettings = () => {
-    router.push('/dashboard/setting');
+    router.push('/dashboard/settings');
   };
 
   // If no accounts are present, show navigation UI to settings
