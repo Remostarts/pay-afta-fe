@@ -54,7 +54,11 @@ const genderOptions = [
   { value: 'other', label: 'Other' },
 ];
 
-export default function IdentityVerification() {
+interface IdentityVerificationProps {
+  onComplete?: () => void;
+}
+
+export default function IdentityVerification({ onComplete }: IdentityVerificationProps = {}) {
   const router = useRouter();
   const form = useForm<TidentityVerification>({
     resolver: zodResolver(identityVerificationSchema),
@@ -74,9 +78,10 @@ export default function IdentityVerification() {
   // if completed identityVerification
   useEffect(() => {
     if (onboardingStatus === true && user?.profile?.identityVerified === true) {
-      router.push('/dashboard');
+      // Verification completed successfully - the modal will be closed by the parent component
+      toast.success('Identity verification completed successfully!');
     }
-  }, [onboardingStatus, user, router]);
+  }, [onboardingStatus, user]);
 
   const onSubmit = async (data: TidentityVerification) => {
     try {
@@ -86,7 +91,13 @@ export default function IdentityVerification() {
         toast.success(result.message || 'Identity verified successfully!');
         setKycResult({ success: true, message: result.message });
         loadUserData();
-        router.push('/dashboard');
+
+        // Call the completion callback if provided
+        if (onComplete) {
+          setTimeout(() => {
+            onComplete();
+          }, 1500); // Give time for the success message to be visible
+        }
       } else {
         toast.error(result.message || 'Identity verification failed.');
         setKycResult({ success: false, message: result.message });
@@ -106,6 +117,8 @@ export default function IdentityVerification() {
   const handleLogoutConfirm = () => {
     signOut();
     setShowLogoutDialog(false);
+    router.push('/sign-in');
+    toast.success('Successfully logged out');
   };
 
   const handleLogoutCancel = () => {
@@ -133,8 +146,9 @@ export default function IdentityVerification() {
           </button>
         </div>
         <p className="mb-5 font-inter text-zinc-500">
-          Provide your personal information as it appears on your bank verification documents for
-          accurate account matching and processing.
+          Identity verification is required to access your dashboard. Please provide your personal
+          information as it appears on your bank verification documents for accurate account
+          matching and processing.
         </p>
         <Form {...form}>
           <form onSubmit={handleSubmit(onSubmit)}>
@@ -184,7 +198,7 @@ export default function IdentityVerification() {
                 type="submit"
                 isSubmitting={isSubmitting}
               >
-                Complete Onboarding
+                Verify Identity
               </ReButton>
               {/* </DialogClose> */}
             </div>

@@ -21,6 +21,7 @@ export const transferfundSchema = z.object({
   amountWithdraw: z
     .number({ invalid_type_error: 'Amount must be a number' })
     .positive('Amount must be greater than zero'),
+  narration: z.string().optional(),
 });
 
 export type TTransferfundSchema = z.infer<typeof transferfundSchema>;
