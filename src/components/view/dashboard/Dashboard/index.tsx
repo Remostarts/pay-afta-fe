@@ -10,11 +10,20 @@ import OnboardingModal from './OnboardingModal';
 
 import { ReHeading } from '@/components/re-ui/ReHeading';
 import { useGeneral } from '@/context/generalProvider';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ReButton } from '@/components/re-ui/ReButton';
+import IdentityVerification from '@/components/view/auth/onboarding/IdentityVerification';
+import DashboardSkeleton from '../../logisticDashboard/Dashboard/DashboardSkeleton';
 
 export default function Dashboard() {
-  const { user, loadUserData } = useGeneral();
+  const { user, loadUserData, loadingUser } = useGeneral();
+  const [showIdentityVerification, setShowIdentityVerification] = useState(false);
+
+  // Check if user needs to complete identity verification
+  const needsIdentityVerification = user?.profile?.identityVerified;
+
+  console.log(user);
+
   const [isOnboardingModalOpen, setIsOnboardingModalOpen] = useState(false);
 
   // Check if user needs to complete onboarding
@@ -31,6 +40,48 @@ export default function Dashboard() {
   const handleCloseModal = () => {
     setIsOnboardingModalOpen(false);
   };
+
+  const handleOnboardingComplete = () => {
+    loadUserData();
+    setIsOnboardingModalOpen(false);
+  };
+
+  const handleIdentityVerificationComplete = () => {
+    loadUserData();
+    setShowIdentityVerification(false);
+  };
+
+  useEffect(() => {
+    // Only process identity verification logic after user data has loaded
+    if (!loadingUser) {
+      if (needsIdentityVerification) {
+        console.log('needsIdentityVerification', needsIdentityVerification);
+        setShowIdentityVerification(false);
+      } else {
+        console.log('needsIdentityVerification if false', needsIdentityVerification);
+        setShowIdentityVerification(true);
+      }
+    }
+  }, [needsIdentityVerification, loadingUser]);
+
+  // Show loading state while user data is being fetched
+  if (loadingUser) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
+        <div className="flex flex-col items-center space-y-6 rounded-xl shadow-lg p-8 bg-white border border-gray-200">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent"></div>
+          <div className="flex flex-col items-center">
+            <p className="text-lg font-semibold text-blue-800 font-inter">
+              Loading your dashboard...
+            </p>
+            <p className="text-sm text-gray-500 mt-1">
+              Please wait while we get things ready for you.
+            </p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-full w-full">
@@ -54,7 +105,8 @@ export default function Dashboard() {
         <StatsSection />
       </div>
 
-      {needsOnboarding && (
+      {/* Onboarding notification - Only render after user data has loaded */}
+      {!loadingUser && needsOnboarding && (
         <div className="flex mt-5 flex-col sm:flex-row sm:items-start sm:justify-between gap-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
           <div className="flex items-start space-x-3">
             {/* Warning Icon */}
@@ -91,6 +143,15 @@ export default function Dashboard() {
 
       {/* Onboarding Modal */}
       <OnboardingModal isOpen={isOnboardingModalOpen} onClose={handleCloseModal} />
+
+      {/* Identity Verification Modal - Only render after user data has loaded */}
+      {!loadingUser && showIdentityVerification && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center p-4">
+          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <IdentityVerification onComplete={handleIdentityVerificationComplete} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }

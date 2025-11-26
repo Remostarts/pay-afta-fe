@@ -74,12 +74,14 @@ export default function RejectOrderModal({
         orderId
       );
 
+      console.log(response);
+
       if (response?.success) {
         toast.success('Order rejected successfully!');
         onSuccess();
         onClose();
       } else {
-        toast.error(response?.error || 'Failed to reject order');
+        toast.error(response?.message || 'Failed to reject order');
       }
     } catch (error) {
       console.error('Error rejecting order:', error);

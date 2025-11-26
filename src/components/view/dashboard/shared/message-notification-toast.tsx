@@ -24,12 +24,9 @@ export function MessageNotificationToast({ notification, onClose, index }: Notif
   const router = useRouter();
 
   useEffect(() => {
-    const timer = setTimeout(
-      () => {
-        setIsVisible(false);
-      },
-      10000 + index * 1000
-    ); // change the timer as per the needs
+    const timer = setTimeout(() => {
+      setIsVisible(false);
+    }, 3000); // change the timer as per the needs
 
     return () => clearTimeout(timer);
   }, [index]);

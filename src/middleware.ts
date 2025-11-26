@@ -14,7 +14,6 @@ const hybridRoutes = [
   '/sign-up',
   '/sign-up/admin',
   '/sign-up/verification',
-  '/onboarding',
 ];
 
 const rolesRedirect: Record<string, string> = {
@@ -47,14 +46,6 @@ export async function middleware(request: NextRequest) {
     }
   }
 
-  // Handle onboarding route protection
-  if (pathname === '/onboarding') {
-    if (!token) {
-      return NextResponse.redirect(`${process.env.FRONTEND_URL}/sign-in`);
-    }
-    return NextResponse.next();
-  }
-
   if (
     (role === ADMIN && pathname.startsWith('/admin-dashboard')) ||
     (role === USER && pathname.startsWith('/dashboard')) ||
@@ -71,7 +62,6 @@ export const config = {
     '/',
     '/sign-in/:page*',
     '/sign-up/:page*',
-    '/onboarding',
     '/dashboard/:page*',
     '/admin-dashboard/:page*',
     '/logistic-dashboard/:page*',

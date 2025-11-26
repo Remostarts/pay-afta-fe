@@ -57,6 +57,7 @@ const defaultValues: TWithdrawfund = {
 
 const defaultValuesForTransferFund: TTransferfundSchema = {
   amountWithdraw: 0,
+  narration: '',
 };
 
 export default function WithdrawFund() {
@@ -390,6 +391,15 @@ export default function WithdrawFund() {
               <p className="mt-2 text-sm text-gray-600">
                 Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
               </p>
+            </div>
+
+            <div>
+              <ReInput
+                name="narration"
+                label="Narration"
+                placeholder="Enter narration"
+                type="text"
+              />
             </div>
 
             <div className="mb-4">

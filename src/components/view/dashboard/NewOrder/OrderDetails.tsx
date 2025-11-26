@@ -260,11 +260,13 @@ export default function OrderDetails({
                     value={orderData.counterpartyEmailOrPhoneNo}
                     icon={<Mail className="w-4 h-4" />}
                   />
-                  <InfoCard
-                    label={orderData.initiatorRole === 'Buyer' ? 'Invoice Date' : 'Delivery Date'}
-                    value={formatDate(orderData.invoiceDate).long}
-                    icon={<Calendar className="w-4 h-4" />}
-                  />
+                  {orderData.initiatorRole === 'Seller' && (
+                    <InfoCard
+                      label="Invoice Date"
+                      value={formatDate(orderData.invoiceDate).long}
+                      icon={<Calendar className="w-4 h-4" />}
+                    />
+                  )}
                   <InfoCard
                     label="Order Number"
                     value={orderNumber}
@@ -320,7 +322,7 @@ export default function OrderDetails({
               </CollapsibleSection>
 
               {/* Shipping Information */}
-              <CollapsibleSection
+              {/* <CollapsibleSection
                 id="shipping"
                 title="Shipping & Delivery"
                 icon={<Truck className="w-5 h-5" />}
@@ -353,7 +355,7 @@ export default function OrderDetails({
                     />
                   </div>
                 </div>
-              </CollapsibleSection>
+              </CollapsibleSection> */}
 
               {/* Item Details */}
               {orderData.detailAboutItem && (
