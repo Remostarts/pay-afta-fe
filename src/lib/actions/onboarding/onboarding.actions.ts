@@ -220,14 +220,17 @@ export async function deleteBankAccount(accountId: string) {
   }
 
   try {
-    const response = await fetch(`${process.env.BACKEND_URL}/user/bank-account/${accountId}`, {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: token,
-      },
-      cache: 'no-store',
-    });
+    const response = await fetch(
+      `${process.env.BACKEND_URL}/user/delete-settlement-bank-account/${accountId}`,
+      {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: token,
+        },
+        cache: 'no-store',
+      }
+    );
 
     if (!response.ok) {
       const errorData = await response.json();
