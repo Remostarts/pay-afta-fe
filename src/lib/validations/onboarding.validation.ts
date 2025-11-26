@@ -20,7 +20,11 @@ export type TidentityVerification = z.infer<typeof identityVerificationSchema>;
 
 // NIN Verification Form
 export const ninVerificationSchema = z.object({
-  nin: z.string().min(1, 'NIN is required'),
+  nin: z
+    .string()
+    .min(1, 'NIN is required')
+    .length(11, 'NIN must be exactly 11 digits')
+    .regex(/^\d+$/, 'NIN must contain only numbers!'),
 });
 
 export type TNinVerificationSchema = z.infer<typeof ninVerificationSchema>;

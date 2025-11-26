@@ -6,6 +6,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { ReDataTable } from '../shared/ReDateTable';
 
 import { TransactionReceipt } from './TransactionReceipt';
+import { getUserTransactions } from '@/lib/actions/root/user.action';
 
 export type Payment = {
   id: string;
@@ -14,117 +15,6 @@ export type Payment = {
   status: string;
   transactionType: string;
 };
-
-// const columns: ColumnDef<Payment>[] = [
-//   {
-//     accessorKey: 'date',
-//     header: 'Date',
-//   },
-//   {
-//     accessorKey: 'transactionType',
-//     header: 'Transcation Type',
-//   },
-//   {
-//     accessorKey: 'amount',
-//     header: 'Amount (₦)',
-//   },
-//   {
-//     accessorKey: 'status',
-//     header: 'Status',
-//     cell: ({ row }) => {
-//       const status = row.getValue('status') as string;
-
-//       const style =
-//         {
-//           Successful:
-//             'bg-[#E8FDEF] rounded-full text-[#0F973C] text-center py-1 text-sm font-medium font-inter',
-//         }[status] ||
-//         'bg-red-200 rounded-full text-red-600 text-center py-1 text-sm font-medium font-inter';
-
-//       return <div className={`${style} `}>{status}</div>;
-//     },
-//   },
-// ];
-
-const tData : Payment[] = [
-  // {
-  //   id: '1',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '2',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Track Link',
-  // },
-  // {
-  //   id: '3',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '4',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Withdrawal',
-  // },
-  // {
-  //   id: '6',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Card Funded',
-  // },
-  // {
-  //   id: '7',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '8',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '8',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '8',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '8',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-  // {
-  //   id: '8',
-  //   date: '21-02-2025, 02:24pm',
-  //   amount: 500000,
-  //   status: 'Successful',
-  //   transactionType: 'Credit',
-  // },
-];
 
 interface PageChangeParams {
   pageNumber?: number;
@@ -195,57 +85,33 @@ export default function Transcations() {
     },
   ];
 
-  // function handlePageChange(pageNumber: number, transactionType: string) {
-  //   try {
-  //     console.log('page no., ', pageNumber, ' transaction type, ', transactionType);
-  //     setTimeout(() => {
-  //       setData(tData);
-  //       setIsLoading(false);
-  //     }, 5000);
-  //   } catch (error) {
-  //     console.log(error);
-  //     setIsLoading(false);
-  //   }
-  // }
-
-  // useEffect(() => {
-  //   handlePageChange(1, 'All');
-  // }, []);
-
-  function handlePageChange(params: PageChangeParams = {}) {
+  async function handlePageChange(params: PageChangeParams = {}) {
     const { pageNumber = 1, selectedDate = 'Today', Status = 'Active' } = params;
+
     try {
-      console.log({ pageNumber, selectedDate, Status });
-      setTimeout(() => {
-        setTotalCount(tData.length);
-        setData(tData);
-        setPage(pageNumber);
-        setIsLoading(false);
-      }, 500);
+      setIsLoading(true);
+
+      const res = await getUserTransactions(pageNumber, 10);
+
+      setData(res?.data?.transactions || []);
+      setTotalCount(res?.data?.totalCount || 0);
+      setPage(pageNumber);
     } catch (error) {
-      console.error('Error loading data:', error);
-      setIsLoading(false);
+      console.error('Error loading transactions:', error);
       setData([]);
+      setTotalCount(0);
+    } finally {
+      setIsLoading(false);
     }
   }
 
   useEffect(() => {
     handlePageChange({ pageNumber: 1 });
-
-    setData(tData);
   }, []);
 
   return (
     <section>
       <div className="rounded-md bg-white p-5">
-        {/* <DataTable
-          columns={columns}
-          data={data}
-          lable={'Transaction History'}
-          isLoading={isLoading}
-          onPageChange={handlePageChange}
-        /> */}
-
         <ReDataTable
           label="Transaction History"
           columns={columns}
