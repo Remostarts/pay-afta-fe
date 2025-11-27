@@ -3,6 +3,7 @@ import { Badge, Bell } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { MessageNotification, NotificationType } from '@/types/messageNotification.type';
 import { useMessageNotification } from '@/context/MessageNotificationProvider';
+import { useRouter } from 'next/navigation';
 
 interface NotificationListProps {
   notifications: MessageNotification[];
@@ -11,6 +12,7 @@ interface NotificationListProps {
 
 export default function NotificationList({ notifications, onView }: NotificationListProps) {
   const { markAsRead } = useMessageNotification();
+  const route = useRouter();
 
   // Helper function to format date
   function formatDate(date: Date): string {
@@ -49,6 +51,11 @@ export default function NotificationList({ notifications, onView }: Notification
     console.log('Notification marked as read locally:', id);
   };
 
+  const handleView = (notification: MessageNotification) => {
+    route.push(`/dashboard/track-links/${notification.type}/${notification.actionInfo}`);
+    handleReadNotification(notification.id);
+  };
+
   return (
     <div className="max-h-[300px] overflow-auto p-0">
       {notifications.map((notification) => (
@@ -69,16 +76,9 @@ export default function NotificationList({ notifications, onView }: Notification
             <Badge className={`${getBadgeColor(notification.type)} text-white`}>
               {notification.type}
             </Badge>
-            {/* <Button
-              variant="ghost"
-              size="sm"
-              onClick={() => {
-                onView(notification);
-                handleReadNotification(notification.id);
-              }}
-            >
+            <Button variant="ghost" size="sm" onClick={() => handleView(notification)}>
               {notification.type === NotificationType.message ? 'View Chat' : 'View'}
-            </Button> */}
+            </Button>
           </div>
         </div>
       ))}

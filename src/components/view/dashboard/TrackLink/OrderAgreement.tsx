@@ -32,7 +32,7 @@ interface OrderAgreementProps {
   currentStepChange: number;
   showActions?: boolean;
   userRole: UserRole;
-  order?: OrderDetails | null;
+  order: OrderDetails | null;
   loadOrder?: () => Promise<void>;
 }
 
@@ -78,6 +78,8 @@ export default function OrderAgreement({
   const currentUserHasConfirmed = false;
   const buyerHasConfirmed = totalAgreementConfirmations >= 1;
   const sellerHasConfirmed = totalAgreementConfirmations >= 2;
+
+  console.log(order);
 
   const handleAcceptOrder = () => {
     if (!isAgreed) return;
@@ -452,17 +454,17 @@ export default function OrderAgreement({
     );
   }
 
-  if (order?.status === 'AGREEMENT' && currentStepChange === 1) {
-    mainContent = (
-      <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
-        <h2 className="mb-2 font-inter text-lg font-medium text-green-800">Agreement Completed</h2>
-        <p className="font-inter text-sm text-green-700">
-          The escrow agreement has been signed and accepted by both parties. The transaction is now
-          ready to proceed to the payment stage.
-        </p>
-      </div>
-    );
-  }
+  // if (order?.status === 'AGREEMENT' && currentStepChange === 1) {
+  //   mainContent = (
+  //     <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
+  //       <h2 className="mb-2 font-inter text-lg font-medium text-green-800">Agreement Completed</h2>
+  //       <p className="font-inter text-sm text-green-700">
+  //         The escrow agreement has been signed and accepted by both parties. The transaction is now
+  //         ready to proceed to the payment stage.
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>
