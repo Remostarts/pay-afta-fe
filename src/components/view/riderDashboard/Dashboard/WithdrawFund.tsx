@@ -173,7 +173,7 @@ export default function WithdrawFund() {
     try {
       const result = await enquiryBankAccount({
         account_number: accountNumber,
-        bank_code: parseInt(bankCode),
+        bank_code: bankCode.toString(),
       });
 
       console.log(result);

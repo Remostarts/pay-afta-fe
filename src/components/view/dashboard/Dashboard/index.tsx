@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   // Check if user needs to complete onboarding
   const needsOnboarding =
-    !user?.profile?.personalKycStatus ||
+    !user?.profile?.ninVerified ||
     !user?.username ||
     !user?.profile?.pinSet ||
     !user?.profile?.settlementKycStatus;

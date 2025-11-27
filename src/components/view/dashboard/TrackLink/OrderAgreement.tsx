@@ -22,13 +22,17 @@ import { updateOrderProgress } from '@/lib/actions/order/order.actions';
 import PaymentSuccessful from './PaymentSuccessful';
 import EditOrderModal from './EditOrderModal';
 import RejectOrderModal from './RejectOrderModal';
+import {
+  GeneratePendingAgreementPdf,
+  GenerateSignedAgreementPdf,
+} from '@/helpers/utils/pdfCreation';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
   currentStepChange: number;
   showActions?: boolean;
   userRole: UserRole;
-  order?: OrderDetails | null;
+  order: OrderDetails | null;
   loadOrder?: () => Promise<void>;
 }
 
@@ -74,6 +78,8 @@ export default function OrderAgreement({
   const currentUserHasConfirmed = false;
   const buyerHasConfirmed = totalAgreementConfirmations >= 1;
   const sellerHasConfirmed = totalAgreementConfirmations >= 2;
+
+  console.log(order);
 
   const handleAcceptOrder = () => {
     if (!isAgreed) return;
@@ -123,8 +129,22 @@ export default function OrderAgreement({
     handleCurrentStepChange(currentStepChange - 1);
   };
 
-  const handleDownload = () => {
-    console.log('Downloading escrow agreement PDF');
+  const handleDownload = (version: 'pending' | 'signed') => {
+    if (!order) {
+      toast.error('Unable to generate agreement – order not found.');
+      return;
+    }
+
+    try {
+      if (version === 'pending') {
+        GeneratePendingAgreementPdf(order);
+      } else {
+        GenerateSignedAgreementPdf(order);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to generate agreement PDF.');
+    }
   };
 
   const canRejectOrder = (order: OrderDetails | null): boolean => {
@@ -151,7 +171,7 @@ export default function OrderAgreement({
         </div>
 
         <button
-          onClick={handleDownload}
+          onClick={() => handleDownload('pending')}
           className="mb-8 flex items-center gap-2 text-blue-600 transition-colors hover:text-blue-700"
         >
           <Download className="h-4 w-4" />
@@ -300,7 +320,7 @@ export default function OrderAgreement({
         </div>
 
         <button
-          onClick={handleDownload}
+          onClick={() => handleDownload('pending')}
           className="mb-8 flex items-center gap-2 text-blue-600 transition-colors hover:text-blue-700"
         >
           <Download className="h-4 w-4" />
@@ -434,17 +454,17 @@ export default function OrderAgreement({
     );
   }
 
-  if (order?.status === 'AGREEMENT' && currentStepChange === 1) {
-    mainContent = (
-      <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
-        <h2 className="mb-2 font-inter text-lg font-medium text-green-800">Agreement Completed</h2>
-        <p className="font-inter text-sm text-green-700">
-          The escrow agreement has been signed and accepted by both parties. The transaction is now
-          ready to proceed to the payment stage.
-        </p>
-      </div>
-    );
-  }
+  // if (order?.status === 'AGREEMENT' && currentStepChange === 1) {
+  //   mainContent = (
+  //     <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
+  //       <h2 className="mb-2 font-inter text-lg font-medium text-green-800">Agreement Completed</h2>
+  //       <p className="font-inter text-sm text-green-700">
+  //         The escrow agreement has been signed and accepted by both parties. The transaction is now
+  //         ready to proceed to the payment stage.
+  //       </p>
+  //     </div>
+  //   );
+  // }
 
   return (
     <>

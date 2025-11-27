@@ -41,10 +41,6 @@ export default function SettlementAccount() {
   const [accountToSetDefault, setAccountToSetDefault] = useState<string | null>(null);
   const [isSettingDefault, setIsSettingDefault] = useState(false);
 
-  useEffect(() => {
-    loadUserData();
-  }, []);
-
   function handleSettlementAcc() {
     setToggleSettlementAcc(!toggleSettlementAcc);
   }

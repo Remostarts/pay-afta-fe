@@ -26,6 +26,8 @@ function Notifications({ handleNotificationBtn }: NotificationsProps) {
   const [isOpen, setIsOpen] = useState(false);
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
+  console.log(notifications);
+
   const router = useRouter();
 
   const handleView = (notification: MessageNotification) => {

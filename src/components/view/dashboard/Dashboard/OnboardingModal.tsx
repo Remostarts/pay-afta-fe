@@ -84,7 +84,7 @@ export default function OnboardingModal({ isOpen, onClose }: OnboardingModalProp
     if (user?.profile && isOpen) {
       const completed: number[] = [];
 
-      if (user.profile.personalKycStatus) {
+      if (user.profile.ninVerified) {
         completed.push(0);
       }
       if (user.username) {

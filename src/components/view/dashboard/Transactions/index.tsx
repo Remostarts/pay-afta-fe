@@ -7,6 +7,7 @@ import { ReDataTable } from '../shared/ReDateTable';
 
 import { TransactionReceipt } from './TransactionReceipt';
 import { getUserTransactions } from '@/lib/actions/root/user.action';
+import WalletTopcard from './WalletTopcard';
 
 export type Payment = {
   id: string;
@@ -111,6 +112,10 @@ export default function Transcations() {
 
   return (
     <section>
+      <div className="mb-5">
+        <WalletTopcard />
+      </div>
+
       <div className="rounded-md bg-white p-5">
         <ReDataTable
           label="Transaction History"

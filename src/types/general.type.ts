@@ -14,7 +14,7 @@ type Profile = {
   nigeriaLawSchoolCurrentlyAt: string | null;
   onBoardingStatus: boolean;
   identityVerified: boolean;
-  personalKycStatus: boolean;
+  ninVerified: boolean;
   settlementKycStatus: boolean;
   pinSet: boolean;
 };
