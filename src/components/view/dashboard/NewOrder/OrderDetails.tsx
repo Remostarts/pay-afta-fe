@@ -195,7 +195,7 @@ export default function OrderDetails({
             <div className="flex items-center space-x-4">
               <div className="flex items-center space-x-3">
                 <div className="flex items-center justify-center w-12 h-12 bg-primary-800/10 rounded-xl">
-                  <Package className="w-6 h-6 text-primary-800" />
+                  <Package className="w-6 h-6 text-[#03045B]" />
                 </div>
                 <div>
                   <h1
@@ -470,7 +470,7 @@ export default function OrderDetails({
             <button
               onClick={handleConfirm}
               disabled={isSubmitting}
-              className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-green-800 hover:bg-green-800/90 disabled:bg-gray-400 text-white font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px] transform hover:scale-[1.02] active:scale-[0.98]"
+              className="flex-1 flex items-center justify-center space-x-2 py-3 px-4 rounded-xl bg-[#03045B] hover:bg-[#03045B]/90 disabled:bg-gray-400 text-white font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 min-h-[44px] transform hover:scale-[1.02] active:scale-[0.98]"
               aria-label="Confirm and send order"
             >
               {isSubmitting ? (
@@ -519,7 +519,7 @@ function CollapsibleSection({
         aria-controls={`section-${id}`}
       >
         <div className="flex items-center space-x-3">
-          <div className="flex items-center justify-center w-8 h-8 text-primary-800 dark:text-primary-400">
+          <div className="flex items-center justify-center w-8 h-8 text-[#03045B] dark:text-primary-400">
             {icon}
           </div>
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">{title}</h3>
@@ -705,7 +705,7 @@ function PriceRow({ label, value, isTotal }: PriceRowProps) {
         {label}
       </span>
       <span
-        className={`font-bold ${isTotal ? 'text-xl text-primary-800 dark:text-primary-200' : 'text-gray-900 dark:text-white'}`}
+        className={`font-bold ${isTotal ? 'text-xl text-[#03045B] dark:text-primary-200' : 'text-gray-900 dark:text-white'}`}
       >
         {value}
       </span>

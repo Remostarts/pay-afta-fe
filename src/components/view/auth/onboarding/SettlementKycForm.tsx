@@ -128,7 +128,7 @@ const AddSettlementForm: React.FC<AddSettlementFormProps> = ({ onClose, onSucces
     try {
       const result = await enquiryBankAccount({
         account_number: accountNumber,
-        bank_code: parseInt(bankCode.toString()),
+        bank_code: bankCode.toString(),
       });
 
       console.log(result);

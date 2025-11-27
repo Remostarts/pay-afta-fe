@@ -255,7 +255,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
       milestones,
     };
 
-    console.log('Processed order data:', processedData);
+    // console.log('Processed order data:', processedData);
     return processedData;
   };
 
@@ -283,10 +283,10 @@ export default function NewOrder({ onBack }: NewOrderProps) {
     setIsCreatingOrder(true);
 
     try {
-      // console.log('Creating order with data:', pendingOrderData);
+      console.log('Creating order with data:', pendingOrderData);
       const response = await createOrder(pendingOrderData);
 
-      // console.log(response);
+      console.log(response);
 
       if (response?.success) {
         toast.success('Order created successfully');
@@ -708,7 +708,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
                       value: 'Both Parties Pay (50/50)',
                     },
                   ]}
-                  className="flex flex-col lg:grid lg:grid-cols-3 gap-4"
+                  className="flex flex-col gap-4 sm:flex-row sm:gap-2 lg:grid lg:grid-cols-3"
                 />
               </div>
 
