@@ -3,32 +3,36 @@
 import React from 'react';
 import { CheckCircle, ArrowLeft, Calendar, User, Mail } from 'lucide-react';
 import Link from 'next/link';
+import { useSearchParams } from 'next/navigation';
 
-interface AgreementSuccessPageProps {
-  orderData?: {
-    id: string;
-    orderId: string;
-    buyer: {
-      name: string;
-      email: string;
-    };
-    seller: {
-      name: string;
-      email: string;
-    };
-    orderValue: number;
-    createdAt: string;
-    agreedAt?: string; // Made optional
+interface OrderData {
+  id: string;
+  orderId: string;
+  buyer: {
+    name: string;
+    email: string;
   };
-  userRole: 'buyer' | 'seller';
-  isGuest?: boolean;
+  seller: {
+    name: string;
+    email: string;
+  };
+  orderValue: number;
+  createdAt: string;
+  agreedAt?: string;
 }
 
-export default function AgreementSuccessPage({
-  orderData,
-  userRole,
-  isGuest = false,
-}: AgreementSuccessPageProps) {
+export default function AgreementSuccessPage() {
+  const searchParams = useSearchParams();
+
+  // Parse orderData from search params
+  const orderDataStr = searchParams.get('orderData');
+  const orderData: OrderData | null = orderDataStr
+    ? JSON.parse(decodeURIComponent(orderDataStr))
+    : null;
+
+  // Parse other params
+  const userRole = (searchParams.get('userRole') as 'buyer' | 'seller') || 'buyer';
+  const isGuest = searchParams.get('isGuest') === 'true';
   if (!orderData) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
@@ -62,7 +66,7 @@ export default function AgreementSuccessPage({
 
   const getNextActionUrl = () => {
     if (userRole === 'buyer') {
-      return `/finalize-payment?orderId=${orderData.orderId}`;
+      return `/finalize-payment?orderId=${orderData?.orderId || ''}`;
     }
     return `/dashboard/orders?status=agreed`;
   };
