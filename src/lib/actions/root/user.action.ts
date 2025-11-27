@@ -77,7 +77,7 @@ export async function withdrawFundFromWallet(
   }
 }
 
-export async function enquiryBankAccount(payload: { account_number: string; bank_code: number }) {
+export async function enquiryBankAccount(payload: { account_number: string; bank_code: string }) {
   try {
     const session = (await getServerSession(authOptions)) as any;
     const token = session?.accessToken;
