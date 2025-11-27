@@ -28,7 +28,6 @@ export const authOptions: AuthOptions = {
 
           // If backend returns error (401/403/404 etc.)
           if (!res.ok) {
-            // Throw backend message so frontend can display it
             throw new Error(result?.message || 'Login failed');
           }
 
