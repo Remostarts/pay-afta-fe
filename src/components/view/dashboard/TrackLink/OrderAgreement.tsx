@@ -36,22 +36,36 @@ interface OrderAgreementProps {
   loadOrder?: () => Promise<void>;
 }
 
-// Helper function to check if a user has confirmed agreement
-const hasUserConfirmedAgreement = (
-  order: OrderDetails | null,
-  userId: string | undefined
-): boolean => {
-  if (!order?.progressHistory || !userId) return false;
+// Helper function to check if a specific user has confirmed agreement
+const hasUserConfirmedAgreement = (order: OrderDetails | null, userRole: UserRole): boolean => {
+  if (!order?.progressHistory) return false;
 
-  const agreementConfirmations = order.progressHistory.filter(
-    (progress) => progress.notes.includes('Agreement signed') && progress.status === 'AGREEMENT'
+  // Check if this specific user has a BUYER_AGREED or SELLER_AGREED progress entry
+  const expectedStatus = userRole === 'buyer' ? 'BUYER_AGREED' : 'SELLER_AGREED';
+
+  const userConfirmation = order.progressHistory.find(
+    (progress) => progress.status === expectedStatus && progress.notes.includes('Agreement signed')
   );
 
-  if (order.buyerId && order.sellerId) {
-    return agreementConfirmations.length >= 2;
-  }
+  return !!userConfirmation;
+};
 
-  return agreementConfirmations.length > 0;
+// Helper function to check if buyer has confirmed
+const hasBuyerConfirmedAgreement = (order: OrderDetails | null): boolean => {
+  if (!order?.progressHistory || !order.buyerId) return false;
+
+  return order.progressHistory.some(
+    (progress) => progress.status === 'BUYER_AGREED' && progress.notes.includes('Agreement signed')
+  );
+};
+
+// Helper function to check if seller has confirmed
+const hasSellerConfirmedAgreement = (order: OrderDetails | null): boolean => {
+  if (!order?.progressHistory || !order.sellerId) return false;
+
+  return order.progressHistory.some(
+    (progress) => progress.status === 'SELLER_AGREED' && progress.notes.includes('Agreement signed')
+  );
 };
 
 export default function OrderAgreement({
@@ -71,15 +85,21 @@ export default function OrderAgreement({
 
   const totalAgreementConfirmations =
     order?.progressHistory?.filter(
-      (progress) => progress.notes.includes('Agreement signed') && progress.status === 'AGREEMENT'
+      (progress) =>
+        (progress.status === 'BUYER_AGREED' || progress.status === 'SELLER_AGREED') &&
+        progress.notes.includes('Agreement signed')
     ).length || 0;
 
   const bothPartiesConfirmed = totalAgreementConfirmations >= 2;
-  const currentUserHasConfirmed = false;
-  const buyerHasConfirmed = totalAgreementConfirmations >= 1;
-  const sellerHasConfirmed = totalAgreementConfirmations >= 2;
+  const currentUserHasConfirmed = hasUserConfirmedAgreement(order ?? null, userRole);
+  const buyerHasConfirmed = hasBuyerConfirmedAgreement(order ?? null);
+  const sellerHasConfirmed = hasSellerConfirmedAgreement(order ?? null);
+
+  // Check if user can accept agreement (hasn't accepted yet)
+  const canAcceptAgreement = !currentUserHasConfirmed;
 
   console.log(order);
+  console.log(userRole);
 
   const handleAcceptOrder = () => {
     if (!isAgreed) return;
@@ -89,9 +109,12 @@ export default function OrderAgreement({
   const handleConfirmTransaction = async () => {
     setIsLoading(true);
     try {
+      // Determine the correct status based on user role
+      const agreementStatus = userRole === 'buyer' ? 'BUYER_AGREED' : 'SELLER_AGREED';
+
       const response = await updateOrderProgress(
         {
-          status: 'AGREEMENT',
+          status: agreementStatus,
           step: 1,
           notes: 'Agreement signed',
         } as UpdateOrderProgressDTO,
@@ -102,12 +125,9 @@ export default function OrderAgreement({
         toast.success('Order agreement accepted successfully!');
         if (loadOrder) await loadOrder();
 
-        const updatedBuyerHasConfirmed = hasUserConfirmedAgreement(order ?? null, order?.buyerId);
-        const updatedSellerHasConfirmed = hasUserConfirmedAgreement(order ?? null, order?.sellerId);
-
-        if (updatedBuyerHasConfirmed && updatedSellerHasConfirmed) {
-          handleCurrentStepChange(currentStepChange + 1);
-        }
+        // Note: We can't check both parties confirmed immediately because we need to wait for the data to refresh
+        // The step advancement will happen automatically when loadOrder() updates the state
+        // and getStep() detects both parties have confirmed in the progressHistory
 
         setTimeout(() => setIsOpen(false), 500);
       } else {
@@ -138,7 +158,7 @@ export default function OrderAgreement({
     try {
       if (version === 'pending') {
         GeneratePendingAgreementPdf(order);
-      } else {
+      } else if (version === 'signed') {
         GenerateSignedAgreementPdf(order);
       }
     } catch (error) {
@@ -150,13 +170,19 @@ export default function OrderAgreement({
   const canRejectOrder = (order: OrderDetails | null): boolean => {
     if (!order) return false;
     const nonRejectableStatuses = ['SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
+
     return !nonRejectableStatuses.includes(order.status);
   };
 
   // Main content rendering
   let mainContent = null;
 
-  if (userRole === 'seller' && (order?.status === 'PENDING' || order?.status === 'AGREEMENT')) {
+  if (
+    userRole === 'seller' &&
+    (order?.status === 'PENDING' ||
+      order?.status === 'BUYER_AGREED' ||
+      order?.status === 'SELLER_AGREED')
+  ) {
     mainContent = (
       <section className="mt-5 rounded-xl border-2 border-gray-200 bg-[#E6E6E6] p-5">
         <div className="mb-5">
@@ -171,7 +197,7 @@ export default function OrderAgreement({
         </div>
 
         <button
-          onClick={() => handleDownload('pending')}
+          onClick={() => handleDownload(currentUserHasConfirmed ? 'signed' : 'pending')}
           className="mb-8 flex items-center gap-2 text-blue-600 transition-colors hover:text-blue-700"
         >
           <Download className="h-4 w-4" />
@@ -208,21 +234,33 @@ export default function OrderAgreement({
           <h3 className="font-inter text-sm font-medium mb-3">Confirmation Status:</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Buyer (You):</span>
+              <span className="text-sm text-gray-600">
+                {userRole === 'seller'
+                  ? `Buyer: ${order?.buyer?.firstName} ${order?.buyer?.lastName}`
+                  : `Seller: ${order?.seller?.firstName} ${order?.seller?.lastName}`}
+              </span>
               <span
-                className={`text-sm font-medium ${currentUserHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
+                className={`text-sm font-medium ${buyerHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
               >
-                {currentUserHasConfirmed ? '✓ Confirmed' : '⏳ Pending'}
+                {buyerHasConfirmed ? '✓ Confirmed' : '⏳ Pending'}
               </span>
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">
-                Seller ({order?.seller?.firstName} {order?.seller?.lastName}):
+                {userRole === 'seller' ? 'Seller:' : 'Buyer:'} (
+                {userRole === 'seller' ? order?.seller?.firstName : order?.buyer?.firstName}{' '}
+                {userRole === 'seller' ? order?.seller?.lastName : order?.buyer?.lastName})
               </span>
               <span
-                className={`text-sm font-medium ${sellerHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
+                className={`text-sm font-medium ${userRole === 'seller' ? sellerHasConfirmed : buyerHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
               >
-                {sellerHasConfirmed ? '✓ Confirmed' : '⏳ Pending'}
+                {userRole === 'seller'
+                  ? sellerHasConfirmed
+                    ? '✓ Confirmed'
+                    : '⏳ Pending'
+                  : buyerHasConfirmed
+                    ? '✓ Confirmed'
+                    : '⏳ Pending'}
               </span>
             </div>
           </div>
@@ -230,15 +268,18 @@ export default function OrderAgreement({
           {!bothPartiesConfirmed && (
             <p className="mt-3 text-xs text-gray-500">
               {currentUserHasConfirmed
-                ? 'Waiting for the seller to confirm before proceeding to payment.'
+                ? '✅ You have confirmed. Waiting for the other party to confirm the agreement before proceeding to payment.'
                 : 'Please confirm the agreement to proceed.'}
             </p>
           )}
 
           {bothPartiesConfirmed && (
-            <p className="mt-3 text-xs text-green-600 font-medium">
-              ✓ Both parties have confirmed. Agreement is complete!
-            </p>
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-xs text-green-700 font-medium flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>✓ Both
+                parties have confirmed! Advancing to payment step...
+              </p>
+            </div>
           )}
         </div>
 
@@ -247,14 +288,14 @@ export default function OrderAgreement({
             <DialogTrigger asChild>
               <ReButton
                 className={`w-full sm:w-2/5 rounded-full ${
-                  isAgreed
+                  isAgreed && canAcceptAgreement
                     ? 'bg-[#03045B] hover:bg-[#03045B] text-white transition-all'
                     : 'cursor-not-allowed bg-gray-300 text-gray-600'
                 }`}
                 onClick={handleAcceptOrder}
-                disabled={!isAgreed}
+                disabled={!isAgreed || !canAcceptAgreement}
               >
-                Accept Order
+                {currentUserHasConfirmed ? 'Agreement Accepted' : 'Accept Order'}
               </ReButton>
             </DialogTrigger>
 
@@ -290,7 +331,6 @@ export default function OrderAgreement({
 
           <ReButton
             onClick={() => setIsRejectDialogOpen(true)}
-            // onClick={() => {}}
             disabled={!canRejectOrder(order)}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
@@ -298,14 +338,19 @@ export default function OrderAgreement({
                 : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
             }`}
           >
-            {!canRejectOrder(order) ? 'Cannot Reject' : 'Reject'}
+            {!canRejectOrder(order) ? 'Cannot Reject' : 'Reject Order'}
           </ReButton>
         </div>
       </section>
     );
   }
 
-  if (userRole === 'buyer' && (order?.status === 'PENDING' || order?.status === 'AGREEMENT')) {
+  if (
+    userRole === 'buyer' &&
+    (order?.status === 'PENDING' ||
+      order?.status === 'BUYER_AGREED' ||
+      order?.status === 'SELLER_AGREED')
+  ) {
     mainContent = (
       <section className="mt-5 rounded-xl border-2 border-gray-200 bg-[#E6E6E6] p-5">
         <div className="mb-5">
@@ -320,7 +365,7 @@ export default function OrderAgreement({
         </div>
 
         <button
-          onClick={() => handleDownload('pending')}
+          onClick={() => handleDownload(currentUserHasConfirmed ? 'signed' : 'pending')}
           className="mb-8 flex items-center gap-2 text-blue-600 transition-colors hover:text-blue-700"
         >
           <Download className="h-4 w-4" />
@@ -357,7 +402,11 @@ export default function OrderAgreement({
           <h3 className="font-inter text-sm font-medium mb-3">Confirmation Status:</h3>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
-              <span className="text-sm text-gray-600">Buyer (You):</span>
+              <span className="text-sm text-gray-600">
+                {userRole === 'buyer'
+                  ? `Buyer: ${order?.buyer?.firstName} ${order?.buyer?.lastName}`
+                  : `Seller: ${order?.seller?.firstName} ${order?.seller?.lastName}`}
+              </span>
               <span
                 className={`text-sm font-medium ${currentUserHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
               >
@@ -366,12 +415,20 @@ export default function OrderAgreement({
             </div>
             <div className="flex items-center justify-between">
               <span className="text-sm text-gray-600">
-                Seller ({order?.seller?.firstName} {order?.seller?.lastName}):
+                {userRole === 'buyer' ? 'Seller:' : 'Buyer:'} (
+                {userRole === 'buyer' ? order?.seller?.firstName : order?.buyer?.firstName}{' '}
+                {userRole === 'buyer' ? order?.seller?.lastName : order?.buyer?.lastName})
               </span>
               <span
-                className={`text-sm font-medium ${sellerHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
+                className={`text-sm font-medium ${userRole === 'buyer' ? sellerHasConfirmed : buyerHasConfirmed ? 'text-green-600' : 'text-orange-600'}`}
               >
-                {sellerHasConfirmed ? '✓ Confirmed' : '⏳ Pending'}
+                {userRole === 'buyer'
+                  ? sellerHasConfirmed
+                    ? '✓ Confirmed'
+                    : '⏳ Pending'
+                  : buyerHasConfirmed
+                    ? '✓ Confirmed'
+                    : '⏳ Pending'}
               </span>
             </div>
           </div>
@@ -379,15 +436,18 @@ export default function OrderAgreement({
           {!bothPartiesConfirmed && (
             <p className="mt-3 text-xs text-gray-500">
               {currentUserHasConfirmed
-                ? 'Waiting for the seller to confirm before proceeding to payment.'
+                ? '✅ You have confirmed. Waiting for the other party to confirm the agreement before proceeding to payment.'
                 : 'Please confirm the agreement to proceed.'}
             </p>
           )}
 
           {bothPartiesConfirmed && (
-            <p className="mt-3 text-xs text-green-600 font-medium">
-              ✓ Both parties have confirmed. Agreement is complete!
-            </p>
+            <div className="mt-3 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-xs text-green-700 font-medium flex items-center gap-2">
+                <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></span>✓ Both
+                parties have confirmed! Advancing to payment step...
+              </p>
+            </div>
           )}
         </div>
 
@@ -396,14 +456,14 @@ export default function OrderAgreement({
             <DialogTrigger asChild>
               <ReButton
                 className={`w-full sm:w-2/5 rounded-full ${
-                  isAgreed
+                  isAgreed && canAcceptAgreement
                     ? 'bg-[#03045B] hover:bg-[#03045B] text-white transition-all'
                     : 'cursor-not-allowed bg-gray-300 text-gray-600'
                 }`}
                 onClick={handleAcceptOrder}
-                disabled={!isAgreed}
+                disabled={!isAgreed || !canAcceptAgreement}
               >
-                Accept Order
+                {currentUserHasConfirmed ? 'Agreement Accepted' : 'Accept Order'}
               </ReButton>
             </DialogTrigger>
 
@@ -439,7 +499,6 @@ export default function OrderAgreement({
 
           <ReButton
             onClick={() => setIsRejectDialogOpen(true)}
-            // onClick={() => {}}
             disabled={!canRejectOrder(order)}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
@@ -447,7 +506,7 @@ export default function OrderAgreement({
                 : 'bg-gray-100 text-gray-400 border-gray-300 cursor-not-allowed'
             }`}
           >
-            {!canRejectOrder(order) ? 'Cannot Reject' : 'Reject'}
+            {!canRejectOrder(order) ? 'Cannot Cancel Order' : 'Cancel Order'}
           </ReButton>
         </div>
       </section>

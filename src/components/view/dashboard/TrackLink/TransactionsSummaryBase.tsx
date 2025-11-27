@@ -3,15 +3,15 @@
 import { useEffect, useState } from 'react';
 import { ChevronLeft } from 'lucide-react';
 
+import StepperForProduct from './StepperForProduct';
+import StepperForService from './StepperForService';
+import OrderAgreement from './OrderAgreement';
+import MakePayment from './MakePayment';
+import Delivery from './Delivery';
+import OrderShipping from './OrderShipping';
 import Summary from './Summary';
 import TransactionSummary from './TransactionSummary';
-import MakePayment from './MakePayment';
-import OrderShipping from './OrderShipping';
-import Delivery from './Delivery';
-import ReturnProduct from './ReturnProduct';
 import TransactionsDispute from './TransactionsDispute';
-import OrderAgreement from './OrderAgreement';
-import StepperForProduct from './StepperForProduct';
 import TransactionSummarySkeleton from './TransactionSummarySkeleton';
 
 import { toast } from 'sonner';
@@ -20,75 +20,22 @@ import { useGeneral } from '@/context/generalProvider';
 import { useSocket } from '@/context/socketProvider';
 import { OrderDetails } from '@/types/order';
 import { UpdateOrderProgressDTO } from '@/lib/validations/order';
+import { getStepByOrderType } from '@/helpers/utils/stepLogic';
 
 export type UserRole = 'buyer' | 'seller' | null;
+export type TransactionType = 'product' | 'service';
 
-interface TransactionsSummaryProps {
+interface TransactionsSummaryBaseProps {
   onBack: () => void;
   id: string;
+  type: TransactionType;
 }
 
-// ---------------- Step mapping function ----------------
-function getStep(status: string, currentStep: number, progressHistory?: any[]): number {
-  // Helper function to check if both parties have confirmed agreement
-  const hasBothPartiesAgreed = (history?: any[]) => {
-    if (!history || !Array.isArray(history)) return false;
-
-    const buyerConfirmed = history.some(
-      (progress) =>
-        progress.status === 'BUYER_AGREED' && progress.notes.includes('Agreement signed')
-    );
-    const sellerConfirmed = history.some(
-      (progress) =>
-        progress.status === 'SELLER_AGREED' && progress.notes.includes('Agreement signed')
-    );
-
-    return buyerConfirmed && sellerConfirmed;
-  };
-
-  switch (status) {
-    case 'PENDING':
-      // Start at step 1 for new orders, maintain current step if already progressed
-      return currentStep === 0 ? 1 : currentStep;
-
-    case 'BUYER_AGREED':
-    case 'SELLER_AGREED':
-      // Only advance to step 2 if BOTH parties have agreed
-      // This ensures proper step synchronization with StepperForProduct component
-      return hasBothPartiesAgreed(progressHistory) ? 2 : 1;
-
-    case 'PAID':
-      // Payment completed - advance to shipping step
-      return 3;
-
-    case 'SHIPPING':
-      // Item in transit - advance to delivery step
-      return 4;
-
-    case 'DELIVERY':
-      // Item delivered - this is step 5 for normal completion flow
-      // Final step in the StepperForProduct component's 5-step sequence
-      return 5;
-
-    case 'CLOSED':
-    case 'COMPLETED':
-      // Order completed successfully - this is step 5 for completed status
-      // Matches StepperForProduct's "Completed" label in the 5-step flow
-      return 5;
-
-    case 'DISPUTED':
-      // Order disputed - this is step 5 for disputed flow
-      // Matches StepperForProduct's disputed scenario with 5 steps ending in "Disputed"
-      return 5;
-
-    default:
-      // Fallback to step 1 for unknown statuses
-      // Ensures consistent state management with component expectations
-      return 1;
-  }
-}
-
-export default function TransactionsSummaryForProduct({ onBack, id }: TransactionsSummaryProps) {
+export default function TransactionsSummaryBase({
+  onBack,
+  id,
+  type,
+}: TransactionsSummaryBaseProps) {
   const [order, setOrder] = useState<OrderDetails | null>(null);
   const [currentStep, setCurrentStep] = useState<number>(0);
   const [showRiseDispute, setShowRiseDispute] = useState<boolean>(false);
@@ -122,12 +69,8 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
               : null;
         setUserRole(role);
 
-        // Determine correct step
-        const step = getStep(
-          orderData.status,
-          orderData.currentStep ?? 0,
-          orderData.progressHistory
-        );
+        // Determine correct step based on type
+        const step = getStepByOrderType(orderData, type);
         setCurrentStep(step);
 
         if (orderData.status === 'DISPUTED') setShowRiseDispute(true);
@@ -147,11 +90,7 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
 
     const handleOrderUpdated = (updatedOrder: OrderDetails) => {
       setOrder(updatedOrder);
-      const step = getStep(
-        updatedOrder.status,
-        updatedOrder.currentStep ?? 0,
-        updatedOrder.progressHistory
-      );
+      const step = getStepByOrderType(updatedOrder, type);
       setCurrentStep(step);
 
       if (updatedOrder.status === 'DISPUTED') setShowRiseDispute(true);
@@ -160,11 +99,10 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
 
     socket.on('order_updated', handleOrderUpdated);
 
-    //  Proper cleanup
     return () => {
       socket.off('order_updated', handleOrderUpdated);
     };
-  }, [socket]);
+  }, [socket, type]);
 
   // ---------------- Initial Load ----------------
   useEffect(() => {
@@ -178,16 +116,17 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   // ---------------- Delivery Handlers ----------------
   const handleAcceptDelivery = async () => {
     try {
+      const finalStep = type === 'product' ? 5 : 4;
       const res = await updateOrderProgress(
         {
           status: 'COMPLETED',
-          step: 5,
+          step: finalStep,
           notes: 'Buyer confirmed delivery.',
         } as UpdateOrderProgressDTO,
         order?.id as string
       );
       setOrder(res);
-      setCurrentStep(6);
+      setCurrentStep(finalStep);
       toast.success('Delivery accepted!');
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Failed to accept delivery');
@@ -200,13 +139,18 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
   };
 
   const handleRefundRequested = () => setIsReturn(true);
+
   const handleReturnCompleted = () => {
     setIsRefunded(true);
-    setCurrentStep(6);
+    const finalStep = type === 'product' ? 5 : 4;
+    setCurrentStep(finalStep);
   };
 
   // ---------------- UI Rendering ----------------
   if (progressLoading) return <TransactionSummarySkeleton />;
+
+  const isProductFlow = type === 'product';
+  const maxStep = isProductFlow ? 5 : 4;
 
   return (
     <div>
@@ -234,14 +178,24 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
             </p>
           </div>
 
-          <StepperForProduct
-            currentStep={currentStep}
-            isDisputed={showRiseDispute}
-            isReturn={isReturn}
-            isRefunded={isRefunded}
-          />
+          {/* Stepper - Product or Service */}
+          {isProductFlow ? (
+            <StepperForProduct
+              currentStep={currentStep}
+              isDisputed={showRiseDispute}
+              isReturn={isReturn}
+              isRefunded={isRefunded}
+            />
+          ) : (
+            <StepperForService
+              currentStep={currentStep}
+              isDisputed={showRiseDispute}
+              isReturn={isReturn}
+              isRefunded={isRefunded}
+            />
+          )}
 
-          {/* ---------------- Step Components ---------------- */}
+          {/* ---------------- Step 1: Agreement ---------------- */}
           {currentStep === 1 && (
             <OrderAgreement
               handleCurrentStepChange={setCurrentStep}
@@ -253,42 +207,84 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
             />
           )}
 
+          {/* ---------------- Step 2: Payment ---------------- */}
           {currentStep === 2 && (
             <MakePayment
               handleCurrentStepChange={setCurrentStep}
               currentStepChange={currentStep}
               userRole={userRole}
-              isProduct
+              isProduct={isProductFlow}
               showActions={userRole === 'buyer'}
               order={order ?? null}
               loadOrder={loadOrder}
             />
           )}
 
+          {/* ---------------- Step 3: Product=Shipping | Service=Delivery ---------------- */}
           {currentStep === 3 && (
-            <div className="mt-5 p-4 border rounded-lg bg-gray-50">
-              <h2 className="text-lg font-semibold">Payment Completed</h2>
-              <p className="text-sm text-gray-700">Payment has been completed successfully.</p>
-            </div>
+            <>
+              {isProductFlow ? (
+                <OrderShipping userRole={userRole} order={order ?? null} />
+              ) : (
+                <Delivery
+                  handleCurrentStepChange={setCurrentStep}
+                  handleShowRiseDispute={setShowRiseDispute}
+                  handleAcceptDelivery={handleAcceptDelivery}
+                  handleRejectDelivery={handleRejectDelivery}
+                  handleIsRequestRefund={() => {}}
+                  handleRefundRequested={handleRefundRequested}
+                  currentStepChange={currentStep}
+                  userRole={userRole}
+                  showActions={userRole === 'buyer'}
+                />
+              )}
+            </>
           )}
 
-          {currentStep === 4 && <OrderShipping userRole={userRole} order={order ?? null} />}
-
-          {currentStep === 5 && !isReturn && (
-            <Delivery
-              handleCurrentStepChange={setCurrentStep}
-              handleShowRiseDispute={setShowRiseDispute}
-              handleAcceptDelivery={handleAcceptDelivery}
-              handleRejectDelivery={handleRejectDelivery}
-              handleIsRequestRefund={() => {}}
-              handleRefundRequested={handleRefundRequested}
-              currentStepChange={currentStep}
-              userRole={userRole}
-              showActions={userRole === 'buyer'}
-            />
+          {/* ---------------- Step 4: Product=Delivery | Service=Completed ---------------- */}
+          {currentStep === 4 && (
+            <>
+              {isProductFlow ? (
+                !isReturn && (
+                  <Delivery
+                    handleCurrentStepChange={setCurrentStep}
+                    handleShowRiseDispute={setShowRiseDispute}
+                    handleAcceptDelivery={handleAcceptDelivery}
+                    handleRejectDelivery={handleRejectDelivery}
+                    handleIsRequestRefund={() => {}}
+                    handleRefundRequested={handleRefundRequested}
+                    currentStepChange={currentStep}
+                    userRole={userRole}
+                    showActions={userRole === 'buyer'}
+                  />
+                )
+              ) : (
+                <>
+                  {showRiseDispute ? (
+                    <TransactionsDispute />
+                  ) : isRefunded ? (
+                    <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+                      <h2 className="mb-2 text-lg font-semibold">Transaction Refunded</h2>
+                      <p className="text-sm font-medium text-gray-700">
+                        Refund processed successfully! Payment has been refunded to the buyer.
+                      </p>
+                    </div>
+                  ) : (
+                    <div className="mt-5 flex flex-col gap-4 rounded-lg border-2 border-gray-200 bg-gray-50 p-4">
+                      <h2 className="mb-2 text-lg font-semibold">Transaction Completed</h2>
+                      <p className="text-sm font-medium text-gray-700">
+                        Congratulations! Transaction complete, {order?.transactionType} delivered &
+                        accepted.
+                      </p>
+                    </div>
+                  )}
+                </>
+              )}
+            </>
           )}
 
-          {currentStep === 6 && (
+          {/* ---------------- Step 5: Product Final Step ---------------- */}
+          {currentStep === 5 && isProductFlow && (
             <>
               {showRiseDispute ? (
                 <TransactionsDispute />
@@ -321,8 +317,12 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
                 showActions
                 name={
                   userRole === 'buyer'
-                    ? `${order?.seller?.firstName} ${order?.seller?.lastName}`
-                    : `${order?.buyer?.firstName} ${order?.buyer?.lastName}`
+                    ? order?.seller?.firstName
+                      ? `${order.seller.firstName} ${order.seller.lastName}`
+                      : 'Guest User'
+                    : order?.buyer?.firstName
+                      ? `${order.buyer.firstName} ${order.buyer.lastName}`
+                      : 'Guest User'
                 }
                 paymentMethod={order?.paymentType}
                 deliveryDate={new Date(order?.deliveryDate).toLocaleDateString()}

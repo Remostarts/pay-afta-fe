@@ -11,11 +11,11 @@ interface InvoicePreviewProps {
     id: string;
     issueDate: string;
     dueDate: string;
-    seller: {
+    seller?: {
       name: string;
       email: string;
     };
-    buyer: {
+    buyer?: {
       name: string;
       email: string;
     };
@@ -32,7 +32,7 @@ interface InvoicePreviewProps {
       deliveryDate: string;
       amount: number;
     }>;
-    totals: {
+    totals?: {
       subtotal: number;
       tax: number;
       shipping: number;
@@ -52,53 +52,7 @@ export default function InvoicePreview({
   const router = useRouter();
   const { user } = useGeneral();
 
-  // Use provided data or fallback to defaults
-  // const data = invoiceData || {
-  //   id: orderId,
-  //   issueDate: '3 Nov, 2023',
-  //   dueDate: '24 Nov, 2023',
-  //   seller: {
-  //     name: 'John Doe',
-  //     email: 'johndoe@mail.com',
-  //   },
-  //   buyer: {
-  //     name: 'John Doe',
-  //     email: 'johndoe@mail.com',
-  //   },
-  //   items: [
-  //     {
-  //       id: '1',
-  //       description:
-  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-  //       quantity: 70,
-  //       price: 300000,
-  //     },
-  //   ],
-  //   milestones: [
-  //     {
-  //       id: '1',
-  //       title: 'Milestone 1',
-  //       description:
-  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-  //       deliveryDate: 'November 24, 2023',
-  //       amount: 150000,
-  //     },
-  //     {
-  //       id: '2',
-  //       title: 'Milestone 2',
-  //       description:
-  //         'Lorem ipsum dolor sit amet consectetur. Sapien placerat mauris cras commodo faucibus nisl magna in',
-  //       deliveryDate: 'November 24, 2023',
-  //       amount: 150000,
-  //     },
-  //   ],
-  //   totals: {
-  //     subtotal: 300000,
-  //     tax: 0,
-  //     shipping: 0,
-  //     total: 300000,
-  //   },
-  // };
+  console.log(invoiceData);
 
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -113,7 +67,9 @@ export default function InvoicePreview({
       onAccept();
     } else {
       // Navigate to finalize payment page
-      router.push(`/finalize-payment?orderId=${invoiceData?.id}`);
+      router.push(
+        `/finalize-payment?orderId=${invoiceData?.id}&invoiceData=${encodeURIComponent(JSON.stringify(invoiceData))}`
+      );
     }
   };
 
@@ -126,7 +82,7 @@ export default function InvoicePreview({
     }
   };
 
-  console.log(user);
+  // console.log(user);
 
   return (
     <div className="w-full bg-white shadow-sm rounded-xl px-6 py-8">
@@ -155,22 +111,22 @@ export default function InvoicePreview({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
         {/* Seller */}
         <div className="border rounded-lg p-4">
-          <p className="text-xs font-medium flex items-center gap-2">
+          {/* <p className="text-xs font-medium flex items-center gap-2">
             <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Initiator
-          </p>
+          </p> */}
           <p className="mt-3 text-sm text-gray-500">Seller</p>
-          <p className="font-semibold">{invoiceData?.seller.name}</p>
-          <p className="text-gray-500 text-sm">{invoiceData?.seller.email}</p>
+          <p className="font-semibold">{invoiceData?.seller?.name || 'N/A'}</p>
+          <p className="text-gray-500 text-sm">{invoiceData?.seller?.email || 'N/A'}</p>
         </div>
 
         {/* Buyer */}
         <div className="border rounded-lg p-4">
-          <p className="text-xs font-medium flex items-center gap-2">
+          {/* <p className="text-xs font-medium flex items-center gap-2">
             <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Counterparty
-          </p>
+          </p> */}
           <p className="mt-3 text-sm text-gray-500">Buyer</p>
-          <p className="font-semibold">{invoiceData?.buyer.name}</p>
-          <p className="text-gray-500 text-sm">{invoiceData?.buyer.email}</p>
+          <p className="font-semibold">{invoiceData?.buyer?.name || 'N/A'}</p>
+          <p className="text-gray-500 text-sm">{invoiceData?.buyer?.email || 'N/A'}</p>
         </div>
       </div>
 

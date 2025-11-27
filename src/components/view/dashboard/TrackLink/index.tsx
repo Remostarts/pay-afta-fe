@@ -24,6 +24,7 @@ type User = {
 export type Order = {
   id: string;
   createdAt: string;
+  updatedAt?: string;
   type: string;
   transactionType: 'Product' | 'Services';
   amount: number;
@@ -32,6 +33,13 @@ export type Order = {
   seller: User;
   name: string;
   status: string;
+  progressHistory?: Array<{
+    id: string;
+    status: string;
+    timestamp: string;
+    notes: string;
+    step: number;
+  }>;
 };
 
 export type { Order as SimpleOrder };
@@ -108,21 +116,72 @@ export default function TrackLink() {
         const status = row?.original?.status;
 
         // status dynamic label + color map
-        const statusMap: Record<string, { label: string; bg: string; text: string }> = {
-          AGREEMENT: { label: 'Agreement', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
-          PAYMENT: { label: 'Payment', bg: 'bg-[#FCE9E9]', text: 'text-[#0F973C]' },
-          SHIPPING: { label: 'In-transit', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
-          DELIVERY: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
-          CLOSED: { label: 'Settled', bg: 'bg-gray-200', text: 'text-gray-600' },
-          DISPUTED: { label: 'Dispute', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
-          CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
-        };
+        // Extended status label logic for Agreement steps
+        let statusKey = status;
+        let label = '';
+        let bg = '';
+        let text = '';
 
-        const { label, bg, text } = statusMap[status] || {
-          label: 'Not Started',
-          bg: 'bg-gray-300',
-          text: 'text-gray-800',
-        };
+        if (status === 'BUYER_AGREED' || status === 'SELLER_AGREED') {
+          // Use the proper progressHistory property from the order
+          const order = row?.original;
+          const progressHistory = order?.progressHistory ?? [];
+          // Helper to check if both agreed
+
+          console.log(progressHistory);
+
+          const buyerConfirmed = progressHistory?.some(
+            (progress: any) =>
+              progress.status === 'BUYER_AGREED' && progress.notes?.includes('Agreement signed')
+          );
+          const sellerConfirmed = progressHistory?.some(
+            (progress: any) =>
+              progress.status === 'SELLER_AGREED' && progress.notes?.includes('Agreement signed')
+          );
+          if (buyerConfirmed && sellerConfirmed) {
+            label = 'Both Agreed';
+            bg = 'bg-[#E8FDEF]';
+            text = 'text-[#0F973C]';
+          } else if (buyerConfirmed && !sellerConfirmed) {
+            label = 'Buyer Agreed';
+            bg = 'bg-[#E8FDEF]';
+            text = 'text-[#0F973C]';
+          } else if (!buyerConfirmed && sellerConfirmed) {
+            label = 'Seller Agreed';
+            bg = 'bg-[#E8FDEF]';
+            text = 'text-[#0F973C]';
+          } else {
+            label = 'Agreement Pending';
+            bg = 'bg-gray-200';
+            text = 'text-gray-800';
+          }
+        } else {
+          const statusMap: Record<string, { label: string; bg: string; text: string }> = {
+            PENDING: { label: 'Pending', bg: 'bg-gray-200', text: 'text-gray-800' },
+            CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
+            PAID: { label: 'Paid', bg: 'bg-[#FCE9E9]', text: 'text-[#0F973C]' },
+            REJECTED: { label: 'Rejected', bg: 'bg-red-200', text: 'text-red-700' },
+            SHIPPED: { label: 'Shipped', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
+            DELIVERED: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
+            COMPLETED: { label: 'Completed', bg: 'bg-green-100', text: 'text-green-700' },
+            CLOSED: { label: 'Closed', bg: 'bg-gray-200', text: 'text-gray-600' },
+            DISPUTED_REQUESTED: {
+              label: 'Dispute Requested',
+              bg: 'bg-[#FFE5EC]',
+              text: 'text-[#A81D1C]',
+            },
+            DISPUTED: { label: 'Disputed', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
+          };
+          if (statusMap[status]) {
+            label = statusMap[status].label;
+            bg = statusMap[status].bg;
+            text = statusMap[status].text;
+          } else {
+            label = 'Not Started';
+            bg = 'bg-gray-300';
+            text = 'text-gray-800';
+          }
+        }
 
         return (
           <div>

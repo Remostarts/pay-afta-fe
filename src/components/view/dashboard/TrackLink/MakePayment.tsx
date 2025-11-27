@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -16,6 +15,7 @@ import { OrderDetails, TWalletData } from '@/types/order';
 import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/order.actions';
 import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
 import { useGeneral } from '@/context/generalProvider';
+import MilestoneDialog from './MilestoneDialog';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
@@ -49,7 +49,7 @@ export default function MakePayment({
   const totalAmount = Number(order?.amount);
 
   // If payment already completed, show message instead of payment form
-  if (order?.status === 'PAYMENT' && order?.currentStep >= 2) {
+  if (order?.status === 'PAID' && order?.currentStep >= 2) {
     return (
       <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
         <h2 className="mb-2 text-lg font-semibold text-green-700">Payment Completed</h2>
@@ -211,6 +211,14 @@ export default function MakePayment({
                   oneTimeUseWallet={oneTimeUseWallet ?? undefined}
                 />
               )}
+
+              {/* {currentComponent === 'milestone' && isProduct === false && (
+                <MilestoneDialog
+                  isInTransactionSummary={true}
+                  // onNext={handleMilestoneNext} // FIX: Commented out since handleMilestoneNext is undefined
+                  onClose={handleCloseDialog}
+                />
+              )} */}
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful
