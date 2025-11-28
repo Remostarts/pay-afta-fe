@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { Download, Loader2, Edit2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { useGeneral } from '@/context/generalProvider';
+ 
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import {
@@ -34,6 +34,7 @@ interface OrderAgreementProps {
   userRole: UserRole;
   order: OrderDetails | null;
   loadOrder?: () => Promise<void>;
+  userId: string;
 }
 
 // Helper function to check if a specific user has confirmed agreement
@@ -75,13 +76,13 @@ export default function OrderAgreement({
   userRole,
   order,
   loadOrder,
+  userId,
 }: OrderAgreementProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isAgreed, setIsAgreed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [isRejectDialogOpen, setIsRejectDialogOpen] = useState(false);
-  const { user } = useGeneral();
 
   const totalAgreementConfirmations =
     order?.progressHistory?.filter(
@@ -117,7 +118,7 @@ export default function OrderAgreement({
           status: agreementStatus,
           step: 1,
           notes: 'Agreement signed',
-          userId: user?.id,
+          userId,
         } as UpdateOrderProgressDTO,
         order?.id as string
       );

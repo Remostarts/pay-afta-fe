@@ -24,6 +24,7 @@ interface OrderAgreementProps {
   showActions?: boolean;
   userRole: UserRole;
   order?: OrderDetails | null;
+  userId: string;
   loadOrder?: () => Promise<void>;
 }
 
@@ -33,6 +34,7 @@ export default function MakePayment({
   currentStepChange,
   showActions = false,
   userRole,
+  userId,
   order,
   loadOrder,
 }: OrderAgreementProps) {
@@ -102,7 +104,6 @@ export default function MakePayment({
       console.log('🌼 handleWalletPayment response:', response);
 
       if (response?.success) {
-        await loadUserData();
         toast.success('Payment successful!');
         setCurrentComponent('successful');
         // Auto progress to next step after success
@@ -122,15 +123,12 @@ export default function MakePayment({
   //  Bank transfer handler
   const handleBankTransferSelect = async () => {
     if (!order) return;
-    if (!user?.id) {
-      toast.error('User not authenticated. Please log in again.');
-      return;
-    }
+
     setLocalLoading(true);
     const data: TOneTimeUseWallet = {
       amount: Number(order.amount),
       orderId: order.id,
-      userId: user.id,
+      userId,
     };
 
     try {

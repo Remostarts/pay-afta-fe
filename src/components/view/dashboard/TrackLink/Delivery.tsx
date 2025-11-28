@@ -20,6 +20,7 @@ interface DeliveryProps {
   showActions?: boolean;
   handleAcceptDelivery: () => void;
   handleRejectDelivery: () => void;
+  userId: string;
 }
 
 export default function Delivery({
@@ -32,6 +33,7 @@ export default function Delivery({
   showActions = false,
   handleAcceptDelivery,
   handleRejectDelivery,
+  userId,
 }: DeliveryProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAcceptDeliveryLoading, setIsAcceptDeliveryLoading] = useState<boolean>(false);

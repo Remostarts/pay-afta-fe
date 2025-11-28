@@ -88,7 +88,7 @@ export type OrderDetails = {
   detailAboutItem: string;
   paymentType: string;
   transactionFee: string;
-  transactionType: 'Product' | 'Services'; // Extend if needed
+  transactionType: 'Product' | 'Services';
   amount: number;
   status:
     | 'PENDING'
@@ -106,6 +106,7 @@ export type OrderDetails = {
   createdAt: string;
   updatedAt: string;
   escrowFee: string;
+  createdBy?: string;
   progressHistory: ProgressStep[];
   milestones: Milestone[];
   items: Item[];
@@ -114,6 +115,7 @@ export type OrderDetails = {
   Transaction: Transaction[]; // Empty array in this case
   buyer: UserProfile;
   seller: UserProfile;
+  guest: UserProfile;
 };
 
 export type TWalletData = {
