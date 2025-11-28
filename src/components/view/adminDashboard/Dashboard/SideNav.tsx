@@ -47,7 +47,10 @@ export default function AdminSidebar({ onClose }: SidebarProps) {
   };
 
   const handleLogoutConfirm = () => {
-    signOut();
+     signOut({
+       redirect: true,
+       callbackUrl: '/sign-in',
+     });
     setShowLogoutDialog(false);
   };
 

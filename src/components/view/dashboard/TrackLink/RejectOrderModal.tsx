@@ -14,6 +14,7 @@ import ReSelect from '@/components/re-ui/ReSelect';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import { rejectOrderSchema, TRejectOrderInput } from '@/lib/validations/order';
 import { rejectOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
+import { useGeneral } from '@/context/generalProvider';
 
 interface RejectOrderModalProps {
   orderId: string;
@@ -32,6 +33,7 @@ export default function RejectOrderModal({
   onSuccess,
   orderDetails,
 }: RejectOrderModalProps) {
+  const { user } = useGeneral();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const form = useForm<TRejectOrderInput>({
@@ -70,6 +72,7 @@ export default function RejectOrderModal({
           status: 'REJECTED',
           step: 8,
           notes: data.rejectionComments,
+          userId: user?.id,
         },
         orderId
       );

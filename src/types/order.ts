@@ -86,7 +86,19 @@ export type OrderDetails = {
   transactionFee: string;
   transactionType: 'Product' | 'Services'; // Extend if needed
   amount: number;
-  status: 'PENDING' | 'AGREEMENT' | 'PAYMENT' | 'SHIPPING' | 'DELIVERY' | 'CLOSED' | 'DISPUTED';
+  status:
+    | 'PENDING'
+    | 'BUYER_AGREED'
+    | 'SELLER_AGREED'
+    | 'CANCELED'
+    | 'PAID'
+    | 'REJECTED'
+    | 'SHIPPED'
+    | 'DELIVERED'
+    | 'COMPLETED'
+    | 'CLOSED'
+    | 'DISPUTED_REQUESTED'
+    | 'DISPUTED';
   currentStep: number;
   createdAt: string;
   updatedAt: string;

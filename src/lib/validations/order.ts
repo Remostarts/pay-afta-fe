@@ -1,21 +1,32 @@
 import { z } from 'zod';
 
 export const OrderProgressStatus: {
-  AGREEMENT: 'AGREEMENT';
-  COMPLETED: 'COMPLETED';
-  DISPUTED: 'DISPUTED';
+  CANCELED: 'CANCELED';
+  BUYER_AGREED: 'BUYER_AGREED';
+  SELLER_AGREED: 'SELLER_AGREED';
   REJECTED: 'REJECTED';
+  SHIPPED: 'SHIPPED';
+  DELIVERED: 'DELIVERED';
+  COMPLETED: 'COMPLETED';
+  DISPUTED_REQUESTED: 'DISPUTED_REQUESTED';
+  DISPUTED: 'DISPUTED';
 } = {
-  AGREEMENT: 'AGREEMENT',
-  COMPLETED: 'COMPLETED',
-  DISPUTED: 'DISPUTED',
+  CANCELED: 'CANCELED',
+  BUYER_AGREED: 'BUYER_AGREED',
+  SELLER_AGREED: 'SELLER_AGREED',
   REJECTED: 'REJECTED',
+  SHIPPED: 'SHIPPED',
+  DELIVERED: 'DELIVERED',
+  COMPLETED: 'COMPLETED',
+  DISPUTED_REQUESTED: 'DISPUTED_REQUESTED',
+  DISPUTED: 'DISPUTED',
 };
 
 export const updateOrderProgressSchema = z.object({
   status: z.nativeEnum(OrderProgressStatus),
   step: z.number().int().min(1),
   notes: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 export type UpdateOrderProgressDTO = z.infer<typeof updateOrderProgressSchema>;
