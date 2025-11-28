@@ -237,8 +237,8 @@ export default function Loading() {
               }}
             >
               <Image
-                src="/logo.svg"
-                alt="Company Logo"
+                src="/Logo.svg"
+                alt="PayAfta Logo"
                 width={100}
                 height={100}
                 className="w-20 h-20 sm:w-24 sm:h-24 object-contain drop-shadow-md"
