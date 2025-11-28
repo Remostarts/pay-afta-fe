@@ -14,6 +14,8 @@ import ReSelect from '@/components/re-ui/ReSelect';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import { rejectOrderSchema, TRejectOrderInput } from '@/lib/validations/order';
 import { rejectOrder, updateOrderProgress } from '@/lib/actions/order/order.actions';
+import { useGeneral } from '@/context/generalProvider';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface RejectOrderModalProps {
   orderId: string;
@@ -24,6 +26,7 @@ interface RejectOrderModalProps {
     transactionType: string;
     amount: string;
   };
+  userRole?: UserRole;
 }
 
 export default function RejectOrderModal({
@@ -31,8 +34,18 @@ export default function RejectOrderModal({
   onClose,
   onSuccess,
   orderDetails,
+  userRole,
 }: RejectOrderModalProps) {
+  const { user } = useGeneral();
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  // Determine action text and status based on user role
+  const isBuyer = userRole === 'buyer';
+  const actionText = isBuyer ? 'Cancel Order' : 'Reject Order';
+  const actionDescription = isBuyer ? 'cancelling' : 'rejecting';
+  const actionStatus = isBuyer ? 'CANCELED' : 'REJECTED';
+  const successMessage = isBuyer ? 'Order cancelled successfully!' : 'Order rejected successfully!';
+  const errorMessage = isBuyer ? 'Failed to cancel order' : 'Failed to reject order';
 
   const form = useForm<TRejectOrderInput>({
     resolver: zodResolver(rejectOrderSchema),
@@ -67,9 +80,10 @@ export default function RejectOrderModal({
 
       const response = await updateOrderProgress(
         {
-          status: 'REJECTED',
+          status: actionStatus,
           step: 8,
           notes: data.rejectionComments,
+          userId: user?.id,
         },
         orderId
       );
@@ -77,16 +91,18 @@ export default function RejectOrderModal({
       console.log(response);
 
       if (response?.success) {
-        toast.success('Order rejected successfully!');
+        toast.success(successMessage);
         onSuccess();
         onClose();
       } else {
-        toast.error(response?.message || 'Failed to reject order');
+        toast.error(response?.message || errorMessage);
       }
     } catch (error) {
-      console.error('Error rejecting order:', error);
+      console.error(`Error ${actionDescription} order:`, error);
       toast.error(
-        error instanceof Error ? error.message : 'Failed to reject order. Please try again.'
+        error instanceof Error
+          ? error.message
+          : `Failed to ${actionDescription} order. Please try again.`
       );
     } finally {
       setIsSubmitting(false);
@@ -102,7 +118,7 @@ export default function RejectOrderModal({
             <AlertCircle className="w-5 h-5 text-red-600" />
           </div>
           <div>
-            <DialogTitle className="text-xl font-semibold">Reject Order</DialogTitle>
+            <DialogTitle className="text-xl font-semibold">{actionText}</DialogTitle>
             <p className="text-sm text-gray-600">Order #{orderDetails?.orderNumber || orderId}</p>
           </div>
         </div>
@@ -165,7 +181,7 @@ export default function RejectOrderModal({
             <ReTextarea
               name="rejectionComments"
               className="font-inter"
-              placeholder="Please provide detailed comments about why you're rejecting this order..."
+              placeholder={`Please provide detailed comments about why you're ${actionDescription.toLowerCase()} this order...`}
               rows={4}
             />
             {errors.rejectionComments && (
@@ -216,8 +232,8 @@ export default function RejectOrderModal({
               <div>
                 <h4 className="text-sm font-medium text-amber-800">Important Notice</h4>
                 <p className="text-sm text-amber-700 mt-1">
-                  Once you reject this order, the transaction will be cancelled and both parties
-                  will be notified. This action cannot be undone.
+                  Once you {actionDescription.toLowerCase()} this order, the transaction will be
+                  cancelled and both parties will be notified. This action cannot be undone.
                 </p>
               </div>
             </div>
@@ -243,7 +259,7 @@ export default function RejectOrderModal({
                   : 'bg-red-600 hover:bg-red-700 text-white'
               }`}
             >
-              {isSubmitting ? 'Rejecting...' : 'Reject Order'}
+              {isSubmitting ? `${actionText}ing...` : actionText}
             </ReButton>
           </div>
         </form>

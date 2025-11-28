@@ -12,12 +12,14 @@ interface StepperForServiceProps {
   currentStep: number;
   isReturn?: boolean;
   isDisputed?: boolean;
+  isRefunded?: boolean;
 }
 
 export default function StepperForService({
   currentStep,
   isReturn = false,
   isDisputed = false,
+  isRefunded = false,
 }: StepperForServiceProps) {
   const getSteps = (): Step[] => {
     if (isDisputed) {
@@ -29,7 +31,7 @@ export default function StepperForService({
       ];
     }
 
-    if (isReturn) {
+    if (isReturn || isRefunded) {
       return [
         { number: 1, label: 'Agreement', status: 'refunded' },
         { number: 2, label: 'Payment', status: 'refunded' },

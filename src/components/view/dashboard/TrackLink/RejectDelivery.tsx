@@ -6,7 +6,7 @@ import { useState } from 'react';
 
 import RaiseDispute from './RaiseDispute';
 import RequestRefund from './RequestRefund';
-import { UserRole } from './TransactionsSummaryForProduct';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface RejectDeliveryProps {
   handleClosed: (e: boolean) => void;

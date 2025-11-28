@@ -15,7 +15,7 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import ReImageInput from '@/components/re-ui/re-image/ReImage';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { UserRole } from './TransactionsSummaryForProduct';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface RaiseDisputeProps {
   handleClosed: (e: boolean) => void;

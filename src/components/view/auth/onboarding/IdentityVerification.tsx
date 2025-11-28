@@ -115,9 +115,11 @@ export default function IdentityVerification({ onComplete }: IdentityVerificatio
   };
 
   const handleLogoutConfirm = () => {
-    signOut();
+    signOut({
+      redirect: true,
+      callbackUrl: '/',
+    });
     setShowLogoutDialog(false);
-    router.push('/sign-in');
     toast.success('Successfully logged out');
   };
 

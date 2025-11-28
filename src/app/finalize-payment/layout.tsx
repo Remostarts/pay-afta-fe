@@ -19,7 +19,7 @@ export default function OnboardingLayout({ children }: TChildrenProps) {
 
       {/* Main content */}
       <div className="flex flex-1 flex-col justify-center">
-        <div className="mt-10 px-4 md:mx-auto md:w-1/2 lg:px-8 xl:px-20">{children}</div>
+        <div className="mt-10 px-4 md:mx-auto md:w-3/4 lg:px-8 xl:px-20">{children}</div>
       </div>
     </div>
   );

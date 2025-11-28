@@ -1,4 +1,3 @@
-
 'use client';
 
 import { useState } from 'react';
@@ -11,11 +10,12 @@ import PaymentSummary from './PaymentSummary';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { UserRole } from './TransactionsSummaryForProduct';
 import { OrderDetails, TWalletData } from '@/types/order';
 import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/order.actions';
 import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
 import { useGeneral } from '@/context/generalProvider';
+import MilestoneDialog from './MilestoneDialog';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
@@ -24,6 +24,7 @@ interface OrderAgreementProps {
   showActions?: boolean;
   userRole: UserRole;
   order?: OrderDetails | null;
+  userId: string;
   loadOrder?: () => Promise<void>;
 }
 
@@ -33,10 +34,11 @@ export default function MakePayment({
   currentStepChange,
   showActions = false,
   userRole,
+  userId,
   order,
   loadOrder,
 }: OrderAgreementProps) {
-  const { loadUserData } = useGeneral();
+  const { loadUserData, user } = useGeneral();
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -49,7 +51,7 @@ export default function MakePayment({
   const totalAmount = Number(order?.amount);
 
   // If payment already completed, show message instead of payment form
-  if (order?.status === 'PAYMENT' && order?.currentStep >= 2) {
+  if (order?.status === 'PAID' && order?.currentStep >= 2) {
     return (
       <div className="mt-5 rounded-xl border-2 border-green-200 bg-green-50 p-5">
         <h2 className="mb-2 text-lg font-semibold text-green-700">Payment Completed</h2>
@@ -83,6 +85,10 @@ export default function MakePayment({
   //  Wallet payment handler
   const handleWalletPayment = async () => {
     if (!order) return;
+    if (!user?.id) {
+      toast.error('User not authenticated. Please log in again.');
+      return;
+    }
     setLocalLoading(true);
 
     const data: TPersonalWalletPaymentInput = {
@@ -98,7 +104,6 @@ export default function MakePayment({
       console.log('🌼 handleWalletPayment response:', response);
 
       if (response?.success) {
-        await loadUserData();
         toast.success('Payment successful!');
         setCurrentComponent('successful');
         // Auto progress to next step after success
@@ -118,14 +123,20 @@ export default function MakePayment({
   //  Bank transfer handler
   const handleBankTransferSelect = async () => {
     if (!order) return;
+
     setLocalLoading(true);
     const data: TOneTimeUseWallet = {
       amount: Number(order.amount),
       orderId: order.id,
+      userId,
     };
 
     try {
+      console.log(data);
+
       const response = await createOneTimeUseWallet(data);
+
+      console.log(response);
 
       if (response?.success) {
         setOneTimeUseWallet(response?.data);
@@ -211,6 +222,17 @@ export default function MakePayment({
                   oneTimeUseWallet={oneTimeUseWallet ?? undefined}
                 />
               )}
+
+              {/* MilestoneDialog commented out - requires handleMilestoneNext implementation */}
+              {/*
+              {currentComponent === 'milestone' && isProduct === false && (
+                <MilestoneDialog
+                  isInTransactionSummary={true}
+                  onNext={handleMilestoneNext} // TODO: Implement handleMilestoneNext function
+                  onClose={handleCloseDialog}
+                />
+              )}
+              */}
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful

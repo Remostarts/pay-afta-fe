@@ -253,7 +253,7 @@ export default function EditOrderModal({ order, onClose, onSuccess }: EditOrderM
           <div>
             <ReHeading heading="Counterparty" size="base" className="text-gray-700 mb-2" />
             <div className="p-3 bg-gray-100 rounded-md text-sm text-gray-600">
-              {order?.buyer && `Buyer: ${order.buyer.firstName} ${order.buyer.lastName}`}
+              {order?.buyer && `Buyer: ${order.buyer.firstName} ${order.buyer.lastName}`}{' '}
               {order?.seller && `Seller: ${order.seller.firstName} ${order.seller.lastName}`}
             </div>
           </div>
@@ -346,10 +346,10 @@ export default function EditOrderModal({ order, onClose, onSuccess }: EditOrderM
           </div>
 
           {/* Delivery Date */}
-          <div>
+          {/* <div>
             <ReHeading heading="Select Delivery Date" size="base" className="text-gray-700 mb-2" />
             <ReDatePicker name="deliveryDate" className="lg:w-2/5" disablePast />
-          </div>
+          </div> */}
 
           {/* Milestone Payment Fields */}
           {paymentType === 'Milestone Payment' && (
