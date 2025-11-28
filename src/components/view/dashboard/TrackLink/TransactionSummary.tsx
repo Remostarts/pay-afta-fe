@@ -8,12 +8,35 @@ import {
   AccordionTrigger,
 } from '@/components/ui/accordion';
 import { OrderDetails } from '@/types/order';
+import { toast } from 'sonner';
+import {
+  GeneratePendingAgreementPdf,
+  GenerateSignedAgreementPdf,
+} from '@/helpers/utils/pdfCreation';
 interface TransactionSummaryProps {
   order?: OrderDetails | null;
 }
 
 export default function TransactionSummary({ order }: TransactionSummaryProps) {
   console.log('🌼 🔥🔥 TransactionSummary 🔥🔥 order🌼', order);
+
+  const handleDownload = (version: 'pending' | 'signed') => {
+    if (!order) {
+      toast.error('Unable to generate agreement – order not found.');
+      return;
+    }
+
+    try {
+      if (version === 'pending') {
+        GeneratePendingAgreementPdf(order);
+      } else if (version === 'signed') {
+        GenerateSignedAgreementPdf(order);
+      }
+    } catch (error) {
+      console.error(error);
+      toast.error('Failed to generate agreement PDF.');
+    }
+  };
 
   return (
     <div className="max-w-5xl mx-auto rounded-xl border border-gray-100 bg-white shadow-sm">
@@ -92,10 +115,11 @@ export default function TransactionSummary({ order }: TransactionSummaryProps) {
 
             {/* CTA Button */}
             <button
-              type="button"
-              className="mt-6 w-full rounded-lg bg-[#03045B] px-4 py-3 text-sm font-medium text-white transition hover:bg-[#02033d] focus:outline-none focus:ring-2 focus:ring-[#03045B]/30"
+              onClick={() => handleDownload('signed')}
+              className="mb-8 flex items-center gap-2 text-blue-600 transition-colors hover:text-blue-700"
             >
-              View / Download Escrow Agreement (PDF)
+              <Download className="h-4 w-4" />
+              Download Escrow Agreement (PDF)
             </button>
           </AccordionContent>
         </AccordionItem>

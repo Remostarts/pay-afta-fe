@@ -37,7 +37,8 @@ type Milestone = {
   id: string;
   orderId: string;
   title: string;
-  amount: string;
+  description: string;
+  amount: number;
   deliveryDate: string;
   status: 'PENDING' | 'PAID' | 'FAILED'; // Extend if needed
   paymentId: string | null;
@@ -67,7 +68,10 @@ type UserProfile = {
 };
 
 type Item = {
+  id: string;
   quantity: number;
+  detailAboutItem: string;
+  amount: number;
 };
 
 type Delivery = {
@@ -84,7 +88,7 @@ export type OrderDetails = {
   detailAboutItem: string;
   paymentType: string;
   transactionFee: string;
-  transactionType: 'Product' | 'Services'; // Extend if needed
+  transactionType: 'Product' | 'Services';
   amount: number;
   status:
     | 'PENDING'
@@ -96,12 +100,13 @@ export type OrderDetails = {
     | 'SHIPPED'
     | 'DELIVERED'
     | 'COMPLETED'
-    | 'CLOSED'
     | 'DISPUTED_REQUESTED'
     | 'DISPUTED';
   currentStep: number;
   createdAt: string;
   updatedAt: string;
+  escrowFee: string;
+  createdBy?: string;
   progressHistory: ProgressStep[];
   milestones: Milestone[];
   items: Item[];
@@ -110,6 +115,7 @@ export type OrderDetails = {
   Transaction: Transaction[]; // Empty array in this case
   buyer: UserProfile;
   seller: UserProfile;
+  guest: UserProfile;
 };
 
 export type TWalletData = {

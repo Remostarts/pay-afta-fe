@@ -1,237 +1,337 @@
 'use client';
 
 import React from 'react';
-import { CheckCircle, XCircle } from 'lucide-react';
-import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import { useGeneral } from '@/context/generalProvider';
+import { toast } from 'sonner';
+import { OrderDetails } from '@/types/order';
+import { updateOrderProgress } from '@/lib/actions/order/order.actions';
+import { UpdateOrderProgressDTO } from '@/lib/validations/order';
+
 interface InvoicePreviewProps {
-  orderId?: string;
-  invoiceData?: {
-    id: string;
-    issueDate: string;
-    dueDate: string;
-    seller?: {
-      name: string;
-      email: string;
-    };
-    buyer?: {
-      name: string;
-      email: string;
-    };
-    items: Array<{
-      id: string;
-      description: string;
-      quantity: number;
-      price: number;
-    }>;
-    milestones: Array<{
-      id: string;
-      title: string;
-      description: string;
-      deliveryDate: string;
-      amount: number;
-    }>;
-    totals?: {
-      subtotal: number;
-      tax: number;
-      shipping: number;
-      total: number;
-    };
-  };
-  onAccept?: () => void;
-  onReject?: () => void;
+  orderId: string;
+  invoiceData: OrderDetails;
 }
 
-export default function InvoicePreview({
-  orderId = 'INV-2023-0749268',
-  invoiceData,
-  onAccept,
-  onReject,
-}: InvoicePreviewProps) {
+export default function InvoicePreview({ orderId, invoiceData }: InvoicePreviewProps) {
   const router = useRouter();
-  const { user } = useGeneral();
 
-  console.log(invoiceData);
+  // -----------------------------------------
+  // 🔥 SMART ROLE DETECTION
+  // -----------------------------------------
+  const detectRoles = () => {
+    const { createdBy, buyerId, sellerId } = invoiceData;
 
-  const formatCurrency = (amount: number) => {
+    const isBuyerReal = createdBy === buyerId;
+    const isSellerReal = createdBy === sellerId;
+
+    let viewer: 'BUYER' | 'SELLER' | 'GUEST';
+    let guestRole: 'BUYER' | 'SELLER' | null = null;
+
+    if (isBuyerReal && isSellerReal) {
+      // Both real users exist, no guest
+      viewer = isBuyerReal ? 'BUYER' : 'SELLER';
+      guestRole = null;
+    } else if (isBuyerReal) {
+      viewer = 'BUYER';
+      guestRole = 'SELLER';
+    } else if (isSellerReal) {
+      viewer = 'SELLER';
+      guestRole = 'BUYER';
+    } else {
+      // Neither buyer nor seller is real → guest
+      viewer = 'GUEST';
+      guestRole = null;
+    }
+
+    return { viewer, isBuyerReal, isSellerReal, guestRole };
+  };
+
+  const { viewer, isBuyerReal, isSellerReal, guestRole } = detectRoles();
+
+  // -----------------------------------------
+  // 🔥 HELPER TO GET USER ID
+  // -----------------------------------------
+  const getUserIdByViewer = () => {
+    if (viewer === 'BUYER') return invoiceData.buyerId;
+    if (viewer === 'SELLER') return invoiceData.sellerId;
+    return invoiceData.guest?.id || 'UNKNOWN';
+  };
+
+  // -----------------------------------------
+  // CHECK LATEST STATUS
+  // -----------------------------------------
+
+  const getLatestStatus = () => {
+    if (!invoiceData.progressHistory || invoiceData.progressHistory.length === 0) return null;
+    // Assuming progressHistory is sorted by step or createdAt ascending
+    return invoiceData.progressHistory[invoiceData.progressHistory.length - 1].status;
+  };
+
+  // -----------------------------------------
+  // 🔥 ACCEPT LOGIC WITH GUEST AWARENESS
+  // -----------------------------------------
+  const handleAccept = async () => {
+    try {
+      const latestStatus = getLatestStatus();
+
+      if (['BUYER_AGREED', 'SELLER_AGREED', 'CANCELED', 'REJECTED'].includes(latestStatus || '')) {
+        toast.info('This order has already been processed.');
+        return;
+      }
+
+      let status: UpdateOrderProgressDTO['status'] = 'BUYER_AGREED';
+
+      if (viewer === 'BUYER') {
+        status = 'BUYER_AGREED';
+      } else if (viewer === 'SELLER') {
+        status = 'SELLER_AGREED';
+      } else if (viewer === 'GUEST') {
+        // Guest acts as the opposite role of the real user
+        if (isBuyerReal)
+          status = 'SELLER_AGREED'; // guest is seller
+        else if (isSellerReal)
+          status = 'BUYER_AGREED'; // guest is buyer
+        else status = 'BUYER_AGREED'; // fallback
+      }
+
+      const payload: UpdateOrderProgressDTO = {
+        status,
+        step: 1,
+        notes: `${viewer} accepted the agreement`,
+        userId: getUserIdByViewer(),
+      };
+
+      const response = await updateOrderProgress(payload, invoiceData?.id);
+
+      if (!response?.success) {
+        toast.error(response?.message || 'Failed to update order');
+        return;
+      }
+
+      toast.success('Order updated successfully!');
+
+      // Only real buyer OR guest acting as buyer can make payment
+      const isGuestBuyer = viewer === 'GUEST' && !isBuyerReal && isSellerReal;
+      if ((viewer === 'BUYER' && isBuyerReal) || isGuestBuyer) {
+        router.push(`/finalize-payment?orderId=${invoiceData?.id}`);
+      } else {
+        toast.info('Only the buyer can proceed with payment.');
+        router.refresh();
+      }
+    } catch (err: any) {
+      toast.error(err?.message || 'Failed to accept agreement.');
+    }
+  };
+
+  // -----------------------------------------
+  // 🔥 REJECT LOGIC
+  // -----------------------------------------
+  const handleReject = async () => {
+    const latestStatus = getLatestStatus();
+
+    if (['BUYER_AGREED', 'SELLER_AGREED', 'CANCELED', 'REJECTED'].includes(latestStatus || '')) {
+      toast.info('This order has already been processed.');
+      return;
+    }
+    const note = prompt('Please provide a reason for rejection:');
+
+    if (!note || note.trim().length < 3) {
+      toast.error('Rejection note is required!');
+      return;
+    }
+
+    let status: UpdateOrderProgressDTO['status'];
+    if (viewer === 'BUYER') status = 'CANCELED';
+    else if (viewer === 'SELLER') status = 'REJECTED';
+    else status = 'REJECTED';
+
+    try {
+      const payload: UpdateOrderProgressDTO = {
+        status,
+        step: 1,
+        notes: note,
+        userId: getUserIdByViewer(),
+      };
+
+      const response = await updateOrderProgress(payload, invoiceData?.id);
+
+      if (!response?.success) {
+        toast.error(response?.message || 'Failed to reject order');
+        return;
+      }
+
+      toast.success('Order rejected successfully');
+      router.refresh();
+    } catch {
+      toast.error('Something went wrong');
+    }
+  };
+
+  // -----------------------------------------
+  // Helpers
+  // -----------------------------------------
+  const formatCurrency = (amount: number | string) => {
+    const numAmount = typeof amount === 'string' ? parseFloat(amount) : amount;
     return new Intl.NumberFormat('en-NG', {
       style: 'currency',
       currency: 'NGN',
       minimumFractionDigits: 0,
-    }).format(amount);
+    }).format(numAmount);
   };
 
-  const handleAccept = () => {
-    if (onAccept) {
-      onAccept();
-    } else {
-      // Navigate to finalize payment page
-      router.push(
-        `/finalize-payment?orderId=${invoiceData?.id}&invoiceData=${encodeURIComponent(JSON.stringify(invoiceData))}`
-      );
-    }
+  const formatDate = (dateString: string) => {
+    return new Date(dateString).toLocaleDateString('en-US', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    });
   };
-
-  const handleReject = () => {
-    if (onReject) {
-      onReject();
-    } else {
-      // Handle reject logic
-      console.log('Invoice rejected');
-    }
-  };
-
-  // console.log(user);
 
   return (
     <div className="w-full bg-white shadow-sm rounded-xl px-6 py-8">
-      {/* Title */}
       <h1 className="text-xl font-semibold mb-6">Payment Invoice</h1>
 
       {/* Header */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-b pb-6">
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 border-b pb-6">
         <div>
           <p className="text-xs text-gray-500">Invoice Number</p>
           <p className="font-medium">{invoiceData?.id}</p>
         </div>
-
         <div>
-          <p className="text-xs text-gray-500">Issue Date</p>
-          <p className="font-medium">{invoiceData?.issueDate}</p>
+          <p className="text-xs text-gray-500">Status</p>
+          <p className="font-medium">{invoiceData?.status}</p>
         </div>
-
         <div>
-          <p className="text-xs text-gray-500">Due Date</p>
-          <p className="font-medium">{invoiceData?.dueDate}</p>
+          <p className="text-xs text-gray-500">Transaction Type</p>
+          <p className="font-medium">{invoiceData?.transactionType || 'N/A'}</p>
+        </div>
+        <div>
+          <p className="text-xs text-gray-500">Created Date</p>
+          <p className="font-medium">
+            {invoiceData?.createdAt ? formatDate(invoiceData.createdAt) : 'N/A'}
+          </p>
         </div>
       </div>
 
-      {/* Parties */}
+      {/* Seller & Buyer */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 my-6">
         {/* Seller */}
         <div className="border rounded-lg p-4">
-          {/* <p className="text-xs font-medium flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Initiator
-          </p> */}
           <p className="mt-3 text-sm text-gray-500">Seller</p>
-          <p className="font-semibold">{invoiceData?.seller?.name || 'N/A'}</p>
-          <p className="text-gray-500 text-sm">{invoiceData?.seller?.email || 'N/A'}</p>
+          <p className="font-semibold">
+            {invoiceData?.seller?.firstName
+              ? `${invoiceData.seller.firstName} ${invoiceData.seller.lastName}`
+              : invoiceData?.guest && guestRole === 'SELLER'
+                ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                : invoiceData?.sellerId}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {invoiceData?.seller?.email
+              ? invoiceData.seller.email
+              : invoiceData?.guest && guestRole === 'SELLER'
+                ? invoiceData.guest.email
+                : 'N/A'}
+          </p>
         </div>
 
         {/* Buyer */}
         <div className="border rounded-lg p-4">
-          {/* <p className="text-xs font-medium flex items-center gap-2">
-            <span className="w-2 h-2 bg-blue-600 rounded-full"></span> Counterparty
-          </p> */}
           <p className="mt-3 text-sm text-gray-500">Buyer</p>
-          <p className="font-semibold">{invoiceData?.buyer?.name || 'N/A'}</p>
-          <p className="text-gray-500 text-sm">{invoiceData?.buyer?.email || 'N/A'}</p>
+          <p className="font-semibold">
+            {invoiceData?.buyer?.firstName
+              ? `${invoiceData.buyer.firstName} ${invoiceData.buyer.lastName}`
+              : invoiceData?.guest && guestRole === 'BUYER'
+                ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                : invoiceData?.buyerId}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {invoiceData?.buyer?.email
+              ? invoiceData.buyer.email
+              : invoiceData?.guest && guestRole === 'BUYER'
+                ? invoiceData.guest.email
+                : 'N/A'}
+          </p>
         </div>
       </div>
 
       {/* Items */}
-      {invoiceData?.items.map((item, index) => (
-        <div key={item.id} className="border rounded-lg overflow-hidden mb-4">
-          <div className="bg-gray-50 px-4 py-2 font-medium text-sm">Item {index + 1}</div>
-
-          <div className="p-4 space-y-3">
-            <div>
-              <p className="text-xs font-semibold">Description</p>
-              <p className="text-sm text-gray-600">{item.description}</p>
-            </div>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
-              <div>
-                <p className="text-xs font-semibold">Quantity</p>
-                <p>{item.quantity}</p>
-              </div>
-
-              <div>
-                <p className="text-xs font-semibold">Price</p>
-                <p>{formatCurrency(item.price)}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-
-      {/* Milestones */}
-      <h2 className="text-sm font-medium mt-8 mb-4">Payment Milestones</h2>
-
-      <div className="space-y-4">
-        {invoiceData?.milestones.map((milestone, index) => (
-          <div key={milestone.id} className="border rounded-lg p-4">
-            <p className="font-semibold text-sm mb-2">{milestone.title}</p>
-            <p className="text-sm text-gray-600">{milestone.description}</p>
-
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4 text-sm">
-              <div>
-                <p className="text-xs font-semibold">Delivery Date</p>
-                <p>{milestone.deliveryDate}</p>
-              </div>
-              <div>
-                <p className="text-xs font-semibold">Amount</p>
-                <p>{formatCurrency(milestone.amount)}</p>
+      <div className="mb-6">
+        <h2 className="text-sm font-medium mb-4">Order Items</h2>
+        {invoiceData?.items?.length ? (
+          invoiceData.items.map((item, idx) => (
+            <div key={idx} className="border rounded-lg overflow-hidden mb-4">
+              <div className="bg-gray-50 px-4 py-2 font-medium text-sm">Item {idx + 1}</div>
+              <div className="p-4 space-y-3">
+                <div>
+                  <p className="text-xs font-semibold">Description</p>
+                  <p className="text-sm text-gray-600">
+                    {item?.detailAboutItem || 'No description'}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-sm">
+                  <div>
+                    <p className="text-xs font-semibold">Qty</p>
+                    <p>{item.quantity}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold">Unit Price</p>
+                    <p>{formatCurrency(item?.amount)}</p>
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold">Total</p>
+                    <p>{formatCurrency(item.amount * item.quantity)}</p>
+                  </div>
+                </div>
               </div>
             </div>
-          </div>
-        ))}
+          ))
+        ) : (
+          <p>No items found</p>
+        )}
       </div>
 
-      {/* Totals */}
-      {/* <div className="flex justify-end mt-8 text-sm">
-        <div className="w-full max-w-xs space-y-2">
+      {/* Summary */}
+      <div className="border rounded-lg p-4 mb-6">
+        <h3 className="font-semibold mb-3">Order Summary</h3>
+        <div className="space-y-2 text-sm">
           <div className="flex justify-between">
-            <span>Subtotal</span>
-            <span>{formatCurrency(invoiceData?.totals.subtotal)}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Tax ({((invoiceData?.totals.tax / invoiceData?.totals.subtotal) * 100).toFixed(0)}%)</span>
-            <span>{formatCurrency(invoiceData?.totals.tax)}</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Shipping</span>
-            <span>{formatCurrency(invoiceData?.totals.shipping)}</span>
-          </div>
-
-          <div className="flex justify-between font-semibold text-lg border-t pt-2">
             <span>Total Amount</span>
-            <span>{formatCurrency(data.totals.total)}</span>
+            <span>{formatCurrency(invoiceData.amount)}</span>
           </div>
-        </div>
-      </div> */}
-
-      {/* Approval Section */}
-      <div className="border rounded-xl p-6 mt-10 bg-[#E6E6E6]">
-        <p className="font-semibold mb-2">Approve Transaction</p>
-        <p className="text-sm text-gray-600 mb-6">
-          The buyer/seller has created a payment. Make sure you inspect the details before
-          approving.
-        </p>
-
-        <div className="flex flex-col sm:flex-row gap-3">
-          <button
-            onClick={handleAccept}
-            className="w-full bg-[#03045B] text-white py-3 rounded-lg font-medium hover:bg-blue-900 transition-colors"
-          >
-            Accept
-          </button>
-          <button
-            onClick={handleReject}
-            className="w-full border border-gray-300 py-3 rounded-lg font-medium bg-gray-50 hover:bg-gray-100 transition-colors"
-          >
-            Reject
-          </button>
+          <div className="flex justify-between">
+            <span>Escrow Fee</span>
+            <span>{formatCurrency(invoiceData.escrowFee)}</span>
+          </div>
         </div>
       </div>
 
-      {/* Footer */}
-      <p className="center text-xs text-gray-500 mt-10">
-        If you have any questions about this invoice, please contact us at support@example.com
-      </p>
+      {/* Agreement Section */}
+      {['PENDING', 'BUYER_AGREED', 'SELLER_AGREED'].includes(invoiceData.status) && (
+        <div className="border rounded-xl p-6 mt-10 bg-[#E6E6E6]">
+          <p className="font-semibold mb-2">
+            {invoiceData.status === 'PENDING'
+              ? 'Review Transaction'
+              : 'Transaction Update Required'}
+          </p>
+          <p className="text-sm text-gray-600 mb-6">Please inspect details before approving.</p>
+
+          <div className="flex flex-col sm:flex-row gap-3">
+            <button
+              onClick={handleAccept}
+              className="w-full bg-[#03045B] text-white py-3 rounded-lg font-medium hover:bg-blue-900"
+            >
+              Accept
+            </button>
+
+            <button
+              onClick={handleReject}
+              className="w-full border border-gray-300 py-3 rounded-lg font-medium bg-gray-50 hover:bg-gray-100"
+            >
+              Reject
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

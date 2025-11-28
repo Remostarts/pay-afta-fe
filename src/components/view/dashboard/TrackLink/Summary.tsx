@@ -1,4 +1,4 @@
-import type { UserRole } from './TransactionsSummaryForProduct';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface SummaryProps {
   showActions?: boolean;
@@ -22,7 +22,7 @@ export default function Summary({
   price,
 }: SummaryProps) {
   return (
-    <div className="w-full rounded-2xl bg-card shadow-sm border border-border p-8">
+    <div className="w-full rounded-2xl bg-card shadow-sm border border-border p-8 bg-white">
       <h2 className="mb-8 text-3xl font-bold text-foreground tracking-tight">
         Transaction Summary
       </h2>

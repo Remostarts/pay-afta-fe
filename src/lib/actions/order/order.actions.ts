@@ -89,19 +89,19 @@ export async function updateOrder(formData: TEditOrderInput, id: string) {
 }
 
 export async function getSingleOrder(id: string) {
-  const session = (await getServerSession(authOptions)) as any;
-  const token = session?.accessToken;
+  // const session = (await getServerSession(authOptions)) as any;
+  // const token = session?.accessToken;
 
-  if (!token) {
-    getErrorMessage('No token found And You are not auth.');
-  }
+  // if (!token) {
+  //   getErrorMessage('No token found And You are not auth.');
+  // }
 
   try {
     const response = await fetch(`${process.env.BACKEND_URL}/order/${id}`, {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: token,
+        // Authorization: token,
       },
       cache: 'no-store',
     });
@@ -150,15 +150,15 @@ export async function updateOrderProgress(formData: UpdateOrderProgressDTO, id: 
     throw new Error(zodErrors);
   }
 
-  const session = (await getServerSession(authOptions)) as any;
-  const token = session?.accessToken;
+  // const session = (await getServerSession(authOptions)) as any;
+  // const token = session?.accessToken;
 
   try {
     const response = await fetch(`${process.env.BACKEND_URL}/order/update-progress/${id}`, {
       method: 'PATCH',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: token,
+        // Authorization: token,
       },
       body: JSON.stringify(validation.data),
       cache: 'no-store',

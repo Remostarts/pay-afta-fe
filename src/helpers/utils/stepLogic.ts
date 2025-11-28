@@ -11,12 +11,8 @@ export const STEP_CONFIG = {
 const hasBothPartiesAgreed = (history?: any[]) => {
   if (!history || !Array.isArray(history)) return false;
 
-  const buyerConfirmed = history.some(
-    (progress) => progress.status === 'BUYER_AGREED' && progress.notes.includes('Agreement signed')
-  );
-  const sellerConfirmed = history.some(
-    (progress) => progress.status === 'SELLER_AGREED' && progress.notes.includes('Agreement signed')
-  );
+  const buyerConfirmed = history.some((progress) => progress.status === 'BUYER_AGREED');
+  const sellerConfirmed = history.some((progress) => progress.status === 'SELLER_AGREED');
 
   return buyerConfirmed && sellerConfirmed;
 };
@@ -50,14 +46,16 @@ export function getStepByOrderType(order: OrderDetails, type: 'product' | 'servi
       // Service: step 4
       return type === 'product' ? 5 : 4;
 
-    case 'CLOSED':
+    // case 'CLOSED':
     case 'COMPLETED':
       // Product: 5 steps total
       // Service: 4 steps total
       return type === 'product' ? 5 : 4;
 
+    case 'CANCELED':
+    case 'REJECTED':
     case 'DISPUTED':
-      // Last step for both
+      // Terminal states - last step for both
       return type === 'product' ? 5 : 4;
 
     default:

@@ -8,7 +8,7 @@ import StepperForService from './StepperForService';
 import OrderAgreement from './OrderAgreement';
 import MakePayment from './MakePayment';
 import Delivery from './Delivery';
-import OrderShipping from './OrderShipping';
+import OrderShipped from './OrderShipped';
 import Summary from './Summary';
 import TransactionSummary from './TransactionSummary';
 import TransactionsDispute from './TransactionsDispute';
@@ -122,6 +122,7 @@ export default function TransactionsSummaryBase({
           status: 'COMPLETED',
           step: finalStep,
           notes: 'Buyer confirmed delivery.',
+          userId: user?.id,
         } as UpdateOrderProgressDTO,
         order?.id as string
       );
@@ -204,6 +205,7 @@ export default function TransactionsSummaryBase({
               showActions={userRole === 'buyer'}
               order={order ?? null}
               loadOrder={loadOrder}
+              userId={user?.id as string}
             />
           )}
 
@@ -216,6 +218,7 @@ export default function TransactionsSummaryBase({
               isProduct={isProductFlow}
               showActions={userRole === 'buyer'}
               order={order ?? null}
+              userId={user?.id as string}
               loadOrder={loadOrder}
             />
           )}
@@ -224,7 +227,11 @@ export default function TransactionsSummaryBase({
           {currentStep === 3 && (
             <>
               {isProductFlow ? (
-                <OrderShipping userRole={userRole} order={order ?? null} />
+                <OrderShipped
+                  userRole={userRole}
+                  order={order ?? null}
+                  userId={user?.id as string}
+                />
               ) : (
                 <Delivery
                   handleCurrentStepChange={setCurrentStep}
@@ -236,6 +243,7 @@ export default function TransactionsSummaryBase({
                   currentStepChange={currentStep}
                   userRole={userRole}
                   showActions={userRole === 'buyer'}
+                  userId={user?.id as string}
                 />
               )}
             </>
@@ -256,6 +264,7 @@ export default function TransactionsSummaryBase({
                     currentStepChange={currentStep}
                     userRole={userRole}
                     showActions={userRole === 'buyer'}
+                    userId={user?.id as string}
                   />
                 )
               ) : (

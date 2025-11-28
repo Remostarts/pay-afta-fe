@@ -8,7 +8,7 @@ import RaiseDispute from './RaiseDispute';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
-import { UserRole } from './TransactionsSummaryForProduct';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface DeliveryProps {
   handleCurrentStepChange: (step: number) => void;
@@ -20,6 +20,7 @@ interface DeliveryProps {
   showActions?: boolean;
   handleAcceptDelivery: () => void;
   handleRejectDelivery: () => void;
+  userId: string;
 }
 
 export default function Delivery({
@@ -32,6 +33,7 @@ export default function Delivery({
   showActions = false,
   handleAcceptDelivery,
   handleRejectDelivery,
+  userId,
 }: DeliveryProps) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [isAcceptDeliveryLoading, setIsAcceptDeliveryLoading] = useState<boolean>(false);

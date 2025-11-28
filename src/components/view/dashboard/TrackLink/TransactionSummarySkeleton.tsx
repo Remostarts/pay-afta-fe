@@ -1,72 +1,105 @@
 'use client';
 
-const TransactionSummarySkeleton = () => {
+const Shimmer =
+  'animate-shimmer bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800';
+
+// Reusable Component
+const SkeletonBar = ({
+  width = 'w-full',
+  height = 'h-4',
+  className,
+}: {
+  width?: string;
+  height?: string;
+  className?: string;
+}) => <div className={`${height} ${width} rounded-lg ${Shimmer} ${className}`} />;
+
+export default function TransactionSummarySkeleton() {
   return (
-    <section className="flex flex-col gap-6 p-6">
-      {/* Main Card */}
-      <div className="rounded-xl bg-card shadow-sm border border-border p-6 max-w-4xl">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="h-8 w-8 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          <div className="h-7 w-48 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-        </div>
-
-        <div className="h-5 w-32 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer mb-6" />
-
-        <div className="mb-8 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="h-4 w-32 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-5 w-24 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          </div>
-          <div className="flex flex-col gap-2 flex-1">
-            <div className="h-4 w-32 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-5 w-24 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
+    <section className="flex flex-col lg:flex-row gap-6 p-6">
+      {/* LEFT CARD */}
+      <div className="w-full lg:flex-1 rounded-xl bg-card border border-border shadow-sm p-6 space-y-8">
+        {/* Header Section */}
+        <div className="flex flex-col gap-3 sm:flex-row sm:justify-between sm:items-center">
+          <SkeletonBar width="w-48" height="h-7" />
+          <div className="flex gap-3">
+            <SkeletonBar width="w-32" height="h-5" />
+            <SkeletonBar width="w-40" height="h-5" />
           </div>
         </div>
 
-        <div className="w-full mb-10">
-          <div className="flex items-center justify-between">
-            {[1, 2, 3, 4, 5].map((step) => (
-              <div key={step} className="relative flex flex-col items-center flex-1">
-                {step < 5 && (
-                  <div className="absolute left-[50%] top-[16px] h-1 hidden sm:block w-full translate-x-2 bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-                )}
-
-                <div className="z-10 flex h-10 w-10 items-center justify-center rounded-full border-2 border-slate-200 dark:border-slate-700 bg-gradient-to-br from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900 animate-shimmer shadow-sm" />
-
-                <div className="mt-3 h-3 w-14 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-              </div>
-            ))}
-          </div>
+        {/* Stepper */}
+        <div className="flex justify-between items-center mt-6">
+          {[...Array(5)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center flex-1 relative">
+              {i !== 4 && (
+                <div
+                  className={`absolute top-[16px] left-[50%] w-full h-1 hidden sm:block ${Shimmer}`}
+                />
+              )}
+              <div
+                className={`h-10 w-10 rounded-full border-2 border-slate-300 dark:border-slate-700 shadow-sm ${Shimmer}`}
+              />
+              <SkeletonBar width="w-14" height="h-3" className="mt-3" />
+            </div>
+          ))}
         </div>
 
-        <div className="mt-6 flex flex-col gap-4 rounded-xl border border-border bg-muted/30 p-6 backdrop-blur-sm">
-          <div className="h-7 w-56 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          <div className="space-y-3 pt-2">
-            <div className="h-4 w-full rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-4 w-5/6 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-4 w-4/6 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
+        {/* Agreement Section */}
+        <div className="space-y-4">
+          <SkeletonBar width="w-56" height="h-6" />
+          <div className="space-y-3">
+            <SkeletonBar />
+            <SkeletonBar width="w-5/6" />
+            <SkeletonBar width="w-4/6" />
           </div>
+          <SkeletonBar width="w-52" height="h-4" /> {/* Download Link */}
+        </div>
+
+        {/* Checkbox text */}
+        <div>
+          <SkeletonBar width="w-64" />
+        </div>
+
+        {/* Agreement Status Box */}
+        <div className="border border-border rounded-xl p-4 space-y-3">
+          <SkeletonBar width="w-48" height="h-5" />
+          <SkeletonBar width="w-32" height="h-4" />
+          <SkeletonBar width="w-24" height="h-4" />
+        </div>
+
+        {/* Buttons Row */}
+        <div className="flex flex-col-reverse sm:flex-row gap-4 pt-4">
+          <SkeletonBar height="h-11" className="flex-1" />
+          <SkeletonBar height="h-11" className="flex-1" />
         </div>
       </div>
 
-      <div className="rounded-xl bg-card shadow-sm border border-border p-6 max-w-sm">
-        <div className="space-y-5">
-          <div className="h-7 w-40 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          <div className="space-y-3 pt-2">
-            <div className="h-4 w-full rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-4 w-5/6 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-            <div className="h-4 w-4/6 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          </div>
+      {/* RIGHT SIDEBAR */}
+      <div className="w-full lg:w-[350px] rounded-xl bg-card border border-border shadow-sm p-6 space-y-6">
+        <SkeletonBar width="w-48" height="h-6" />
 
-          <div className="pt-4 border-t border-border">
-            <div className="h-4 w-28 rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer mb-3" />
-            <div className="h-11 w-full rounded-lg bg-gradient-to-r from-slate-200 via-slate-100 to-slate-200 dark:from-slate-800 dark:via-slate-700 dark:to-slate-800 animate-shimmer" />
-          </div>
+        <div className="space-y-4">
+          {[...Array(4)].map((_, i) => (
+            <div key={i} className="space-y-2">
+              <SkeletonBar width="w-32" height="h-3" />
+              <SkeletonBar width="w-24" height="h-4" />
+            </div>
+          ))}
+        </div>
+
+        {/* Item Box */}
+        <div className="border border-border rounded-xl p-4 space-y-3">
+          <SkeletonBar width="w-36" height="h-4" />
+          <SkeletonBar width="w-20" height="h-4" />
+          <SkeletonBar width="w-14" height="h-4" />
+        </div>
+
+        {/* Price */}
+        <div className="pt-2 border-t border-border">
+          <SkeletonBar width="w-24" height="h-5" />
         </div>
       </div>
     </section>
   );
-};
-
-export { TransactionSummarySkeleton };
-export default TransactionSummarySkeleton;
+}
