@@ -14,7 +14,7 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import { ReTextarea } from '@/components/re-ui/ReTextarea';
 import { ReButton } from '@/components/re-ui/ReButton';
 import ReImageInput from '@/components/re-ui/re-image/ReImage';
-import { UserRole } from './TransactionsSummaryForProduct';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface RequestRefundProps {
   handleClosed: (e: boolean) => void;

@@ -18,100 +18,31 @@ interface ContactDetails {
 
 interface FinalizeOrderPayProps {
   orderId?: string;
-  invoiceData?: {
-    id: string;
-    issueDate: string;
-    dueDate: string;
-    seller?: {
-      name: string;
-      email: string;
-    };
-    buyer?: {
-      name: string;
-      email: string;
-    };
-    items: Array<{
-      id: string;
-      description: string;
-      quantity: number;
-      price: number;
-    }>;
-    milestones: Array<{
-      id: string;
-      title: string;
-      description: string;
-      deliveryDate: string;
-      amount: number;
-    }>;
-    totals?: {
-      subtotal: number;
-      tax: number;
-      shipping: number;
-      total: number;
-    };
-  };
-  onAccept?: () => void;
-  onReject?: () => void;
-  onPaymentError?: (error: string) => void;
+  amount?: number;
   onPaymentSuccess?: () => void;
+  onPaymentError?: (error: string) => void;
 }
 
 export default function FinalizeOrderPay({
   orderId = 'EBD-9087-CBA',
-  invoiceData: propInvoiceData,
-  onAccept,
-  onReject,
-  onPaymentError,
+  amount = 300000,
   onPaymentSuccess,
+  onPaymentError,
 }: FinalizeOrderPayProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  // Get and decode invoiceData from query param
-  const urlInvoiceData = searchParams?.get('invoiceData');
-  const invoiceData = useMemo(() => {
-    // Use prop invoiceData first, fallback to URL decoded data
-    if (propInvoiceData) {
-      return propInvoiceData;
-    }
-
-    if (urlInvoiceData) {
-      try {
-        return JSON.parse(decodeURIComponent(urlInvoiceData));
-      } catch (err) {
-        console.error('Failed to parse invoiceData from URL:', err);
-        return null;
-      }
-    }
-    return null;
-  }, [propInvoiceData, urlInvoiceData]);
-
-  // Get orderId from URL params or use default from invoiceData
+  // Get orderId from URL params or use default
   const urlOrderId = searchParams?.get('orderId');
-  const finalOrderId = urlOrderId || orderId || invoiceData?.id || 'EBD-9087-CBA';
-
-  // Extract amount from invoiceData totals
-  const amount = invoiceData?.totals?.total || 0;
+  const finalOrderId = urlOrderId || orderId;
 
   // Form state
   const [agree, setAgree] = useState(false);
-  const [contactDetails, setContactDetails] = useState<ContactDetails>(() => {
-    // Pre-populate from buyer data if available
-    if (invoiceData?.buyer) {
-      const [firstName, ...lastNameParts] = invoiceData.buyer.name.split(' ');
-      return {
-        firstName: firstName || '',
-        lastName: lastNameParts.join(' ') || '',
-        email: invoiceData.buyer.email || '',
-        phoneNumber: '',
-      };
-    }
-    return {
-      firstName: '',
-      lastName: '',
-      email: '',
-      phoneNumber: '',
-    };
+  const [contactDetails, setContactDetails] = useState<ContactDetails>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    phoneNumber: '',
   });
 
   // Modal state
@@ -259,19 +190,10 @@ export default function FinalizeOrderPay({
       <div className="mb-6">
         <h1 className="text-xl font-semibold">Finalize Order & Pay</h1>
 
-        <div className="text-sm mt-1 space-y-1">
-          <p>
-            Order ID:{' '}
-            <span className="text-blue-600 underline font-medium cursor-pointer">
-              {finalOrderId}
-            </span>
-          </p>
-          {invoiceData?.id && invoiceData.id !== finalOrderId && (
-            <p>
-              Invoice ID: <span className="text-gray-600 font-medium">{invoiceData.id}</span>
-            </p>
-          )}
-        </div>
+        <p className="text-sm mt-1">
+          Order ID:{' '}
+          <span className="text-blue-600 underline font-medium cursor-pointer">{finalOrderId}</span>
+        </p>
 
         <div className="flex items-center gap-4 mt-3">
           <p className="text-2xl font-bold">{formatCurrency(amount)}</p>
@@ -290,115 +212,7 @@ export default function FinalizeOrderPay({
             </p>
           </div>
         )}
-
-        {!invoiceData && (
-          <div className="mt-2 p-3 bg-yellow-50 border border-yellow-200 rounded-lg">
-            <p className="text-sm text-yellow-800">
-              Invoice data not available. Using default values.
-            </p>
-          </div>
-        )}
       </div>
-
-      <Separator />
-
-      {/* Invoice Details Section */}
-      {invoiceData && (
-        <div className="mb-6">
-          <h2 className="font-semibold text-lg">Invoice Details</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4 text-sm">
-            <div>
-              <ReSubHeading subHeading="Issue Date" className="text-xs font-medium text-gray-500" />
-              <p className="text-gray-900">{invoiceData.issueDate}</p>
-            </div>
-            <div>
-              <ReSubHeading subHeading="Due Date" className="text-xs font-medium text-gray-500" />
-              <p className="text-gray-900">{invoiceData.dueDate}</p>
-            </div>
-            {invoiceData.seller && (
-              <div>
-                <ReSubHeading subHeading="Seller" className="text-xs font-medium text-gray-500" />
-                <p className="text-gray-900">{invoiceData.seller.name}</p>
-                <p className="text-gray-500 text-xs">{invoiceData.seller.email}</p>
-              </div>
-            )}
-            {invoiceData.buyer && (
-              <div>
-                <ReSubHeading subHeading="Buyer" className="text-xs font-medium text-gray-500" />
-                <p className="text-gray-900">{invoiceData.buyer.name}</p>
-                <p className="text-gray-500 text-xs">{invoiceData.buyer.email}</p>
-              </div>
-            )}
-          </div>
-
-          {/* Items Summary */}
-          {invoiceData.items && invoiceData.items.length > 0 && (
-            <div className="mt-4">
-              <ReSubHeading subHeading="Items" className="text-xs font-medium text-gray-500 mb-2" />
-              <div className="space-y-2">
-                {invoiceData.items
-                  .slice(0, 3)
-                  .map(
-                    (item: {
-                      id: string;
-                      description: string;
-                      quantity: number;
-                      price: number;
-                    }) => (
-                      <div
-                        key={item.id}
-                        className="flex justify-between text-sm bg-gray-50 p-2 rounded"
-                      >
-                        <span className="text-gray-900">{item.description}</span>
-                        <span className="text-gray-600">{item.quantity}x</span>
-                      </div>
-                    )
-                  )}
-                {invoiceData.items.length > 3 && (
-                  <p className="text-xs text-gray-500">
-                    +{invoiceData.items.length - 3} more items
-                  </p>
-                )}
-              </div>
-            </div>
-          )}
-
-          {/* Totals Breakdown */}
-          {invoiceData.totals && (
-            <div className="mt-4 bg-gray-50 p-4 rounded-lg">
-              <h3 className="font-medium text-sm mb-2">Payment Summary</h3>
-              <div className="space-y-1 text-sm">
-                {invoiceData.totals.subtotal > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Subtotal:</span>
-                    <span className="text-gray-900">
-                      {formatCurrency(invoiceData.totals.subtotal)}
-                    </span>
-                  </div>
-                )}
-                {invoiceData.totals.tax > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Tax:</span>
-                    <span className="text-gray-900">{formatCurrency(invoiceData.totals.tax)}</span>
-                  </div>
-                )}
-                {invoiceData.totals.shipping > 0 && (
-                  <div className="flex justify-between">
-                    <span className="text-gray-600">Shipping:</span>
-                    <span className="text-gray-900">
-                      {formatCurrency(invoiceData.totals.shipping)}
-                    </span>
-                  </div>
-                )}
-                <div className="flex justify-between font-semibold border-t pt-1">
-                  <span className="text-gray-900">Total:</span>
-                  <span className="text-gray-900">{formatCurrency(invoiceData.totals.total)}</span>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      )}
 
       <Separator />
 

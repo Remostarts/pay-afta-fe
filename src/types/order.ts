@@ -37,7 +37,8 @@ type Milestone = {
   id: string;
   orderId: string;
   title: string;
-  amount: string;
+  description: string;
+  amount: number;
   deliveryDate: string;
   status: 'PENDING' | 'PAID' | 'FAILED'; // Extend if needed
   paymentId: string | null;
@@ -67,7 +68,10 @@ type UserProfile = {
 };
 
 type Item = {
+  id: string;
   quantity: number;
+  detailAboutItem: string;
+  amount: number;
 };
 
 type Delivery = {
@@ -96,12 +100,12 @@ export type OrderDetails = {
     | 'SHIPPED'
     | 'DELIVERED'
     | 'COMPLETED'
-    | 'CLOSED'
     | 'DISPUTED_REQUESTED'
     | 'DISPUTED';
   currentStep: number;
   createdAt: string;
   updatedAt: string;
+  escrowFee: string;
   progressHistory: ProgressStep[];
   milestones: Milestone[];
   items: Item[];

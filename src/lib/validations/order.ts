@@ -44,6 +44,7 @@ export type TPersonalWalletPaymentInput = z.infer<typeof PersonalWalletPayment>;
 export const OneTimeUseWallet = z.object({
   amount: z.number().min(1, 'Amount must be at least 1'),
   orderId: z.string().min(1, 'Order ID is required'),
+  userId: z.string().min(1, 'user ID is required'),
 });
 
 export type TOneTimeUseWallet = z.infer<typeof OneTimeUseWallet>;

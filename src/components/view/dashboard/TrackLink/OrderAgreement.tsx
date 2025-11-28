@@ -15,7 +15,6 @@ import {
   DialogTrigger,
 } from '@/components/ui/dialog';
 import { Checkbox } from '@/components/ui/checkbox';
-import { UserRole } from './TransactionsSummaryForProduct';
 import { OrderDetails } from '@/types/order';
 import { UpdateOrderProgressDTO } from '@/lib/validations/order';
 import { updateOrderProgress } from '@/lib/actions/order/order.actions';
@@ -26,6 +25,7 @@ import {
   GeneratePendingAgreementPdf,
   GenerateSignedAgreementPdf,
 } from '@/helpers/utils/pdfCreation';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
@@ -117,7 +117,7 @@ export default function OrderAgreement({
           status: agreementStatus,
           step: 1,
           notes: 'Agreement signed',
-          userId: user?.id
+          userId: user?.id,
         } as UpdateOrderProgressDTO,
         order?.id as string
       );
@@ -205,20 +205,10 @@ export default function OrderAgreement({
           Download Escrow Agreement (PDF)
         </button>
 
-        {order?.status === 'PENDING' && (
-          <button
-            onClick={() => setIsEditDialogOpen(true)}
-            className="mb-8 flex items-center gap-2 text-orange-600 transition-colors hover:text-orange-700"
-          >
-            <Edit2 className="h-4 w-4" />
-            Edit Order
-          </button>
-        )}
-
         <div className="mb-8 flex items-start gap-3">
           <Checkbox
             id="agreement"
-            checked={isAgreed}
+            checked={userRole === 'seller' && sellerHasConfirmed ? true : isAgreed}
             onCheckedChange={(checked) => setIsAgreed(checked as boolean)}
             className="mt-1"
           />
@@ -332,7 +322,7 @@ export default function OrderAgreement({
 
           <ReButton
             onClick={() => setIsRejectDialogOpen(true)}
-            disabled={!canRejectOrder(order)}
+            disabled={!canRejectOrder(order) || sellerHasConfirmed}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
                 ? 'bg-white text-[#03045B] hover:bg-gray-50'
@@ -386,7 +376,7 @@ export default function OrderAgreement({
         <div className="mb-8 flex items-start gap-3">
           <Checkbox
             id="agreement"
-            checked={isAgreed}
+            checked={userRole === 'buyer' && buyerHasConfirmed ? true : isAgreed}
             onCheckedChange={(checked) => setIsAgreed(checked as boolean)}
             className="mt-1"
           />
@@ -500,7 +490,7 @@ export default function OrderAgreement({
 
           <ReButton
             onClick={() => setIsRejectDialogOpen(true)}
-            disabled={!canRejectOrder(order)}
+            disabled={!canRejectOrder(order) || currentUserHasConfirmed}
             className={`w-full sm:w-2/5 rounded-full border-2 border-[#03045B] transition-all duration-300 ${
               canRejectOrder(order)
                 ? 'bg-white text-[#03045B] hover:bg-gray-50'
@@ -560,6 +550,7 @@ export default function OrderAgreement({
                     }
                   : undefined
               }
+              userRole={userRole}
             />
           )}
         </DialogContent>

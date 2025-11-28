@@ -4,13 +4,14 @@ import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import InvoicePreview from '@/components/view/public/InvoicePreview';
-import { fetchOrderById, InvoiceData } from '@/lib/actions/order/order.client-actions';
+import { getSingleOrder } from '@/lib/actions/order/order.actions';
+import { OrderDetails } from '@/types/order';
 
 export default function InvoicePage() {
   const params = useParams();
   const invoiceId = params.id as string;
 
-  const [invoiceData, setInvoiceData] = useState<InvoiceData | null>(null);
+  const [invoiceData, setInvoiceData] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -24,11 +25,11 @@ export default function InvoicePage() {
 
       try {
         setLoading(true);
-        const data = await fetchOrderById(invoiceId);
+        const data = await getSingleOrder(invoiceId);
 
         console.log(data);
 
-        setInvoiceData(data);
+        setInvoiceData(data?.data || {});
         setError(null);
       } catch (err) {
         console.error('Error loading invoice:', err);

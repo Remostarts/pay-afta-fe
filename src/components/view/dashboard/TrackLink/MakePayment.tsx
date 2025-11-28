@@ -10,12 +10,12 @@ import PaymentSummary from './PaymentSummary';
 
 import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { UserRole } from './TransactionsSummaryForProduct';
 import { OrderDetails, TWalletData } from '@/types/order';
 import { createOneTimeUseWallet, makeWalletPayment } from '@/lib/actions/order/order.actions';
 import { TOneTimeUseWallet, TPersonalWalletPaymentInput } from '@/lib/validations/order';
 import { useGeneral } from '@/context/generalProvider';
 import MilestoneDialog from './MilestoneDialog';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface OrderAgreementProps {
   handleCurrentStepChange: (step: number) => void;
@@ -36,7 +36,7 @@ export default function MakePayment({
   order,
   loadOrder,
 }: OrderAgreementProps) {
-  const { loadUserData } = useGeneral();
+  const { loadUserData, user } = useGeneral();
   const router = useRouter();
 
   const [isOpen, setIsOpen] = useState<boolean>(false);
@@ -83,6 +83,10 @@ export default function MakePayment({
   //  Wallet payment handler
   const handleWalletPayment = async () => {
     if (!order) return;
+    if (!user?.id) {
+      toast.error('User not authenticated. Please log in again.');
+      return;
+    }
     setLocalLoading(true);
 
     const data: TPersonalWalletPaymentInput = {
@@ -118,14 +122,23 @@ export default function MakePayment({
   //  Bank transfer handler
   const handleBankTransferSelect = async () => {
     if (!order) return;
+    if (!user?.id) {
+      toast.error('User not authenticated. Please log in again.');
+      return;
+    }
     setLocalLoading(true);
     const data: TOneTimeUseWallet = {
       amount: Number(order.amount),
       orderId: order.id,
+      userId: user.id,
     };
 
     try {
+      console.log(data);
+
       const response = await createOneTimeUseWallet(data);
+
+      console.log(response);
 
       if (response?.success) {
         setOneTimeUseWallet(response?.data);
@@ -212,13 +225,16 @@ export default function MakePayment({
                 />
               )}
 
-              {/* {currentComponent === 'milestone' && isProduct === false && (
+              {/* MilestoneDialog commented out - requires handleMilestoneNext implementation */}
+              {/*
+              {currentComponent === 'milestone' && isProduct === false && (
                 <MilestoneDialog
                   isInTransactionSummary={true}
-                  // onNext={handleMilestoneNext} // FIX: Commented out since handleMilestoneNext is undefined
+                  onNext={handleMilestoneNext} // TODO: Implement handleMilestoneNext function
                   onClose={handleCloseDialog}
                 />
-              )} */}
+              )}
+              */}
 
               {currentComponent === 'successful' && (
                 <PaymentSuccessful

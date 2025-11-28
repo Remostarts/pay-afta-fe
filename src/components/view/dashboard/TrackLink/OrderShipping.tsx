@@ -1,8 +1,8 @@
 'use client';
 
 import React from 'react';
-import { UserRole } from './TransactionsSummaryForProduct';
 import { OrderDetails } from '@/types/order';
+import { UserRole } from './TransactionsSummaryBase';
 
 interface OrderShippingProps {
   userRole: UserRole;
