@@ -26,6 +26,7 @@ export const updateOrderProgressSchema = z.object({
   status: z.nativeEnum(OrderProgressStatus),
   step: z.number().int().min(1),
   notes: z.string().optional(),
+  userId: z.string().optional(),
 });
 
 export type UpdateOrderProgressDTO = z.infer<typeof updateOrderProgressSchema>;

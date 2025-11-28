@@ -117,6 +117,7 @@ export default function OrderAgreement({
           status: agreementStatus,
           step: 1,
           notes: 'Agreement signed',
+          userId: user?.id
         } as UpdateOrderProgressDTO,
         order?.id as string
       );
@@ -169,7 +170,7 @@ export default function OrderAgreement({
 
   const canRejectOrder = (order: OrderDetails | null): boolean => {
     if (!order) return false;
-    const nonRejectableStatuses = ['SHIPPED', 'IN_TRANSIT', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
+    const nonRejectableStatuses = ['SHIPPED', 'DELIVERED', 'COMPLETED', 'CANCELLED'];
 
     return !nonRejectableStatuses.includes(order.status);
   };

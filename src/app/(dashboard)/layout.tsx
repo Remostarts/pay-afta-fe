@@ -15,21 +15,37 @@ import RiderSidebar from '@/components/view/riderDashboard/Dashboard/SideNav';
 import RiderProfileHeader from '@/components/view/riderDashboard/shared/RiderProfileHeader';
 import { MessageNotificationManager } from '@/components/view/dashboard/shared/message-notification-manager';
 import DashboardSkeleton from '@/components/view/logisticDashboard/Dashboard/DashboardSkeleton';
+import IdentityVerification from '@/components/view/auth/onboarding/IdentityVerification';
 import DashboardLoader from './DashboardLoader';
 
 export default function Layout({ children }: TChildrenProps) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const pathName = usePathname();
   const router = useRouter();
-  const { user, loadingUser } = useGeneral();
-  // console.log('🌼 🔥🔥 Layout 🔥🔥 user🌼', user);
+  const { user, loadUserData, loadingUser, onboardingStatus } = useGeneral();
+  const [showIdentityModal, setShowIdentityModal] = useState(false);
 
-  // console.log('🌼 🔥🔥 Layout 🔥🔥 onboardingStatus🌼', onboardingStatus);
+  useEffect(() => {
+    if (!loadingUser && user) {
+      const shouldVerify =
+        onboardingStatus === false &&
+        user?.profile?.identityVerified === false &&
+        user?.role !== 'admin' &&
+        user?.role !== 'logistic';
 
-  // Onboarding redirect removed - identity verification is now handled within the dashboard
+      if (shouldVerify) {
+        setShowIdentityModal(true);
+      } else {
+        setShowIdentityModal(false);
+      }
+    }
+  }, [loadingUser, onboardingStatus, user]);
 
-  // Show loading state in the layout while user data is being fetched
-  // DashboardLoader
+  const handleVerificationComplete = () => {
+    loadUserData();
+    setShowIdentityModal(false);
+  };
+
   if (loadingUser) {
     return (
       // <div className="fixed inset-0 z-50 flex items-center justify-center bg-white bg-opacity-80">
@@ -81,6 +97,17 @@ export default function Layout({ children }: TChildrenProps) {
           {isDashboard && <Sidebar onClose={() => setIsSidebarOpen(false)} />}
           {isLogisticDashboard && <LogisticSidebar onClose={() => setIsSidebarOpen(false)} />}
           {isRiderDashboard && <RiderSidebar onClose={() => setIsSidebarOpen(false)} />}
+        </div>
+
+        <div>
+          {/* Identity Verification Modal */}
+          {showIdentityModal && (
+            <div className="fixed inset-0 z-50 bg-black bg-opacity-90 flex items-center justify-center p-4">
+              <div className="bg-white rounded-lg max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+                <IdentityVerification onComplete={handleVerificationComplete} />
+              </div>
+            </div>
+          )}
         </div>
 
         <main className="flex flex-1 flex-col bg-gray-50 overflow-hidden">
