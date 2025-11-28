@@ -17,7 +17,6 @@ import DashboardSkeleton from '../../logisticDashboard/Dashboard/DashboardSkelet
 
 export default function Dashboard() {
   const { user, loadUserData, loadingUser } = useGeneral();
-  const [showIdentityVerification, setShowIdentityVerification] = useState(false);
 
   // Check if user needs to complete identity verification
   const needsIdentityVerification = user?.profile?.identityVerified;
@@ -45,24 +44,6 @@ export default function Dashboard() {
     loadUserData();
     setIsOnboardingModalOpen(false);
   };
-
-  const handleIdentityVerificationComplete = () => {
-    loadUserData();
-    setShowIdentityVerification(false);
-  };
-
-  useEffect(() => {
-    // Only process identity verification logic after user data has loaded
-    if (!loadingUser) {
-      if (needsIdentityVerification) {
-        console.log('needsIdentityVerification', needsIdentityVerification);
-        setShowIdentityVerification(false);
-      } else {
-        console.log('needsIdentityVerification if false', needsIdentityVerification);
-        setShowIdentityVerification(true);
-      }
-    }
-  }, [needsIdentityVerification, loadingUser]);
 
   // Show loading state while user data is being fetched
   if (loadingUser) {
@@ -143,15 +124,6 @@ export default function Dashboard() {
 
       {/* Onboarding Modal */}
       <OnboardingModal isOpen={isOnboardingModalOpen} onClose={handleCloseModal} />
-
-      {/* Identity Verification Modal - Only render after user data has loaded */}
-      {!loadingUser && showIdentityVerification && (
-        <div className="fixed inset-0 z-50 bg-black bg-opacity-95 flex items-center justify-center p-4">
-          <div className="bg-white rounded-lg shadow-xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
-            <IdentityVerification onComplete={handleIdentityVerificationComplete} />
-          </div>
-        </div>
-      )}
     </div>
   );
 }

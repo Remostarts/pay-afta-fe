@@ -70,7 +70,6 @@ function getStep(status: string, currentStep: number, progressHistory?: any[]): 
       // Final step in the StepperForProduct component's 5-step sequence
       return 5;
 
-    case 'CLOSED':
     case 'COMPLETED':
       // Order completed successfully - this is step 5 for completed status
       // Matches StepperForProduct's "Completed" label in the 5-step flow
@@ -183,6 +182,7 @@ export default function TransactionsSummaryForProduct({ onBack, id }: Transactio
           status: 'COMPLETED',
           step: 5,
           notes: 'Buyer confirmed delivery.',
+          userId: user?.id,
         } as UpdateOrderProgressDTO,
         order?.id as string
       );

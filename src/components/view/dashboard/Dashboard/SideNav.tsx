@@ -58,7 +58,10 @@ export default function Sidebar({ onClose }: SidebarProps) {
   };
 
   const handleLogoutConfirm = () => {
-    signOut();
+    signOut({
+      redirect: true,
+      callbackUrl: '//',
+    });
     setShowLogoutDialog(false);
   };
 
@@ -93,12 +96,12 @@ export default function Sidebar({ onClose }: SidebarProps) {
         {/* Navigation - Scrollable Area */}
         <nav className="flex-1 overflow-y-auto px-3 py-4 lg:px-4">
           <ul className="space-y-1.5">
-            {sideNavMenu.map((nav) => {
+            {sideNavMenu.map((nav, index) => {
               const isChildren = nav.isChildrean;
               const active = isActive(nav);
 
               return (
-                <li key={nav.id}>
+                <li key={nav.id || index}>
                   {isChildren ? (
                     <Accordion type="single" collapsible className="w-full">
                       <AccordionItem value={`item-${nav.id}`} className="border-none">

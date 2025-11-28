@@ -131,13 +131,12 @@ export default function TrackLink() {
           console.log(progressHistory);
 
           const buyerConfirmed = progressHistory?.some(
-            (progress: any) =>
-              progress.status === 'BUYER_AGREED' && progress.notes?.includes('Agreement signed')
+            (progress: any) => progress.status === 'BUYER_AGREED'
           );
           const sellerConfirmed = progressHistory?.some(
-            (progress: any) =>
-              progress.status === 'SELLER_AGREED' && progress.notes?.includes('Agreement signed')
+            (progress: any) => progress.status === 'SELLER_AGREED'
           );
+
           if (buyerConfirmed && sellerConfirmed) {
             label = 'Both Agreed';
             bg = 'bg-[#E8FDEF]';

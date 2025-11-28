@@ -44,7 +44,10 @@ export default function RiderSidebar({ onClose }: SidebarProps) {
   };
 
   const handleLogoutConfirm = () => {
-    signOut({ callbackUrl: '/' });
+    signOut({
+      redirect: true,
+      callbackUrl: '/',
+    });
     setShowLogoutDialog(false);
   };
 

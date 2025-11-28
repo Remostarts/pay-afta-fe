@@ -1,7 +1,20 @@
 export type TOrder = {
   id: string;
-  status: 'AGREEMENT' | 'PAYMENT' | 'SHIPPING' | 'DELIVERY' | 'CLOSED' | 'DISPUTED';
-  createdAt: string; // or Date if you plan to convert it
+  status:
+    | 'PENDING'
+    | 'CANCELED'
+    | 'BUYER_AGREED'
+    | 'SELLER_AGREED'
+    | 'PAYMENT_PENDING'
+    | 'PAID'
+    | 'SHIPPED'
+    | 'DELIVERED'
+    | 'COMPLETED'
+    | 'DISPUTED_REQUESTED'
+    | 'DISPUTED'
+    | 'RETURN_INITIATED'
+    | 'RETURNED';
+  createdAt: string;
   transactionType: string;
   amount: number;
   sellerId: string;
