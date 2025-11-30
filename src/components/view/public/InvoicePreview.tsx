@@ -48,6 +48,17 @@ export default function InvoicePreview({ orderId, invoiceData }: InvoicePreviewP
 
   const { viewer, isBuyerReal, isSellerReal, guestRole } = detectRoles();
 
+  console.log(
+    'viewer:',
+    viewer,
+    'buyer:',
+    isBuyerReal,
+    'seller:',
+    isSellerReal,
+    'guest:',
+    guestRole
+  );
+
   // -----------------------------------------
   // 🔥 HELPER TO GET USER ID
   // -----------------------------------------
@@ -56,6 +67,8 @@ export default function InvoicePreview({ orderId, invoiceData }: InvoicePreviewP
     if (viewer === 'SELLER') return invoiceData.sellerId;
     return invoiceData.guest?.id || 'UNKNOWN';
   };
+
+  console.log('getUserIdByViewer : ', getUserIdByViewer);
 
   // -----------------------------------------
   // CHECK LATEST STATUS
@@ -67,31 +80,88 @@ export default function InvoicePreview({ orderId, invoiceData }: InvoicePreviewP
     return invoiceData.progressHistory[invoiceData.progressHistory.length - 1].status;
   };
 
+  console.log('getLatestStatus', getLatestStatus());
+
   // -----------------------------------------
-  // 🔥 ACCEPT LOGIC WITH GUEST AWARENESS
+  // 🔥 ACCEPT LOGIC WITH INITIATOR-Counterparty FLOW
   // -----------------------------------------
   const handleAccept = async () => {
     try {
       const latestStatus = getLatestStatus();
 
-      if (['BUYER_AGREED', 'SELLER_AGREED', 'CANCELED', 'REJECTED'].includes(latestStatus || '')) {
+      console.log(latestStatus);
+
+      if (
+        ['SHIPPED', 'DELIVERED', 'COMPLETED', 'DISPUTED', 'CANCELED', 'REJECTED'].includes(
+          latestStatus || ''
+        )
+      ) {
         toast.info('This order has already been processed.');
         return;
       }
 
+      // Determine who the initiator is
+      const isBuyerInitiator = invoiceData?.buyerId === invoiceData?.createdBy;
+      const isSellerInitiator = invoiceData?.sellerId === invoiceData?.createdBy;
+
       let status: UpdateOrderProgressDTO['status'] = 'BUYER_AGREED';
 
-      if (viewer === 'BUYER') {
-        status = 'BUYER_AGREED';
-      } else if (viewer === 'SELLER') {
-        status = 'SELLER_AGREED';
-      } else if (viewer === 'GUEST') {
-        // Guest acts as the opposite role of the real user
-        if (isBuyerReal)
-          status = 'SELLER_AGREED'; // guest is seller
-        else if (isSellerReal)
-          status = 'BUYER_AGREED'; // guest is buyer
-        else status = 'BUYER_AGREED'; // fallback
+      console.log(isBuyerInitiator);
+      console.log(viewer);
+
+      // Logic: If initiator has agreed, counterparty needs to agree
+      if (isBuyerInitiator) {
+        // Buyer is initiator
+        if (latestStatus === 'BUYER_AGREED') {
+          // Buyer has already agreed, now seller needs to agree
+          if (viewer === 'SELLER' || (viewer === 'GUEST' && !isBuyerReal && isSellerReal)) {
+            status = 'SELLER_AGREED';
+            console.log('Seller Agreed');
+          } else {
+            toast.info('Waiting for the seller to agree to the agreement.');
+            return;
+          }
+        } else {
+          // Buyer hasn't agreed yet, buyer can agree
+          if (viewer === 'BUYER' || (viewer === 'GUEST' && isBuyerReal && !isSellerReal)) {
+            status = 'BUYER_AGREED';
+          } else {
+            toast.info('Waiting for the buyer to agree to the agreement.');
+            return;
+          }
+        }
+      } else if (isSellerInitiator) {
+        // Seller is initiator
+        if (latestStatus === 'SELLER_AGREED') {
+          // Seller has already agreed, now buyer needs to agree
+          if (viewer === 'BUYER' || (viewer === 'GUEST' && isBuyerReal && !isSellerReal)) {
+            status = 'BUYER_AGREED';
+          } else {
+            toast.info('Waiting for the buyer to agree to the agreement.');
+            return;
+          }
+        } else {
+          // Seller hasn't agreed yet, seller can agree
+          if (viewer === 'SELLER' || (viewer === 'GUEST' && !isBuyerReal && isSellerReal)) {
+            status = 'SELLER_AGREED';
+          } else {
+            toast.info('Waiting for the seller to agree to the agreement.');
+            return;
+          }
+        }
+      } else {
+        // Fallback to original logic if initiator cannot be determined
+        if (viewer === 'BUYER') {
+          status = 'BUYER_AGREED';
+        } else if (viewer === 'SELLER') {
+          status = 'SELLER_AGREED';
+        } else if (viewer === 'GUEST') {
+          if (isBuyerReal)
+            status = 'SELLER_AGREED'; // guest is seller
+          else if (isSellerReal)
+            status = 'BUYER_AGREED'; // guest is buyer
+          else status = 'BUYER_AGREED'; // fallback
+        }
       }
 
       const payload: UpdateOrderProgressDTO = {
@@ -249,6 +319,79 @@ export default function InvoicePreview({ orderId, invoiceData }: InvoicePreviewP
               ? invoiceData.buyer.email
               : invoiceData?.guest && guestRole === 'BUYER'
                 ? invoiceData.guest.email
+                : 'N/A'}
+          </p>
+        </div>
+      </div>
+
+      {/* Initiator & Counterparty */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+        {/* Initiator */}
+        <div className="border rounded-lg p-4">
+          <p className="mt-3 text-sm text-gray-500">Initiator</p>
+          <p className="font-semibold">
+            {invoiceData?.buyerId === invoiceData?.createdBy
+              ? invoiceData?.buyer?.firstName
+                ? `${invoiceData.buyer.firstName} ${invoiceData.buyer.lastName}`
+                : invoiceData?.guest && guestRole === 'BUYER'
+                  ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                  : invoiceData?.buyerId
+              : invoiceData?.sellerId === invoiceData?.createdBy
+                ? invoiceData?.seller?.firstName
+                  ? `${invoiceData.seller.firstName} ${invoiceData.seller.lastName}`
+                  : invoiceData?.guest && guestRole === 'SELLER'
+                    ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                    : invoiceData?.sellerId
+                : 'N/A'}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {invoiceData?.buyerId === invoiceData?.createdBy
+              ? invoiceData?.buyer?.email
+                ? invoiceData.buyer.email
+                : invoiceData?.guest && guestRole === 'BUYER'
+                  ? invoiceData.guest.email
+                  : 'N/A'
+              : invoiceData?.sellerId === invoiceData?.createdBy
+                ? invoiceData?.seller?.email
+                  ? invoiceData.seller.email
+                  : invoiceData?.guest && guestRole === 'SELLER'
+                    ? invoiceData.guest.email
+                    : 'N/A'
+                : 'N/A'}
+          </p>
+        </div>
+
+        {/* Counterparty */}
+        <div className="border rounded-lg p-4">
+          <p className="mt-3 text-sm text-gray-500">Counterparty</p>
+          <p className="font-semibold">
+            {invoiceData?.buyerId === invoiceData?.createdBy
+              ? invoiceData?.seller?.firstName
+                ? `${invoiceData.seller.firstName} ${invoiceData.seller.lastName}`
+                : invoiceData?.guest && guestRole === 'SELLER'
+                  ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                  : invoiceData?.sellerId
+              : invoiceData?.sellerId === invoiceData?.createdBy
+                ? invoiceData?.buyer?.firstName
+                  ? `${invoiceData.buyer.firstName} ${invoiceData.buyer.lastName}`
+                  : invoiceData?.guest && guestRole === 'BUYER'
+                    ? `${invoiceData.guest.firstName} ${invoiceData.guest.lastName}`
+                    : invoiceData?.buyerId
+                : 'N/A'}
+          </p>
+          <p className="text-gray-500 text-sm">
+            {invoiceData?.buyerId === invoiceData?.createdBy
+              ? invoiceData?.seller?.email
+                ? invoiceData.seller.email
+                : invoiceData?.guest && guestRole === 'SELLER'
+                  ? invoiceData.guest.email
+                  : 'N/A'
+              : invoiceData?.sellerId === invoiceData?.createdBy
+                ? invoiceData?.buyer?.email
+                  ? invoiceData.buyer.email
+                  : invoiceData?.guest && guestRole === 'BUYER'
+                    ? invoiceData.guest.email
+                    : 'N/A'
                 : 'N/A'}
           </p>
         </div>
