@@ -14,7 +14,7 @@ interface OrderShippedProps {
   userId: string;
 }
 
-export default function OrderShipped({ userRole, order,userId }: OrderShippedProps) {
+export default function OrderShipped({ userRole, order, userId }: OrderShippedProps) {
   const isBuyer = userRole === 'buyer';
   const trackingNumber = order?.delivery?.trackingNumber;
 
