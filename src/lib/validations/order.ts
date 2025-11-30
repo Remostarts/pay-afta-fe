@@ -41,6 +41,7 @@ export const PersonalWalletPayment = z.object({
 
 export type TPersonalWalletPaymentInput = z.infer<typeof PersonalWalletPayment>;
 
+// onetime wallet for real buyer
 export const OneTimeUseWallet = z.object({
   amount: z.number().min(1, 'Amount must be at least 1'),
   orderId: z.string().min(1, 'Order ID is required'),
@@ -48,6 +49,20 @@ export const OneTimeUseWallet = z.object({
 });
 
 export type TOneTimeUseWallet = z.infer<typeof OneTimeUseWallet>;
+
+// one-time wallet for guest buyer
+export const GuestOneTimeUseWallet = z.object({
+  amount: z.number().min(1, 'Amount must be at least 1'),
+  orderId: z.string().min(1, 'Order ID is required'),
+
+  // guest info for upsert on backend
+  firstName: z.string().min(1, 'First name is required'),
+  lastName: z.string().min(1, 'Last name is required'),
+  email: z.string().email('Valid email is required'),
+  phone: z.string().min(1, 'Phone number is required'),
+});
+
+export type TGuestOneTimeUseWallet = z.infer<typeof GuestOneTimeUseWallet>;
 
 // assign delivery
 export const DeliveryPickupTypeEnum = z.enum(['SELLER_DOOR', 'SELLER_DROP_OFF']);

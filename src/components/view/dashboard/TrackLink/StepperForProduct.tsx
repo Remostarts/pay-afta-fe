@@ -32,7 +32,7 @@ export default function StepperForProduct({
       ];
     }
 
-    if (isReturn || isRefunded) {
+     if (isReturn || isRefunded) {
       return [
         { number: 1, label: 'Agreement', status: 'completed' },
         { number: 2, label: 'Payment', status: 'completed' },
