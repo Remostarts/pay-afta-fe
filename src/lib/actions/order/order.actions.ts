@@ -18,6 +18,8 @@ import {
   updateOrderProgressSchema,
   rejectOrderSchema,
   TRejectOrderInput,
+  TGuestOneTimeUseWallet,
+  GuestOneTimeUseWallet,
 } from '@/lib/validations/order';
 
 export async function createOrder(formData: TCreateOrderInput) {
@@ -233,6 +235,41 @@ export async function createOneTimeUseWallet(formData: TOneTimeUseWallet) {
     return response.json();
   } catch (error) {
     console.log('🌼 🔥🔥 makeWalletPayment 🔥🔥 error🌼', error);
+
+    getErrorMessage(error);
+  }
+}
+
+
+// guest onetime payment 
+export async function createGuestOneTimeUseWallet(formData: TGuestOneTimeUseWallet) {
+  const validation = GuestOneTimeUseWallet.safeParse(formData);
+
+  if (!validation.success) {
+    let zodErrors = '';
+    validation.error.issues.forEach((issue) => {
+      zodErrors = zodErrors + issue.path[0] + ':' + issue.message + '.';
+    });
+    throw new Error(zodErrors);
+  }
+
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  try {
+    const response = await fetch(`${process.env.BACKEND_URL}/pilla/guest/one-time-use`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      body: JSON.stringify(validation.data),
+      cache: 'no-store',
+    });
+
+    return response.json();
+  } catch (error) {
+    console.log('🌼 🔥🔥 guest onetime wallet payment  🔥🔥 error🌼', error);
 
     getErrorMessage(error);
   }
