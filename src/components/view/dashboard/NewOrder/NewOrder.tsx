@@ -287,6 +287,17 @@ export default function NewOrder({ onBack }: NewOrderProps) {
       const response = await createOrder(pendingOrderData);
 
       console.log(response);
+      // Store relevant IDs in localStorage after successful order creation
+      if (response?.success && response.data) {
+        const usersDetails = [
+          response.data.buyerId && { type: 'buyer', id: response.data.buyerId },
+          response.data.sellerId && { type: 'seller', id: response.data.sellerId },
+          response.data.guestId && { type: 'guest', id: response.data.guestId },
+          response.data.createdBy && { type: 'createdBy', id: response.data.createdBy },
+        ].filter(Boolean);
+
+        localStorage.setItem('usersDetails', JSON.stringify(usersDetails));
+      }
 
       if (response?.success) {
         toast.success('Order created successfully');
