@@ -58,7 +58,7 @@ type PaymentDetails = {
 
 type Transaction = unknown; // Define when structure is known
 
-type UserProfile = {
+export type UserProfile = {
   firstName: string;
   lastName: string;
   username: string | null;
@@ -115,6 +115,8 @@ export type OrderDetails = {
   Transaction: Transaction[]; // Empty array in this case
   buyer: UserProfile;
   seller: UserProfile;
+  buyerAgreed: boolean;
+  sellerAgreed: boolean;
   guest: UserProfile;
 };
 

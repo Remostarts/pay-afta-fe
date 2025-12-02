@@ -72,9 +72,17 @@ export function GeneralProvider({ children, session }: { children: ReactNode; se
         setOnboardingStatus(data.data?.profile?.onBoardingStatus ?? null);
       } else {
         setUser(null);
-        signOut();
+        signOut({
+          redirect: true,
+          callbackUrl: '/sign-in',
+        });
       }
     } catch (error) {
+      setUser(null);
+      signOut({
+        redirect: true,
+        callbackUrl: '/sign-in',
+      });
       console.error('❌ loadUserData error:', getErrorMessage(error));
     } finally {
       setLoadingUser(false);

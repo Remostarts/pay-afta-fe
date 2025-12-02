@@ -101,10 +101,10 @@ export async function getSingleOrder(id: string) {
   try {
     const response = await fetch(`${process.env.BACKEND_URL}/order/${id}`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        // Authorization: token,
-      },
+      // headers: {
+      //   'Content-Type': 'application/json',
+      //   // Authorization: token,
+      // },
       cache: 'no-store',
     });
 
@@ -240,8 +240,7 @@ export async function createOneTimeUseWallet(formData: TOneTimeUseWallet) {
   }
 }
 
-
-// guest onetime payment 
+// guest onetime payment
 export async function createGuestOneTimeUseWallet(formData: TGuestOneTimeUseWallet) {
   const validation = GuestOneTimeUseWallet.safeParse(formData);
 
