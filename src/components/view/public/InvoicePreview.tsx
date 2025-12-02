@@ -13,6 +13,10 @@ interface InvoicePreviewProps {
 export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ orderId }) => {
   const { order, loading, error, viewer, userRole } = useOrder(orderId);
 
+  console.log(order);
+
+  // console.log(userRole);
+
   const router = useRouter();
 
   if (loading) {

@@ -3,20 +3,30 @@
 import React, { useState } from 'react';
 import { ReButton } from '@/components/re-ui/ReButton';
 import { useOrder } from './useOrderHook';
+import RejectOrderModal from '@/components/view/dashboard/TrackLink/RejectOrderModal';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 interface SellerActionsProps {
   orderId: string;
 }
 
 export const SellerActions: React.FC<SellerActionsProps> = ({ orderId }) => {
-  const { order, userRole, performAction } = useOrder(orderId);
+  const { order, userRole, performAction, refreshOrder } = useOrder(orderId);
   const [submittingAction, setSubmittingAction] = useState<string | null>(null);
+  const [showRejectModal, setShowRejectModal] = useState(false);
 
   if (userRole !== 'REAL_SELLER' && userRole !== 'GUEST_SELLER') return null;
   if (!order) return null;
 
   const handleAction = async (action: 'ACCEPT' | 'REJECT' | 'SHIP' | 'DELIVER') => {
     if (submittingAction) return;
+
+    // For reject action, open the modal instead of directly performing the action
+    if (action === 'REJECT') {
+      setShowRejectModal(true);
+      return;
+    }
+
     setSubmittingAction(action);
     try {
       await performAction(action);
@@ -63,6 +73,32 @@ export const SellerActions: React.FC<SellerActionsProps> = ({ orderId }) => {
             {submittingAction === 'DELIVER' ? 'Submitting...' : 'Mark Delivered'}
             </ReButton>
         )} */}
+
+      {/* Reject Order Modal */}
+      <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          {order && (
+            <RejectOrderModal
+              orderId={order.id || ''}
+              onClose={() => setShowRejectModal(false)}
+              onSuccess={() => {
+                refreshOrder();
+                setShowRejectModal(false);
+              }}
+              orderDetails={
+                order
+                  ? {
+                      orderNumber: order.id,
+                      transactionType: order.transactionType,
+                      amount: order.amount.toString(),
+                    }
+                  : undefined
+              }
+              userRole="seller"
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

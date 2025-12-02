@@ -1,6 +1,9 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
+import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
+import { ReButton } from '@/components/re-ui/ReButton';
+import EditOrderModal from '@/components/view/dashboard/TrackLink/EditOrderModal';
 
 interface User {
   firstName?: string;
@@ -50,10 +53,30 @@ const formatDate = (dateString: string) =>
   });
 
 const InvoiceOrderDetails: React.FC<InvoiceOrderDetailsProps> = ({ order, userRole }) => {
+  // const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+
+  // console.log(userRole);
+
+  // // Check if userRole is GUEST BUYER or REAL BUYER
+  // const canEditOrder = userRole === 'GUEST_BUYER' || userRole === 'REAL_BUYER';
+
+  // // Handle modal close
+  // const handleEditModalClose = () => {
+  //   setIsEditModalOpen(false);
+  // };
+
+  // // Handle successful edit
+  // const handleEditSuccess = () => {
+  //   setIsEditModalOpen(false);
+  //   // Optionally refresh the order data here
+  // };
+
   return (
     <div className="bg-white shadow-sm rounded-xl px-6 py-8 mt-6">
       {/* Header */}
-      <h1 className="text-xl font-semibold mb-6">Payment Invoice</h1>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-xl font-semibold">Payment Invoice</h1>
+      </div>
 
       <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 border-b pb-6">
         <div>
@@ -173,6 +196,24 @@ const InvoiceOrderDetails: React.FC<InvoiceOrderDetailsProps> = ({ order, userRo
           </div>
         </div>
       </div>
+
+      {/* Edit Button */}
+      {/* {canEditOrder && !['CANCELED', 'REJECTED'].includes(order.status) && (
+        <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>
+          <DialogTrigger asChild>
+            <button className="mb-8 flex items-center gap-2 text-orange-600 transition-colors hover:text-orange-700">
+              Edit Order
+            </button>
+          </DialogTrigger>
+          <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+            <EditOrderModal
+              order={order}
+              onClose={handleEditModalClose}
+              onSuccess={handleEditSuccess}
+            />
+          </DialogContent>
+        </Dialog>
+      )} */}
     </div>
   );
 };
