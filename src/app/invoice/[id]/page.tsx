@@ -1,7 +1,7 @@
 'use client';
 
+import { InvoicePreview } from '@/components/view/public/InvoicePreview';
 import { useParams } from 'next/navigation';
-import InvoicePreview from '@/components/view/public/InvoicePreview';
 
 export default function InvoicePage() {
   const params = useParams();
