@@ -5,6 +5,7 @@ import { getSingleOrder, updateOrderProgress } from '@/lib/actions/order/order.a
 import { UpdateOrderProgressDTO } from '@/lib/validations/order';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useGeneral } from '@/context/generalProvider';
 
 interface OrderDetails {
   id: string;
@@ -60,12 +61,16 @@ interface OrderDetails {
 
 export default function InvoicePreview({ orderId }: { orderId: string }) {
   const router = useRouter();
+  const { user } = useGeneral();
 
   const [orderData, setOrderData] = useState<OrderDetails | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
+  if (user?.id === orderData?.createdBy) {
+    console.log('its initiator')
+  }
   // Fetch order data
   useEffect(() => {
     if (!orderId) return;
@@ -98,6 +103,7 @@ export default function InvoicePreview({ orderId }: { orderId: string }) {
             initiator = parsedUsers.find(
               (user: any) => user.type === 'buyer' && user.id === buyerId
             );
+
             if (initiator)
               setCurrentUser({
                 ...initiator,
@@ -574,7 +580,7 @@ export default function InvoicePreview({ orderId }: { orderId: string }) {
           {/* Items */}
           <div className="mb-6">
             <h2 className="text-sm font-medium mb-4">Order Items</h2>
-            {orderData.items.length > 0 ? (
+            {orderData.items?.length > 0 ? (
               orderData.items.map((item, idx) => (
                 <div key={item.id} className="border rounded-lg overflow-hidden mb-4">
                   <div className="bg-gray-50 px-4 py-2 font-medium text-sm">Item {idx + 1}</div>

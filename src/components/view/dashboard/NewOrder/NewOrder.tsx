@@ -319,9 +319,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
             currency: 'NGN',
             minimumFractionDigits: 2,
           }).format(finalAmount),
-          trackUrl:
-            response.data?.trackUrl ||
-            `${typeof window !== 'undefined' ? window.location.origin : ''}/invoice/${response.data?.orderId || response.data?.id}`,
+          trackUrl: response.data?.trackUrl,
         });
 
         // Close order details and show success
