@@ -245,11 +245,16 @@ export default function FinalizeOrderPay() {
                     handleContactChange(field as keyof ContactDetails, e.target.value)
                   }
                   placeholder={`Enter your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}`}
-                  readOnly={isAuthenticatedUser}
+                  readOnly={isAuthenticatedUser || (field === 'email' && !isAuthenticatedUser)}
                   className={`w-full px-3 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 ${
                     errors[field as keyof ContactDetails] ? 'border-red-500' : 'border-gray-300'
-                  } ${isAuthenticatedUser ? 'bg-gray-100 cursor-not-allowed' : ''}`}
+                  } ${
+                    isAuthenticatedUser || (field === 'email' && !isAuthenticatedUser)
+                      ? 'bg-gray-100 cursor-not-allowed'
+                      : ''
+                  }`}
                 />
+
                 {errors[field as keyof ContactDetails] && (
                   <p className="text-sm text-red-600 mt-1">
                     {errors[field as keyof ContactDetails]}
