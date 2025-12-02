@@ -60,7 +60,7 @@ export default function Sidebar({ onClose }: SidebarProps) {
   const handleLogoutConfirm = () => {
     signOut({
       redirect: true,
-      callbackUrl: '//',
+      callbackUrl: '/',
     });
     setShowLogoutDialog(false);
   };
