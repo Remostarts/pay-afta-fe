@@ -8,6 +8,11 @@ import { ReHeading } from '@/components/re-ui/ReHeading';
 import ReSubHeading from '@/components/re-ui/ReSubHeading';
 import BankTransferModal from '@/components/view/public/BankTransferModal';
 import { TWalletData } from '@/types/order';
+import { useGeneral } from '@/context/generalProvider';
+import {
+  createOneTimeUseWallet,
+  createGuestOneTimeUseWallet,
+} from '@/lib/actions/order/order.actions';
 
 interface ContactDetails {
   firstName: string;
@@ -31,6 +36,7 @@ export default function FinalizeOrderPay({
 }: FinalizeOrderPayProps) {
   const searchParams = useSearchParams();
   const router = useRouter();
+  const { user } = useGeneral();
 
   // Get orderId from URL params or use default
   const urlOrderId = searchParams?.get('orderId');
@@ -53,26 +59,6 @@ export default function FinalizeOrderPay({
   // Error state
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Mock wallet data - in real app, this would come from API
-  const mockWalletData: TWalletData = {
-    id: '1',
-    walletId: null,
-    type: 'ONE_TIME',
-    userId: 'user1',
-    balance: amount.toString(),
-    currency: 'NGN',
-    isActive: true,
-    accountName: 'PayAfta Escrow',
-    accountNumber: '1234567890',
-    bankName: 'First Bank',
-    referenceId: `REF-${Date.now()}`,
-    transactionId: `TXN-${Date.now()}`,
-    expiredAt: new Date(Date.now() + 30 * 60 * 1000).toISOString(), // 30 minutes from now
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    orderId: finalOrderId,
-  };
-
   // Format currency
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('en-NG', {
@@ -82,24 +68,83 @@ export default function FinalizeOrderPay({
     }).format(amount);
   };
 
-  // Load wallet data (mock implementation)
+  // Check if user is authenticated (registered) or guest
+  // If user exists with ID, they are a registered user
+  // If user is null, they are a guest user
+  const isAuthenticatedUser = user && user.id;
+
+  // Load wallet data based on user type
   useEffect(() => {
     const loadWalletData = async () => {
       setIsLoadingWallet(true);
       try {
-        // Simulate API call
-        await new Promise((resolve) => setTimeout(resolve, 1000));
-        setWalletData(mockWalletData);
+        let walletResponse;
+
+        if (isAuthenticatedUser) {
+          // For registered users, create one-time use wallet
+          walletResponse = await createOneTimeUseWallet({
+            amount,
+            orderId: finalOrderId,
+            userId: user.id,
+          });
+        } else {
+          // For guest users, create guest one-time use wallet
+          walletResponse = await createGuestOneTimeUseWallet({
+            amount,
+            orderId: finalOrderId,
+            firstName: contactDetails.firstName,
+            lastName: contactDetails.lastName,
+            email: contactDetails.email,
+            phone: contactDetails.phoneNumber,
+          });
+        }
+
+        if (walletResponse?.data) {
+          // Transform API response to match TWalletData interface
+          const transformedWallet: TWalletData = {
+            id: walletResponse.data.id || '1',
+            walletId: walletResponse.data.walletId || null,
+            type: 'ONE_TIME',
+            userId: walletResponse.data.userId || (isAuthenticatedUser ? user.id : 'guest'),
+            balance: walletResponse.data.balance?.toString() || amount.toString(),
+            currency: walletResponse.data.currency || 'NGN',
+            isActive: walletResponse.data.isActive ?? true,
+            accountName: walletResponse.data.accountName || 'PayAfta Escrow',
+            accountNumber: walletResponse.data.accountNumber || '1234567890',
+            bankName: walletResponse.data.bankName || 'First Bank',
+            referenceId: walletResponse.data.referenceId || `REF-${Date.now()}`,
+            transactionId: walletResponse.data.transactionId || `TXN-${Date.now()}`,
+            expiredAt:
+              walletResponse.data.expiredAt || new Date(Date.now() + 30 * 60 * 1000).toISOString(),
+            createdAt: walletResponse.data.createdAt || new Date().toISOString(),
+            updatedAt: walletResponse.data.updatedAt || new Date().toISOString(),
+            orderId: finalOrderId,
+          };
+          setWalletData(transformedWallet);
+        } else {
+          throw new Error('Invalid response format');
+        }
       } catch (error) {
         console.error('Failed to load wallet data:', error);
-        onPaymentError?.('Failed to load payment details');
+        onPaymentError?.('Failed to load payment details. Please try again.');
       } finally {
         setIsLoadingWallet(false);
       }
     };
 
-    loadWalletData();
-  }, [finalOrderId, onPaymentError]);
+    // Only load wallet data if we have the minimum required information
+    if (
+      finalOrderId &&
+      amount &&
+      (isAuthenticatedUser ||
+        (contactDetails.firstName &&
+          contactDetails.lastName &&
+          contactDetails.email &&
+          contactDetails.phoneNumber))
+    ) {
+      loadWalletData();
+    }
+  }, [finalOrderId, amount, isAuthenticatedUser, contactDetails, onPaymentError]);
 
   // Form validation
   const validateForm = (): boolean => {
@@ -141,6 +186,12 @@ export default function FinalizeOrderPay({
       return;
     }
 
+    // Check if wallet data is available
+    if (!walletData) {
+      onPaymentError?.('Please wait for payment details to load.');
+      return;
+    }
+
     try {
       // Open bank transfer modal
       setShowBankTransferModal(true);
@@ -176,9 +227,10 @@ export default function FinalizeOrderPay({
       !errors.firstName &&
       !errors.lastName &&
       !errors.email &&
-      !errors.phoneNumber
+      !errors.phoneNumber &&
+      walletData !== null // Ensure wallet data is loaded
     );
-  }, [agree, contactDetails, errors]);
+  }, [agree, contactDetails, errors, walletData]);
 
   // Available wallet balance (mock calculation)
   const availableBalance = walletData?.balance ? parseFloat(walletData.balance) : 0;
@@ -203,6 +255,10 @@ export default function FinalizeOrderPay({
               <span>Wallet: {formatCurrency(availableBalance)}</span>
             </div>
           )}
+          {/* User type indicator */}
+          <div className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
+            {isAuthenticatedUser ? 'Registered User' : 'Guest User'}
+          </div>
         </div>
 
         {needsPayment && (
@@ -221,6 +277,16 @@ export default function FinalizeOrderPay({
         <h2 className="font-semibold text-lg">1. Contact Details</h2>
         <p className="text-sm text-gray-500">
           These details are required for order tracking and refunds
+          {!isAuthenticatedUser && (
+            <span className="block mt-1 text-xs text-blue-600">
+              <strong>Guest checkout:</strong> We'll create a temporary account for this transaction
+            </span>
+          )}
+          {isAuthenticatedUser && (
+            <span className="block mt-1 text-xs text-green-600">
+              <strong>Registered user:</strong> Using your existing account for this transaction
+            </span>
+          )}
         </p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
@@ -348,7 +414,7 @@ export default function FinalizeOrderPay({
         {isLoadingWallet ? (
           <span className="flex items-center justify-center gap-2">
             <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-            Loading...
+            {isAuthenticatedUser ? 'Creating secure wallet...' : 'Setting up guest payment...'}
           </span>
         ) : (
           `Secure Payment (${formatCurrency(amount)})`
