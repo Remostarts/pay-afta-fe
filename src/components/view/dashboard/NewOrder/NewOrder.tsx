@@ -103,6 +103,63 @@ export default function NewOrder({ onBack }: NewOrderProps) {
   // Watch role changes
   const currentRole = watch('role');
 
+  // Generate dynamic transaction fee options based on role
+  const getTransactionFeeOptions = (role: string | undefined) => {
+    if (role === 'Buyer') {
+      return [
+        {
+          label: 'I will pay for the transaction',
+          value: 'Buyer',
+        },
+        {
+          label: 'Seller pays for the transaction fee',
+          value: 'Seller',
+        },
+        {
+          label: 'Both Parties Pay (50/50)',
+          value: 'Both',
+        },
+      ];
+    } else if (role === 'Seller') {
+      return [
+        {
+          label: 'I will pay for the transaction',
+          value: 'Seller',
+        },
+        {
+          label: 'Buyer pays for the transaction fee',
+          value: 'Buyer',
+        },
+        {
+          label: 'Both Parties Pay (50/50)',
+          value: 'Both',
+        },
+      ];
+    }
+    return [];
+  };
+
+  // Determine who pays the transaction fee
+  // const getTransactionFeePayer = (role: string, transactionFeeSelection: string) => {
+  //   if (transactionFeeSelection === 'Both Parties Pay (50/50)') {
+  //     return 'Both';
+  //   }
+
+  //   if (transactionFeeSelection === 'I will pay for the transaction') {
+  //     return role; // The current user pays
+  //   }
+
+  //   if (transactionFeeSelection === 'Seller pays for the transaction fee') {
+  //     return 'Seller';
+  //   }
+
+  //   if (transactionFeeSelection === 'Buyer pays for the transaction fee') {
+  //     return 'Buyer';
+  //   }
+
+  //   return ''; // Default case
+  // };
+
   // Update initiatorRole when role changes in form
   useEffect(() => {
     if (currentRole) {
@@ -117,6 +174,9 @@ export default function NewOrder({ onBack }: NewOrderProps) {
     // Update form values based on new role
     setValue('role', newRole);
     setInitiatorRole(newRole);
+
+    // Reset transaction fee when role changes to avoid invalid selections
+    setValue('transactionFee', '');
   };
 
   // Handle counterparty selection
@@ -261,6 +321,12 @@ export default function NewOrder({ onBack }: NewOrderProps) {
 
   // Handle form submission
   const onSubmit = async (data: TNewOrder) => {
+    // Validate transaction fee selection
+    if (!data.transactionFee) {
+      toast.error('Please select who should pay the transaction fee');
+      return;
+    }
+
     try {
       const processedData = processOrderData(data);
       setPendingOrderData(processedData);
@@ -692,22 +758,19 @@ export default function NewOrder({ onBack }: NewOrderProps) {
                 <ReHeading heading="Transaction Fee" size="base" className="text-gray-700 mb-2" />
                 <ReRadioGroup
                   name="transactionFee"
-                  options={[
-                    {
-                      label: 'I will pay for the transaction',
-                      value: 'I will pay for the transaction',
-                    },
-                    {
-                      label: 'Seller pays for the transaction fee',
-                      value: 'Seller pays for the transaction fee',
-                    },
-                    {
-                      label: 'Both Parties Pay (50/50)',
-                      value: 'Both Parties Pay (50/50)',
-                    },
-                  ]}
+                  options={getTransactionFeeOptions(currentRole)}
                   className="flex flex-col gap-4 sm:flex-row sm:gap-2 lg:grid lg:grid-cols-3"
                 />
+                {!currentRole && (
+                  <p className="text-sm text-gray-500 mt-2">
+                    Please select your role first to see transaction fee options
+                  </p>
+                )}
+                {currentRole && !watch('transactionFee') && (
+                  <p className="text-sm text-amber-600 mt-2">
+                    Please select who should pay the transaction fee
+                  </p>
+                )}
               </div>
 
               {/* Submit Button */}
