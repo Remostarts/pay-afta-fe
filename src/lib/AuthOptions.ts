@@ -45,7 +45,7 @@ export const authOptions: AuthOptions = {
         } catch (error: any) {
           console.error('❌ authorize error:', error);
           // Pass readable message to frontend
-          throw new Error(error?.message || 'Something went wrong');
+          throw new Error('Something went wrong, try later.');
         }
       },
     }),

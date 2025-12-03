@@ -45,15 +45,14 @@ export type Order = {
 export type { Order as SimpleOrder };
 
 export default function TrackLink() {
-  const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
-  const [data, setData] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [transactionType, setTransactionType] = useState<string>('');
-  const router = useRouter();
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
   console.log('🌼 🔥🔥 TrackLink 🔥🔥 orders🌼', orders);
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PAGE_SIZE = 8;
   const { session, user, loadUserData } = useGeneral();
 
   const columns: ColumnDef<Order>[] = [
@@ -206,30 +205,32 @@ export default function TrackLink() {
     },
   ];
 
-  async function handlePageChange(page: number, transactionType: string, status: string) {
+  const handlePageChange = async (
+    page: number,
+    transactionType: string = 'All',
+    status: string = 'All'
+  ) => {
+    setIsLoading(true);
     try {
-      console.log('page no.', page, ' transaction type ', transactionType, 'status', status);
-      setIsLoading(true);
+      const data = await getAllOrdersByUser(page, 8, status, transactionType);
+      console.log('🌼 🔥🔥 handlePageChange 🔥🔥 data🌼', data);
 
-      // setInvoiceHPage(page);
 
-      const data = await getAllOrdersByUser(page);
+      // if (!data.success) throw new Error('Failed to fetch orders');
 
-      if (!data.success) {
-        throw new Error(`Error fetching invoice history request: ${data.statusText}`);
-      }
-
-      setOrders(data?.data?.data);
-      setIsLoading(false);
+      setOrders(data.data.data);
+      setTotal(data.data.meta.total);
+      setCurrentPage(page);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
 
-  useEffect(() => {
-    handlePageChange(1, 'All', 'All');
-  }, []);
+  // useEffect(() => {
+  //   handlePageChange(1, 'All', 'All');
+  // }, []);
 
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);
@@ -243,6 +244,9 @@ export default function TrackLink() {
         lable={'Order History'}
         isLoading={isLoading}
         onPageChange={handlePageChange}
+        total={total}
+        currentPage={currentPage}
+        pageSize={PAGE_SIZE}
       />
     </section>
   );

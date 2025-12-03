@@ -2,7 +2,7 @@
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import Image from 'next/image';
@@ -28,9 +28,8 @@ const defaultValues = {
 
 export const SigninForm = () => {
   const pathname = usePathname();
-  // const role = pathname?.split('/')[2];
-  const date = new Date().toDateString();
-  // console.log('🌼 🔥🔥 SigninFormLawyer 🔥🔥 pathname🌼', role);
+  const searchParams = useSearchParams();
+  const callbackUrl = searchParams.get('callbackUrl') || '/';
 
   const router = useRouter();
 
@@ -47,13 +46,18 @@ export const SigninForm = () => {
     event?.preventDefault();
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 data🌼', data);
 
-    const result = await signIn('pay-afta-backend', { ...data, role: 'user', redirect: false });
+    const result = await signIn('pay-afta-backend', {
+      ...data,
+      role: 'user',
+      callbackUrl,
+      redirect: false,
+    });
     console.log('🌼 🔥🔥 onSubmit 🔥🔥 result🌼', result);
 
     if (result?.ok && !result.error) {
       toast.success('User login successful');
-      router.refresh();
-
+      await new Promise((resolve) => setTimeout(resolve, 200));
+      window.location.href = callbackUrl;
       // switch (role) {
       //   case 'lawyer':
       //     router.push(`${process.env.FRONTEND_URL}/lawyer`);
@@ -73,7 +77,8 @@ export const SigninForm = () => {
       // }
       // router.push('/');
     } else {
-      toast.error(result?.error || 'Something went wrong');
+      toast.error('Something went wrong, try later.');
+      // toast.error(result?.error || 'Something went wrong');
     }
   };
 

@@ -541,7 +541,7 @@ export default function WithdrawFund() {
                 )}
 
               <input type="hidden" {...register('bankCode')} />
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500" style={{ display: 'none' }}>
                 Bank Code: {watch('bankCode') || 'Auto-filled upon bank selection'}
               </div>
 

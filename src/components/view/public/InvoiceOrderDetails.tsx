@@ -197,6 +197,50 @@ const InvoiceOrderDetails: React.FC<InvoiceOrderDetailsProps> = ({ order, userRo
         </div>
       </div>
 
+      {/* Order Agreement Section with Fixed Height and Scrollable Content */}
+      <div className="mb-6">
+        <h2 className="text-lg font-semibold mb-4">Agreement & Confirmation</h2>
+        <div className="border rounded-lg bg-white shadow-sm px-4 py-3 max-h-56 overflow-y-auto">
+          <p className="text-sm mb-4">
+            By confirming this order, both parties agree to the terms outlined herein. The item(s)
+            listed above will be delivered as described, and payment shall be processed through
+            escrow. Disputes are subject to the platform’s dispute resolution policy.
+          </p>
+          <ul className="list-disc list-inside text-sm mb-4 space-y-2">
+            <li>
+              <span className="font-semibold">Delivery:</span> The seller agrees to deliver the
+              listed item(s) within the agreed timeframe.
+            </li>
+            <li>
+              <span className="font-semibold">Payment:</span> The buyer agrees funds will be held
+              securely in escrow until delivery is confirmed.
+            </li>
+            <li>
+              <span className="font-semibold">Dispute:</span> In case of disagreement, both parties
+              will cooperate with the platform and provide any necessary evidence. Lorem ipsum dolor
+              sit amet consectetur adipisicing elit. Minima, dolor sed. Optio veniam eligendi autem
+              minus consequuntur! Illo voluptate nemo odit et corporis repellat unde est temporibus
+              tempore repudiandae earum maiores possimus rerum blanditiis consequatur, dolorum
+              voluptatum sunt ad architecto? Perferendis porro veniam velit incidunt, consectetur
+              praesentium debitis rerum, deserunt culpa nulla nisi voluptatum molestias?
+            </li>
+            <li>
+              <span className="font-semibold">Refunds:</span> Refunds will be handled as per the
+              platform’s policies and dependent on both parties’ actions. Lorem ipsum dolor sit amet
+              consectetur adipisicing elit. Minima, dolor sed. Optio veniam eligendi autem minus
+              consequuntur! Illo voluptate nemo odit et corporis repellat unde est temporibus
+              tempore repudiandae earum maiores possimus rerum blanditiis consequatur, dolorum
+              voluptatum sunt ad architecto? Perferendis porro veniam velit incidunt, consectetur
+              praesentium debitis rerum, deserunt culpa nulla nisi voluptatum molestias?
+            </li>
+          </ul>
+          <p className="text-xs text-gray-500">
+            Please carefully review the order details before confirming. Your agreement is legally
+            binding under the terms of this platform.
+          </p>
+        </div>
+      </div>
+
       {/* Edit Button */}
       {/* {canEditOrder && !['CANCELED', 'REJECTED'].includes(order.status) && (
         <Dialog open={isEditModalOpen} onOpenChange={setIsEditModalOpen}>

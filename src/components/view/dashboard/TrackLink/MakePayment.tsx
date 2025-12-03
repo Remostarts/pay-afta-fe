@@ -76,6 +76,8 @@ export default function MakePayment({
     );
   }
 
+  console.log(order);
+
   //  Open payment summary modal
   const handleAcceptOrder = () => {
     setIsOpen(true);
@@ -210,6 +212,7 @@ export default function MakePayment({
                   onClose={handleCloseDialog}
                   progressLoading={localLoading}
                   amount={order ? Number(order.amount) : 0}
+                  order={order ?? null}
                 />
               )}
 
