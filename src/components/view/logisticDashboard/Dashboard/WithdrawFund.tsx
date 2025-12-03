@@ -415,7 +415,7 @@ export default function WithdrawFund() {
                   Account Name:{' '}
                   {getSafeString(selectedAccount?.accountName, defaultAccount.accountName)}
                 </p>
-                <p>
+                <p style={{ display: 'none' }}>
                   Bank Code: {getSafeString(selectedAccount?.bankCode, defaultAccount.bankCode)}
                 </p>
               </div>

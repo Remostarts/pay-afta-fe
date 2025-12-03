@@ -45,14 +45,11 @@ export type Order = {
 export type { Order as SimpleOrder };
 
 export default function TrackLink() {
-  const [isSelectedTransaction, setIsSelectedTransaction] = useState<boolean>(false);
-  const [data, setData] = useState<Order[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [transactionType, setTransactionType] = useState<string>('');
-  const router = useRouter();
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
   console.log('🌼 🔥🔥 TrackLink 🔥🔥 orders🌼', orders);
+
   const [currentPage, setCurrentPage] = useState(1);
   const [total, setTotal] = useState(0);
   const PAGE_SIZE = 8;
@@ -216,8 +213,10 @@ export default function TrackLink() {
     setIsLoading(true);
     try {
       const data = await getAllOrdersByUser(page, 8, status, transactionType);
+      console.log('🌼 🔥🔥 handlePageChange 🔥🔥 data🌼', data);
 
-      if (!data.success) throw new Error('Failed to fetch orders');
+
+      // if (!data.success) throw new Error('Failed to fetch orders');
 
       setOrders(data.data.data);
       setTotal(data.data.meta.total);
@@ -229,9 +228,9 @@ export default function TrackLink() {
     }
   };
 
-  useEffect(() => {
-    handlePageChange(1, 'All', 'All');
-  }, []);
+  // useEffect(() => {
+  //   handlePageChange(1, 'All', 'All');
+  // }, []);
 
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);

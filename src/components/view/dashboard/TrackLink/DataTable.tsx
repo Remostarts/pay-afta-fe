@@ -46,8 +46,6 @@ interface DataTableProps<TData extends { payment: string; status: string }, TVal
   pageSize: number;
 }
 
- 
-
 export function DataTable<
   TData extends {
     name: string;
@@ -76,8 +74,6 @@ export function DataTable<
   const endIndex = startIndex + pageSize;
   const totalPages = Math.ceil(total / pageSize);
   const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
-  console.log('🌼 🔥🔥 DataTable 🔥🔥 pageNumberButtons🌼', pageNumberButtons);
-
 
   const visibleData = data.slice(startIndex, endIndex);
   // setFilteredData(visibleData);
@@ -253,7 +249,6 @@ export function DataTable<
           <ChevronLeftIcon />
         </Button>
         {pageNumberButtons.map((number) => {
-          console.log('🌼 🔥🔥 DataTable 🔥🔥 number🌼', number);
           return (
             <Button
               key={number}

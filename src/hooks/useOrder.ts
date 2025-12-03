@@ -43,18 +43,50 @@ export const useOrder = (orderId: string): UseOrderReturn => {
         let uid = '';
         let currentViewer: any = null;
 
+        // if (!currentUser) {
+        //   // Guest takes priority
+        //   if (data.payBy === 'GUEST_BUYER') role = 'GUEST_BUYER';
+        //   if (data.sellerType === 'GUEST') role = 'GUEST_SELLER';
+        //   uid = data.guest?.id || '';
+        //   currentViewer = data.guest || { role: 'Guest' };
+        // } else {
+        //   if (currentUser.id === data.buyerId || currentUser.id === data.sellerId) {
+        //     uid = currentUser.id;
+        //     currentViewer = currentUser;
+        //   }
+
+        //   if (data.payBy === 'REAL_BUYER' && currentUser.id === data.buyerId) role = 'REAL_BUYER';
+        //   if (data.sellerType === 'REAL' && currentUser.id === data.sellerId) role = 'REAL_SELLER';
+        // }
+
         if (!currentUser) {
-          // Guest takes priority
+          // No logged-in user → use guest info
           if (data.payBy === 'GUEST_BUYER') role = 'GUEST_BUYER';
           if (data.sellerType === 'GUEST') role = 'GUEST_SELLER';
+
           uid = data.guest?.id || '';
           currentViewer = data.guest || { role: 'Guest' };
         } else {
-          uid = currentUser.id;
-          currentViewer = currentUser;
+          // Logged-in user exists → check if they match buyer/seller
+          const isBuyer = currentUser.id === data.buyerId;
+          const isSeller = currentUser.id === data.sellerId;
 
-          if (data.payBy === 'REAL_BUYER' && currentUser.id === data.buyerId) role = 'REAL_BUYER';
-          if (data.sellerType === 'REAL' && currentUser.id === data.sellerId) role = 'REAL_SELLER';
+          if (isBuyer) {
+            role = 'REAL_BUYER';
+            uid = currentUser.id;
+            currentViewer = currentUser;
+          } else if (isSeller) {
+            role = 'REAL_SELLER';
+            uid = currentUser.id;
+            currentViewer = currentUser;
+          } else {
+            // Logged-in user BUT not part of this order → treat as guest
+            if (data.payBy === 'GUEST_BUYER') role = 'GUEST_BUYER';
+            if (data.sellerType === 'GUEST') role = 'GUEST_SELLER';
+
+            uid = data.guest?.id || '';
+            currentViewer = data.guest || { role: 'Guest' };
+          }
         }
 
         setUserRole(role);

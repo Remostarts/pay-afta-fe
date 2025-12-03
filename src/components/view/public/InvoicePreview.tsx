@@ -2,9 +2,9 @@
 import React from 'react';
 import { BuyerActions } from './BuyerActions';
 import { SellerActions } from './SellerActions';
-import { useOrder } from './useOrderHook';
 import InvoiceOrderDetails from './InvoiceOrderDetails';
 import { useRouter } from 'next/navigation';
+import { useOrder } from '@/hooks/useOrder';
 
 interface InvoicePreviewProps {
   orderId: string;
@@ -57,12 +57,6 @@ export const InvoicePreview: React.FC<InvoicePreviewProps> = ({ orderId }) => {
           </div>
         </div>
         <InvoiceOrderDetails order={order} userRole={userRole} />
-        {/* <p>
-          Buyer: {order.buyer?.firstName || viewer?.firstName || 'Guest'} | Seller:{' '}
-          {order.seller?.firstName || order.guest?.firstName || 'Guest'}
-        </p>
-        <p>Status: {order.status}</p>
-        <p>Current Step: {order.currentStep}</p> */}
 
         {/* Buyer Actions */}
         <BuyerActions orderId={orderId} />

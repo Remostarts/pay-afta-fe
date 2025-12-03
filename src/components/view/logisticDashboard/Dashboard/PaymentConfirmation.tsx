@@ -59,8 +59,8 @@ const PaymentConfirmation = ({
             <p>{accountNumber}</p>
           </div>
           <div className="mb-4 flex justify-between">
-            <p>Bank Code</p>
-            <p>{bankCode}</p>
+            {/* <p>Bank Code</p>
+            <p>{bankCode}</p> */}
           </div>
           <ReButton className="w-full rounded-full" onClick={() => setIsShowTranscationPin(true)}>
             Authorize Payment
