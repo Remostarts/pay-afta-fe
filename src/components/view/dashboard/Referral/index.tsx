@@ -24,6 +24,7 @@ export default function ReferralPage() {
   const { user } = useGeneral();
 
   const [copied, setCopied] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(false);
 
   const referralLink = `https://www.getpayafta.com/sign-up?ref=${user?.referralCode}`;
 
@@ -35,13 +36,20 @@ export default function ReferralPage() {
   };
 
   const sendInvite = async (data: InviteSchema) => {
-    const result = await inviteCounterParty(data.email);
-    if (result.success) {
-      toast.success('Invite sent!', {
-        description: `The invitation has been sent to ${data.email}.`,
-      });
-    } else {
-      toast.error(result?.message || 'Invite failed, try again!');
+    try {
+      setInviteLoading(true);
+      const result = await inviteCounterParty(data.email);
+      if (result.success) {
+        toast.success('Invite sent!', {
+          description: `The invitation has been sent to ${data.email}.`,
+        });
+        setInviteLoading(false);
+      } else {
+        toast.error(result?.message || 'Invite failed, try again!');
+      }
+    } catch (error) {
+      toast.error('Invite failed, try again!');
+      setInviteLoading(false);
     }
   };
 
@@ -95,10 +103,39 @@ export default function ReferralPage() {
 
                 <ReButton
                   type="submit"
-                  className="w-full py-3 text-white bg-teal-600 hover:bg-teal-700 rounded-lg text-base flex items-center justify-center"
+                  className="w-full py-3 text-white bg-[#03045B] rounded-lg text-base flex items-center justify-center"
+                  disabled={inviteLoading}
                 >
-                  <Send className="w-4 h-4 mr-2" />
-                  Send Invite
+                  {inviteLoading ? (
+                    <>
+                      <svg
+                        className="animate-spin h-4 w-4 mr-2 text-white"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                      >
+                        <circle
+                          className="opacity-25"
+                          cx="12"
+                          cy="12"
+                          r="10"
+                          stroke="currentColor"
+                          strokeWidth="4"
+                        ></circle>
+                        <path
+                          className="opacity-75"
+                          fill="currentColor"
+                          d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
+                        ></path>
+                      </svg>
+                      Sending...
+                    </>
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Send Invite
+                    </>
+                  )}
                 </ReButton>
               </div>
             </ReForm>

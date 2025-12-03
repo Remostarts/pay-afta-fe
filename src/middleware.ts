@@ -30,13 +30,18 @@ export async function middleware(request: NextRequest) {
     if (hybridRoutes.includes(pathname)) {
       return NextResponse.next();
     }
-    return NextResponse.redirect(`${process.env.FRONTEND_URL}/sign-in`);
+    const redirectUrl = new URL(`${process.env.FRONTEND_URL}/sign-in`, request.url);
+    redirectUrl.searchParams.set('callbackUrl', pathname);
+
+    return NextResponse.redirect(redirectUrl);
   }
 
   const role = token?.role as string;
 
   if (!role) {
-    return NextResponse.redirect(`${process.env.FRONTEND_URL}/sign-in`);
+    const redirectUrl = new URL(`${process.env.FRONTEND_URL}/sign-in`, request.url);
+    redirectUrl.searchParams.set('callbackUrl', pathname);
+    return NextResponse.redirect(redirectUrl);
   }
 
   // Redirect authenticated users away from `/sign-in` to their dashboard

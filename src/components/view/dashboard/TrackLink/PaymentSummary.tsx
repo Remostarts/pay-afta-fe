@@ -5,6 +5,7 @@ import { X, Info } from 'lucide-react';
 
 import { ReButton } from '@/components/re-ui/ReButton';
 import { useGeneral } from '@/context/generalProvider';
+import { OrderDetails } from '@/types/order';
 
 interface PaymentSummaryProps {
   onWalletPayment?: () => void;
@@ -12,6 +13,7 @@ interface PaymentSummaryProps {
   onClose?: () => void;
   progressLoading: boolean;
   amount: number;
+  order: OrderDetails | null;
 }
 
 export default function PaymentSummary({
@@ -20,6 +22,7 @@ export default function PaymentSummary({
   onClose,
   progressLoading,
   amount,
+  order,
 }: PaymentSummaryProps) {
   const { user } = useGeneral();
   const [selectedPayment, setSelectedPayment] = useState('wallet');
@@ -79,16 +82,18 @@ export default function PaymentSummary({
         <div className="flex justify-between items-center">
           <div className="flex items-center gap-1">
             {/* <span className="text-gray-600">Escrow fee @2.5%</span> */}
-            <span className="text-gray-600">Escrow fee @0%</span>
+            <span className="text-gray-600">Escrow fee</span>
             <Info size={14} className="text-gray-400" />
           </div>
-          <span className="text-gray-900 font-medium">₦0.00</span>
+          <span className="text-gray-900 font-medium">₦{order?.escrowFee}</span>
         </div>
 
         <div className="border-t pt-4">
           <div className="flex justify-between items-center">
             <span className="text-gray-900 font-semibold text-lg">Total</span>
-            <span className="text-gray-900 font-bold text-xl">₦{amount}.00</span>
+            <span className="text-gray-900 font-bold text-xl">
+              ₦{Number(amount) + Number(order?.escrowFee || 0)}.00
+            </span>
           </div>
         </div>
       </div>

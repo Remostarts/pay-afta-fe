@@ -370,82 +370,87 @@ export default function WithdrawFund() {
       )}
 
       {/* Step 2A: Settlement Form (Remains the same) */}
-      {transferType === 'settlement' && !isShowPaymentConfirmation && (
-        <Form {...transferForm}>
-          <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
-            <div className="mb-4">
-              <ReHeading heading="Amount to withdraw" size="base" />
-              {/* <ReInput name="amountWithdraw" type="number" /> */}
-              <input
-                type="number"
-                placeholder="₦"
-                inputMode="numeric"
-                {...registerTransfer('amountWithdraw', { valueAsNumber: true })}
-                className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
-              />
-              {transferErrors.amountWithdraw && (
-                <p className="text-base font-normal text-primary-800">
-                  {transferErrors.amountWithdraw.message}
-                </p>
-              )}
-              <p className="mt-2 text-sm text-gray-600">
-                Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
-              </p>
-            </div>
-
-            <div>
-              <ReInput
-                name="narration"
-                label="Narration"
-                placeholder="Enter narration"
-                type="text"
-              />
-            </div>
-
-            <div className="mb-4">
-              <div className="mb-1 flex items-center justify-between">
-                <span className="font-semibold">Settlement Account</span>
-                <button
-                  type="button"
-                  className="text-sm font-medium text-blue-600"
-                  onClick={() => setIsShowSwitchAccount(true)}
-                >
-                  Switch Account
-                </button>
-              </div>
-              <div className="space-y-1 rounded-md border border-dashed p-4 bg-[#F8F8F8]">
-                <p>
-                  Bank Name: {getSafeString(selectedAccount?.bankName, defaultAccount.bankName)}
-                </p>
-                <p>
-                  Account Number:{' '}
-                  {getSafeString(selectedAccount?.accountNumber, defaultAccount.accountNumber)}
-                </p>
-                <p>
-                  Account Name:{' '}
-                  {getSafeString(selectedAccount?.accountName, defaultAccount.accountName)}
-                </p>
-                <p>
-                  Bank Code: {getSafeString(selectedAccount?.bankCode, defaultAccount.bankCode)}
+      {transferType === 'settlement' &&
+        !isShowPaymentConfirmation &&
+        (!selectedAccount?.bankName && !defaultAccount.bankName ? (
+          <div className="p-4 border rounded-md bg-red-50 text-red-600 mb-4">
+            <p>
+              No settlement account found. Please add a settlement account in your profile to
+              proceed.
+            </p>
+          </div>
+        ) : (
+          <Form {...transferForm}>
+            <form onSubmit={handleSubmitForTransfer(onSubmitForTransfer)}>
+              <div className="mb-4">
+                <ReHeading heading="Amount to withdraw" size="base" />
+                <input
+                  type="number"
+                  placeholder="₦"
+                  inputMode="numeric"
+                  {...registerTransfer('amountWithdraw', { valueAsNumber: true })}
+                  className="w-full rounded-md border border-gray-300 p-3 focus:outline-none focus:ring-0 focus:border-gray-300 [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none"
+                />
+                {transferErrors.amountWithdraw && (
+                  <p className="text-base font-normal text-primary-800">
+                    {transferErrors.amountWithdraw.message}
+                  </p>
+                )}
+                <p className="mt-2 text-sm text-gray-600">
+                  Available Balance: ₦{user?.Wallet[0]?.balance || '0.00'}
                 </p>
               </div>
-            </div>
 
-            <ReButton
-              className={`mt-3 w-full rounded-full p-5 ${
-                !isSettlementFormValid()
-                  ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                  : 'bg-blue-600 text-white'
-              }`}
-              type="submit"
-              isSubmitting={isSubmittingForTransfer}
-              disabled={isSubmittingForTransfer || !isSettlementFormValid()}
-            >
-              Proceed
-            </ReButton>
-          </form>
-        </Form>
-      )}
+              <div>
+                <ReInput
+                  name="narration"
+                  label="Narration"
+                  placeholder="Enter narration"
+                  type="text"
+                />
+              </div>
+
+              <div className="mb-4">
+                <div className="mb-1 flex items-center justify-between">
+                  <span className="font-semibold">Settlement Account</span>
+                  <button
+                    type="button"
+                    className="text-sm font-medium text-blue-600"
+                    onClick={() => setIsShowSwitchAccount(true)}
+                  >
+                    Switch Account
+                  </button>
+                </div>
+                <div className="space-y-1 rounded-md border border-dashed p-4 bg-[#F8F8F8]">
+                  <p>
+                    Bank Name: {getSafeString(selectedAccount?.bankName, defaultAccount.bankName)}
+                  </p>
+                  <p>
+                    Account Number:{' '}
+                    {getSafeString(selectedAccount?.accountNumber, defaultAccount.accountNumber)}
+                  </p>
+                  <p>
+                    Account Name:{' '}
+                    {getSafeString(selectedAccount?.accountName, defaultAccount.accountName)}
+                  </p>
+                </div>
+              </div>
+
+              <ReButton
+                className={`mt-3 w-full rounded-full p-5 ${
+                  !isSettlementFormValid()
+                    ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
+                    : 'bg-blue-600 text-white'
+                }`}
+                type="submit"
+                isSubmitting={isSubmittingForTransfer}
+                disabled={isSubmittingForTransfer || !isSettlementFormValid()}
+              >
+                Proceed
+              </ReButton>
+            </form>
+          </Form>
+        ))}
 
       {/* Step 2B: New Bank Form (Updated for Select) */}
       {transferType === 'bank' && !isShowPaymentConfirmation && (
@@ -551,7 +556,7 @@ export default function WithdrawFund() {
                 )}
 
               <input type="hidden" {...register('bankCode')} />
-              <div className="text-sm text-gray-500">
+              <div className="text-sm text-gray-500" style={{ display: 'none' }}>
                 Bank Code: {watch('bankCode') || 'Auto-filled upon bank selection'}
               </div>
 

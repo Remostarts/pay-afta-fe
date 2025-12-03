@@ -116,13 +116,19 @@ export async function getSingleOrder(id: string) {
   }
 }
 
-export async function getAllOrdersByUser(page: number) {
+export async function getAllOrdersByUser(
+  page: number,
+  limit = 8,
+  status = '',
+  transactionType = ''
+) {
   const session = (await getServerSession(authOptions)) as any;
   const token = session?.accessToken;
 
   try {
     const response = await fetch(
-      `${process.env.BACKEND_URL}/order/get-by-user?page=${page}&limit=8`,
+      // `${process.env.BACKEND_URL}/order/get-by-user?page=${page || 1}&limit=8`,
+      `${process.env.NEXT_PUBLIC_BACKEND_URL}/order/get-by-user?page=${page}&limit=${limit}&transactionType=${transactionType}`,
       {
         method: 'GET',
         headers: {

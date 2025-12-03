@@ -2,9 +2,9 @@
 
 import React, { useState } from 'react';
 import { ReButton } from '@/components/re-ui/ReButton';
-import { useOrder } from './useOrderHook';
 import RejectOrderModal from '@/components/view/dashboard/TrackLink/RejectOrderModal';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useOrder } from '@/hooks/useOrder';
 
 interface SellerActionsProps {
   orderId: string;

@@ -12,8 +12,8 @@ import {
   createOneTimeUseWallet,
   createGuestOneTimeUseWallet,
 } from '@/lib/actions/order/order.actions';
-import { useOrder } from './useOrderHook';
 import { toast } from 'sonner';
+import { useOrder } from '@/hooks/useOrder';
 
 interface ContactDetails {
   firstName: string;
@@ -73,30 +73,59 @@ export default function FinalizeOrderPay() {
       minimumFractionDigits: 0,
     }).format(amt || 0);
 
-  // Form validation
-  // const validateForm = () => {
-  //   const newErrors: Record<string, string> = {};
-  //   if (!contactDetails.firstName.trim()) newErrors.firstName = 'First name is required';
-  //   if (!contactDetails.lastName.trim()) newErrors.lastName = 'Last name is required';
-  //   if (!contactDetails.email.trim()) newErrors.email = 'Email is required';
-  //   else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactDetails.email))
-  //     newErrors.email = 'Invalid email';
-  //   if (!contactDetails.phoneNumber.trim()) newErrors.phoneNumber = 'Phone number is required';
-  //   setErrors(newErrors);
-  //   return Object.keys(newErrors).length === 0;
-  // };
-
   const handleContactChange = (field: keyof ContactDetails, value: string) => {
     setContactDetails((prev) => ({ ...prev, [field]: value }));
     if (errors[field]) setErrors((prev) => ({ ...prev, [field]: '' }));
   };
 
-  const handleMakePayment = async () => {
-    // if (!validateForm() || !agree) {
-    //   toast.error('Please fill in all required fields and accept the agreement');
-    //   return;
-    // }
+  // Calculate Payable Amount for Viewer
+  const payableAmount = useMemo(() => {
+    if (!order) return 0;
 
+    const base = Number(order.amount) || 0;
+    const escrow = Number(order.escrowFee) || 0;
+
+    const payer = order.transactionFee; // "Buyer" | "Seller" | "Both"
+
+    const isBuyer = userRole === 'REAL_BUYER' || userRole === 'GUEST_BUYER';
+
+    let extraFee = 0;
+
+    if (payer === 'Buyer') {
+      if (isBuyer) extraFee = escrow;
+    } else if (payer === 'Seller') {
+      // buyer pays nothing extra
+      extraFee = 0;
+    } else if (payer === 'Both') {
+      if (isBuyer) extraFee = escrow / 2;
+    }
+
+    return base + extraFee;
+  }, [order, userRole]);
+
+  const validateForm = () => {
+    const newErrors: Record<string, string> = {};
+
+    if (!contactDetails.firstName.trim()) newErrors.firstName = 'First name is required';
+
+    if (!contactDetails.lastName.trim()) newErrors.lastName = 'Last name is required';
+
+    if (!contactDetails.email.trim()) newErrors.email = 'Email is required';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(contactDetails.email))
+      newErrors.email = 'Invalid email format';
+
+    if (!contactDetails.phone.trim()) newErrors.phone = 'Phone number is required';
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  const handleMakePayment = async () => {
+    const valid = validateForm();
+    if (!valid || !agree) {
+      toast.error('Please fill all required fields and accept the agreement.');
+      return;
+    }
     if (!order?.amount || !urlOrderId) {
       toast.error('Order information is missing');
       return;
@@ -108,13 +137,13 @@ export default function FinalizeOrderPay() {
       let walletResponse;
       if (isAuthenticatedUser) {
         walletResponse = await createOneTimeUseWallet({
-          amount: order.amount,
+          amount: payableAmount,
           orderId: urlOrderId,
           userId,
         });
       } else {
         walletResponse = await createGuestOneTimeUseWallet({
-          amount: order.amount,
+          amount: payableAmount,
           orderId: urlOrderId,
           firstName: contactDetails.firstName,
           lastName: contactDetails.lastName,
@@ -166,20 +195,6 @@ export default function FinalizeOrderPay() {
 
   const handleModalClose = () => setShowBankTransferModal(false);
 
-  // const isFormValid = useMemo(
-  //   () =>
-  //     agree &&
-  //     contactDetails.firstName.trim() &&
-  //     contactDetails.lastName.trim() &&
-  //     contactDetails.email.trim() &&
-  //     contactDetails.phoneNumber.trim() &&
-  //     !errors.firstName &&
-  //     !errors.lastName &&
-  //     !errors.email &&
-  //     !errors.phoneNumber,
-  //   [agree, contactDetails, errors]
-  // );
-
   if (loading || !order) {
     return (
       <div className="flex items-center justify-center p-8">
@@ -207,7 +222,7 @@ export default function FinalizeOrderPay() {
             <span className="text-blue-600 underline font-medium cursor-pointer">{order.id}</span>
           </p>
           <div className="flex items-center gap-4 mt-3">
-            <p className="text-2xl font-bold">{formatCurrency(order.amount)}</p>
+            <p className="text-2xl font-bold">{formatCurrency(payableAmount)}</p>
             <div className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
               {isAuthenticatedUser ? 'Registered User' : 'Guest User'}
             </div>
@@ -320,7 +335,7 @@ export default function FinalizeOrderPay() {
         </div>
 
         {/* CTA Button */}
-        <button
+        {/* <button
           onClick={handleMakePayment}
           disabled={!agree || isLoadingWallet}
           className={`w-full py-3 rounded-full text-white text-sm sm:text-base font-semibold transition ${
@@ -336,6 +351,27 @@ export default function FinalizeOrderPay() {
             </span>
           ) : (
             `Make Payment (${formatCurrency(order.amount)})`
+          )}
+        </button> */}
+        <button
+          onClick={handleMakePayment}
+          disabled={!agree || isLoadingWallet}
+          className={`
+    w-full py-3 rounded-full text-white text-sm sm:text-base font-semibold transition
+    ${
+      !agree || isLoadingWallet
+        ? 'bg-gray-400 cursor-not-allowed'
+        : 'bg-[#03045B] hover:bg-blue-900 cursor-pointer'
+    }
+  `}
+        >
+          {isLoadingWallet ? (
+            <span className="flex items-center justify-center gap-2">
+              <Loader2 className="h-4 w-4 animate-spin" />
+              <span>Preparing payment...</span>
+            </span>
+          ) : (
+            `Make Payment (${formatCurrency(payableAmount)})`
           )}
         </button>
       </div>

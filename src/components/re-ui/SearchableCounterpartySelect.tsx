@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback, useMemo } from 'react';
 import { SearchableSelect } from './SearchableSelect';
 import { searchCounterParty } from '@/lib/actions/root/user.action';
 
@@ -21,6 +21,12 @@ type SelectOption = {
   avatar?: string;
 };
 
+// 🌐 Global cache – persists across component instances
+const searchCache = new Map<string, SelectOption[]>();
+// 🕒 Track last fetch time to avoid excessive revalidation
+const lastFetchTime = new Map<string, number>();
+const CACHE_TTL = 30_000; // 30 seconds
+
 export const SearchableCounterpartySelect = ({
   onChange,
   placeholder = 'Search Counterparty',
@@ -37,25 +43,37 @@ export const SearchableCounterpartySelect = ({
   const [loading, setLoading] = useState(false);
   const [selectedEmail, setSelectedEmail] = useState<string>('');
 
-  console.log(inviteCounterpartyEmail);
-
-  // Update the value when inviteCounterpartyEmail changes
+  // Sync invite email
   useEffect(() => {
     if (inviteCounterpartyEmail) {
       setSelectedEmail(inviteCounterpartyEmail);
     }
   }, [inviteCounterpartyEmail]);
 
-  useEffect(() => {
-    if (!searchTerm) {
-      setOptions([]);
-      return;
-    }
+  const performSearch = useCallback(
+    async (term: string) => {
+      const trimmedTerm = term.trim().toLowerCase();
+      if (!trimmedTerm) {
+        setOptions([]);
+        return;
+      }
 
-    const handler = setTimeout(async () => {
+      // 🔥 STEP 1: Show cached result IMMEDIATELY (stale-while-revalidate)
+      if (searchCache.has(trimmedTerm)) {
+        setOptions(searchCache.get(trimmedTerm)!);
+      }
+
+      // 🔥 STEP 2: Only fetch if not recently fetched (avoid spamming)
+      const now = Date.now();
+      const lastFetched = lastFetchTime.get(trimmedTerm) || 0;
+      if (now - lastFetched < CACHE_TTL) {
+        // Skip API call if recently fetched
+        return;
+      }
+
       setLoading(true);
       try {
-        const res = await searchCounterParty(searchTerm);
+        const res = await searchCounterParty(trimmedTerm);
 
         const transformedOptions: SelectOption[] = (res.data || []).map((u: CounterpartyOption) => {
           const displayName =
@@ -73,20 +91,41 @@ export const SearchableCounterpartySelect = ({
           };
         });
 
-        setOptions(transformedOptions);
+        // 🔥 STEP 3: Update cache AND UI
+        searchCache.set(trimmedTerm, transformedOptions);
+        lastFetchTime.set(trimmedTerm, now);
+
+        // Only update if user hasn't changed term
+        if (searchTerm.trim().toLowerCase() === trimmedTerm) {
+          setOptions(transformedOptions);
+        }
       } catch (err) {
-        console.error(err);
-        setOptions([]);
+        console.error('Search error:', err);
+        // Don't clear options on error — keep stale result
       } finally {
         setLoading(false);
       }
-    }, 500);
+    },
+    [searchTerm]
+  ); // 🔥 Important: include searchTerm to avoid stale closure
+
+  // Trigger search with very short debounce (150ms feels instant)
+  useEffect(() => {
+    if (!searchTerm.trim()) {
+      setOptions([]);
+      return;
+    }
+
+    const handler = setTimeout(() => {
+      performSearch(searchTerm);
+    }, 150); // ⚡ Faster: 150ms
 
     return () => clearTimeout(handler);
-  }, [searchTerm]);
+  }, [searchTerm, performSearch]);
 
-  // Map selected email to corresponding name for the dropdown
-  const selectedOption = options.find((o) => o.email === selectedEmail);
+  const selectedOption = useMemo(() => {
+    return options.find((o) => o.email === selectedEmail);
+  }, [options, selectedEmail]);
 
   return (
     <SearchableSelect
@@ -95,11 +134,10 @@ export const SearchableCounterpartySelect = ({
       options={options}
       value={selectedOption?.name || inviteCounterpartyEmail || ''}
       onChange={(val: string) => {
-        // val is the name selected, find corresponding email
         const selected = options.find((o) => o.name === val);
         if (selected?.email) {
           setSelectedEmail(selected.email);
-          onChange(selected.email); // send email to parent
+          onChange(selected.email);
         }
       }}
       inviteCounterParty={(email: string) => {

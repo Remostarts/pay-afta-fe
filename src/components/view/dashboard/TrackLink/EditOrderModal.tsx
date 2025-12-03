@@ -364,8 +364,8 @@ export default function EditOrderModal({ order, onClose, onSuccess }: EditOrderM
                 />
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                   <ReDatePicker
-                    name={`milestones.0.deliveryDate`}
-                    placeholder="Select delivery date"
+                    name={`milestones.0.invoiceDate`}
+                    placeholder="Select invoice date"
                     disablePast
                   />
                   <ReInput
@@ -397,8 +397,8 @@ export default function EditOrderModal({ order, onClose, onSuccess }: EditOrderM
                   <ReInput name={`milestones.1.title`} placeholder="Describe deliverable" />
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-4">
                     <ReDatePicker
-                      name={`milestones.1.deliveryDate`}
-                      placeholder="Select delivery date"
+                      name={`milestones.1.invoiceDate`}
+                      placeholder="Select invoice date"
                       disablePast
                     />
                     <ReInput

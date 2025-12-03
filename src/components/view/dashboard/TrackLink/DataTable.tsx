@@ -41,10 +41,10 @@ interface DataTableProps<TData extends { payment: string; status: string }, TVal
   lable: string;
   isLoading: boolean;
   onPageChange: (pageNumber: number, transactionType: string, status: string) => void;
+  total: number;
+  currentPage: number;
+  pageSize: number;
 }
-
-const PAGE_SIZE = 8;
-const DEFAULT_PAGE = 1;
 
 export function DataTable<
   TData extends {
@@ -53,7 +53,16 @@ export function DataTable<
     status: string;
   },
   TValue,
->({ columns, data, lable, isLoading, onPageChange }: DataTableProps<TData, TValue>) {
+>({
+  columns,
+  data,
+  lable,
+  isLoading,
+  onPageChange,
+  total,
+  currentPage,
+  pageSize,
+}: DataTableProps<TData, TValue>) {
   const [selectedTransactionType, setSelectedTransactionType] = useState<string | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string | null>(null);
   const route = useRouter();
@@ -61,14 +70,13 @@ export function DataTable<
   const [visibleTableData, setVisibleTableData] = useState<TData[]>(data);
   // console.log(visibleTableData);
 
-  const [currentPage, setCurrentPage] = useState<number>(DEFAULT_PAGE);
-
-  const startIndex = (currentPage - 1) * PAGE_SIZE;
-  const endIndex = startIndex + PAGE_SIZE;
+  const startIndex = (currentPage - 1) * pageSize;
+  const endIndex = startIndex + pageSize;
+  const totalPages = Math.ceil(total / pageSize);
+  const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   const visibleData = data.slice(startIndex, endIndex);
   // setFilteredData(visibleData);
-  const totalPages = Math.ceil(data.length / PAGE_SIZE);
 
   const table = useReactTable({
     data: visibleTableData,
@@ -112,8 +120,6 @@ export function DataTable<
   useEffect(() => {
     handlePageChange(currentPage, selectedTransactionType || 'All', selectedStatus || 'All');
   }, [currentPage, selectedTransactionType, selectedStatus]);
-
-  const pageNumberButtons = Array.from({ length: totalPages }, (_, index) => index + 1);
 
   function handlePageChange(pageNumber: number, transactionType: string, status: string) {
     // console.log(pageNumber);
@@ -233,38 +239,36 @@ export function DataTable<
       </div>
 
       {/* pagination  */}
-      <div className="flex items-center justify-center gap-8 space-x-2 py-4">
-        <div className="flex items-center space-x-2">
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentPage(currentPage - 1)}
-            disabled={currentPage === 1}
-          >
-            <ChevronLeftIcon className="size-4" />
-          </Button>
-          {pageNumberButtons?.map((pageNumber) => {
-            return (
-              <Button
-                key={pageNumber}
-                variant="outline"
-                size="sm"
-                className={currentPage === pageNumber ? 'bg-[#E6E7FE] text-black' : ''}
-                onClick={() => setCurrentPage(pageNumber)}
-              >
-                {pageNumber}
-              </Button>
-            );
-          })}
-          <Button
-            variant="outline"
-            size="icon"
-            onClick={() => setCurrentPage(currentPage + 1)}
-            disabled={currentPage === totalPages}
-          >
-            <ChevronRightIcon className="size-4" />
-          </Button>
-        </div>
+      <div className="flex items-center justify-center gap-2 py-4">
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage - 1, '', ' ')}
+          disabled={currentPage === 1}
+        >
+          <ChevronLeftIcon />
+        </Button>
+        {pageNumberButtons.map((number) => {
+          return (
+            <Button
+              key={number}
+              variant="outline"
+              size="sm"
+              className={currentPage === number ? 'bg-[#E6E7FE] text-black' : ''}
+              onClick={() => onPageChange(number, '', ' ')}
+            >
+              {number}
+            </Button>
+          );
+        })}
+        <Button
+          variant="outline"
+          size="icon"
+          onClick={() => onPageChange(currentPage + 1, '', ' ')}
+          disabled={currentPage === totalPages}
+        >
+          <ChevronRightIcon />
+        </Button>
       </div>
     </div>
   );
