@@ -53,7 +53,9 @@ export default function TrackLink() {
   const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
   console.log('🌼 🔥🔥 TrackLink 🔥🔥 orders🌼', orders);
-
+  const [currentPage, setCurrentPage] = useState(1);
+  const [total, setTotal] = useState(0);
+  const PAGE_SIZE = 8;
   const { session, user, loadUserData } = useGeneral();
 
   const columns: ColumnDef<Order>[] = [
@@ -206,26 +208,26 @@ export default function TrackLink() {
     },
   ];
 
-  async function handlePageChange(page: number, transactionType: string, status: string) {
+  const handlePageChange = async (
+    page: number,
+    transactionType: string = 'All',
+    status: string = 'All'
+  ) => {
+    setIsLoading(true);
     try {
-      console.log('page no.', page, ' transaction type ', transactionType, 'status', status);
-      setIsLoading(true);
+      const data = await getAllOrdersByUser(page, 8, status, transactionType);
 
-      // setInvoiceHPage(page);
+      if (!data.success) throw new Error('Failed to fetch orders');
 
-      const data = await getAllOrdersByUser(page);
-
-      if (!data.success) {
-        throw new Error(`Error fetching invoice history request: ${data.statusText}`);
-      }
-
-      setOrders(data?.data?.data);
-      setIsLoading(false);
+      setOrders(data.data.data);
+      setTotal(data.data.meta.total);
+      setCurrentPage(page);
     } catch (error) {
-      console.log(error);
+      console.error(error);
+    } finally {
       setIsLoading(false);
     }
-  }
+  };
 
   useEffect(() => {
     handlePageChange(1, 'All', 'All');
@@ -243,6 +245,9 @@ export default function TrackLink() {
         lable={'Order History'}
         isLoading={isLoading}
         onPageChange={handlePageChange}
+        total={total}
+        currentPage={currentPage}
+        pageSize={PAGE_SIZE}
       />
     </section>
   );
