@@ -14,6 +14,7 @@ import {
 } from '@/lib/actions/order/order.actions';
 import { toast } from 'sonner';
 import { useOrder } from '@/hooks/useOrder';
+import Link from 'next/link';
 
 interface ContactDetails {
   firstName: string;
@@ -303,7 +304,7 @@ export default function FinalizeOrderPay() {
 
         {/* Escrow Agreement */}
         <div className="mb-6">
-          <h2 className="font-semibold text-lg mb-2">Payment Agreement</h2>
+          <h2 className="font-semibold text-lg mb-2">Escrow Agreement</h2>
           <div className="mt-3 bg-gray-100 p-4 rounded-lg max-h-48 overflow-y-auto text-sm text-gray-700 leading-6">
             <p>
               By proceeding with this payment, you acknowledge that the funds will be held in escrow
@@ -323,13 +324,19 @@ export default function FinalizeOrderPay() {
               onChange={() => setAgree(!agree)}
               className="w-5 h-5 border rounded-md cursor-pointer mt-0.5"
             />
-            <span className="text-sm text-gray-700">
-              I confirm I have read and agree to the{' '}
-              <span className="text-[#03045B] font-medium cursor-pointer">
-                Payment Escrow agreement
-              </span>{' '}
+            <span className="ml-2 text-sm">
+              You agree to the{' '}
+              <Link href="terms-and-condition" className="text-blue-700">
+                terms and conditions
+              </Link>{' '}
+              and acknowledge the{' '}
+              <Link href="privacy-policy" className="text-blue-700">
+                privacy policy
+              </Link>{' '}
               and{' '}
-              <span className="text-[#03045B] font-medium cursor-pointer">Terms of service</span>.
+              <Link href="refund-policy" className="text-blue-700">
+                refund policy
+              </Link>
             </span>
           </label>
         </div>

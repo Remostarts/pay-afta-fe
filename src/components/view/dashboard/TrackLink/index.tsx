@@ -2,20 +2,18 @@
 
 import { ColumnDef } from '@tanstack/react-table';
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
-import router from 'next/router';
+import { ReDataTable } from '../shared/ReDateTable';
 
-import { DataTable } from './DataTable';
-import MilestoneDialog from './MilestoneDialog';
 import TrackButtonDropdown from './TrackButtonDropdown';
+import MilestoneDialog from './MilestoneDialog';
 
-import { Dialog, DialogTrigger } from '@/components/ui/dialog';
 import { useGeneral } from '@/context/generalProvider';
-import page from '@/app/(auth)/forget-pass/page';
 import { formatISODateToReadable } from '@/helpers/utils/makeTimeReadable';
 import { getAllOrdersByUser } from '@/lib/actions/order/order.actions';
+import { Dialog, DialogTrigger } from '@/components/ui/dialog';
+import { OrderDetails } from '@/types/order';
 
-type User = {
+export type User = {
   id: string;
   firstName: string;
   lastName: string;
@@ -24,229 +22,243 @@ type User = {
 export type Order = {
   id: string;
   createdAt: string;
-  updatedAt?: string;
   type: string;
   transactionType: 'Product' | 'Services';
   amount: number;
   payment: string;
   buyer: User;
   seller: User;
-  name: string;
+  paymentType: string;
+  createdBy: string;
   status: string;
-  progressHistory?: Array<{
-    id: string;
-    status: string;
-    timestamp: string;
-    notes: string;
-    step: number;
-  }>;
+  progressHistory?: any[];
 };
 
-export type { Order as SimpleOrder };
-
 export default function TrackLink() {
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState<boolean>(false);
   const [orders, setOrders] = useState<Order[]>([]);
-  console.log('🌼 🔥🔥 TrackLink 🔥🔥 orders🌼', orders);
+  const [isLoading, setIsLoading] = useState(true);
+  const [isMilestoneDialogOpen, setIsMilestoneDialogOpen] = useState(false);
 
-  const [currentPage, setCurrentPage] = useState(1);
-  const [total, setTotal] = useState(0);
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const PAGE_SIZE = 8;
-  const { session, user, loadUserData } = useGeneral();
 
-  const columns: ColumnDef<Order>[] = [
-    {
-      accessorKey: 'createdAt',
-      header: 'Date',
-      cell: ({ row }) => <div>{formatISODateToReadable(row?.original?.createdAt)}</div>,
-    },
-    {
-      accessorKey: 'sssd',
-      header: 'Your Role',
-      cell: ({ row }) => (
-        <div>
-          {row?.original?.buyer?.id === user?.id
-            ? 'Buyer'
-            : row?.original?.seller?.id === user?.id
-              ? 'Seller'
-              : 'Unknown'}
-        </div>
-      ),
-    },
-    {
-      accessorKey: 'transactionType',
-      header: 'Transaction Type',
-      cell: ({ row }) => <div>{row?.original?.transactionType}</div>,
-    },
-    {
-      accessorKey: 'transactionType2',
-      header: 'Milestone Payment',
-      cell: ({ row }) =>
-        row?.original?.transactionType === 'Product' ? (
-          <span className="rounded-md bg-red-400 px-4 py-1 text-white">No</span>
-        ) : row?.original?.transactionType === 'Services' ? (
-          <Dialog>
-            <DialogTrigger asChild>
-              <button className="cursor-pointer text-blue-600" onClick={handleMilestoneDialog}>
-                View
-              </button>
-            </DialogTrigger>
-            {isMilestoneDialogOpen && <MilestoneDialog />}
-          </Dialog>
-        ) : (
-          <span className="rounded-md bg-red-500 px-2 py-1 text-white">Unknown</span>
-        ),
-    },
-    {
-      accessorKey: 'payment',
-      header: 'Payment',
-      cell: ({ row }) => <div>{row?.original?.payment || 'Pending'}</div>,
-    },
-    {
-      accessorKey: 'amount',
-      header: 'Amount (₦)',
-      cell: ({ row }) => <div>{row?.original?.amount}</div>,
-    },
-    {
-      accessorKey: 'status',
-      header: 'Status',
-      cell: ({ row }) => {
-        const status = row?.original?.status;
+  const { user } = useGeneral();
 
-        // status dynamic label + color map
-        // Extended status label logic for Agreement steps
-        let statusKey = status;
-        let label = '';
-        let bg = '';
-        let text = '';
+  const resolveStatusStyle = (order: Order) => {
+    let { status, progressHistory = [] } = order;
+    let label = status;
 
-        if (status === 'BUYER_AGREED' || status === 'SELLER_AGREED') {
-          // Use the proper progressHistory property from the order
-          const order = row?.original;
-          const progressHistory = order?.progressHistory ?? [];
-          // Helper to check if both agreed
+    // Custom Agreement Logic
+    if (status === 'BUYER_AGREED' || status === 'SELLER_AGREED') {
+      const buyerConfirmed = progressHistory.some((p: any) => p.status === 'BUYER_AGREED');
+      const sellerConfirmed = progressHistory.some((p: any) => p.status === 'SELLER_AGREED');
 
-          console.log(progressHistory);
+      if (buyerConfirmed && sellerConfirmed) label = 'Both Agreed';
+      else if (buyerConfirmed) label = 'Buyer Agreed';
+      else if (sellerConfirmed) label = 'Seller Agreed';
+      else label = 'Agreement Pending';
 
-          const buyerConfirmed = progressHistory?.some(
-            (progress: any) => progress.status === 'BUYER_AGREED'
-          );
-          const sellerConfirmed = progressHistory?.some(
-            (progress: any) => progress.status === 'SELLER_AGREED'
-          );
-
-          if (buyerConfirmed && sellerConfirmed) {
-            label = 'Both Agreed';
-            bg = 'bg-[#E8FDEF]';
-            text = 'text-[#0F973C]';
-          } else if (buyerConfirmed && !sellerConfirmed) {
-            label = 'Buyer Agreed';
-            bg = 'bg-[#E8FDEF]';
-            text = 'text-[#0F973C]';
-          } else if (!buyerConfirmed && sellerConfirmed) {
-            label = 'Seller Agreed';
-            bg = 'bg-[#E8FDEF]';
-            text = 'text-[#0F973C]';
-          } else {
-            label = 'Agreement Pending';
-            bg = 'bg-gray-200';
-            text = 'text-gray-800';
-          }
-        } else {
-          const statusMap: Record<string, { label: string; bg: string; text: string }> = {
-            PENDING: { label: 'Pending', bg: 'bg-gray-200', text: 'text-gray-800' },
-            CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
-            PAID: { label: 'Paid', bg: 'bg-[#FCE9E9]', text: 'text-[#0F973C]' },
-            REJECTED: { label: 'Rejected', bg: 'bg-red-200', text: 'text-red-700' },
-            SHIPPED: { label: 'Shipped', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
-            DELIVERED: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
-            COMPLETED: { label: 'Completed', bg: 'bg-green-100', text: 'text-green-700' },
-            CLOSED: { label: 'Closed', bg: 'bg-gray-200', text: 'text-gray-600' },
-            DISPUTED_REQUESTED: {
-              label: 'Dispute Requested',
-              bg: 'bg-[#FFE5EC]',
-              text: 'text-[#A81D1C]',
-            },
-            DISPUTED: { label: 'Disputed', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
-          };
-          if (statusMap[status]) {
-            label = statusMap[status].label;
-            bg = statusMap[status].bg;
-            text = statusMap[status].text;
-          } else {
-            label = 'Not Started';
-            bg = 'bg-gray-300';
-            text = 'text-gray-800';
-          }
-        }
-
-        return (
-          <div>
-            <span className={`rounded-full p-1 px-4 font-inter text-sm ${bg} ${text}`}>
-              {label}
-            </span>
-          </div>
-        );
-      },
-    },
-    {
-      accessorKey: 'view',
-      header: 'Actions',
-      cell: ({ row }) => (
-        <TrackButtonDropdown
-          order={row?.original}
-          onOrderUpdate={() => {
-            // Refresh the orders data when an order is updated
-            handlePageChange(1, 'All', 'All');
-          }}
-        />
-      ),
-    },
-  ];
-
-  const handlePageChange = async (
-    page: number,
-    transactionType: string = 'All',
-    status: string = 'All'
-  ) => {
-    setIsLoading(true);
-    try {
-      const data = await getAllOrdersByUser(page, 8, status, transactionType);
-      console.log('🌼 🔥🔥 handlePageChange 🔥🔥 data🌼', data);
-
-
-      // if (!data.success) throw new Error('Failed to fetch orders');
-
-      setOrders(data.data.data);
-      setTotal(data.data.meta.total);
-      setCurrentPage(page);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
+      return { label, bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' };
     }
+
+    // General Status Map
+    const statusMap: Record<string, { label: string; bg: string; text: string }> = {
+      PENDING: { label: 'Pending', bg: 'bg-gray-200', text: 'text-gray-800' },
+      CANCELED: { label: 'Canceled', bg: 'bg-gray-300', text: 'text-gray-800' },
+      PAID: { label: 'Paid', bg: 'bg-[#FCE9E9]', text: 'text-[#0F973C]' },
+      REJECTED: { label: 'Rejected', bg: 'bg-red-200', text: 'text-red-700' },
+      SHIPPED: { label: 'Shipped', bg: 'bg-[#FFF8E1]', text: 'text-[#FFA000]' },
+      DELIVERED: { label: 'Delivered', bg: 'bg-[#E6E7FE]', text: 'text-[#070AC5]' },
+      COMPLETED: { label: 'Completed', bg: 'bg-green-100', text: 'text-green-700' },
+      CLOSED: { label: 'Closed', bg: 'bg-gray-200', text: 'text-gray-600' },
+      DISPUTED_REQUESTED: {
+        label: 'Dispute Requested',
+        bg: 'bg-[#FFE5EC]',
+        text: 'text-[#A81D1C]',
+      },
+      DISPUTED: { label: 'Disputed', bg: 'bg-[#FFE5EC]', text: 'text-[#C21807]' },
+      SUCCESSFUL: { label: 'Successful', bg: 'bg-[#E8FDEF]', text: 'text-[#0F973C]' },
+    };
+
+    return (
+      statusMap[status] || {
+        label: 'Not Started',
+        bg: 'bg-gray-300',
+        text: 'text-gray-800',
+      }
+    );
   };
 
-  // useEffect(() => {
-  //   handlePageChange(1, 'All', 'All');
-  // }, []);
+  console.log(orders);
 
   const handleMilestoneDialog = () => {
     setIsMilestoneDialogOpen(true);
   };
 
+  const columns: ColumnDef<Order>[] = [
+    {
+      accessorKey: 'createdAt',
+      header: 'Date',
+      cell: ({ row }) => formatISODateToReadable(row.original.createdAt),
+    },
+    {
+      accessorKey: 'role',
+      header: 'Your Role',
+      cell: ({ row }) =>
+        row.original.buyer?.id === user?.id
+          ? 'Buyer'
+          : row.original.seller?.id === user?.id
+            ? 'Seller'
+            : 'Guest User',
+    },
+    {
+      accessorKey: 'position',
+      header: 'Position',
+      cell: ({ row }) => {
+        const order = row.original;
+
+        const createdBy = order?.createdBy;
+        const buyerId = order?.buyer?.id;
+        const sellerId = order?.seller?.id;
+
+        let position = 'Unknown';
+
+        if (!createdBy) {
+          position = 'Unknown';
+        } else if (createdBy === buyerId) {
+          position = 'Initiator (Buyer)';
+        } else if (createdBy === sellerId) {
+          position = 'Initiator (Seller)';
+        } else {
+          position = 'Guest';
+        }
+
+        return <span className="font-semibold text-gray-700">{position}</span>;
+      },
+    },
+    {
+      accessorKey: 'transactionType',
+      header: 'Transaction Type',
+    },
+    // {
+    //   accessorKey: 'transactionType2',
+    //   header: 'Milestone Payment',
+    //   cell: ({ row }) =>
+    //     row?.original?.transactionType === 'Product' ? (
+    //       <span className="rounded-md bg-red-400 px-4 py-1 text-white">No</span>
+    //     ) : row?.original?.transactionType === 'Services' ? (
+    //       <Dialog>
+    //         <DialogTrigger asChild>
+    //           <button className="cursor-pointer text-blue-600" onClick={handleMilestoneDialog}>
+    //             View
+    //           </button>
+    //         </DialogTrigger>
+    //         {isMilestoneDialogOpen && <MilestoneDialog />}
+    //       </Dialog>
+    //     ) : (
+    //       <span className="rounded-md bg-red-500 px-2 py-1 text-white">Unknown</span>
+    //     ),
+    // },
+
+    {
+      accessorKey: 'Payment Type',
+      header: 'Payment Type',
+      cell: ({ row }) => row.original?.paymentType,
+    },
+    {
+      accessorKey: 'payment',
+      header: 'Payment',
+      cell: ({ row }) => row.original.payment || 'Pending',
+    },
+    {
+      accessorKey: 'amount',
+      header: 'Amount (₦)',
+    },
+    {
+      accessorKey: 'status',
+      header: 'Status',
+      cell: ({ row }) => {
+        const { label, bg, text } = resolveStatusStyle(row.original);
+
+        return (
+          <span className={`rounded-full px-4 py-1 text-sm font-inter ${bg} ${text}`}>{label}</span>
+        );
+      },
+    },
+    {
+      accessorKey: 'actions',
+      header: 'Actions',
+      cell: ({ row }) => (
+        <TrackButtonDropdown
+          order={row.original as unknown as OrderDetails}
+          onOrderUpdate={() => handlePageChange({ pageNumber: page })}
+          currentUserId={row.original.id}
+        />
+      ),
+    },
+  ];
+
+  // ---------- Pagination + Filters ----------
+  async function handlePageChange({
+    pageNumber = 1,
+    selectedDate = 'All',
+    Status = 'All',
+    transactionType = 'All',
+  } = {}) {
+    setIsLoading(true);
+    try {
+      const data = await getAllOrdersByUser(pageNumber, PAGE_SIZE, Status, transactionType);
+      setOrders(data?.data?.data || []);
+      setTotalCount(data?.data?.meta?.total || 0);
+      setPage(pageNumber);
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    handlePageChange({ pageNumber: 1 });
+  }, []);
+
   return (
     <section className="rounded-md bg-white p-5">
-      <DataTable
+      <ReDataTable
+        label="Order History"
         columns={columns}
         data={orders}
-        lable={'Order History'}
         isLoading={isLoading}
         onPageChange={handlePageChange}
-        total={total}
-        currentPage={currentPage}
+        rowClickMode="none"
+        count={totalCount}
+        page={page}
+        setPage={setPage}
         pageSize={PAGE_SIZE}
+        filters={[
+          {
+            name: 'Transaction Type',
+            placeholder: 'Transaction Type',
+            options: [
+              { label: 'All', value: 'All' },
+              { label: 'Product', value: 'Product' },
+              { label: 'Services', value: 'Services' },
+            ],
+          },
+          {
+            name: 'Status',
+            placeholder: 'Order Status',
+            options: [
+              { label: 'All', value: 'All' },
+              { label: 'Pending', value: 'PENDING' },
+              { label: 'Paid', value: 'PAID' },
+              { label: 'Completed', value: 'COMPLETED' },
+              { label: 'Disputed', value: 'DISPUTED' },
+              { label: 'Canceled', value: 'CANCELED' },
+            ],
+          },
+        ]}
       />
     </section>
   );
