@@ -35,7 +35,7 @@ export default function StatsSection() {
               </div> */}
             </div>
             <p className="font-inter text-2xl font-bold text-white">
-              ₦{user?.Wallet[0]?.balance || '0.00'}
+              ₦{user?.Wallet[0]?.balance || '0'}
             </p>
           </div>
           <div className="mt-4 flex items-center gap-3 sm:mt-0">
@@ -101,7 +101,7 @@ export default function StatsSection() {
             </div> */}
           </div>
           <p className="font-inter text-2xl font-bold text-white">
-            ₦{user?.escrowBalance || '0.00'}
+            ₦{user?.escrowBalance || '0'}
           </p>
         </div>
       </div>

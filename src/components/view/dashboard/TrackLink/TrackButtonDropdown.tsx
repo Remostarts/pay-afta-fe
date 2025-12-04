@@ -13,7 +13,6 @@ import {
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { OrderDetails } from '@/types/order';
-import { SimpleOrder } from './index';
 import EditOrderModal from './EditOrderModal';
 import RaiseDispute from './RaiseDispute';
 import RejectOrderModal from './RejectOrderModal';
@@ -22,8 +21,9 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { getSingleOrder } from '@/lib/actions/order/order.actions';
 
 interface TrackButtonDropdownProps {
-  order: SimpleOrder | OrderDetails;
+  order: OrderDetails;
   onOrderUpdate: () => void;
+  currentUserId: string; // Added current user ID prop
 }
 
 interface DropdownItem {
@@ -35,7 +35,11 @@ interface DropdownItem {
   disabledReason?: string;
 }
 
-export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButtonDropdownProps) {
+export default function TrackButtonDropdown({
+  order,
+  onOrderUpdate,
+  currentUserId, // Added current user ID prop
+}: TrackButtonDropdownProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoading, setIsLoading] = useState<string | null>(null);
   const [showEditModal, setShowEditModal] = useState(false);
@@ -45,8 +49,14 @@ export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButto
   const mountedComponentsRef = useRef<{ [key: string]: boolean }>({});
   const router = useRouter();
 
+  // Determine if current user is the initiator
+  const userRole = currentUserId === order.createdBy ? 'initiator' : 'counterparty';
+
   // Debounce rapid clicks
   const clickTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Check if both parties have agreed
+  const bothPartiesAgreed = order.buyerAgreed && order.sellerAgreed;
 
   // Get activation state based on order status
   const getActivationState = useCallback(() => {
@@ -59,13 +69,13 @@ export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButto
     const isFailedOrDelayed = ['FAILED', 'DELAYED', 'DISPUTED'].includes(status.toUpperCase());
 
     return {
-      editOrder: isBeforeAgreement,
-      cancelOrder: isNotShipped,
+      editOrder: isBeforeAgreement && userRole === 'initiator', // Only initiator can edit
+      cancelOrder: isNotShipped && !bothPartiesAgreed, // Disable if both parties agreed
       viewTimeline: true,
       trackDelivery: isShipped,
       raiseDispute: isFailedOrDelayed,
     };
-  }, [order.status]);
+  }, [order.status, userRole, bothPartiesAgreed]);
 
   const activationState = getActivationState();
 
@@ -151,7 +161,10 @@ export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButto
       icon: <Edit2 className="w-4 h-4" />,
       action: handleEditOrder,
       enabled: activationState.editOrder,
-      disabledReason: 'Order is past the agreement stage',
+      disabledReason:
+        userRole !== 'initiator'
+          ? 'Only the order initiator can edit this order'
+          : 'Order is past the agreement stage',
     },
     {
       id: 'cancelOrder',
@@ -159,7 +172,9 @@ export default function TrackButtonDropdown({ order, onOrderUpdate }: TrackButto
       icon: <X className="w-4 h-4" />,
       action: handleCancelOrder,
       enabled: activationState.cancelOrder,
-      disabledReason: 'Order has already been shipped',
+      disabledReason: bothPartiesAgreed
+        ? 'Order cannot be cancelled after both parties have agreed'
+        : 'Order has already been shipped',
     },
     {
       id: 'viewTimeline',

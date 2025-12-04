@@ -77,7 +77,7 @@ export const SigninForm = () => {
       // }
       // router.push('/');
     } else {
-      toast.error('Something went wrong, try later.');
+      toast.error(result?.error || 'Something went wrong, try later.');
       // toast.error(result?.error || 'Something went wrong');
     }
   };
