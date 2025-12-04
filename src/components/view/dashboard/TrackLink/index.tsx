@@ -45,6 +45,8 @@ export default function TrackLink() {
 
   const { user } = useGeneral();
 
+  console.log(user);
+
   const resolveStatusStyle = (order: Order) => {
     let { status, progressHistory = [] } = order;
     let label = status;
@@ -122,16 +124,24 @@ export default function TrackLink() {
         const buyerId = order?.buyer?.id;
         const sellerId = order?.seller?.id;
 
+        // Determine logged in user's identity in this order
+        const isBuyer = user?.id === buyerId;
+        const isSeller = user?.id === sellerId;
+
+        // Determine initiator
+        const initiatorRole =
+          createdBy === buyerId ? 'Buyer' : createdBy === sellerId ? 'Seller' : null;
+
         let position = 'Unknown';
 
-        if (!createdBy) {
-          position = 'Unknown';
-        } else if (createdBy === buyerId) {
-          position = 'Initiator (Buyer)';
-        } else if (createdBy === sellerId) {
-          position = 'Initiator (Seller)';
+        if (!isBuyer && !isSeller) {
+          position = 'Guest User';
+        } else if (isBuyer && initiatorRole === 'Buyer') {
+          position = 'Initiator';
+        } else if (isSeller && initiatorRole === 'Seller') {
+          position = 'Initiator';
         } else {
-          position = 'Guest';
+          position = 'Counterparty';
         }
 
         return <span className="font-semibold text-gray-700">{position}</span>;
