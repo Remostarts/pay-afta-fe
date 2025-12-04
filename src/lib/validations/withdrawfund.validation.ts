@@ -7,7 +7,7 @@ export const withdrawfundSchema = z.object({
     .min(3, 'Bank code must be at least 3 characters')
     .max(6, 'Bank code is too long')
     .trim(),
-  accountNumber: z.string().regex(/^\d{10,12}$/, 'Account number must be 10–12 digits'),
+  accountNumber: z.string().regex(/^\d{10}$/, 'Account number must be 10 digits'),
   accountName: z.string().min(1, 'Account name verification is required').trim(),
   narration: z.string().optional(),
   amountWithdraw: z
