@@ -98,7 +98,7 @@ const TopCards = () => {
         <div className="text-sm opacity-80">
           Earnings this week <span className="ml-1 text-xs">ⓘ</span>
         </div>
-        <div className="my-2 text-2xl font-bold">₦0.00</div>
+        <div className="my-2 text-2xl font-bold">₦0</div>
       </div>
     </div>
   );
