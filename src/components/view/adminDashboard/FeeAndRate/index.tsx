@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,10 +13,13 @@ import {
 } from '@/components/ui/select';
 import { Switch } from '@/components/ui/switch';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Plus } from 'lucide-react';
+import { Plus, Trash } from 'lucide-react';
+import { toast } from 'sonner';
+import { TCreateFeeRate } from '@/lib/validations/fee.validation';
+import { useChats } from '@/context/ChatListProvider';
 
 interface ServiceFee {
-  transactionName: string;
+  transactionType: string;
   feeType: string;
   minimumAmount: string;
   maximumAmount: string;
@@ -46,8 +49,9 @@ interface VAT {
 }
 
 export default function FeeAndRate() {
+  const { session } = useChats();
   const [serviceFee, setServiceFee] = useState<ServiceFee>({
-    transactionName: '',
+    transactionType: '',
     feeType: '',
     minimumAmount: '0.00',
     maximumAmount: '',
@@ -76,8 +80,119 @@ export default function FeeAndRate() {
     appliedTo: 'Specific Service',
   });
 
-  const handleSaveServiceFee = () => {
-    console.log('Saving Service Fee:', serviceFee);
+  const [serviceFeeList, setServiceFeeList] = useState<ServiceFee[]>([]);
+
+  // Fetch service fee list from backend
+  const fetchServiceFees = async () => {
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/fee/list`, {
+        headers: {
+          authorization: session?.accessToken as string,
+        },
+      });
+      const result = await res.json();
+      if (result.success && result.data?.data) {
+        setServiceFeeList(result.data.data);
+      } else {
+        toast.error(result.message || 'Failed to fetch service fees');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to fetch service fees');
+    }
+  };
+
+  useEffect(() => {
+    fetchServiceFees();
+  }, []);
+
+  const handleSaveServiceFee = async () => {
+    try {
+      if (!serviceFee.transactionType) {
+        toast.error('Please select a transaction type');
+        return;
+      }
+      if (!serviceFee.feeType) {
+        toast.error('Please select a fee type');
+        return;
+      }
+      if (!serviceFee.amount || Number(serviceFee.amount) <= 0) {
+        toast.error('Amount must be greater than 0');
+        return;
+      }
+      if (!serviceFee.currency) {
+        toast.error('Amount must be greater than 0');
+        return;
+      }
+      const payload: TCreateFeeRate = {
+        title: `${serviceFee.transactionType} fee`,
+        transactionType: serviceFee.transactionType as
+          | 'invoice'
+          | 'transfer'
+          | 'payment'
+          | 'withdrawal'
+          | 'airtime',
+        feeType: serviceFee.feeType as 'flat' | 'percentage',
+        value: Number(serviceFee.amount),
+        minAmount: Number(serviceFee.minimumAmount) || 0,
+        maxAmount: serviceFee.maximumAmount ? Number(serviceFee.maximumAmount) : undefined,
+        isActive: true,
+        country: undefined,
+        currencyCode: serviceFee.currency || 'NGN',
+        currencySymbol: serviceFee.currency || '₦',
+      };
+
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/fee/create`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          authorization: session?.accessToken as string,
+        },
+        body: JSON.stringify(payload),
+      });
+      const result = await res.json();
+      console.log('🌼 🔥🔥 handleSaveServiceFee 🔥🔥 result🌼', result);
+
+      if (result.success) {
+        toast.success(result.message || 'Fee created successfully!');
+        // Reset form
+        setServiceFee({
+          transactionType: '',
+          feeType: '',
+          minimumAmount: '0.00',
+          maximumAmount: '',
+          amount: '',
+          currency: '',
+        });
+        fetchServiceFees(); 
+      } else {
+        toast.error(result.message || 'Failed to create fee!');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to create fee!');
+    }
+  };
+  const handleDeleteFee = async (id: string) => {
+    const confirmed = window.confirm('Are you sure you want to delete this fee?');
+    if (!confirmed) return;
+
+    try {
+      const res = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL}/fee/${id}`, {
+        method: 'DELETE',
+        headers: {
+          authorization: session?.accessToken as string,
+        },
+      });
+      const result = await res.json();
+
+      if (result.success) {
+        toast.success('Fee deleted successfully!');
+        fetchServiceFees();  
+      } else {
+        toast.error(result.message || 'Failed to delete fee');
+      }
+    } catch (error: any) {
+      toast.error(error.message || 'Failed to delete fee');
+    }
   };
 
   const handleSaveExchangeRate = () => {
@@ -112,15 +227,16 @@ export default function FeeAndRate() {
                 TRANSACTION NAME
               </Label>
               <Select
-                value={serviceFee.transactionName}
+                value={serviceFee.transactionType}
                 onValueChange={(value) =>
-                  setServiceFee((prev) => ({ ...prev, transactionName: value }))
+                  setServiceFee((prev) => ({ ...prev, transactionType: value }))
                 }
               >
                 <SelectTrigger>
                   <SelectValue placeholder="Select Name" />
                 </SelectTrigger>
                 <SelectContent className="bg-white">
+                  <SelectItem value="invoice">Invoice</SelectItem>
                   <SelectItem value="transfer">Transfer</SelectItem>
                   <SelectItem value="payment">Payment</SelectItem>
                   <SelectItem value="withdrawal">Withdrawal</SelectItem>
@@ -211,6 +327,25 @@ export default function FeeAndRate() {
             >
               Save
             </Button>
+          </div>
+          <div className="space-y-2">
+            {serviceFeeList.map((fee: any) => (
+              <Card key={fee.id} className="p-4 flex justify-between items-center">
+                <div>
+                  <p className="font-medium">{fee.title}</p>
+                  <p className="text-sm text-gray-500">
+                    {fee.transactionType} | {fee.feeType} | {fee.currency} {fee.value}
+                  </p>
+                </div>
+                <Button
+                  variant="destructive"
+                  size="sm"
+                  onClick={() => fee.id && handleDeleteFee(fee.id)}
+                >
+                  <Trash className="w-4 h-4" />
+                </Button>
+              </Card>
+            ))}
           </div>
         </CardContent>
       </Card>

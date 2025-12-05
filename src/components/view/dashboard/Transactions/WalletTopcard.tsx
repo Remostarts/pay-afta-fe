@@ -15,12 +15,12 @@ const WalletTopcard: React.FC = () => {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <BalanceCard variant="wallet">
           <p className="text-white text-sm">Wallet Balance</p>
-          <p className="text-2xl font-semibold text-white">₦0.00</p>
+          <p className="text-2xl font-semibold text-white">₦0</p>
         </BalanceCard>
 
         <BalanceCard variant="escrow">
           <p className="text-white text-sm">Escrow Balance</p>
-          <p className="text-2xl font-semibold text-white">₦0.00</p>
+          <p className="text-2xl font-semibold text-white">₦0</p>
         </BalanceCard>
       </div>
 
@@ -29,10 +29,10 @@ const WalletTopcard: React.FC = () => {
         {/* Wallet Summary */}
         <Card>
           <h3 className="font-semibold text-lg mb-3">Wallet Summary</h3>
-          <SummaryRow label="Total Money In (30d)" value="₦0.00" />
-          <SummaryRow label="Total Money Out (30d)" value="₦0.00" />
-          <SummaryRow label="Pending Escrow Releases" value="₦0.00" />
-          <SummaryRow label="Pending Withdrawals" value="₦0.00" />
+          <SummaryRow label="Total Money In (30d)" value="₦0" />
+          <SummaryRow label="Total Money Out (30d)" value="₦0" />
+          <SummaryRow label="Pending Escrow Releases" value="₦0" />
+          <SummaryRow label="Pending Withdrawals" value="₦0" />
         </Card>
 
         {/* Actions */}
@@ -53,19 +53,19 @@ const WalletTopcard: React.FC = () => {
           <div className="space-y-3">
             <ActivityItem
               icon={<ArrowUpRight size={18} className="text-green-500" />}
-              text="You funded your wallet ₦0.00"
+              text="You funded your wallet ₦0"
             />
             <ActivityItem
               icon={<Lock size={18} className="text-gray-600" />}
-              text="Escrow Hold Created for Order #1168 - ₦0.00"
+              text="Escrow Hold Created for Order #1168 - ₦0"
             />
             <ActivityItem
               icon={<Lock size={18} className="text-gray-600" />}
-              text="Escrow Fee Deducted - ₦0.00"
+              text="Escrow Fee Deducted - ₦0"
             />
             <ActivityItem
               icon={<CheckCircle size={18} className="text-green-600" />}
-              text="Escrow Release Received - ₦0.00"
+              text="Escrow Release Received - ₦0"
             />
           </div>
         </Card>

@@ -82,7 +82,7 @@ export default function PaymentSummary({
             <span className="text-gray-600">Escrow fee @0%</span>
             <Info size={14} className="text-gray-400" />
           </div>
-          <span className="text-gray-900 font-medium">₦0.00</span>
+          <span className="text-gray-900 font-medium">₦0</span>
         </div>
 
         <div className="border-t pt-4">
