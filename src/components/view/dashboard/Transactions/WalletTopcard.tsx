@@ -107,10 +107,12 @@ const WalletTopcard: React.FC = () => {
                 <ActivityItem
                   key={idx}
                   icon={
-                    item.type === 'success' ? (
-                      <CheckCircle size={18} className="text-green-600" />
-                    ) : item.type === 'fund' ? (
-                      <ArrowUpRight size={18} className="text-green-500" />
+                    item.type === 'DEPOSIT' ? (
+                      <ArrowUpRight size={18} className="text-green-600" />
+                    ) : item.type === 'ESCROW_RELEASE' ? (
+                      <CheckCircle size={18} className="text-green-500" />
+                    ) : item.type === 'TRANSFER' ? (
+                      <ArrowUpRight size={18} className="text-red-500" />
                     ) : (
                       <Lock size={18} className="text-gray-600" />
                     )
