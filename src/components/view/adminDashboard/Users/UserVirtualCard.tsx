@@ -142,7 +142,7 @@ export default function UserVirtualCard() {
       <div className="">
         <div className="mt-2 rounded-md border-2 border-gray-200 bg-white p-3">
           <p className="font-inter text-sm text-gray-500">Card Balance</p>
-          <p className="font-inter text-xl font-semibold">₦0.00</p>
+          <p className="font-inter text-xl font-semibold">₦0</p>
         </div>
       </div>
       <div>

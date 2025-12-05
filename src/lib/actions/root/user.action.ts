@@ -173,3 +173,29 @@ export const getUserTransactions = async (page: number = 1, limit: number = 10) 
 
   return await response.json();
 };
+
+export const getUserProfileSummary = async () => {
+  const session = (await getServerSession(authOptions)) as any;
+  const token = session?.accessToken;
+
+  if (!token) throw new Error('Unauthorized. Please log in again.');
+
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/wallet/profile-summary`,
+    {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: token,
+      },
+      cache: 'no-store',
+    }
+  );
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.message || 'Failed to fetch transactions');
+  }
+
+  return await response.json();
+};

@@ -79,15 +79,6 @@ export default function OrderDetails({
     };
   }, [orderData.items]);
 
-  // Generate order number and timeline data
-  const orderNumber = useMemo(() => {
-    const timestamp = Date.now();
-    const random = Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(3, '0');
-    return `POA-${timestamp}-${random}`;
-  }, []);
-
   const orderTimeline = useMemo<TimelineEvent[]>(
     () => [
       {
@@ -204,9 +195,6 @@ export default function OrderDetails({
                   >
                     Order Details
                   </h1>
-                  <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
-                    Order #{orderNumber}
-                  </p>
                 </div>
               </div>
             </div>
@@ -267,11 +255,7 @@ export default function OrderDetails({
                       icon={<Calendar className="w-4 h-4" />}
                     />
                   )}
-                  <InfoCard
-                    label="Order Number"
-                    value={orderNumber}
-                    icon={<FileText className="w-4 h-4" />}
-                  />
+
                   <InfoCard
                     label="Total Amount"
                     value={formatCurrency(totals.totalAmount)}
@@ -407,7 +391,7 @@ export default function OrderDetails({
               >
                 <div className="space-y-4">
                   <PriceRow label="Subtotal" value={formatCurrency(totals.itemTotal)} />
-                  <PriceRow label="VAT (7.5%)" value={formatCurrency(totals.taxAmount)} />
+                  {/* <PriceRow label="VAT (7.5%)" value={formatCurrency(totals.taxAmount)} /> */}
                   <PriceRow
                     label={
                       <span className="inline-flex items-center gap-2">

@@ -367,7 +367,7 @@ export default function NewOrder({ onBack }: NewOrderProps) {
 
         // Set success data
         setOrderSuccessData({
-          orderId: response.data?.orderNumber || response.data?.id || `ORD-${Date.now()}`,
+          orderId: response.data?.id || response.data?.orderNumber,
           transactionType: response.data?.transactionType,
           amount: `₦${response.data?.amount}`,
           trackUrl: response.data?.trackUrl,
