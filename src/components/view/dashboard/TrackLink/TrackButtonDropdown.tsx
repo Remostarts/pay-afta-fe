@@ -70,7 +70,7 @@ export default function TrackButtonDropdown({
 
     return {
       editOrder: isBeforeAgreement && userRole === 'initiator', // Only initiator can edit
-      cancelOrder: isNotShipped && !bothPartiesAgreed, // Disable if both parties agreed
+      cancelOrder: isNotShipped && !bothPartiesAgreed && userRole === 'initiator', // Only initiator can cancel before agreement
       viewTimeline: true,
       trackDelivery: isShipped,
       raiseDispute: isFailedOrDelayed,
@@ -172,9 +172,12 @@ export default function TrackButtonDropdown({
       icon: <X className="w-4 h-4" />,
       action: handleCancelOrder,
       enabled: activationState.cancelOrder,
-      disabledReason: bothPartiesAgreed
-        ? 'Order cannot be cancelled after both parties have agreed'
-        : 'Order has already been shipped',
+      disabledReason:
+        userRole !== 'initiator'
+          ? 'Only the order initiator can cancel this order'
+          : bothPartiesAgreed
+            ? 'Order cannot be cancelled after both parties have agreed'
+            : 'Order has already been shipped',
     },
     {
       id: 'viewTimeline',
